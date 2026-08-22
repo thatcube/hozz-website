@@ -1,0 +1,118 @@
+---
+import { Icon } from 'astro-icon/components';
+import type { HealthCategory } from '../../data/health';
+
+/**
+ * The Browse tile. Health's most recognisable object: a diagonal gradient
+ * slab, the glyph knocked out in white at the top-left, the name at the
+ * bottom-left, and nothing else. Reproduced faithfully because recognition is
+ * the point — you should know what this grid is before you read a word of it.
+ */
+export interface Props {
+  category: HealthCategory;
+  /** Reveal order for the staggered entrance. */
+  index?: number;
+}
+const { category, index = 0 } = Astro.props;
+---
+
+<li
+  class="tile"
+  style={`--from: ${category.from}; --to: ${category.to}; --i: ${index}`}
+>
+  <span class="tile-icon">
+    <Icon name={category.icon} width={26} height={26} />
+  </span>
+  <span class="tile-label">{category.label}</span>
+  <span class="tile-note">{category.note}</span>
+</li>
+
+<style>
+  .tile {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-block-size: clamp(126px, 17vw, 168px);
+    padding: 1rem 1.05rem;
+    border-radius: var(--r-tile);
+    background: linear-gradient(142deg, var(--from) 0%, var(--to) 100%);
+    color: #fff;
+    overflow: hidden;
+    isolation: isolate;
+    /* The gradient does the lifting; the shadow only separates the tile from
+       the grey behind it, tinted so it never reads as a grey drop shadow. */
+    box-shadow: 0 1px 2px color-mix(in oklab, var(--to) 30%, transparent),
+      0 10px 24px -12px color-mix(in oklab, var(--to) 55%, transparent);
+    animation: tile-in 0.5s cubic-bezier(0.2, 0.7, 0.3, 1) backwards;
+    animation-delay: calc(var(--i) * 34ms);
+    transition: transform 0.22s cubic-bezier(0.2, 0.7, 0.3, 1),
+      box-shadow 0.22s ease;
+  }
+
+  .tile:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 1px 2px color-mix(in oklab, var(--to) 34%, transparent),
+      0 18px 34px -14px color-mix(in oklab, var(--to) 62%, transparent);
+  }
+
+  .tile:hover .tile-note {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  .tile:hover .tile-label {
+    translate: 0 -2px;
+  }
+
+  @keyframes tile-in {
+    from {
+      opacity: 0;
+      transform: translateY(14px) scale(0.97);
+    }
+  }
+
+  .tile-icon {
+    margin-bottom: auto;
+    opacity: 0.95;
+  }
+
+  .tile-label {
+    font-size: clamp(1.02rem, 0.95rem + 0.35vw, 1.2rem);
+    font-weight: 700;
+    letter-spacing: -0.022em;
+    line-height: 1.15;
+    transition: translate 0.22s ease;
+  }
+
+  /* The note is the one liberty taken with the original. Health has room for a
+     tap; a page does not, so what the category actually holds surfaces on
+     hover instead of hiding behind navigation. */
+  .tile-note {
+    font-size: 0.78rem;
+    line-height: 1.35;
+    letter-spacing: -0.005em;
+    color: rgba(255, 255, 255, 0.88);
+    margin-top: 0.3rem;
+    opacity: 0;
+    translate: 0 6px;
+    transition: opacity 0.22s ease, translate 0.22s ease;
+  }
+
+  /* Touch has no hover, so the note simply stays visible there. */
+  @media (hover: none) {
+    .tile-note {
+      opacity: 1;
+      translate: 0 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tile {
+      animation: none;
+    }
+    .tile-note {
+      opacity: 1;
+      translate: 0 0;
+    }
+  }
+</style>

@@ -1,0 +1,151 @@
+---
+import { Icon } from 'astro-icon/components';
+import type { DetailRow } from '../../data/health';
+
+/**
+ * The category-detail card: coloured title with its glyph, timestamp on the
+ * right, "Latest" above a very large number, and a sparkline where the most
+ * recent bar is the only one in colour.
+ *
+ * The identifier is the addition. Health shows a friendly name; this shows the
+ * friendly name *and* the HealthKit type it comes from, because the promise
+ * being made on this page is about specific API types and the reader should be
+ * able to check one.
+ */
+export interface Props {
+  row: DetailRow;
+  icon: string;
+}
+const { row, icon } = Astro.props;
+---
+
+<article class="data-card">
+  <header>
+    <span class="name">
+      <Icon name={icon} width={17} height={17} />
+      {row.name}
+    </span>
+    <span class="time">{row.time}</span>
+  </header>
+
+  <div class="readout">
+    <div class="figures">
+      <span class="label">Latest</span>
+      <span class="value">
+        {row.value}<span class="unit">{row.unit}</span>
+      </span>
+      <code class="identifier">{row.identifier}</code>
+    </div>
+
+    {
+      row.spark.length > 0 && (
+        <div class="spark" aria-hidden="true">
+          {row.spark.map((h, i) => (
+            <span
+              class="bar"
+              style={`--h: ${Math.round(h * 100)}%`}
+              data-last={i === row.spark.length - 1 ? '' : undefined}
+            />
+          ))}
+        </div>
+      )
+    }
+  </div>
+</article>
+
+<style>
+  .data-card {
+    background: var(--card);
+    border-radius: var(--r-card);
+    padding: 1rem 1.15rem 1.1rem;
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .name {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--tint-ink);
+    font-weight: 600;
+    font-size: var(--fs-sub);
+    letter-spacing: -0.015em;
+  }
+
+  .time {
+    color: var(--ink-3);
+    font-size: var(--fs-cap);
+    font-weight: 500;
+  }
+
+  .readout {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .label {
+    display: block;
+    color: var(--ink-2);
+    font-size: var(--fs-sub);
+    margin-bottom: 0.1rem;
+  }
+
+  /* The number is the loudest thing in the card, by a wide margin. */
+  .value {
+    display: block;
+    font-size: clamp(2rem, 1.5rem + 1.9vw, 2.9rem);
+    font-weight: 800;
+    letter-spacing: -0.045em;
+    line-height: 1;
+  }
+
+  .unit {
+    font-size: 0.42em;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--ink-3);
+    margin-left: 0.28em;
+  }
+
+  .identifier {
+    display: inline-block;
+    margin-top: 0.6rem;
+    padding: 0.18rem 0.5rem;
+    border-radius: 6px;
+    background: color-mix(in oklab, var(--tint) 12%, transparent);
+    color: color-mix(in oklab, var(--tint) 72%, #000);
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+  }
+
+  .spark {
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    block-size: 64px;
+    flex: none;
+  }
+
+  .bar {
+    inline-size: 6px;
+    block-size: var(--h);
+    border-radius: var(--r-pill);
+    background: #d8d8de;
+  }
+
+  /* Only the newest reading is in colour — the rest are context. */
+  .bar[data-last] {
+    background: var(--tint);
+  }
+</style>

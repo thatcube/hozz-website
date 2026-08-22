@@ -1,0 +1,297 @@
+---
+/**
+ * Sketch A — "Manifest"
+ *
+ * Thesis: the one thing Hozz does that other exporters won't is tell you what it
+ * didn't get. So the page is shaped like the manifest the app writes: a plain
+ * document you read top to bottom, where the interesting part is the column
+ * admitting uncertainty.
+ *
+ * The fourteen Health hues appear only as index rules down the left of each row.
+ * Colour is the category key here, not scenery — no tiles, no fake chrome, and
+ * nothing that could be mistaken for a screenshot of an app that does not exist.
+ */
+import SketchLayout from '../../layouts/SketchLayout.astro';
+import { GITHUB_URL } from '../../data/site';
+
+const ROWS = [
+  { id: 'stepCount', cat: 'activity', label: 'Activity', state: 'copied', detail: '2,114,882 records' },
+  { id: 'activeEnergyBurned', cat: 'activity', label: 'Activity', state: 'copied', detail: '891,204 records' },
+  { id: 'heartRate', cat: 'heart', label: 'Heart', state: 'copied', detail: '4,388,120 records' },
+  { id: 'heartRateVariabilitySDNN', cat: 'heart', label: 'Heart', state: 'copied', detail: '61,004 records' },
+  { id: 'electrocardiogram', cat: 'heart', label: 'Heart', state: 'unknown', detail: 'permission not granted' },
+  { id: 'sleepAnalysis', cat: 'sleep', label: 'Sleep', state: 'copied', detail: '18,332 records' },
+  { id: 'bodyMass', cat: 'body', label: 'Body', state: 'copied', detail: '1,904 records' },
+  { id: 'bloodGlucose', cat: 'vitals', label: 'Vitals', state: 'unknown', detail: 'permission not granted' },
+  { id: 'clinicalRecords', cat: 'other', label: 'Other', state: 'refused', detail: 'out of scope by design' },
+  { id: 'menstrualFlow', cat: 'cycle', label: 'Cycle', state: 'unknown', detail: 'permission not granted' },
+];
+
+const STATE_COPY: Record<string, string> = {
+  copied: 'Copied',
+  unknown: 'Unknown',
+  refused: 'Not read',
+};
+---
+
+<SketchLayout title="Sketch A — Manifest · Hozz" letter="A" name="Manifest">
+  <main>
+    <header class="hero">
+      <p class="kicker">Hozz</p>
+      <h1>
+        Every export tool tells you it worked.<br />
+        This one tells you <em>where it couldn't.</em>
+      </h1>
+      <p class="stand">
+        Apple will not let an app tell the difference between a data type you
+        denied and one you simply have none of. From the inside, the two look
+        identical. So Hozz writes both down, and refuses to call the result
+        complete.
+      </p>
+    </header>
+
+    <section class="doc" aria-labelledby="manifest-h">
+      <div class="doc-head">
+        <h2 id="manifest-h">manifest.json</h2>
+        <p>Shape of the record written alongside every export.</p>
+      </div>
+
+      <ol class="ledger">
+        {
+          ROWS.map((r) => (
+            <li class={`entry entry--${r.state}`} style={`--hue: var(--h-${r.cat})`}>
+              <span class="cat">{r.label}</span>
+              <code>{r.id}</code>
+              <span class="detail">{r.detail}</span>
+              <span class="state">{STATE_COPY[r.state]}</span>
+            </li>
+          ))
+        }
+      </ol>
+
+      <p class="tally">
+        <b>3 of 14 categories could not be confirmed.</b> An export that says
+        otherwise is guessing.
+      </p>
+    </section>
+
+    <section class="ends">
+      <p>Free, open source, no account, and no server of mine in the middle.</p>
+      <a href={GITHUB_URL} rel="noopener">Read the source →</a>
+    </section>
+  </main>
+</SketchLayout>
+
+<style>
+  body {
+    background: #fbfaf8;
+    color: #16161a;
+  }
+
+  main {
+    width: min(100% - 2.5rem, 1080px);
+    margin-inline: auto;
+    padding-block: clamp(3.5rem, 9vw, 8rem) 8rem;
+  }
+
+  /* ── Hero ─────────────────────────────────────────────────────────────── */
+  .kicker {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #6b6760;
+    margin-bottom: clamp(2rem, 5vw, 3.5rem);
+  }
+
+  h1 {
+    font-size: clamp(2.1rem, 1rem + 4.4vw, 4.4rem);
+    font-weight: 800;
+    line-height: 1.03;
+    letter-spacing: -0.042em;
+    text-wrap: balance;
+    max-width: 20ch;
+  }
+
+  /* The turn in the argument gets the colour, and it is the only coloured
+     display type on the page. */
+  h1 em {
+    font-style: normal;
+    color: #b3421c;
+  }
+
+  .stand {
+    margin-top: clamp(1.5rem, 3vw, 2.25rem);
+    max-width: 56ch;
+    font-size: clamp(1.05rem, 1rem + 0.4vw, 1.25rem);
+    line-height: 1.55;
+    letter-spacing: -0.012em;
+    color: #4a4740;
+  }
+
+  /* ── The document ─────────────────────────────────────────────────────── */
+  .doc {
+    margin-top: clamp(4rem, 9vw, 7rem);
+    border-top: 1px solid #16161a;
+    padding-top: 1.25rem;
+  }
+
+  .doc-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .doc-head h2 {
+    font-family: var(--mono);
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  .doc-head p {
+    font-size: 0.9375rem;
+    color: #605d56;
+  }
+
+  .ledger {
+    border-top: 1px solid #e4e0d8;
+  }
+
+  /* A row is the category, the identifier, what happened, and the verdict.
+     Nothing else earns a column. The hue sits on the category name, which is the
+     only place it means anything. */
+  .entry {
+    display: grid;
+    grid-template-columns: 7.5rem 1fr auto;
+    gap: 0.2rem 1.5rem;
+    align-items: baseline;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid #e4e0d8;
+  }
+
+  .cat {
+    grid-row: span 2;
+    align-self: center;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    /* Health's hues are built for a screen, not for 13px labels, so each one is
+       taken down until it reads on the paper. */
+    color: color-mix(in oklab, var(--hue) 64%, #16161a);
+  }
+
+  .cat::before {
+    content: '';
+    inline-size: 7px;
+    block-size: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    flex: none;
+  }
+
+  .entry code {
+    font-family: var(--mono);
+    font-size: 0.9375rem;
+    letter-spacing: -0.02em;
+  }
+
+  .detail {
+    grid-column: 2;
+    font-size: 0.875rem;
+    color: #605d56;
+  }
+
+  .state {
+    grid-row: span 2;
+    align-self: center;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  .entry--copied .state {
+    background: #e3f1e5;
+    color: #1a6128;
+  }
+
+  .entry--unknown .state {
+    background: #fbeedd;
+    color: #7d4a00;
+  }
+
+  .entry--refused .state {
+    background: #eceae6;
+    color: #4d4a44;
+  }
+
+  .tally {
+    margin-top: 1.75rem;
+    max-width: 52ch;
+    font-size: 1.0625rem;
+    line-height: 1.5;
+    color: #4a4740;
+  }
+
+  .tally b {
+    color: #16161a;
+    font-weight: 700;
+  }
+
+  /* ── Ends ─────────────────────────────────────────────────────────────── */
+  .ends {
+    margin-top: clamp(4rem, 9vw, 7rem);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    border-top: 1px solid #16161a;
+    padding-top: 1.25rem;
+  }
+
+  .ends p {
+    max-width: 44ch;
+    color: #4a4740;
+  }
+
+  .ends a {
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    text-decoration: none;
+    border-bottom: 2px solid #b3421c;
+    padding-bottom: 1px;
+  }
+
+  .ends a:hover {
+    color: #b3421c;
+  }
+
+  @media (max-width: 620px) {
+    .entry {
+      grid-template-columns: 1fr;
+      gap: 0.3rem;
+    }
+
+    .cat,
+    .detail,
+    .state {
+      grid-row: auto;
+      grid-column: 1;
+    }
+
+    .state {
+      justify-self: start;
+      margin-top: 0.25rem;
+    }
+  }
+</style>

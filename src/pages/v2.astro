@@ -1,0 +1,659 @@
+---
+import HealthLayout from '../layouts/HealthLayout.astro';
+import CategoryTile from '../components/health/CategoryTile.astro';
+import DataCard from '../components/health/DataCard.astro';
+import Mark from '../components/Mark.astro';
+import { Icon } from 'astro-icon/components';
+import {
+  COVERAGE_ROWS,
+  DESTINATION_ROWS,
+  HEALTH_CATEGORIES,
+  HEART_ROWS,
+  MILESTONE_ROWS,
+  PROMISE_ROWS,
+  STEP_ROWS,
+  CATEGORY_BY_KEY,
+} from '../data/health';
+import { DONATE_URL, GITHUB_URL, SIBLINGS } from '../data/site';
+
+const heart = CATEGORY_BY_KEY.heart;
+const year = new Date().getFullYear();
+---
+
+<HealthLayout title="Hozz — your Apple Health data, somewhere you own">
+  <!-- ───────────────────────── Header ───────────────────────── -->
+  <header class="bar">
+    <div class="wrap bar-inner">
+      <a href="/v2" class="brand">
+        <Mark size={28} />
+        <span>Hozz</span>
+      </a>
+      <nav aria-label="Sections">
+        <ul>
+          <li><a href="#browse">Categories</a></li>
+          <li><a href="#promise">Promise</a></li>
+          <li><a href="#honest">Honesty</a></li>
+          <li><a href="#status">Status</a></li>
+        </ul>
+      </nav>
+      <a class="btn btn--primary bar-cta" href={GITHUB_URL} rel="noopener">Source</a>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- ───────────────────────── Hero ─────────────────────────
+         The wash here blends four category hues at once rather than one,
+         echoing the Summary screen, where no single category owns the top of
+         the page because all of them are about to appear. -->
+    <section class="hero">
+      <div class="wrap">
+        <p class="eyebrow">Pre-alpha · nothing to install yet</p>
+        <h1>
+          Your health data.<br />
+          <span class="keep">Yours to keep.</span>
+        </h1>
+        <p class="lead">
+          Hozz is a free, open-source app for iPhone and iPad that copies what
+          Apple Health knows about you into a file you keep, or onto a server you
+          run. No subscription, no account, and nothing of yours passing through
+          anything of mine.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn--primary" href={GITHUB_URL} rel="noopener">Read the source</a>
+          <a class="btn btn--plain" href="#browse">See what it reads</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────────────────── Browse ───────────────────────── -->
+    <section class="section" id="browse">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Not a curated dozen.</h2>
+          <p class="lead">
+            This is the shape of what Apple Health holds — the same categories,
+            in the same colours you already know. The target is every one of
+            them, with the relationships between records left intact. Hozz's
+            only job is getting a copy somewhere you own.
+          </p>
+        </div>
+
+        <ul class="tiles">
+          {HEALTH_CATEGORIES.map((c, i) => <CategoryTile category={c} index={i} />)}
+        </ul>
+
+        <p class="footnote">
+          Categories arrive as the milestones below land. Nothing here is
+          exported yet.
+        </p>
+      </div>
+    </section>
+
+    <!-- ─────────────────── A category, up close ───────────────────
+         One detail screen rendered at full size. It is the source, not the
+         product: this is what Health hands over, and the identifiers under
+         each reading are the real HealthKit types anyone can check. -->
+    <section
+      class="section section--wash"
+      style={`--tint: ${heart.from}; --tint-2: ${heart.to}`}
+    >
+      <div class="wrap">
+        <div class="detail-head">
+          <span class="detail-glyph" style={`--from: ${heart.from}; --to: ${heart.to}`}>
+            <Icon name={heart.icon} width={22} height={22} />
+          </span>
+          <h2>Heart</h2>
+        </div>
+
+        <p class="group-title">Today</p>
+        <div class="cards">
+          {HEART_ROWS.map((row) => <DataCard row={row} icon={heart.icon} />)}
+        </div>
+
+        <p class="footnote footnote--dark">
+          Readings are illustrative. The identifiers under them are the real
+          HealthKit types, so every claim on this page can be checked against
+          Apple's documentation.
+        </p>
+      </div>
+    </section>
+
+    <!-- ───────────────────────── Promise ───────────────────────── -->
+    <section class="section section--split" id="promise">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Six things it will never do.</h2>
+          <p class="lead">
+            Most health apps ask you to trust a company. Hozz is built so there
+            is nothing to trust in the first place.
+          </p>
+        </div>
+
+        <ul class="group">
+          {
+            PROMISE_ROWS.map((p) => (
+              <li class="row" style={`--row-tint: ${p.tint}`}>
+                <span class="row-icon">
+                  <Icon name={p.icon} width={17} height={17} />
+                </span>
+                <span class="row-title">{p.title}</span>
+                <span class="row-body">{p.body}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <!-- ───────────────────────── How ───────────────────────── -->
+    <section class="section" id="how">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>It only does three things.</h2>
+        </div>
+
+        <ul class="grid grid--3">
+          {
+            STEP_ROWS.map((s) => (
+              <li class="card step" style={`--row-tint: ${s.tint}`}>
+                <span class="step-n">{s.n}</span>
+                <h3>{s.title}</h3>
+                <p>{s.body}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <!-- ───────────────────── Destinations ───────────────────── -->
+    <section class="section">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Somewhere you already own.</h2>
+          <p class="lead">
+            A destination is a place you set up and confirm. There is no default
+            one, because a default would be somewhere I chose.
+          </p>
+        </div>
+
+        <ul class="grid grid--3">
+          {
+            DESTINATION_ROWS.map((d) => (
+              <li class="card dest" style={`--row-tint: ${d.tint}`}>
+                <span class="dest-icon">
+                  <Icon name={d.icon} width={22} height={22} />
+                </span>
+                <h3>{d.title}</h3>
+                <p>{d.body}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <!-- ───────────────────────── Honesty ───────────────────────── -->
+    <section class="section section--split honest" id="honest">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>It will never say it got everything.</h2>
+          <p class="lead">
+            Apple will not let an app tell the difference between a data type you
+            denied and one you simply have none of. From the inside, the two look
+            identical. Plenty of export tools quietly call that “complete”.
+          </p>
+        </div>
+
+        <ul class="group states">
+          {
+            COVERAGE_ROWS.map((s) => (
+              <li class={`row state state--${s.tone}`}>
+                <span class="dot" aria-hidden="true" />
+                <span class="row-title">{s.state}</span>
+                <span class="row-body">{s.body}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <!-- ───────────────────────── Status ───────────────────────── -->
+    <section class="section section--split" id="status">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Where it actually is.</h2>
+          <p class="lead">
+            Hozz is pre-alpha. There is no TestFlight and no build to install.
+            The repository holds the reviewed architecture and the first
+            acquisition test harness. Each milestone ships only when its gate
+            passes.
+          </p>
+        </div>
+
+        <ol class="group miles">
+          {
+            MILESTONE_ROWS.map((m) => (
+              <li class={`row mile mile--${m.state}`}>
+                <span class="mile-badge">{m.id}</span>
+                <span class="row-title">
+                  {m.name}
+                  <em>{m.state === 'done' ? 'Done' : m.state === 'now' ? 'In progress' : 'Planned'}</em>
+                </span>
+                <span class="row-body">{m.body}</span>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    <!-- ───────────────────────── Closer ───────────────────────── -->
+    <section class="section closer">
+      <div class="wrap">
+        <h2>There is no paid version coming.</h2>
+        <p class="lead">
+          Hozz has nothing to upsell, so watching the repository is the only way
+          to follow it for now. Sponsorship is optional and goes to this and the
+          other free apps.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn--primary" href={GITHUB_URL} rel="noopener">Watch the repository</a>
+          <a class="btn btn--plain" href={DONATE_URL} rel="noopener">Sponsor the work</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap foot-inner">
+      <div>
+        <a href="/v2" class="brand">
+          <Mark size={26} />
+          <span>Hozz</span>
+        </a>
+        <p>A free, open-source app for taking your Apple Health data somewhere you own.</p>
+      </div>
+      <nav aria-label="Hozz">
+        <h2>Hozz</h2>
+        <ul>
+          <li><a href={GITHUB_URL} rel="noopener">Source on GitHub</a></li>
+          <li><a href="/privacy">Privacy</a></li>
+          <li><a href={DONATE_URL} rel="noopener">Sponsor</a></li>
+        </ul>
+      </nav>
+      <nav aria-label="Other apps">
+        <h2>Other apps</h2>
+        <ul>
+          {SIBLINGS.map((s) => (
+            <li><a href={s.href} rel="noopener">{s.name}</a></li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+    <div class="wrap foot-base">
+      <p>© {year} Brandon Moore. Not affiliated with Apple.</p>
+      <p>Apple Health and HealthKit are trademarks of Apple Inc.</p>
+    </div>
+  </footer>
+</HealthLayout>
+
+<style>
+  /* ── Header ───────────────────────────────────────────────────────────── */
+  .bar {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: rgba(242, 242, 247, 0.72);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+  }
+
+  /* Without a backdrop filter the translucency would let body copy read straight
+     through the bar, so fall back to the solid system grey. */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .bar {
+      background: var(--sys-bg);
+    }
+  }
+
+  .bar-inner {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding-block: 0.7rem;
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    color: var(--ink);
+    margin-inline-end: auto;
+  }
+
+  .brand:hover {
+    text-decoration: none;
+  }
+
+  .brand span {
+    font-size: 1.3rem;
+    font-weight: 800;
+    letter-spacing: -0.035em;
+  }
+
+  .bar nav ul {
+    display: none;
+    gap: 1.5rem;
+  }
+
+  .bar nav a {
+    color: var(--ink-2);
+    font-size: var(--fs-sub);
+    font-weight: 500;
+  }
+
+  .bar nav a:hover {
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .bar-cta {
+    padding: 0.5rem 1.1rem;
+    font-size: var(--fs-sub);
+  }
+
+  @media (min-width: 860px) {
+    .bar nav ul {
+      display: flex;
+    }
+  }
+
+  /* ── Hero ─────────────────────────────────────────────────────────────── */
+  .hero {
+    position: relative;
+    padding-block: clamp(3.5rem, 9vw, 7.5rem) clamp(3rem, 7vw, 6rem);
+    overflow: clip;
+  }
+
+  /* Four hues at once. No single category owns the page, because all of them
+     are about to. */
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: -30% -10% auto;
+    block-size: 150%;
+    background:
+      radial-gradient(52% 46% at 12% 8%, rgba(255, 138, 61, 0.5), transparent 72%),
+      radial-gradient(48% 44% at 78% 4%, rgba(242, 107, 120, 0.48), transparent 70%),
+      radial-gradient(56% 50% at 92% 46%, rgba(138, 114, 236, 0.42), transparent 74%),
+      radial-gradient(46% 42% at 34% 56%, rgba(99, 205, 180, 0.32), transparent 72%);
+    pointer-events: none;
+  }
+
+  .hero .wrap {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Health sets every title in solid black over the wash — the colour is in the
+     surfaces, never in the type. The second line carries the argument, so it
+     gets the full black while the first sits back a step. */
+  .hero h1 {
+    font-size: var(--fs-display);
+    font-weight: 900;
+    letter-spacing: -0.045em;
+    line-height: 0.96;
+    color: rgba(0, 0, 0, 0.44);
+  }
+
+  .keep {
+    color: var(--ink);
+  }
+
+  .hero .lead {
+    margin-top: 1.5rem;
+    color: var(--ink-2);
+  }
+
+  /* ── Browse grid ──────────────────────────────────────────────────────── */
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.85rem;
+  }
+
+  @media (min-width: 700px) {
+    .tiles {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (min-width: 1000px) {
+    .tiles {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .footnote {
+    margin-top: 1.5rem;
+    color: var(--ink-3);
+    font-size: var(--fs-sub);
+    max-width: 56ch;
+  }
+
+  .footnote--dark {
+    color: var(--ink-2);
+  }
+
+  /* ── Category detail ──────────────────────────────────────────────────── */
+  .detail-head {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: clamp(1.75rem, 4vw, 2.75rem);
+  }
+
+  .detail-glyph {
+    display: grid;
+    place-items: center;
+    inline-size: 44px;
+    block-size: 44px;
+    border-radius: 13px;
+    color: #fff;
+    background: linear-gradient(142deg, var(--from), var(--to));
+  }
+
+  .detail-head h2 {
+    font-size: clamp(2.4rem, 1.6rem + 3.4vw, 4rem);
+    font-weight: 900;
+    letter-spacing: -0.04em;
+  }
+
+  .cards {
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  @media (min-width: 760px) {
+    .cards {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* ── Steps ────────────────────────────────────────────────────────────── */
+  .step-n {
+    display: grid;
+    place-items: center;
+    inline-size: 30px;
+    block-size: 30px;
+    border-radius: 50%;
+    background: var(--row-tint);
+    color: #fff;
+    font-size: var(--fs-sub);
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+
+  .card h3 {
+    font-size: var(--fs-h3);
+    margin-bottom: 0.45rem;
+  }
+
+  .card p {
+    color: var(--ink-2);
+    font-size: var(--fs-sub);
+  }
+
+  .dest-icon {
+    display: grid;
+    place-items: center;
+    inline-size: 40px;
+    block-size: 40px;
+    border-radius: 11px;
+    color: #fff;
+    background: var(--row-tint);
+    margin-bottom: 1rem;
+  }
+
+  /* ── Honesty ──────────────────────────────────────────────────────────── */
+  .state .dot {
+    inline-size: 11px;
+    block-size: 11px;
+    border-radius: 50%;
+    grid-row: span 2;
+    align-self: start;
+    margin-top: 7px;
+  }
+
+  .state--good .dot {
+    background: #34c759;
+  }
+
+  .state--unknown .dot {
+    background: #ff9f0a;
+  }
+
+  .state--flat .dot {
+    background: #8a8a8e;
+  }
+
+  /* ── Milestones ───────────────────────────────────────────────────────── */
+  .mile-badge {
+    display: grid;
+    place-items: center;
+    min-inline-size: 34px;
+    block-size: 22px;
+    padding-inline: 0.4rem;
+    border-radius: 6px;
+    background: var(--sys-bg-2);
+    color: var(--ink-3);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    grid-row: span 2;
+    align-self: start;
+    margin-top: 3px;
+  }
+
+  .mile .row-title {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  .mile .row-title em {
+    font-style: normal;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--r-pill);
+    background: var(--sys-bg-2);
+    color: var(--ink-3);
+  }
+
+  .mile--done .row-title em {
+    background: rgba(52, 199, 89, 0.16);
+    color: #17752c;
+  }
+
+  .mile--now .row-title em {
+    background: rgba(255, 159, 10, 0.18);
+    color: #8a5200;
+  }
+
+  /* ── Closer ───────────────────────────────────────────────────────────── */
+  .closer {
+    text-align: center;
+    padding-bottom: clamp(5rem, 10vw, 9rem);
+  }
+
+  .closer h2 {
+    font-size: var(--fs-h2);
+  }
+
+  .closer .lead {
+    margin-inline: auto;
+  }
+
+  .closer .cta-row {
+    justify-content: center;
+  }
+
+  /* ── Footer ───────────────────────────────────────────────────────────── */
+  .foot {
+    background: #fff;
+    padding-block: clamp(2.5rem, 5vw, 4rem) 2rem;
+  }
+
+  .foot-inner {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .foot-inner > div p {
+    margin-top: 0.8rem;
+    color: var(--ink-2);
+    font-size: var(--fs-sub);
+    max-width: 34ch;
+  }
+
+  .foot h2 {
+    font-size: var(--fs-cap);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 0.9rem;
+  }
+
+  .foot li {
+    margin-bottom: 0.55rem;
+    font-size: var(--fs-sub);
+  }
+
+  .foot li a {
+    color: var(--ink);
+  }
+
+  .foot-base {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.4rem 1.5rem;
+    margin-top: clamp(2rem, 4vw, 3rem);
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--sep);
+    color: var(--ink-3);
+    font-size: var(--fs-cap);
+  }
+
+  @media (min-width: 760px) {
+    .foot-inner {
+      grid-template-columns: 1.7fr 1fr 1fr;
+    }
+  }
+</style>

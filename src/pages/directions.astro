@@ -1,0 +1,299 @@
+---
+/**
+ * The comparison board.
+ *
+ * Every direction stays alive and visible side by side: the two built pages and
+ * the three art-direction sketches, each in a live frame at real scale so what
+ * you are judging is the actual page rather than a picture of one.
+ */
+import { SITE } from '../data/site';
+
+const BOARD = [
+  {
+    href: '/',
+    tag: 'V1',
+    name: 'Category spectrum',
+    state: 'built',
+    note: 'The live site. Sentient and General Sans, every section keyed to a different Health hue, and a drifting stream of real HealthKit identifiers in the hero.',
+    verdict: 'Complete page. Currently what hozz.brandomoore.com serves.',
+  },
+  {
+    href: '/v2/',
+    tag: 'V2',
+    name: 'Health language',
+    state: 'built',
+    note: "Apple Health's own idiom — gradient category tiles, white cards on system grey, one typeface at six weights.",
+    verdict: 'Complete page, but it borrows components rather than ideas, and the cards imply an app UI that does not exist.',
+  },
+  {
+    href: '/sketch/a/',
+    tag: 'A',
+    name: 'Manifest',
+    state: 'sketch',
+    note: 'The page is shaped like the disclosure file Hozz writes. Colour is the category key on a ledger row, and the interesting column is the one admitting it does not know.',
+    verdict: 'Leads with the honesty problem, which is the thing no competitor will say out loud.',
+  },
+  {
+    href: '/sketch/b/',
+    tag: 'B',
+    name: 'Transfer',
+    state: 'sketch',
+    note: "The spectrum used as a legend: saturated colour is Apple's side, plain neutral is yours. Records cross the band and lose their colour on the way.",
+    verdict: 'Makes the palette mean something, and shows movement rather than a dashboard.',
+  },
+  {
+    href: '/sketch/c/',
+    tag: 'C',
+    name: 'Quiet',
+    state: 'sketch',
+    note: 'Almost entirely type on Health system grey. The spectrum appears once, as a hairline, and is the only colour in the design.',
+    verdict: 'Argues that a tool holding your medical history should look like it has nothing to sell.',
+  },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Directions · Hozz</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href={`${SITE}/directions/`} />
+  </head>
+  <body>
+    <header class="top">
+      <h1>Five directions, all still standing</h1>
+      <p>
+        Two finished pages and three art-direction sketches. The sketches are one
+        idea each, not whole sites — enough to judge the direction before any of
+        it gets built out. Nothing here is deleted until you pick.
+      </p>
+    </header>
+
+    <ol class="board">
+      {
+        BOARD.map((b) => (
+          <li class="item">
+            <div class="meta">
+              <p class="tag">
+                <b>{b.tag}</b>
+                <span>{b.name}</span>
+                <em data-state={b.state}>{b.state === 'built' ? 'Full page' : 'Sketch'}</em>
+              </p>
+              <p class="note">{b.note}</p>
+              <p class="verdict">{b.verdict}</p>
+              <a class="open" href={b.href}>Open full size →</a>
+            </div>
+
+            <div class="screen">
+              <iframe src={b.href} title={`${b.tag} — ${b.name}`} loading="lazy" />
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </body>
+</html>
+
+<style>
+  @font-face {
+    font-family: 'Switzer';
+    src: url('/fonts/switzer-400.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Switzer';
+    src: url('/fonts/switzer-600.woff2') format('woff2');
+    font-weight: 600;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Switzer';
+    src: url('/fonts/switzer-800.woff2') format('woff2');
+    font-weight: 800;
+    font-display: swap;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: #16161a;
+    color: #f4f4f6;
+    font-family: 'Switzer', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  p {
+    margin: 0;
+  }
+
+  ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .top {
+    width: min(100% - 3rem, 1280px);
+    margin-inline: auto;
+    padding-block: clamp(3rem, 7vw, 5rem) clamp(2rem, 5vw, 3.5rem);
+  }
+
+  .top h1 {
+    font-size: clamp(1.8rem, 1rem + 3vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+  }
+
+  .top p {
+    margin-top: 1.1rem;
+    max-width: 62ch;
+    line-height: 1.55;
+    color: #a9a9b4;
+  }
+
+  .board {
+    width: min(100% - 3rem, 1280px);
+    margin: 0 auto 6rem;
+    display: grid;
+    gap: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .item {
+    display: grid;
+    gap: 1.5rem;
+    padding-top: clamp(2rem, 4vw, 3rem);
+    border-top: 1px solid #2c2c33;
+  }
+
+  .tag {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.6rem;
+  }
+
+  .tag b {
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+  }
+
+  .tag span {
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: #c9c9d2;
+  }
+
+  .tag em {
+    font-style: normal;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    padding: 0.22rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  .tag em[data-state='built'] {
+    background: #1f3d2a;
+    color: #7ee0a0;
+  }
+
+  .tag em[data-state='sketch'] {
+    background: #3d3520;
+    color: #ecc978;
+  }
+
+  .note {
+    margin-top: 0.9rem;
+    line-height: 1.55;
+    color: #a9a9b4;
+  }
+
+  .verdict {
+    margin-top: 0.9rem;
+    line-height: 1.5;
+    font-weight: 500;
+    color: #f4f4f6;
+  }
+
+  .open {
+    display: inline-block;
+    margin-top: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: #f4f4f6;
+    text-decoration: none;
+    border-bottom: 2px solid #5a5a66;
+    padding-bottom: 2px;
+  }
+
+  .open:hover {
+    border-bottom-color: #f4f4f6;
+  }
+
+  /* A live frame rather than a screenshot, so what is being compared is the real
+     page at a real width. */
+  .screen {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    aspect-ratio: 16 / 11;
+  }
+
+  .screen iframe {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    inline-size: 1440px;
+    block-size: 990px;
+    border: 0;
+    transform-origin: 0 0;
+  }
+
+  @media (min-width: 900px) {
+    .item {
+      grid-template-columns: minmax(0, 21rem) minmax(0, 1fr);
+      gap: clamp(2rem, 4vw, 3.5rem);
+      align-items: start;
+    }
+  }
+
+  :focus-visible {
+    outline: 3px solid #6ea8ff;
+    outline-offset: 3px;
+  }
+</style>
+
+<script>
+  /* Scale each frame to whatever width its slot ended up at, so the previews stay
+     honest at every viewport instead of guessing a fixed ratio. */
+  const FRAME_W = 1440;
+
+  const fit = () => {
+    document.querySelectorAll<HTMLElement>('.screen').forEach((box) => {
+      const frame = box.querySelector('iframe');
+      if (!frame) return;
+      const scale = box.clientWidth / FRAME_W;
+      frame.style.transform = `scale(${scale})`;
+      frame.style.height = `${box.clientHeight / scale}px`;
+    });
+  };
+
+  fit();
+  window.addEventListener('resize', fit);
+  window.addEventListener('load', fit);
+</script>

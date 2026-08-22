@@ -1,0 +1,448 @@
+/* ==========================================================================
+   Hozz — variation B, the Health design language
+
+   Apple Health is where this data lives today, so the site is built in its
+   idiom: gradient category tiles, an ambient hue wash behind each section,
+   white cards floating on system grey, and one typeface carrying everything
+   from 400 to 900. That is the argument rather than the decoration — the page
+   shows you the shape of what Health holds, and Hozz's whole job is getting a
+   copy of it somewhere you own.
+
+   Nothing here depicts the Hozz app itself.
+   ========================================================================== */
+
+/* Switzer is a Swiss-style neo-grotesque: tall x-height, tight apertures, and
+   a 900 that stays readable at display size. Apple runs one family across the
+   entire system, so this does too — no second face, no mono. Self-hosted,
+   because a page about not being watched has no business calling a font CDN. */
+@font-face {
+  font-family: 'Switzer';
+  src: url('/fonts/switzer-400.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Switzer';
+  src: url('/fonts/switzer-500.woff2') format('woff2');
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Switzer';
+  src: url('/fonts/switzer-600.woff2') format('woff2');
+  font-weight: 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Switzer';
+  src: url('/fonts/switzer-700.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Switzer';
+  src: url('/fonts/switzer-800.woff2') format('woff2');
+  font-weight: 800;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Switzer';
+  src: url('/fonts/switzer-900.woff2') format('woff2');
+  font-weight: 900;
+  font-display: swap;
+}
+
+:root {
+  /* iOS system greys. The page is grey and the cards are white — the exact
+     inversion of a normal marketing site, and the thing that makes a screen
+     read as a screen. */
+  --sys-bg: #f2f2f7;
+  --sys-bg-2: #ebebf0;
+  --card: #ffffff;
+  --ink: #000000;
+  --ink-2: #3c3c43;
+  /* Apple's own secondary grey lands near 3.4:1 on white, which a native app can
+     carry and a web page cannot. This is the same grey, taken down until it
+     clears 4.5:1 on both the white cards and the grey page. */
+  --ink-3: #6c6c70;
+  --sep: rgba(60, 60, 67, 0.13);
+  --blue: #0070e0;
+  --blue-press: #005ec0;
+
+  /* Set per section; the wash, the icons and the accents all read from it. */
+  --tint: #f26b78;
+  --tint-2: #e8455f;
+  /* The tint at reading strength. Category hues are chosen to sit on a screen,
+     not under body copy, so anything set in the tint on white uses this. */
+  --tint-ink: color-mix(in oklab, var(--tint) 66%, #180a0c);
+
+  --font: 'Switzer', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Display type is deliberately enormous and very tight — the Health app sets
+     "Browse" at a size no marketing site would dare, and that confidence is
+     most of the character. */
+  --fs-display: clamp(2.9rem, 1.5rem + 6vw, 6.5rem);
+  --fs-h2: clamp(2rem, 1.2rem + 3.4vw, 3.6rem);
+  --fs-h3: clamp(1.35rem, 1.15rem + 0.9vw, 1.75rem);
+  --fs-lead: clamp(1.1rem, 1rem + 0.5vw, 1.4rem);
+  --fs-body: 1.0625rem;
+  --fs-sub: 0.9375rem;
+  --fs-cap: 0.8125rem;
+
+  --maxw: 1180px;
+  --gutter: clamp(1rem, 3.5vw, 2.75rem);
+  --section-y: clamp(4rem, 8vw, 8rem);
+
+  /* iOS continuous-corner radii. Big surfaces round hard. */
+  --r-tile: 22px;
+  --r-card: 18px;
+  --r-group: 14px;
+  --r-pill: 999px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  margin: 0;
+  background: var(--sys-bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: var(--fs-body);
+  line-height: 1.47;
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+
+p {
+  margin: 0;
+  text-wrap: pretty;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: var(--blue);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--tint) 30%, transparent);
+}
+
+.skip-link {
+  position: absolute;
+  left: 50%;
+  top: 0.5rem;
+  translate: -50% -200%;
+  z-index: 100;
+  background: var(--ink);
+  color: #fff;
+  padding: 0.7rem 1.2rem;
+  border-radius: var(--r-pill);
+  font-size: var(--fs-sub);
+  font-weight: 600;
+}
+
+.skip-link:focus-visible {
+  translate: -50% 0;
+}
+
+/* --------------------------------------------------------------------------
+   Layout
+   -------------------------------------------------------------------------- */
+
+.wrap {
+  width: min(100% - var(--gutter) * 2, var(--maxw));
+  margin-inline: auto;
+}
+
+.section {
+  padding-block: var(--section-y);
+  position: relative;
+}
+
+/* The ambient wash. In Health, opening a category floods the top of the screen
+   with that category's hue and lets it fall away into grey — the colour tells
+   you where you are before a single word does. Sections here do the same. */
+.section--wash::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  block-size: min(560px, 80%);
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--tint) 42%, var(--sys-bg)) 0%,
+    color-mix(in oklab, var(--tint) 16%, var(--sys-bg)) 45%,
+    var(--sys-bg) 100%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.section > .wrap {
+  position: relative;
+  z-index: 1;
+}
+
+/* iOS list-section headers: small, black, bold, tight to the group below. */
+.group-title {
+  font-size: clamp(1.3rem, 1.1rem + 0.9vw, 1.7rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.85rem;
+  padding-inline: 0.25rem;
+}
+
+.section-head {
+  margin-bottom: clamp(1.75rem, 4vw, 3rem);
+}
+
+.section-head h2 {
+  font-size: var(--fs-h2);
+  max-width: 18ch;
+}
+
+/* A grouped list is a reading column, not a banner. Past the point where a full
+   -width row would leave its text stranded on the left, the heading takes a
+   left rail and the list keeps a measure you can actually scan. */
+@media (min-width: 1040px) {
+  .section--split > .wrap {
+    display: grid;
+    grid-template-columns: minmax(0, 22rem) minmax(0, 1fr);
+    gap: clamp(2.5rem, 5vw, 4.5rem);
+    align-items: start;
+  }
+
+  .section--split .section-head {
+    margin-bottom: 0;
+    position: sticky;
+    top: 6rem;
+  }
+
+  .section--split .section-head h2 {
+    max-width: 13ch;
+  }
+
+  .section--split .lead {
+    max-width: none;
+  }
+}
+
+.lead {
+  font-size: var(--fs-lead);
+  color: var(--ink-2);
+  max-width: 58ch;
+  margin-top: 1rem;
+  line-height: 1.45;
+  letter-spacing: -0.015em;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.9rem 0.4rem 0.7rem;
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  font-size: var(--fs-cap);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  color: var(--ink-2);
+  margin-bottom: 1.4rem;
+}
+
+.eyebrow::before {
+  content: '';
+  inline-size: 8px;
+  block-size: 8px;
+  border-radius: 50%;
+  background: var(--tint);
+}
+
+/* --------------------------------------------------------------------------
+   Buttons — iOS filled pill and its tinted twin
+   -------------------------------------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.9rem 1.6rem;
+  border-radius: var(--r-pill);
+  font-size: var(--fs-body);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  border: 0;
+  cursor: pointer;
+  transition: background-color 0.18s ease, transform 0.18s ease, opacity 0.18s ease;
+}
+
+.btn:hover {
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.btn--primary {
+  background: var(--blue);
+  color: #fff;
+}
+
+.btn--primary:hover {
+  background: var(--blue-press);
+  color: #fff;
+}
+
+.btn--plain {
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--ink);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.btn--plain:hover {
+  background: #fff;
+  color: var(--ink);
+}
+
+.cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+/* On a phone the two buttons sit one above the other, so they match widths
+   rather than each shrinking to its own label. */
+@media (max-width: 520px) {
+  .cta-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Cards and grouped lists
+   -------------------------------------------------------------------------- */
+
+.card {
+  background: var(--card);
+  border-radius: var(--r-card);
+  padding: clamp(1.15rem, 2.2vw, 1.5rem);
+}
+
+/* iOS inset grouped list: one white slab, hairline dividers, no outer border.
+   Rows inset their own divider so it starts past the icon, exactly as the
+   system does. */
+.group {
+  background: var(--card);
+  border-radius: var(--r-group);
+  overflow: hidden;
+}
+
+.group > * + * {
+  box-shadow: inset 0 1px 0 var(--sep);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.25rem 0.9rem;
+  align-items: center;
+  padding: 0.95rem 1.1rem;
+}
+
+.row-icon {
+  display: grid;
+  place-items: center;
+  inline-size: 30px;
+  block-size: 30px;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--row-tint, var(--tint));
+  grid-row: span 2;
+  align-self: start;
+  margin-top: 2px;
+}
+
+.row-title {
+  font-weight: 600;
+  letter-spacing: -0.018em;
+}
+
+.row-body {
+  grid-column: 2;
+  color: var(--ink-2);
+  font-size: var(--fs-sub);
+  line-height: 1.4;
+}
+
+.grid {
+  display: grid;
+  gap: 0.85rem;
+}
+
+@media (min-width: 640px) {
+  .grid--3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .grid--2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

@@ -148,8 +148,20 @@ export const DESTINATIONS = [
   {
     category: 'nutrition' as CategoryKey,
     icon: 'ph:table-duotone',
-    title: 'CSV and GPX',
+    title: 'CSV and JSON',
     body: 'Labelled as lossy projections, because that is what they are. The full record stays whole.',
+  },
+  {
+    category: 'mind' as CategoryKey,
+    icon: 'ph:desktop-duotone',
+    title: 'Your own Mac',
+    body: 'A companion app receives straight from your phone over your own network, and finds it without an address to type.',
+  },
+  {
+    category: 'heart' as CategoryKey,
+    icon: 'ph:sparkle-duotone',
+    title: 'An AI you choose',
+    body: 'Your Mac can answer questions about your own data through the Model Context Protocol, reading locally.',
   },
 ];
 
@@ -177,13 +189,13 @@ export const COVERAGE_STATES = [
 
 export const MILESTONES = [
   { id: 'M0', name: 'Contract', state: 'done', body: 'Every HealthKit family classified; privacy and threat models written down.' },
-  { id: 'M1', name: 'Foundation', state: 'now', body: 'The Swift 6 targets build, and fault tests prove a retry cannot skip past data.' },
-  { id: 'M2', name: 'Catalogue', state: 'next', body: 'The full type list, with the awkward authorization flows kept separate.' },
-  { id: 'M3', name: 'Canonical model', state: 'next', body: 'Byte-identical output whatever your locale or time zone.' },
-  { id: 'M4', name: 'Acquisition', state: 'next', body: 'Millions of changes survive cancellation and injected crashes.' },
-  { id: 'M5', name: 'Files', state: 'next', body: 'Manifests that verify every part and disclose every limitation.' },
-  { id: 'M6', name: 'Background', state: 'next', body: 'Tested on real devices through lock, reboot and lost network.' },
-  { id: 'M7', name: 'Delivery', state: 'next', body: 'Idempotent batches reconciled against an open-source reference receiver.' },
+  { id: 'M1', name: 'Foundation', state: 'done', body: 'The Swift 6 targets build, and fault tests prove a retry cannot skip past data.' },
+  { id: 'M2', name: 'Catalogue', state: 'done', body: 'The full type list, with the awkward authorization flows kept separate.' },
+  { id: 'M3', name: 'Canonical model', state: 'done', body: 'Byte-identical output whatever your locale or time zone.' },
+  { id: 'M4', name: 'Acquisition', state: 'done', body: 'Millions of changes survive cancellation and injected crashes.' },
+  { id: 'M5', name: 'Files', state: 'done', body: 'Archives that verify every part and disclose every limitation.' },
+  { id: 'M6', name: 'Background', state: 'now', body: 'Automatic sync ships and survives lock, reboot and lost network. The long endurance run on real devices is still under way.' },
+  { id: 'M7', name: 'Delivery', state: 'done', body: 'Idempotent batches reconciled against an open-source reference receiver, plus a Mac app that receives them directly.' },
   { id: 'M8', name: 'Multi-device', state: 'next', body: 'One writer at a time, with an explicit handover between your devices.' },
   { id: 'M9', name: 'Release', state: 'next', body: 'Accessibility, localisation, and a multi-year endurance run.' },
 ];

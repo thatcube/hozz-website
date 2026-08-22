@@ -1,0 +1,391 @@
+---
+/**
+ * Sketch B — "Transfer"
+ *
+ * Thesis: Hozz is a pipe, not a dashboard, so the page should be about movement.
+ * The Health spectrum is put to work as a legend rather than as scenery —
+ * saturated colour is Apple's end of the transfer, plain black is yours. Records
+ * cross the pipe and lose their colour on the way, which is the whole product in
+ * one image: the data arrives somewhere with no brand on it, because it is just
+ * yours.
+ *
+ * Nothing here depicts the Hozz app. The only thing drawn is data in transit.
+ */
+import SketchLayout from '../../layouts/SketchLayout.astro';
+import { GITHUB_URL } from '../../data/site';
+
+const CROSSING = [
+  { id: 'heartRate', cat: 'heart', delay: '0s' },
+  { id: 'sleepAnalysis', cat: 'sleep', delay: '-3s' },
+  { id: 'stepCount', cat: 'activity', delay: '-6s' },
+  { id: 'oxygenSaturation', cat: 'respiratory', delay: '-9s' },
+  { id: 'bodyMass', cat: 'body', delay: '-12s' },
+  { id: 'dietaryProtein', cat: 'nutrition', delay: '-15s' },
+];
+
+const SIDES = [
+  {
+    key: 'from',
+    title: 'Where it comes from',
+    body: 'One vendor, one device, one set of rules you did not write. Every category Health holds is in scope, with the relationships between records left intact.',
+    items: ['Fourteen categories', 'Read-only access', 'Nothing modified'],
+  },
+  {
+    key: 'to',
+    title: 'Where it goes',
+    body: 'A file you keep or a server you run. There is no default destination, because a default would be somewhere I chose for you.',
+    items: ['A file you keep', 'A server you run', 'Nothing of mine'],
+  },
+];
+---
+
+<SketchLayout title="Sketch B — Transfer · Hozz" letter="B" name="Transfer">
+  <main>
+    <section class="hero">
+      <p class="kicker">Hozz · free and open source</p>
+      <h1>Out of Health.<br />Into something<br />you own.</h1>
+      <p class="stand">
+        An iPhone and iPad app that copies what Apple Health knows about you into
+        a file you keep, or onto a server you run. No subscription, no account,
+        and nothing of yours passing through anything of mine.
+      </p>
+      <a class="go" href={GITHUB_URL} rel="noopener">Read the source</a>
+    </section>
+
+    <!-- The signature. Colour enters at Apple's end and is gone by yours. -->
+    <section class="pipe" aria-labelledby="pipe-h">
+      <h2 id="pipe-h" class="sr-only">How a record moves</h2>
+
+      <div class="rail">
+        <div class="wash" aria-hidden="true"></div>
+        <ul class="wire" aria-hidden="true">
+          {
+            CROSSING.map((c) => (
+              <li
+                class="rec"
+                style={`--hue: var(--h-${c.cat}); animation-delay: ${c.delay}`}
+              >
+                {c.id}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="ends">
+        <p class="end end--from"><b>Apple Health</b> <span>on your device</span></p>
+        <p class="end end--to"><b>Somewhere you own</b> <span>and nowhere else</span></p>
+      </div>
+    </section>
+
+    <section class="sides">
+      {
+        SIDES.map((s) => (
+          <article class={`side side--${s.key}`}>
+            <h2>{s.title}</h2>
+            <p>{s.body}</p>
+            <ul>
+              {s.items.map((i) => (
+                <li>{i}</li>
+              ))}
+            </ul>
+          </article>
+        ))
+      }
+    </section>
+
+    <p class="note">
+      Colour on this page marks Apple's end of the transfer. Your end has no
+      colour at all, which is the point.
+    </p>
+  </main>
+</SketchLayout>
+
+<style>
+  body {
+    background: #ffffff;
+    color: #101014;
+  }
+
+  .sr-only {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* ── Hero ─────────────────────────────────────────────────────────────── */
+  .hero {
+    width: min(100% - 2.5rem, 1120px);
+    margin-inline: auto;
+    padding-block: clamp(4rem, 10vw, 8rem) clamp(3rem, 7vw, 5rem);
+  }
+
+  .kicker {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: #56545e;
+    margin-bottom: 1.5rem;
+  }
+
+  h1 {
+    font-size: clamp(2.6rem, 1rem + 7vw, 6.4rem);
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -0.05em;
+  }
+
+  .stand {
+    margin-top: clamp(1.5rem, 3vw, 2.25rem);
+    max-width: 52ch;
+    font-size: clamp(1.05rem, 1rem + 0.45vw, 1.3rem);
+    line-height: 1.5;
+    letter-spacing: -0.015em;
+    color: #3d3b44;
+  }
+
+  .go {
+    display: inline-block;
+    margin-top: 2.25rem;
+    padding: 0.85rem 1.6rem;
+    border-radius: 999px;
+    background: #101014;
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    text-decoration: none;
+  }
+
+  .go:hover {
+    background: #33313c;
+  }
+
+  /* ── The pipe ─────────────────────────────────────────────────────────── */
+  .pipe {
+    border-block: 1px solid #e6e5e9;
+    padding-block: clamp(1.5rem, 3vw, 2.25rem);
+  }
+
+  .rail {
+    position: relative;
+    block-size: 4.25rem;
+    overflow: clip;
+    border-radius: 10px;
+  }
+
+  /* Full strength at Apple's end, nothing at all by two thirds across. */
+  .wash {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      var(--h-heart) 0%,
+      var(--h-activity) 7%,
+      var(--h-mobility) 14%,
+      var(--h-nutrition) 21%,
+      var(--h-mind) 28%,
+      var(--h-respiratory) 35%,
+      var(--h-sleep) 42%,
+      rgba(255, 255, 255, 0) 62%
+    );
+    opacity: 0.42;
+  }
+
+  .wire {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* A record enters carrying its category colour and leaves in plain black. */
+  .rec {
+    position: absolute;
+    inset-block-start: 1.05rem;
+    white-space: nowrap;
+    font-family: var(--mono);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    padding: 0.34rem 0.75rem;
+    border-radius: 999px;
+    border: 1px solid color-mix(in oklab, var(--hue) 45%, #fff);
+    background: color-mix(in oklab, var(--hue) 12%, #fff);
+    color: color-mix(in oklab, var(--hue) 55%, #101014);
+    animation: cross 18s linear infinite;
+  }
+
+  @keyframes cross {
+    0% {
+      inset-inline-start: -16rem;
+      filter: saturate(1.1);
+      opacity: 0;
+    }
+    7% {
+      opacity: 1;
+    }
+    62% {
+      filter: saturate(0);
+    }
+    93% {
+      opacity: 1;
+    }
+    100% {
+      inset-inline-start: 104%;
+      filter: saturate(0);
+      opacity: 0;
+    }
+  }
+
+  /* The legend. Without these two labels the gradient is just a gradient. */
+  .ends {
+    width: min(100% - 2.5rem, 1120px);
+    margin: 1.1rem auto 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem 2rem;
+  }
+
+  .end {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    font-size: 0.9375rem;
+  }
+
+  .end b {
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .end span {
+    color: #56545e;
+  }
+
+  .end--from b {
+    color: #b3243a;
+  }
+
+  .end--to {
+    text-align: right;
+  }
+
+  .end--to b {
+    color: #101014;
+  }
+
+  /* ── The two sides ────────────────────────────────────────────────────── */
+  .sides {
+    width: min(100% - 2.5rem, 1120px);
+    margin: clamp(3rem, 7vw, 5rem) auto 0;
+    display: grid;
+    gap: 1px;
+    background: #e6e5e9;
+    border-block: 1px solid #e6e5e9;
+  }
+
+  .side {
+    background: #fff;
+    padding: clamp(1.75rem, 4vw, 3rem);
+  }
+
+  .side h2 {
+    font-size: clamp(1.3rem, 1.1rem + 0.9vw, 1.75rem);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+  }
+
+  .side p {
+    margin-top: 0.85rem;
+    max-width: 46ch;
+    line-height: 1.55;
+    color: #3d3b44;
+  }
+
+  .side ul {
+    margin-top: 1.5rem;
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .side li {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .side li::before {
+    content: '';
+    inline-size: 7px;
+    block-size: 7px;
+    border-radius: 50%;
+    flex: none;
+  }
+
+  .side--from li::before {
+    background: var(--h-heart);
+  }
+
+  .side--to li::before {
+    background: #101014;
+  }
+
+  @media (min-width: 820px) {
+    .sides {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .note {
+    width: min(100% - 2.5rem, 1120px);
+    margin: 2rem auto 7rem;
+    max-width: 54ch;
+    font-size: 0.9375rem;
+    color: #56545e;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* The records stop, but they stay spaced along the rail — where each one
+       sits still shows the colour draining out of it. */
+    .rec {
+      animation: none;
+    }
+
+    .rec:nth-child(1) {
+      inset-inline-start: 2%;
+    }
+    .rec:nth-child(2) {
+      inset-inline-start: 19%;
+    }
+    .rec:nth-child(3) {
+      inset-inline-start: 36%;
+      filter: saturate(0.5);
+    }
+    .rec:nth-child(4) {
+      inset-inline-start: 53%;
+      filter: saturate(0.2);
+    }
+    .rec:nth-child(5) {
+      inset-inline-start: 70%;
+      filter: saturate(0);
+    }
+    .rec:nth-child(6) {
+      display: none;
+    }
+  }
+
+  @media (max-width: 700px) {
+    /* Three records is enough to read the idea on a phone. */
+    .rec:nth-child(n + 4) {
+      display: none;
+    }
+
+    .end--to {
+      text-align: left;
+    }
+  }
+</style>
