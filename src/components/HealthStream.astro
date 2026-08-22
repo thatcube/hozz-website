@@ -1,0 +1,114 @@
+---
+import { STREAM_LANES, CATEGORIES } from '../data/site';
+
+/**
+ * The signature.
+ *
+ * Hozz's subject is a very large number of different kinds of measurement
+ * leaving one place for another. So the hero's visual is that: lanes of real
+ * HealthKit identifiers drifting steadily out of frame, each carrying the
+ * colour of the category it belongs to, at three different speeds so the whole
+ * thing reads as a current rather than a ticker.
+ *
+ * The identifiers are the real API names. Nothing here is invented.
+ */
+const hue = Object.fromEntries(CATEGORIES.map((c) => [c.key, c.hue]));
+const durations = ['92s', '124s', '106s', '138s'];
+---
+
+<div class="stream" aria-hidden="true">
+  {
+    STREAM_LANES.map((lane, i) => (
+      <div class="lane" style={`--dur: ${durations[i]}`}>
+        <div class="track">
+          {/* Three copies: one scrolls away while the other two still cover the
+              viewport, so the loop never shows a gap on a wide screen. */}
+          {[0, 1, 2].map(() =>
+            lane.map((chip) => (
+              <span class="chip" style={`--hue: ${hue[chip.category]}`}>
+                <span class="dot" />
+                <span class="id">{chip.id}</span>
+                <span class="val">{chip.sample}</span>
+              </span>
+            )),
+          )}
+        </div>
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .stream {
+    display: grid;
+    gap: 0.7rem;
+    /* Already a direct child of the full-width hero, so it bleeds without any
+       viewport-unit arithmetic — which would otherwise overshoot by the width
+       of the scrollbar. */
+    width: 100%;
+    padding-block: 0.4rem;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+  }
+
+  .lane {
+    overflow: hidden;
+  }
+
+  .track {
+    display: flex;
+    gap: 0.7rem;
+    width: max-content;
+    animation: drift var(--dur) linear infinite;
+  }
+
+  /* One copy's width is exactly a third of the track, so translating by that
+     much lands on an identical frame. */
+  @keyframes drift {
+    to {
+      transform: translate3d(-33.3333%, 0, 0);
+    }
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.95rem 0.5rem 0.75rem;
+    border-radius: var(--r-pill);
+    background: var(--card);
+    border: 1px solid color-mix(in oklab, var(--hue) 22%, var(--rule-soft));
+    white-space: nowrap;
+    flex: none;
+  }
+
+  .dot {
+    inline-size: 7px;
+    block-size: 7px;
+    border-radius: 50%;
+    background: var(--hue);
+    flex: none;
+  }
+
+  .id {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono);
+    color: var(--ink-2);
+    letter-spacing: 0.01em;
+  }
+
+  .val {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono);
+    color: color-mix(in oklab, var(--hue) 72%, var(--ink));
+    font-weight: 500;
+  }
+
+  /* Reduced motion keeps the field of data — it is information, not garnish —
+     and simply stops it moving. */
+  @media (prefers-reduced-motion: reduce) {
+    .track {
+      animation: none;
+    }
+  }
+</style>

@@ -1,0 +1,581 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import HealthStream from '../components/HealthStream.astro';
+import { Icon } from 'astro-icon/components';
+import {
+  CATEGORIES,
+  COVERAGE_STATES,
+  DESTINATIONS,
+  DONATE_URL,
+  GITHUB_URL,
+  MILESTONES,
+  PROMISES,
+  STEPS,
+} from '../data/site';
+
+const hue = Object.fromEntries(CATEGORIES.map((c) => [c.key, c.hue]));
+---
+
+<Layout>
+  <SiteHeader />
+
+  <main id="main">
+    <!-- ───────────────────────── Hero ───────────────────────── -->
+    <section class="hero" style={`--tint: ${hue.mobility}`}>
+      <div class="wrap">
+        <p class="eyebrow">Pre-alpha · nothing to install yet</p>
+        <h1>Take your health data somewhere <em class="em">you own</em>.</h1>
+        <p class="lead">
+          Hozz is a free, open-source app for iPhone and iPad that copies what Apple
+          Health knows about you into a file you keep, or onto a server you run.
+          No subscription, no account, and nothing of yours passing through
+          anything of mine.
+        </p>
+        <div class="cta">
+          <a class="btn btn--primary" href={GITHUB_URL} rel="noopener">
+            Read the source
+            <span class="arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="btn btn--ghost" href="#how">How it works</a>
+        </div>
+        <p class="fine">iPhone and iPad · GPL-3.0 · free forever</p>
+      </div>
+
+      <div class="stream-block">
+        <HealthStream />
+        <div class="wrap">
+          <p class="stream-note">
+            Real HealthKit identifiers. Hozz reads what you allow, and writes it
+            where you point it.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────────────── The promise ─────────────────────── -->
+    <section class="section section--wash" id="promise" style={`--tint: ${hue.heart}`}>
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">The promise</p>
+          <h2>Six things Hozz will <em class="em">never</em> do.</h2>
+          <p class="lead">
+            Most health apps ask you to trust a company. Hozz is built so there is
+            nothing to trust in the first place.
+          </p>
+        </div>
+
+        <ul class="grid grid--2 grid--3-lg">
+          {
+            PROMISES.map((p) => (
+              <li class="card promise" style={`--hue: ${hue[p.category]}`}>
+                <h3>{p.title}</h3>
+                <p>{p.body}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <!-- ─────────────────────── How it works ─────────────────────── -->
+    <section class="section" id="how" style={`--tint: ${hue.body}`}>
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">How it works</p>
+          <h2>It only does <em class="em">three</em> things.</h2>
+        </div>
+
+        <ol class="steps">
+          {
+            STEPS.map((s, i) => (
+              <li class="step" style={`--hue: ${hue[s.category]}`}>
+                <span class="num">{String(i + 1).padStart(2, '0')}</span>
+                <h3>{s.title}</h3>
+                <p>{s.body}</p>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    <!-- ─────────────────────── Destinations ─────────────────────── -->
+    <section class="section section--wash" style={`--tint: ${hue.respiratory}`}>
+      <div class="wrap">
+        <div class="section-head section-head--wide">
+          <p class="eyebrow">Destinations</p>
+          <h2>Somewhere you <em class="em">already</em> own.</h2>
+          <p class="lead">
+            A destination is a place you set up and confirm. There is no default
+            one, because a default destination would be somewhere I chose.
+          </p>
+        </div>
+
+        <ul class="grid grid--3">
+          {
+            DESTINATIONS.map((d) => (
+              <li class="card dest" style={`--hue: ${hue[d.category]}`}>
+                <span class="dest-icon">
+                  <Icon name={d.icon} width={24} height={24} />
+                </span>
+                <h3>{d.title}</h3>
+                <p>{d.body}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <!-- ───────────────────────── Honesty ─────────────────────────
+         The section the whole site is really for. Every other export tool
+         claims completeness it cannot demonstrate; this one explains why that
+         claim is impossible and what Hozz says instead. -->
+    <section class="section section--ink" id="honest" style={`--tint: ${hue.sleep}`}>
+      <div class="wrap">
+        <div class="honest">
+          <div class="section-head section-head--wide">
+            <p class="eyebrow">Honesty</p>
+            <h2>Hozz will never tell you it got <em class="em">everything</em>.</h2>
+            <p class="lead">
+              Apple will not let an app tell the difference between a data type you
+              denied and one you simply have none of. From the inside, the two look
+              identical. Plenty of export tools quietly call that “complete”.
+            </p>
+            <p class="lead">
+              Hozz reports what it asked for, what came back, and what it cannot
+              prove — in those words.
+            </p>
+          </div>
+
+          <ul class="states">
+            {
+              COVERAGE_STATES.map((s) => (
+                <li class={`state state--${s.tone}`}>
+                  <code>{s.state}</code>
+                  <p>{s.body}</p>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────────────── Coverage ─────────────────────── -->
+    <section class="section" style={`--tint: ${hue.nutrition}`}>
+      <div class="wrap">
+        <div class="section-head section-head--wide">
+          <p class="eyebrow">Coverage</p>
+          <h2>Not a curated <em class="em">dozen</em>.</h2>
+          <p class="lead">
+            The target is every category Apple exposes to an app, with the
+            relationships between records left intact — a workout and its route, a
+            correlation and its parts, a series and its measurements. Categories
+            arrive as the milestones below land.
+          </p>
+        </div>
+
+        <ul class="cats">
+          {
+            CATEGORIES.map((c) => (
+              <li class="cat" style={`--hue: ${c.hue}`}>
+                <span class="cat-name">{c.label}</span>
+                <span class="cat-note">{c.note}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <!-- ─────────────────────── Status ─────────────────────── -->
+    <section class="section section--wash" id="status" style={`--tint: ${hue.activity}`}>
+      <div class="wrap">
+        <div class="section-head section-head--wide">
+          <p class="eyebrow">Status</p>
+          <h2>Where it <em class="em">actually</em> is.</h2>
+          <p class="lead">
+            Hozz is pre-alpha. There is no TestFlight and no build to install. The
+            repository holds the reviewed architecture and the first acquisition
+            test harness. Each milestone below ships only when its gate passes.
+          </p>
+        </div>
+
+        <ol class="miles">
+          {
+            MILESTONES.map((m) => (
+              <li class={`mile mile--${m.state}`}>
+                <span class="mile-id">{m.id}</span>
+                <span class="mile-name">{m.name}</span>
+                <span class="mile-body">{m.body}</span>
+                <span class="mile-state">
+                  {m.state === 'done' ? 'done' : m.state === 'now' ? 'in progress' : 'planned'}
+                </span>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    <!-- ─────────────────────── Closer ─────────────────────── -->
+    <section class="section closer" style={`--tint: ${hue.mind}`}>
+      <div class="wrap wrap--narrow">
+        <p class="eyebrow">Free forever</p>
+        <h2>There is no paid version <em class="em">coming</em>.</h2>
+        <p class="lead">
+          Hozz has nothing to upsell, so watching the repository is the only way to
+          follow it for now. If you want to help it along, sponsorship is optional
+          and goes to this and the other free apps.
+        </p>
+        <div class="cta">
+          <a class="btn btn--primary" href={GITHUB_URL} rel="noopener">
+            Watch the repository
+            <span class="arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="btn btn--ghost" href={DONATE_URL} rel="noopener">Sponsor the work</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <SiteFooter />
+</Layout>
+
+<style>
+  /* ── Hero ─────────────────────────────────────────────────────────────── */
+  .hero {
+    padding-block: clamp(3.5rem, 8vw, 7rem) clamp(3rem, 6vw, 5rem);
+    display: grid;
+    gap: clamp(3rem, 6vw, 5rem);
+    overflow: clip;
+  }
+
+  .hero h1 {
+    font-size: var(--fs-hero);
+    max-width: 16ch;
+    margin-block: 1.1rem 1.4rem;
+  }
+
+  .hero .lead {
+    max-width: 52ch;
+  }
+
+  .cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+
+  .fine {
+    margin-top: 1.25rem;
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono);
+    letter-spacing: 0.06em;
+    color: var(--ink-3);
+  }
+
+  .stream-block {
+    display: grid;
+    gap: 1.1rem;
+  }
+
+  .stream-note {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono);
+    line-height: 1.7;
+    letter-spacing: 0.04em;
+    color: var(--ink-3);
+    max-width: 62ch;
+  }
+
+  /* ── Promise ──────────────────────────────────────────────────────────── */
+  /* Each card wears its category as a short rule rather than a whole tinted
+     panel: enough to carry the spectrum, quiet enough to stay airy. */
+  .promise {
+    position: relative;
+    padding-top: calc(clamp(1.5rem, 2.6vw, 2rem) + 0.5rem);
+  }
+
+  .promise::before {
+    content: '';
+    position: absolute;
+    top: clamp(1.5rem, 2.6vw, 2rem);
+    left: clamp(1.5rem, 2.6vw, 2rem);
+    inline-size: 28px;
+    block-size: 3px;
+    border-radius: 2px;
+    background: var(--hue);
+  }
+
+  /* ── Steps ────────────────────────────────────────────────────────────── */
+  /* A real sequence, so it is numbered and stacked as rows rather than dealt
+     out as three equal cards — cards would say these happen in parallel. */
+  .steps {
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 2.25rem);
+  }
+
+  .step {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr;
+    gap: 0.5rem 1.25rem;
+    align-items: baseline;
+    padding-bottom: clamp(1.5rem, 3vw, 2.25rem);
+    border-bottom: 1px solid var(--rule-soft);
+  }
+
+  .step:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .num {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono);
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    color: var(--hue);
+  }
+
+  .step h3 {
+    font-size: var(--fs-h3);
+  }
+
+  .step p {
+    grid-column: 2;
+    color: var(--ink-2);
+    max-width: 62ch;
+  }
+
+  @media (min-width: 900px) {
+    .step {
+      grid-template-columns: 3.5rem minmax(12rem, 16rem) 1fr;
+      gap: 2rem;
+    }
+
+    .step p {
+      grid-column: 3;
+    }
+  }
+
+  /* ── Destinations ─────────────────────────────────────────────────────── */
+  .dest-icon {
+    display: grid;
+    place-items: center;
+    inline-size: 46px;
+    block-size: 46px;
+    border-radius: 14px;
+    background: color-mix(in oklab, var(--hue) 12%, transparent);
+    color: var(--hue);
+    margin-bottom: 1.1rem;
+  }
+
+  /* ── Honesty ──────────────────────────────────────────────────────────── */
+  .honest {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+  }
+
+  .honest .section-head {
+    margin-bottom: 0;
+    gap: 1rem;
+  }
+
+  .states {
+    display: grid;
+    gap: 1px;
+    background: color-mix(in oklab, var(--paper) 12%, transparent);
+    border-radius: var(--r-md);
+    overflow: hidden;
+    align-self: start;
+  }
+
+  .state {
+    background: color-mix(in oklab, var(--paper) 4%, var(--ink));
+    padding: 1.15rem 1.35rem;
+  }
+
+  .state code {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono);
+    letter-spacing: 0.06em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .state code::before {
+    content: '';
+    inline-size: 7px;
+    block-size: 7px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .state--good code {
+    color: #7fd39c;
+  }
+
+  .state--unknown code {
+    color: #f0c05a;
+  }
+
+  .state--flat code {
+    color: #9aa6a0;
+  }
+
+  .state p {
+    color: color-mix(in oklab, var(--paper) 66%, transparent);
+    font-size: var(--fs-small);
+    line-height: 1.55;
+  }
+
+  @media (min-width: 940px) {
+    .honest {
+      grid-template-columns: 1.1fr 0.9fr;
+      align-items: start;
+    }
+  }
+
+  /* ── Coverage ─────────────────────────────────────────────────────────── */
+  /* Ten rows, each keyed by its own hue, so the list itself is the palette
+     legend for the rest of the page. */
+  .cats {
+    display: grid;
+    gap: 0;
+    border-top: 1px solid var(--rule-soft);
+  }
+
+  .cat {
+    display: grid;
+    gap: 0.15rem 1.5rem;
+    padding: 1rem 0 1rem 1.4rem;
+    border-bottom: 1px solid var(--rule-soft);
+    position: relative;
+  }
+
+  .cat::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 1.45rem;
+    inline-size: 8px;
+    block-size: 8px;
+    border-radius: 50%;
+    background: var(--hue);
+  }
+
+  .cat-name {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 500;
+  }
+
+  .cat-note {
+    color: var(--ink-2);
+    font-size: var(--fs-small);
+  }
+
+  @media (min-width: 720px) {
+    .cat {
+      grid-template-columns: 11rem 1fr;
+      align-items: baseline;
+    }
+  }
+
+  /* ── Milestones ───────────────────────────────────────────────────────── */
+  .miles {
+    display: grid;
+    border-top: 1px solid var(--rule);
+  }
+
+  .mile {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 0.2rem 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--rule);
+    align-items: baseline;
+  }
+
+  .mile-id {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono);
+    color: var(--ink-3);
+    letter-spacing: 0.08em;
+  }
+
+  .mile-name {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+
+  .mile-body {
+    grid-column: 2 / -1;
+    color: var(--ink-2);
+    font-size: var(--fs-small);
+  }
+
+  .mile-state {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono);
+    letter-spacing: 0.08em;
+    color: var(--ink-3);
+    grid-row: 1;
+    grid-column: 3;
+    justify-self: end;
+  }
+
+  .mile--done .mile-state {
+    color: var(--leaf);
+  }
+
+  .mile--now .mile-state {
+    color: var(--tint);
+  }
+
+  .mile--next .mile-name,
+  .mile--next .mile-id {
+    opacity: 0.72;
+  }
+
+  @media (min-width: 820px) {
+    .mile {
+      grid-template-columns: 3rem 11rem 1fr 7rem;
+    }
+
+    .mile-body {
+      grid-column: 3;
+      grid-row: 1;
+    }
+
+    .mile-state {
+      grid-column: 4;
+    }
+  }
+
+  /* ── Closer ───────────────────────────────────────────────────────────── */
+  .closer {
+    text-align: center;
+  }
+
+  .closer h2 {
+    font-size: var(--fs-h2);
+    margin-block: 1rem 1.25rem;
+  }
+
+  .closer .lead {
+    margin-inline: auto;
+  }
+
+  .closer .cta {
+    justify-content: center;
+  }
+</style>
