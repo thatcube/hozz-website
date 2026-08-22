@@ -80,7 +80,8 @@
       <p>
         NDJSON for everything, losslessly. CSV for spreadsheets. JSON for
         scripts and AI tools. Plus a Health&nbsp;Auto&nbsp;Export-compatible
-        payload so existing setups keep working.
+        payload, so an existing Home&nbsp;Assistant or Grafana setup keeps
+        working when you point it here.
       </p>
     </article>
     <article>
@@ -155,8 +156,11 @@
       <li>Full historical export, resumable</li>
       <li>Automatic background sync</li>
       <li>Folder and REST destinations</li>
-      <li>NDJSON, CSV, JSON formats</li>
+      <li>NDJSON, CSV, JSON, and compatible formats</li>
+      <li>Pick exactly which data types sync</li>
+      <li>Home Screen widget</li>
       <li>Shortcuts and Siri</li>
+      <li>Open-source receiver</li>
     </ul></article>
     <article class="next"><h3>Next</h3><ul>
       <li>Companion app for your computer</li>
@@ -171,6 +175,23 @@
       <li>Apple Watch app</li>
     </ul></article>
   </div>
+</section>
+
+<section id="receiver" class="alt">
+  <h2>Somewhere for it to land</h2>
+  <p class="lede narrow">
+    A folder of files isn't really access to your health data. A database is.
+    Hozz ships a receiver — one file, no dependencies — that turns batches into
+    SQLite you can query with anything.
+  </p>
+  <pre style="max-width:56ch;margin:0 auto;text-align:left"><code># Watch a folder that already syncs here
+python3 hozz_receiver.py watch ~/Dropbox/Health
+
+# Or listen for a REST destination
+python3 hozz_receiver.py serve --port 8765 --token secret</code></pre>
+  <p style="text-align:center;margin-top:1.5rem">
+    <a class="button" href="https://github.com/thatcube/hozz/tree/main/receiver">See the receiver</a>
+  </p>
 </section>
 
 <section class="closing">
