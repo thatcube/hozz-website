@@ -19,9 +19,7 @@
     "not_found_handling": "404-page",
   },
 
-  // The custom domain goes here once brandomoore.com lives in this account — a
-  // Worker cannot claim a hostname in a zone owned by a different account, so
-  // adding it before the zone move just fails the deploy. Until then the site
-  // answers on workers.dev.
-  // "routes": [{ "pattern": "hozz.brandomoore.com", "custom_domain": true }]
+  // brandomoore.com now lives in this same account, so the Worker can own the
+  // hostname directly.
+  "routes": [{ "pattern": "hozz.brandomoore.com", "custom_domain": true }]
 }

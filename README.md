@@ -59,10 +59,9 @@ npm run build
 npx wrangler deploy
 ```
 
-`hozz.brandomoore.com` is commented out in `wrangler.jsonc` until the
-`brandomoore.com` zone moves into the same Cloudflare account as this Worker — a
-Worker cannot claim a hostname in a zone another account owns. Until then the
-site answers on its `workers.dev` URL.
+The Worker owns `hozz.brandomoore.com` as a custom domain. Declaring a route
+disables the `workers.dev` hostname, which is deliberate — the site is never
+served from two URLs.
 
 ## Licence
 
