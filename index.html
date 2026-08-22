@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hozz — Export Apple Health data to destinations you own</title>
+<meta name="description" content="Hozz is a free, open-source iPhone app that exports your Apple Health data automatically to a folder, a server, or anywhere you control. No subscription, no account, no middleman.">
+<meta property="og:title" content="Hozz — Your Apple Health data, wherever you want it">
+<meta property="og:description" content="Free and open source. Automatic export to a folder or your own server. No subscription, no account, no data collection.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#00737a">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="nav">
+  <a class="brand" href="/">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572"/></svg>
+    <span>Hozz</span>
+  </a>
+  <nav>
+    <a href="#features">Features</a>
+    <a href="#how">How it works</a>
+    <a href="docs/">Docs</a>
+    <a href="#compare">Compare</a>
+    <a class="ghost" href="https://github.com/thatcube/hozz">GitHub</a>
+  </nav>
+</header>
+
+<main>
+<section class="hero">
+  <p class="eyebrow">Free forever · Open source · No account</p>
+  <h1>Your Apple Health data,<br>wherever you want it.</h1>
+  <p class="lede">
+    Hozz exports your Health data automatically to a folder, your own server, or
+    anything else you control. Nothing leaves your iPhone until you say so, and
+    there is no subscription, no paywall, and no server of ours in the middle.
+  </p>
+  <div class="cta">
+    <a class="button primary" href="https://github.com/thatcube/hozz">View the source</a>
+    <a class="button" href="docs/">Read the docs</a>
+  </div>
+  <p class="fineprint">GPL-3.0 with an App Store exception. Every line auditable.</p>
+</section>
+
+<section class="strip">
+  <div><strong>192</strong><span>data types</span></div>
+  <div><strong>6.6M</strong><span>records in a real export</span></div>
+  <div><strong>0</strong><span>gaps or duplicates</span></div>
+  <div><strong>$0</strong><span>forever</span></div>
+</section>
+
+<section id="features">
+  <h2>What it does</h2>
+  <div class="grid">
+    <article>
+      <h3>Automatic export</h3>
+      <p>
+        iOS wakes Hozz when new Health data is recorded and sends it on. Set it
+        up once and it keeps running for months without you opening the app.
+      </p>
+    </article>
+    <article>
+      <h3>Never loses a record</h3>
+      <p>
+        Hozz tracks exactly where it left off for every data type. Miss a day,
+        reboot, force-quit — the next run picks up precisely where it stopped.
+        No gaps, no duplicates, ever.
+      </p>
+    </article>
+    <article>
+      <h3>Destinations you own</h3>
+      <p>
+        A folder that syncs to your computer, or an HTTPS endpoint you run.
+        iCloud Drive, Dropbox, OneDrive, Google Drive, a NAS — anything the
+        Files app can reach.
+      </p>
+    </article>
+    <article>
+      <h3>Formats that fit</h3>
+      <p>
+        NDJSON for everything, losslessly. CSV for spreadsheets. JSON for
+        scripts and AI tools. Plus a Health&nbsp;Auto&nbsp;Export-compatible
+        payload so existing setups keep working.
+      </p>
+    </article>
+    <article>
+      <h3>Honest about limits</h3>
+      <p>
+        Apple won't let any app read Health while your phone is locked, and iOS
+        decides when background work runs. Hozz says so plainly instead of
+        pretending sync is instant.
+      </p>
+    </article>
+    <article>
+      <h3>Private by construction</h3>
+      <p>
+        No account, no analytics, no telemetry, no relay. Credentials stay in
+        your iPhone's Keychain. The code is open, so you don't have to take our
+        word for it.
+      </p>
+    </article>
+  </div>
+</section>
+
+<section id="how" class="alt">
+  <h2>How it works</h2>
+  <ol class="steps">
+    <li>
+      <h3>Pick a destination</h3>
+      <p>Choose a folder, or paste in a web address you control. Tap <em>Send a test</em> and see the result immediately.</p>
+    </li>
+    <li>
+      <h3>Grant Health access</h3>
+      <p>You choose exactly which data types Hozz can read, in Apple's own permission sheet.</p>
+    </li>
+    <li>
+      <h3>Forget about it</h3>
+      <p>New data flows to your destination on its own. The dashboard always shows when it last succeeded.</p>
+    </li>
+  </ol>
+</section>
+
+<section id="compare">
+  <h2>How Hozz compares</h2>
+  <div class="table-wrap">
+  <table>
+    <thead>
+      <tr><th>&nbsp;</th><th>Hozz</th><th>Typical paid app</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Automatic export</td><td class="yes">Free</td><td class="no">Subscription</td></tr>
+      <tr><td>Source code</td><td class="yes">Open, auditable</td><td class="no">Closed</td></tr>
+      <tr><td>Sync model</td><td class="yes">Cursor-based — cannot skip or duplicate</td><td class="no">Time windows — a missed window is lost</td></tr>
+      <tr><td>Large exports</td><td class="yes">Resumable, survives reboot</td><td class="no">Often crashes</td></tr>
+      <tr><td>Account required</td><td class="yes">No</td><td class="yes">No</td></tr>
+      <tr><td>Cost</td><td class="yes">$0 forever</td><td class="no">Recurring</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="fineprint">
+    Comparison is against commonly used paid alternatives at the time of
+    writing. If something here is out of date,
+    <a href="https://github.com/thatcube/hozz/issues">tell us</a> and we'll fix it.
+  </p>
+</section>
+
+<section id="roadmap" class="alt">
+  <h2>Where Hozz is going</h2>
+  <p class="lede narrow">
+    Exporting is the foundation, not the destination. Hozz is becoming a free,
+    open-source health app: your data, your device, your insights.
+  </p>
+  <div class="grid">
+    <article class="shipped"><h3>Shipped</h3><ul>
+      <li>Full historical export, resumable</li>
+      <li>Automatic background sync</li>
+      <li>Folder and REST destinations</li>
+      <li>NDJSON, CSV, JSON formats</li>
+      <li>Shortcuts and Siri</li>
+    </ul></article>
+    <article class="next"><h3>Next</h3><ul>
+      <li>Companion app for your computer</li>
+      <li>Dashboards and trends</li>
+      <li>Local AI questions about your data</li>
+      <li>Home Assistant and MQTT</li>
+    </ul></article>
+    <article class="later"><h3>Later</h3><ul>
+      <li>Food and medication logging</li>
+      <li>Barcode scanning</li>
+      <li>Workout routes and ECG</li>
+      <li>Apple Watch app</li>
+    </ul></article>
+  </div>
+</section>
+
+<section class="closing">
+  <h2>Free, and staying that way</h2>
+  <p>
+    Hozz has no paid tier to protect, so there is never a reason to hold a
+    feature back. If you find it useful, sponsoring is optional and always will
+    be.
+  </p>
+  <div class="cta">
+    <a class="button primary" href="https://github.com/thatcube/hozz">Get the code</a>
+    <a class="button" href="https://github.com/sponsors/thatcube">Sponsor</a>
+  </div>
+</section>
+</main>
+
+<footer>
+  <p>
+    <a href="https://github.com/thatcube/hozz">Source</a> ·
+    <a href="docs/">Docs</a> ·
+    <a href="https://github.com/thatcube/hozz/issues">Report an issue</a> ·
+    <a href="https://github.com/sponsors/thatcube">Sponsor</a>
+  </p>
+  <p class="fineprint">
+    Built by <a href="https://github.com/thatcube">Brandon Moore</a>. Not
+    affiliated with Apple. Apple Health and HealthKit are trademarks of Apple Inc.
+  </p>
+</footer>
+</body>
+</html>
