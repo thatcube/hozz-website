@@ -1,0 +1,105 @@
+---
+import SketchLayout from '../../layouts/SketchLayout.astro';
+import { GITHUB_URL } from '../../data/site';
+import '../../styles/sketch-n.css';
+
+const ITEMS = [
+  {
+    mark: '§1 — Coverage',
+    draft: 'All your health data, fully covered.',
+    correction:
+      'Quantities, categories, workouts and deletions export today. Correlations, routes, ECGs, audiograms and clinical records are catalogued — not claimed.',
+    hue: 'var(--h-activity)',
+    why: 'This is early alpha. Coverage is partial and the page says which parts.',
+  },
+  {
+    mark: '§2 — Authorization',
+    draft: 'See at a glance what synced.',
+    correction:
+      'Apple never tells an app whether you denied a type or simply have no data for it. Hozz shows both as one unresolved state, rather than picking the flattering guess.',
+    hue: 'var(--h-symptoms)',
+    why: 'Denied and empty are indistinguishable from inside the app. Always.',
+  },
+  {
+    mark: '§3 — File formats',
+    draft: 'Export to a spreadsheet, nothing lost.',
+    correction:
+      'CSV is a grid. Nested workout detail and sample metadata are not. Hozz says so before you pick that format, not after you notice a gap.',
+    hue: 'var(--h-nutrition)',
+    why: 'A format admitting its own limits, printed where you choose it.',
+  },
+  {
+    mark: '§4 — Background delivery',
+    draft: 'Always current, automatically, in the background.',
+    correction:
+      'iOS decides when background work runs — most types cap near once an hour, and a locked phone can’t be read at all. Hozz reports the wait instead of a green check.',
+    hue: 'var(--h-sleep)',
+    why: 'A tick mark you can’t verify is worse than a timestamp you can.',
+  },
+  {
+    mark: '§5 — The MCP server',
+    draft: 'Ask your assistant anything about your health.',
+    correction:
+      'The server is local and read-only. If you point a cloud assistant at it, what that assistant does with what it reads is the assistant’s behaviour — not Hozz’s.',
+    hue: 'var(--h-mind)',
+    why: 'The boundary of what Hozz controls, stated where the feature is.',
+  },
+  {
+    mark: '§6 — Interruption',
+    draft: 'Never miss a sync.',
+    correction:
+      'A dropped connection can make Hozz repeat a batch of records. It cannot make it skip one. Retries are shown as retries, not folded into a quiet success.',
+    hue: 'var(--h-heart)',
+    why: 'Correctness before convenience, and the difference kept visible.',
+  },
+];
+---
+
+<SketchLayout title="Sketch N — Redline · Hozz" letter="N" name="Redline">
+  <div class="n-page">
+    <header class="n-masthead">
+      <a class="n-wordmark" href="#hero-title">Hozz</a>
+      <p class="n-status"><i aria-hidden="true"></i> Early alpha — first draft, not final</p>
+    </header>
+
+    <main>
+      <section class="n-hero" aria-labelledby="hero-title">
+        <p class="n-eyebrow">Marketing copy, corrected in the open</p>
+        <p class="n-draft-line" aria-hidden="true">Hozz syncs your health data, everywhere, automatically.</p>
+        <h1 id="hero-title" class="n-final">
+          Hozz exports what you’ve <em>granted</em>, to places you add and confirm.
+        </h1>
+        <p class="n-lede">
+          Every health app writes marketing copy first and quietly hopes the product agrees with it later.
+          This one is proofed against the product instead — the confident line struck out, the accurate one
+          set below it. What follows is the rest of that manuscript.
+        </p>
+      </section>
+
+      <section class="n-manuscript" aria-label="Corrected claims about Hozz, one per section">
+        {ITEMS.map((item) => (
+          <article class="n-item">
+            <div class="n-main">
+              <p class="n-mark">{item.mark}</p>
+              <p class="n-draft-line" aria-hidden="true">{item.draft}</p>
+              <p class="n-correction">{item.correction}</p>
+            </div>
+            <p class="n-annot">
+              <span class="n-dot" style={`background:${item.hue}`} aria-hidden="true"></span>
+              <span><b>Why it’s written this way.</b> {item.why}</span>
+            </p>
+          </article>
+        ))}
+      </section>
+
+      <section class="n-close">
+        <p>
+          None of this is a policy promise sitting apart from the code. Hozz is
+          <a href={GITHUB_URL}> free, open source, and GPL‑3.0</a> with an App Store exception — the
+          manuscript and the product are the same document, and both are readable.
+        </p>
+        <p class="n-signoff">Filed by a solo developer. No subscription. No account. No hosted relay.</p>
+      </section>
+    </main>
+  </div>
+</SketchLayout>

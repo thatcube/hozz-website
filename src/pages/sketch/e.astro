@@ -1,0 +1,95 @@
+---
+import SketchLayout from '../../layouts/SketchLayout.astro';
+import '../../styles/sketch-e.css';
+---
+
+<SketchLayout title="Sketch E — Thermal · Hozz" letter="E" name="Thermal">
+  <main class="e-wrapper">
+    <section class="e-hero">
+      <h1 class="e-headline">Honest sync.<br/>No <em>fake</em> ticks.</h1>
+      <p class="e-intro">
+        Automatic export keeps your destinations up to date by itself — and tells you the truth when iOS won't let it.
+      </p>
+    </section>
+    
+    <div class="e-telemetry-container">
+      <div class="e-log">
+        <header class="e-log-header">
+          <div class="e-log-title">Telemetry Stream</div>
+          <div class="e-pulse-indicator">
+            <div class="e-pulse-dot"></div>
+            LISTENING
+          </div>
+        </header>
+        
+        <div class="e-log-body">
+          <div class="e-event">
+            <div class="e-event-time">09:41:02</div>
+            <div class="e-event-status"><span class="e-badge success">Delivered</span></div>
+            <div class="e-event-details">
+              <strong>Batch accepted by destination</strong>
+              <span>Idempotency-Key: req_9a8b7c</span>
+            </div>
+            <div class="e-event-meta">HKQuantityType...<br/>HeartRate</div>
+          </div>
+          
+          <div class="e-event">
+            <div class="e-event-time">10:00:15</div>
+            <div class="e-event-status"><span class="e-badge warning">Queued</span></div>
+            <div class="e-event-details">
+              <strong>Observer query triggered</strong>
+              <span>Awaiting background execution slot</span>
+            </div>
+            <div class="e-event-meta">HKQuantityType...<br/>StepCount</div>
+          </div>
+          
+          <div class="e-event">
+            <div class="e-event-time">10:15:00</div>
+            <div class="e-event-status"><span class="e-badge error">Blocked</span></div>
+            <div class="e-event-details">
+              <strong>Health store inaccessible</strong>
+              <span>iOS prevented read (device locked)</span>
+            </div>
+            <div class="e-event-meta">System</div>
+          </div>
+          
+          <div class="e-event">
+            <div class="e-event-time">11:05:33</div>
+            <div class="e-event-status"><span class="e-badge success">Delivered</span></div>
+            <div class="e-event-details">
+              <strong>Resumed from last cursor</strong>
+              <span>Cursor: HZ_4291_B</span>
+            </div>
+            <div class="e-event-meta">HKQuantityType...<br/>StepCount</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section class="e-features">
+      <article class="e-feature">
+        <h2>Real state, real constraints.</h2>
+        <p>Most apps show a green tick and lie. Hozz reports the actual state. Health cannot be read while the phone is locked. Force-quitting stops background launches. Hozz tells you exactly why a sync is waiting.</p>
+      </article>
+      
+      <article class="e-feature">
+        <h2>Independent destinations.</h2>
+        <p>Each destination maintains its own cursor. A failed destination cannot advance past data it did not accept, and one broken endpoint will never block a healthy one.</p>
+        <div class="e-tags">
+          <span class="e-tag">Hourly</span>
+          <span class="e-tag">Daily</span>
+          <span class="e-tag">Manual</span>
+        </div>
+      </article>
+      
+      <article class="e-feature">
+        <h2>Test before you trust.</h2>
+        <p>Send test payloads to verify your endpoints before trusting them with your data. Apple Shortcuts actions let you script your own sync triggers.</p>
+        <div class="e-tags">
+          <span class="e-tag">Sync Health Data</span>
+          <span class="e-tag">Check Status</span>
+        </div>
+      </article>
+    </section>
+  </main>
+</SketchLayout>

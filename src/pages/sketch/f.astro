@@ -1,0 +1,112 @@
+---
+/**
+ * Sketch F — "Take"
+ *
+ * Thesis: the product is a handover, not a platform. The page is a possession
+ * poster — condensed type filling the wall — and the thing you walk out with
+ * is a physical file. Once it is out it is plain text. There is no default
+ * destination because a default would be somewhere the developer chose.
+ */
+import SketchLayout from '../../layouts/SketchLayout.astro';
+import { GITHUB_URL } from '../../data/site';
+import '../../styles/sketch-f.css';
+
+const LINES = [
+  { id: 'heartRate', value: '72 count/min' },
+  { id: 'heartRateVariabilitySDNN', value: '48 ms' },
+  { id: 'sleepAnalysis', value: 'asleep' },
+  { id: 'stepCount', value: '8241 count' },
+  { id: 'oxygenSaturation', value: '97 %' },
+  { id: 'bodyMass', value: '178.4 lb' },
+  { id: 'dietaryProtein', value: '112 g' },
+  { id: 'vo2Max', value: '44.1 mL/kg·min' },
+];
+---
+
+<SketchLayout title="Sketch F — Take · Hozz" letter="F" name="Take">
+  <main class="take">
+    <header class="mast">
+      <a class="wordmark" href="#top" id="top">HOZZ</a>
+      <p class="meta">
+        <span>Early alpha</span>
+        <span>Free · GPL-3.0</span>
+        <a href={GITHUB_URL}>Source</a>
+      </p>
+    </header>
+
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="kicker">A copy you keep</p>
+        <h1 class="headline" id="hero-title">
+          <b>It is</b>
+          <b>your</b>
+          <b>data.</b>
+        </h1>
+        <div class="take-line">
+          <strong>Take it.</strong>
+          <p>
+            Years of heart, sleep, workouts, weight, meals, symptoms — currently
+            trapped in one vendor’s app on one phone.
+          </p>
+        </div>
+      </div>
+
+      <aside class="folder" aria-label="Example export file">
+        <div class="folder-tab">export.ndjson</div>
+        <div class="folder-body">
+          <div class="stamp" aria-hidden="true">YOURS</div>
+          <div class="folder-head">
+            <p>Plain file · example readings</p>
+          </div>
+          <ol class="listing">
+            {
+              LINES.map((row) => (
+                <li class="row">
+                  <code>{row.id}</code>
+                  <em>{row.value}</em>
+                </li>
+              ))
+            }
+          </ol>
+          <p class="folder-foot">
+            NDJSON, CSV, or JSON. Nothing proprietary. You do not need Hozz to open it again.
+          </p>
+        </div>
+      </aside>
+    </section>
+
+    <section class="argument" aria-labelledby="arg-title">
+      <h2 id="arg-title">Do whatever you want with it.</h2>
+      <p class="lede">
+        A folder you sync. A server you run. Your Mac. An MQTT topic. Home Assistant.
+        Any web endpoint you control. You pick, then you confirm, then it moves.
+        There is no default, because a default would be somewhere I chose.
+      </p>
+
+      <ul class="routes" aria-label="Example destinations you control">
+        <li>~/Health/export.ndjson</li>
+        <li>mqtt://basement.local/health/#</li>
+        <li>http://homeassistant.local</li>
+        <li>your Mac</li>
+        <li class="none">no default · no relay</li>
+      </ul>
+    </section>
+
+    <section class="counter" aria-labelledby="counter-title">
+      <h2 id="counter-title">They want the upload.</h2>
+      <p>
+        Most health platforms ask you to send your history in so they can hold it.
+        {' '}
+        <strong>Hozz hands it back and gets out of the way.</strong>
+        {' '}
+        Early alpha — it works, coverage is partial.
+      </p>
+    </section>
+
+    <p class="colophon">
+      Hozz is a free, open-source iPhone app with a companion Mac app, by Brandon Moore.
+      {' '}
+      <a href={GITHUB_URL}>thatcube/hozz</a>
+    </p>
+  </main>
+</SketchLayout>

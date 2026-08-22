@@ -1,0 +1,206 @@
+---
+/**
+ * Sketch G — "Addressed"
+ *
+ * Leads with the five automatic destinations. The organising idea: this is a
+ * list of *your own things*, not a menu of other companies' clouds — so each
+ * destination is anchored by its real address, and the page opens with a
+ * deliberately empty slot to make the "no default" point physical.
+ *
+ * Nothing here depicts the Hozz app. The only artefacts shown are addresses,
+ * transports and identifiers — all real API names. Sample hostnames are marked
+ * as examples so nothing reads as an invented fact.
+ */
+import SketchLayout from '../../layouts/SketchLayout.astro';
+import '../../styles/sketch-g.css';
+import { GITHUB_URL } from '../../data/site';
+
+/** Break long addresses only after path delimiters, never mid-number. */
+function addrParts(s) {
+  return s.split(/(?<=[/:.@])/);
+}
+
+const DESTINATIONS = [
+  {
+    n: '01',
+    name: 'This Mac',
+    hue: 'var(--h-other)',
+    scheme: '_hozz._tcp',
+    rest: ' · 192.168.1.24:54330',
+    example: true,
+    transport: 'NDJSON batches over your own local network, authenticated with a token only your devices hold.',
+    meta: ['Bonjour _hozz._tcp', 'port 54330', 'token auth'],
+  },
+  {
+    n: '02',
+    name: 'A folder',
+    hue: 'var(--h-nutrition)',
+    scheme: '~/Drive',
+    rest: '/Health/hozz/',
+    example: true,
+    transport: 'Batch files written through the Files picker — iCloud Drive, Dropbox, OneDrive, Google Drive, SMB, or on the device itself.',
+    meta: ['Files picker', 'NDJSON / JSON / CSV', 'on device or a drive you mount'],
+  },
+  {
+    n: '03',
+    name: 'Home Assistant',
+    hue: 'var(--h-mind)',
+    scheme: 'http://',
+    rest: 'homeassistant.local:8123/api/webhook/…',
+    example: true,
+    transport: 'Metrics JSON posted to a webhook or REST endpoint on the instance running in your home.',
+    meta: ['webhook / REST', 'Metrics JSON'],
+  },
+  {
+    n: '04',
+    name: 'A web address',
+    hue: 'var(--h-mobility)',
+    scheme: 'https://',
+    rest: 'your-host.example/ingest',
+    example: true,
+    transport: 'NDJSON, JSON, CSV, or Metrics JSON, POSTed to any endpoint you run — in the format you choose.',
+    meta: ['POST', 'four formats', 'your endpoint'],
+  },
+  {
+    n: '05',
+    name: 'MQTT',
+    hue: 'var(--h-symptoms)',
+    scheme: 'mqtts://',
+    rest: 'broker.lan:8883',
+    example: true,
+    transport: 'MQTT 3.1.1 publishes to your own broker, over mqtt:// or mqtts://, as retained topics.',
+    meta: ['MQTT 3.1.1', 'retained', 'QoS 0'],
+  },
+];
+---
+
+<SketchLayout title="Sketch G — Addressed · Hozz" letter="G" name="Addressed">
+  <div class="g">
+    <div class="wrap">
+      <header class="mast">
+        <a class="mark" href="#top">HOZZ</a>
+        <p class="flag">EARLY ALPHA — FREE &amp; OPEN SOURCE</p>
+      </header>
+
+      <main id="top">
+        <section class="hero" aria-labelledby="hero-title">
+          <div class="hero-grid">
+            <div class="hero-lead">
+              <p class="eyebrow">OUTBOUND / FIVE DESTINATIONS</p>
+              <h1 id="hero-title">Five places to&nbsp;send it. Every one <em>already yours.</em></h1>
+              <p class="lede">
+                Hozz copies your Apple&nbsp;Health data off the iPhone — but only once you
+                name a destination and confirm it. <b>There is no default</b>, because a
+                default would be a place I chose for you.
+              </p>
+            </div>
+            <aside class="hero-index" aria-hidden="true">
+              <p class="idx-head">SHIP TO</p>
+              <ol>
+                {
+                  DESTINATIONS.map((d) => (
+                    <li style={`--hue: ${d.hue}`}>
+                      <span class="n">{d.n}</span>
+                      <span class="dot" />
+                      <span class="nm">{d.name}</span>
+                    </li>
+                  ))
+                }
+              </ol>
+            </aside>
+          </div>
+        </section>
+
+        <section aria-labelledby="ledger-title">
+          <div class="ledger-head">
+            <h2 id="ledger-title">THE FIVE</h2>
+            <p>
+              Each can be limited to the Health types you pick, scheduled — on arrival,
+              hourly, daily, or manual — switched off, and <b>tested before you trust it</b>.
+            </p>
+          </div>
+
+          <ol class="ledger">
+            <li class="row empty">
+              <div class="gutter">
+                <span class="idx">00</span>
+                <span class="node" aria-hidden="true"></span>
+              </div>
+              <div class="body">
+                <p class="name">No default</p>
+                <p class="slot">— nothing is sent until you add one —</p>
+                <p class="transport">
+                  The list starts empty on purpose. Nothing leaves the phone until this
+                  slot has an address in it and you have confirmed the first send.
+                </p>
+              </div>
+            </li>
+
+            {
+              DESTINATIONS.map((d) => (
+                <li class="row" style={`--hue: ${d.hue}`}>
+                  <div class="gutter">
+                    <span class="idx">{d.n}</span>
+                    <span class="node" aria-hidden="true" />
+                  </div>
+                  <div class="body">
+                    <p class="name">{d.name}</p>
+                    <p class="addr">
+                      <span class="scheme">{d.scheme}</span>{addrParts(d.rest).map((seg) => (<>{seg}<wbr /></>))}
+                      {d.example && <span class="tag">EXAMPLE</span>}
+                    </p>
+                    <p class="transport">{d.transport}</p>
+                    <p class="meta">
+                      {d.meta.map((m) => (
+                        <span>{m}</span>
+                      ))}
+                    </p>
+                  </div>
+                </li>
+              ))
+            }
+          </ol>
+        </section>
+
+        <section class="indep" aria-labelledby="indep-title">
+          <h2 id="indep-title">Five destinations, and none of them can <em>ruin</em> the others.</h2>
+          <dl class="facts">
+            <div class="fact">
+              <dt>OWN CURSOR</dt>
+              <dd>
+                Each destination keeps its own place in your data. A failed send can't
+                skip ahead, and one broken destination can't stall a healthy one.
+              </dd>
+            </div>
+            <div class="fact">
+              <dt>DEVICE KEYCHAIN</dt>
+              <dd>
+                Every credential lives in the Keychain with <code>ThisDeviceOnly</code>
+                accessibility. It is never synced off this phone.
+              </dd>
+            </div>
+            <div class="fact">
+              <dt>SAFE TO RETRY</dt>
+              <dd>
+                Batches carry content-derived ids and an <code>Idempotency-Key</code>,
+                so re-sending after a drop can't double-count.
+              </dd>
+            </div>
+            <div class="fact">
+              <dt>PROBED FIRST</dt>
+              <dd>
+                Every remembered address is checked before it's offered. A Mac that
+                isn't answering shows as offline, not saved as a dead destination.
+              </dd>
+            </div>
+          </dl>
+        </section>
+
+        <footer class="foot">
+          <span>Pre-alpha. It works; coverage is partial. Nothing to install yet.</span>
+          <a href={GITHUB_URL} rel="noopener">github.com/thatcube/hozz</a>
+        </footer>
+      </main>
+    </div>
+  </div>
+</SketchLayout>

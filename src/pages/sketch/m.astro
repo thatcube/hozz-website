@@ -1,0 +1,211 @@
+---
+/**
+ * Sketch M — "Received"
+ *
+ * Thesis: the Mac app is not a dashboard and not a cloud. It is a local
+ * receiver that ends as a plain SQLite file on a machine you own. The page
+ * leads with that file, then shows how the phone finds the desk without typing
+ * an address — Bonjour, iCloud Keychain, private /24 sweep — and what the
+ * receiver will admit in its activity log (events, never sample values).
+ *
+ * No mocked Mac UI. Real artefacts only: service type, port, path, schema.
+ */
+import SketchLayout from '../../layouts/SketchLayout.astro';
+import '../../styles/sketch-m.css';
+
+const GITHUB = 'https://github.com/thatcube/hozz';
+
+const FIND = [
+  {
+    n: '01',
+    title: 'Bonjour first',
+    body: 'The phone browses for _hozz._tcp on the local network. The Mac app starts an NWListener HTTP receiver and advertises itself — no address to type when the LAN cooperates.',
+    code: 'service: _hozz._tcp\nport:   54330',
+  },
+  {
+    n: '02',
+    title: 'Keychain, your account',
+    body: 'Receiver records also publish through the user’s own iCloud Keychain access group. Same Apple ID on phone and Mac: they find each other without a manual token copy.',
+    code: 'token via Keychain\naccess group · same Apple ID',
+  },
+  {
+    n: '03',
+    title: 'Sweep, then honesty',
+    body: 'Fallback is a private /24 local-network sweep on port 54330. Every remembered address is probed before it is offered. A machine that does not answer shows as offline — not saved as a dead destination.',
+    code: 'probe before reuse\noffline ≠ remembered',
+  },
+];
+
+const LISTENER = [
+  { k: 'Transport', v: 'NWListener · HTTP' },
+  { k: 'Advertise', v: '_hozz._tcp' },
+  { k: 'Default port', v: '54330' },
+  { k: 'Pair', v: '/pair · no token required' },
+  { k: 'Deliver', v: 'token required' },
+  { k: 'Store', v: 'hozz-received.sqlite' },
+  { k: 'Folder watch', v: 'NDJSON · JSON · CSV · Metrics JSON' },
+  { k: 'Cloud path', v: 'none · local network only' },
+];
+
+const LOG = [
+  { t: '14:02:11', tag: 'accepted', kind: 'ok', msg: 'batch received · types listed, values not logged' },
+  { t: '14:02:11', tag: 'duplicate', kind: 'dup', msg: 'identical batch hash · skipped' },
+  { t: '13:58:44', tag: 'paired', kind: 'pair', msg: 'new device · token issued on Mac' },
+  { t: '13:41:02', tag: 'test', kind: 'test', msg: 'connectivity probe · no samples written' },
+  { t: '13:40:55', tag: 'rejected', kind: 'rej', msg: 'missing or stale token' },
+];
+---
+
+<SketchLayout title="Sketch M — Received · Hozz" letter="M" name="Received">
+  <main class="m">
+    <header class="m-bar">
+      <a class="m-word" href="#top" id="top">Hozz</a>
+      <p class="m-bar-meta">
+        <span>Mac receiver · early alpha</span>
+        <span><b>GPL-3.0</b> · App Store exception</span>
+        <span>free · no account</span>
+      </p>
+    </header>
+
+    <section class="m-hero" aria-labelledby="m-title">
+      <div class="m-hero-copy">
+        <p class="m-kicker"><i aria-hidden="true"></i> Listening on your desk</p>
+        <h1 class="m-title" id="m-title">Your history,<br /><em>received</em> —<br />not uploaded.</h1>
+        <p class="m-lede">
+          The Hozz Mac app is a <strong>local receiver and browser</strong> for Apple Health
+          batches your iPhone sends. Accepted data lands in a plain SQLite file on that Mac.
+          The cloud is never on the path.
+        </p>
+      </div>
+
+      <aside class="m-file" aria-label="The file the Mac app writes">
+        <div class="m-file-top">
+          <span class="m-file-kind">Local database</span>
+          <span class="m-file-state">on this Mac only</span>
+        </div>
+        <p class="m-file-name">hozz-received.sqlite</p>
+        <dl class="m-file-grid">
+          <div>
+            <dt>Engine</dt>
+            <dd>SQLite</dd>
+          </div>
+          <div>
+            <dt>Owner</dt>
+            <dd>your user account</dd>
+          </div>
+          <div>
+            <dt>Network default</dt>
+            <dd>none</dd>
+          </div>
+          <div>
+            <dt>Hosted copy</dt>
+            <dd>does not exist</dd>
+          </div>
+        </dl>
+        <p class="m-file-note">
+          That file is the product surface. Browse it on the Mac, export a type as CSV, or point
+          tools at the machine you already trust.
+        </p>
+      </aside>
+    </section>
+
+    <section class="m-section" aria-labelledby="find-title">
+      <div class="m-section-head">
+        <h2 id="find-title">How the phone finds the desk</h2>
+        <p>Setup is designed so you do not type an address. Three ways, in order — each one local.</p>
+      </div>
+      <div class="m-find-grid">
+      <ol class="m-spine">
+        {
+          FIND.map((s) => (
+            <li class="m-step">
+              <span class="m-step-num">Step {s.n}</span>
+              <h3>{s.title}</h3>
+              <div class="m-step-body">
+                <p>{s.body}</p>
+                <pre class="m-code">{s.code}</pre>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+      <aside class="m-beacon" aria-label="Local service advertisement">
+        <p class="m-beacon-label">Advertised service</p>
+        <p class="m-beacon-svc">_hozz._tcp</p>
+        <p class="m-beacon-port"><span>port</span> 54330</p>
+        <p class="m-beacon-note">NWListener on the Mac. The phone browses; you do not type a host.</p>
+      </aside>
+      </div>
+    </section>
+
+    <section class="m-rails" aria-label="Receiver contract and activity log">
+      <div class="m-rail">
+        <h2>Receiver contract</h2>
+        <p>
+          What the Mac process actually runs. Folder watch covers the case where the LAN refuses
+          inbound connections — point both ends at a synced folder and batches arrive as files.
+        </p>
+        <dl class="m-props">
+          {
+            LISTENER.map((row) => (
+              <div class="m-prop">
+                <dt>{row.k}</dt>
+                <dd>{row.v}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+
+      <div class="m-rail">
+        <h2>Activity, without samples</h2>
+        <p>
+          The Activity tab records deliveries the receiver saw. Status only — accepted, duplicate,
+          paired, test, rejected. Sample values are not written to the log.
+        </p>
+        <div class="m-log" role="list">
+          {
+            LOG.map((row) => (
+              <div class="m-log-row" role="listitem">
+                <span class="m-log-time">{row.t}</span>
+                <span class={`m-log-tag is-${row.kind}`}>{row.tag}</span>
+                <span class="m-log-msg">{row.msg}</span>
+              </div>
+            ))
+          }
+        </div>
+        <p class="m-log-foot">
+          Example lines for illustration. Honest per-device status is based on when data last
+          arrived — not a green tick that guesses.
+        </p>
+      </div>
+    </section>
+
+    <figure class="m-schema" aria-labelledby="schema-title">
+      <div class="m-schema-top">
+        <h2 id="schema-title">What “stored on your Mac” means</h2>
+        <span>illustrative shape · not a live dump</span>
+      </div>
+      <pre><code><span class="cm">-- accepted batches become rows you can open with any SQLite tool</span>
+<span class="kw">CREATE TABLE</span> received_batches (
+  id           <span class="ty">INTEGER PRIMARY KEY</span>,
+  received_at  <span class="ty">TEXT NOT NULL</span>,       <span class="cm">-- local timestamp</span>
+  device_label <span class="ty">TEXT</span>,
+  content_hash <span class="ty">TEXT NOT NULL</span>,       <span class="cm">-- duplicate detection</span>
+  payload      <span class="ty">BLOB NOT NULL</span>        <span class="cm">-- the batch, on disk you own</span>
+);</code></pre>
+    </figure>
+
+    <footer class="m-close">
+      <p>
+        Phone to desk. Local network only. Nothing leaves the iPhone until you add a destination
+        and confirm it.
+      </p>
+      <p class="m-sub">
+        Prefer a script? There is a small standalone Python receiver in <code>receiver/</code> for a
+        dependency-free listen path. Hozz is free, open source, early alpha — companion Mac app by a
+        solo developer. <a href={GITHUB}>Source on GitHub</a>
+      </p>
+    </footer>
+  </main>
+</SketchLayout>

@@ -2,52 +2,124 @@
 /**
  * The comparison board.
  *
- * Every direction stays alive and visible side by side: the two built pages and
- * the three art-direction sketches, each in a live frame at real scale so what
- * you are judging is the actual page rather than a picture of one.
+ * Every direction stays alive and visible: the two built pages and the sketches,
+ * each in a live frame at real scale so what is being judged is the actual page
+ * rather than a picture of one.
+ *
+ * The sketches after C were each built by a separate agent on a separate model,
+ * working from the same product brief but with no sight of each other's work.
+ * That is why they disagree so completely about what Hozz should look like.
  */
 import { SITE } from '../data/site';
 
-const BOARD = [
+const BUILT = [
   {
     href: '/',
     tag: 'V1',
     name: 'Category spectrum',
-    state: 'built',
     note: 'The live site. Sentient and General Sans, every section keyed to a different Health hue, and a drifting stream of real HealthKit identifiers in the hero.',
-    verdict: 'Complete page. Currently what hozz.brandomoore.com serves.',
+    verdict: 'Currently what hozz.brandomoore.com serves.',
   },
   {
     href: '/v2/',
     tag: 'V2',
     name: 'Health language',
-    state: 'built',
     note: "Apple Health's own idiom — gradient category tiles, white cards on system grey, one typeface at six weights.",
-    verdict: 'Complete page, but it borrows components rather than ideas, and the cards imply an app UI that does not exist.',
+    verdict: 'Rejected: borrows Apple’s components rather than its ideas, and the cards imply an app UI that does not exist.',
   },
+];
+
+const SKETCHES = [
   {
     href: '/sketch/a/',
     tag: 'A',
     name: 'Manifest',
-    state: 'sketch',
+    lead: 'What it missed',
     note: 'The page is shaped like the disclosure file Hozz writes. Colour is the category key on a ledger row, and the interesting column is the one admitting it does not know.',
-    verdict: 'Leads with the honesty problem, which is the thing no competitor will say out loud.',
   },
   {
     href: '/sketch/b/',
     tag: 'B',
     name: 'Transfer',
-    state: 'sketch',
-    note: "The spectrum used as a legend: saturated colour is Apple's side, plain neutral is yours. Records cross the band and lose their colour on the way.",
-    verdict: 'Makes the palette mean something, and shows movement rather than a dashboard.',
+    lead: 'Movement',
+    note: "The spectrum as a legend rather than scenery: saturated colour is Apple's end, plain black is yours, and records lose their colour crossing between them.",
   },
   {
     href: '/sketch/c/',
     tag: 'C',
     name: 'Quiet',
-    state: 'sketch',
-    note: 'Almost entirely type on Health system grey. The spectrum appears once, as a hairline, and is the only colour in the design.',
-    verdict: 'Argues that a tool holding your medical history should look like it has nothing to sell.',
+    lead: 'Restraint',
+    note: 'Almost entirely type on system grey. The spectrum appears once, as a hairline, and is the only colour in the design.',
+  },
+  {
+    href: '/sketch/d/',
+    tag: 'D',
+    name: 'Local Loop',
+    lead: 'The MCP server',
+    note: 'Treats MCP as a physical local circuit between your Mac and your assistant, with a read-only gate in the middle. Oversized editorial type against elliptical nodes on lilac.',
+  },
+  {
+    href: '/sketch/e/',
+    tag: 'E',
+    name: 'Thermal',
+    lead: 'Automatic export',
+    note: 'A telemetry console in near-black, with neon state colours and terminal-style log views. Sells the honest sync states rather than a green tick.',
+  },
+  {
+    href: '/sketch/f/',
+    tag: 'F',
+    name: 'Take',
+    lead: 'You own it',
+    note: 'A possession poster. Condensed stencil type on a pine wall, and the thing you walk out with is a manila export folder stamped YOURS.',
+  },
+  {
+    href: '/sketch/g/',
+    tag: 'G',
+    name: 'Addressed',
+    lead: 'The five destinations',
+    note: 'A shipping manifest where each row is anchored by its real address, set in mono at display size. Opens with an empty “no default” slot.',
+  },
+  {
+    href: '/sketch/h/',
+    tag: 'H',
+    name: 'Fault line',
+    lead: 'Durability',
+    note: 'An interruption physically cuts the export artefact, leaving only the sealed checkpoint below it. Failure is the hero rather than a disclaimer.',
+  },
+  {
+    href: '/sketch/j/',
+    tag: 'J',
+    name: 'Unsellable',
+    lead: 'Free forever',
+    note: 'Frames having no business model as the actual security property — economics as the mechanism, not a privacy promise.',
+  },
+  {
+    href: '/sketch/k/',
+    tag: 'K',
+    name: 'Cut sheet',
+    lead: 'The formats',
+    note: 'NDJSON, JSON and CSV as three cards holding the same fields — and CSV’s card is genuinely shorter, its bottom edge cut with sawtooth teeth, because CSV genuinely loses data.',
+  },
+  {
+    href: '/sketch/m/',
+    tag: 'M',
+    name: 'Received',
+    lead: 'The Mac app',
+    note: 'Sells the Mac side as a file that lands on your desk. A parchment card for hozz-received.sqlite, with discovery as a vertical spine beside a Bonjour beacon.',
+  },
+  {
+    href: '/sketch/n/',
+    tag: 'N',
+    name: 'Redline',
+    lead: 'Honest limits',
+    note: 'The page is an edited manuscript: confident marketing lines struck through in red, the accurate sentence set below in serif, with a margin note on why it is phrased that way.',
+  },
+  {
+    href: '/sketch/o/',
+    tag: 'O',
+    name: 'Pump Room',
+    lead: 'A pipe you point anywhere',
+    note: 'Hozz as a mechanical manifold — data enters one pipe and branches to owned endpoints. Infrastructure signage rather than an app landing page.',
   },
 ];
 ---
@@ -64,36 +136,66 @@ const BOARD = [
   </head>
   <body>
     <header class="top">
-      <h1>Five directions, all still standing</h1>
+      <h1>Fifteen directions, all still standing</h1>
       <p>
-        Two finished pages and three art-direction sketches. The sketches are one
-        idea each, not whole sites — enough to judge the direction before any of
-        it gets built out. Nothing here is deleted until you pick.
+        Two finished pages and thirteen art-direction sketches. Each sketch is
+        one idea at full size, not a whole site — enough to judge the direction
+        before any of it gets built out. Nothing here is deleted until you pick.
+      </p>
+      <p class="how">
+        Sketches D onward were each built by a separate agent on a separate
+        model, working from the same product brief with no sight of each other's
+        work. That is why they disagree so completely.
       </p>
     </header>
 
-    <ol class="board">
-      {
-        BOARD.map((b) => (
-          <li class="item">
-            <div class="meta">
-              <p class="tag">
-                <b>{b.tag}</b>
-                <span>{b.name}</span>
-                <em data-state={b.state}>{b.state === 'built' ? 'Full page' : 'Sketch'}</em>
-              </p>
-              <p class="note">{b.note}</p>
-              <p class="verdict">{b.verdict}</p>
-              <a class="open" href={b.href}>Open full size →</a>
-            </div>
+    <section class="band" aria-labelledby="built-h">
+      <h2 id="built-h">Finished pages</h2>
+      <ol class="board board--wide">
+        {
+          BUILT.map((b) => (
+            <li class="item">
+              <div class="meta">
+                <p class="tag">
+                  <b>{b.tag}</b>
+                  <span>{b.name}</span>
+                </p>
+                <p class="note">{b.note}</p>
+                <p class="verdict">{b.verdict}</p>
+                <a class="open" href={b.href}>Open full size →</a>
+              </div>
+              <div class="screen">
+                <iframe src={b.href} title={`${b.tag} — ${b.name}`} loading="lazy" />
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
 
-            <div class="screen">
-              <iframe src={b.href} title={`${b.tag} — ${b.name}`} loading="lazy" />
-            </div>
-          </li>
-        ))
-      }
-    </ol>
+    <section class="band" aria-labelledby="sk-h">
+      <h2 id="sk-h">Sketches</h2>
+      <ol class="board board--grid">
+        {
+          SKETCHES.map((b) => (
+            <li class="item item--card">
+              <div class="meta">
+                <p class="tag">
+                  <b>{b.tag}</b>
+                  <span>{b.name}</span>
+                  <em>{b.lead}</em>
+                </p>
+                <p class="note">{b.note}</p>
+                <a class="open" href={b.href}>Open full size →</a>
+              </div>
+              <div class="screen">
+                <iframe src={b.href} title={`${b.tag} — ${b.name}`} loading="lazy" />
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
   </body>
 </html>
 
@@ -132,6 +234,7 @@ const BOARD = [
   }
 
   h1,
+  h2,
   p {
     margin: 0;
   }
@@ -143,9 +246,9 @@ const BOARD = [
   }
 
   .top {
-    width: min(100% - 3rem, 1280px);
+    width: min(100% - 3rem, 1400px);
     margin-inline: auto;
-    padding-block: clamp(3rem, 7vw, 5rem) clamp(2rem, 5vw, 3.5rem);
+    padding-block: clamp(3rem, 7vw, 5rem) clamp(1.5rem, 4vw, 2.5rem);
   }
 
   .top h1 {
@@ -159,32 +262,71 @@ const BOARD = [
     margin-top: 1.1rem;
     max-width: 62ch;
     line-height: 1.55;
-    color: #a9a9b4;
+    color: #b0b0ba;
+  }
+
+  .how {
+    font-size: 0.9375rem;
+  }
+
+  .band {
+    width: min(100% - 3rem, 1400px);
+    margin-inline: auto;
+    padding-block: clamp(2rem, 5vw, 3.5rem);
+  }
+
+  .band h2 {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #82828e;
+    padding-bottom: 0.9rem;
+    border-bottom: 1px solid #2c2c33;
   }
 
   .board {
-    width: min(100% - 3rem, 1280px);
-    margin: 0 auto 6rem;
     display: grid;
-    gap: clamp(2.5rem, 5vw, 4rem);
+    gap: clamp(2rem, 4vw, 3rem);
+    margin-top: clamp(1.75rem, 4vw, 2.5rem);
   }
 
   .item {
     display: grid;
-    gap: 1.5rem;
-    padding-top: clamp(2rem, 4vw, 3rem);
-    border-top: 1px solid #2c2c33;
+    gap: 1.25rem;
+  }
+
+  /* The two finished pages get the wide treatment, because there is more to
+     read about them and only two of them. */
+  @media (min-width: 940px) {
+    .board--wide .item {
+      grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+      gap: clamp(2rem, 4vw, 3.5rem);
+      align-items: start;
+    }
+  }
+
+  @media (min-width: 900px) {
+    .board--grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1500px) {
+    .board--grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
   }
 
   .tag {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    gap: 0.6rem;
+    gap: 0.55rem;
   }
 
   .tag b {
-    font-size: 1.5rem;
+    font-size: 1.35rem;
     font-weight: 800;
     letter-spacing: -0.04em;
   }
@@ -193,9 +335,11 @@ const BOARD = [
     font-size: 1.05rem;
     font-weight: 600;
     letter-spacing: -0.02em;
-    color: #c9c9d2;
+    color: #d2d2da;
   }
 
+  /* The subject each sketch was asked to lead with. Two sketches can look
+     nothing alike and still be arguing about the same feature. */
   .tag em {
     font-style: normal;
     font-size: 0.75rem;
@@ -204,26 +348,19 @@ const BOARD = [
     text-transform: uppercase;
     padding: 0.22rem 0.5rem;
     border-radius: 4px;
-  }
-
-  .tag em[data-state='built'] {
-    background: #1f3d2a;
-    color: #7ee0a0;
-  }
-
-  .tag em[data-state='sketch'] {
-    background: #3d3520;
-    color: #ecc978;
+    background: #2a2a32;
+    color: #a8a8b4;
   }
 
   .note {
-    margin-top: 0.9rem;
+    margin-top: 0.75rem;
+    font-size: 0.9375rem;
     line-height: 1.55;
-    color: #a9a9b4;
+    color: #b0b0ba;
   }
 
   .verdict {
-    margin-top: 0.9rem;
+    margin-top: 0.75rem;
     line-height: 1.5;
     font-weight: 500;
     color: #f4f4f6;
@@ -231,7 +368,8 @@ const BOARD = [
 
   .open {
     display: inline-block;
-    margin-top: 1.25rem;
+    margin-top: 1rem;
+    font-size: 0.9375rem;
     font-weight: 600;
     letter-spacing: -0.015em;
     color: #f4f4f6;
@@ -262,14 +400,6 @@ const BOARD = [
     block-size: 990px;
     border: 0;
     transform-origin: 0 0;
-  }
-
-  @media (min-width: 900px) {
-    .item {
-      grid-template-columns: minmax(0, 21rem) minmax(0, 1fr);
-      gap: clamp(2rem, 4vw, 3.5rem);
-      align-items: start;
-    }
   }
 
   :focus-visible {

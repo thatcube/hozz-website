@@ -1,0 +1,118 @@
+---
+import SketchLayout from '../../layouts/SketchLayout.astro';
+import '../../styles/sketch-o.css';
+---
+
+<SketchLayout title="Sketch O — Pump Room · Hozz" letter="O" name="Pump Room">
+  <main class="pump-room" aria-labelledby="pump-room-title">
+    <section class="hero" aria-label="Hozz as health-data plumbing">
+      <div class="hero-copy">
+        <p class="kicker"><span aria-hidden="true"></span> Hozz / general-purpose health pipe</p>
+        <h1 id="pump-room-title">Point Apple Health at the systems you already run.</h1>
+        <p class="lede">
+          Hozz is not another health dashboard. It is the boring, inspectable pipe from an iPhone into
+          your broker, webhook, folder, receiver, or database — with every destination owning its own cursor.
+        </p>
+        <div class="commitment-row" aria-label="Product commitments">
+          <span>Free</span>
+          <span>GPL-3.0</span>
+          <span>No account</span>
+          <span>No relay</span>
+          <span>Early alpha</span>
+        </div>
+      </div>
+
+      <div class="manifold" aria-label="Diagram of Hozz routing Apple Health data to owned destinations">
+        <div class="service-ticket" aria-label="Destination schedule and safety notes">
+          <span>per outlet</span>
+          <b>arrival · hourly · daily · manual</b>
+          <small>test before you trust it / nothing leaves until confirmed</small>
+        </div>
+
+        <div class="gauge intake">
+          <span class="gauge-label">intake</span>
+          <strong>Apple Health</strong>
+          <code>heartRate · stepCount · sleepAnalysis</code>
+        </div>
+
+        <svg class="pipe-map" viewBox="0 0 760 520" role="img" aria-labelledby="pipe-map-title pipe-map-desc">
+          <title id="pipe-map-title">Hozz pipe map</title>
+          <desc id="pipe-map-desc">A schematic pipe carries HealthKit data into Hozz and splits it to MQTT, HTTP, Home Assistant, folder, Bonjour, SQLite and Shortcuts outputs.</desc>
+          <defs>
+            <filter id="soft-shadow" x="-12%" y="-12%" width="124%" height="124%">
+              <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#3d362b" flood-opacity="0.16" />
+            </filter>
+          </defs>
+          <path class="pipe pipe-main" d="M82 256 H274 Q318 256 318 212 V104" />
+          <path class="pipe pipe-main" d="M318 212 V417" />
+          <path class="pipe branch branch-one" d="M318 132 H582" />
+          <path class="pipe branch branch-two" d="M318 188 H650" />
+          <path class="pipe branch branch-three" d="M318 244 H605" />
+          <path class="pipe branch branch-four" d="M318 300 H690" />
+          <path class="pipe branch branch-five" d="M318 356 H574" />
+          <path class="pipe branch branch-six" d="M318 412 H646" />
+          <circle class="joint" cx="318" cy="132" r="14" />
+          <circle class="joint" cx="318" cy="188" r="14" />
+          <circle class="joint" cx="318" cy="244" r="14" />
+          <circle class="joint" cx="318" cy="300" r="14" />
+          <circle class="joint" cx="318" cy="356" r="14" />
+          <circle class="joint" cx="318" cy="412" r="14" />
+          <circle class="valve" cx="318" cy="256" r="34" />
+          <path class="valve-mark" d="M295 256 H341 M318 233 V279" />
+          <g class="flow flow-a"><circle cx="154" cy="256" r="7" /><circle cx="426" cy="132" r="6" /><circle cx="526" cy="300" r="6" /></g>
+          <g class="flow flow-b"><circle cx="242" cy="256" r="6" /><circle cx="507" cy="188" r="6" /><circle cx="462" cy="412" r="6" /></g>
+          <g class="flow flow-c"><circle cx="392" cy="244" r="6" /><circle cx="504" cy="356" r="6" /></g>
+        </svg>
+
+        <ul class="endpoint-list" aria-label="Supported destinations">
+          <li style="--pin: var(--h-heart)"><b>MQTT 3.1.1</b><code>mqtts://broker/health/#</code></li>
+          <li style="--pin: var(--h-other)"><b>HTTP POST</b><code>Idempotency-Key</code></li>
+          <li style="--pin: var(--h-mind)"><b>Home Assistant</b><code>webhook or REST</code></li>
+          <li style="--pin: var(--h-sleep)"><b>Watched folder</b><code>NDJSON · CSV · JSON</code></li>
+          <li style="--pin: var(--h-respiratory)"><b>Bonjour receiver</b><code>_hozz._tcp :54330</code></li>
+          <li style="--pin: var(--h-mobility)"><b>Mac / Python</b><code>SQLite or receiver/</code></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="spec-strip" aria-label="How the pipe behaves">
+      <article>
+        <span class="spec-code">cursor.destination_id</span>
+        <h2>A broken endpoint breaks alone.</h2>
+        <p>Each destination advances only after it accepts a batch, so your folder export cannot hide a failed broker.</p>
+      </article>
+      <article>
+        <span class="spec-code">formats[]</span>
+        <h2>Choose the shape at the outlet.</h2>
+        <p>Send NDJSON, JSON, CSV, or Metrics JSON grouped by metric name for dashboards.</p>
+      </article>
+      <article>
+        <span class="spec-code">shortcuts.action</span>
+        <h2>Let iOS do the weird glue.</h2>
+        <p><em>Sync Health Data</em> and <em>Check Health Sync Status</em> compose with Shortcuts.</p>
+      </article>
+    </section>
+
+    <section class="bench" aria-label="Example artifacts produced by Hozz">
+      <div>
+        <p class="bench-label">what you inspect</p>
+        <h2>Real artefacts, not a captive cloud.</h2>
+      </div>
+      <div class="artifact-grid">
+        <figure>
+          <figcaption>Metrics JSON</figcaption>
+          <pre><code>&#123;
+  "heartRate": [&#123; "value": 64 &#125;],
+  "walkingSpeed": [&#123; "value": 1.28 &#125;]
+&#125;</code></pre>
+        </figure>
+        <figure>
+          <figcaption>SQLite</figcaption>
+          <pre><code>select metric, value, start_date
+from samples
+where metric = 'restingHeartRate';</code></pre>
+        </figure>
+      </div>
+    </section>
+  </main>
+</SketchLayout>

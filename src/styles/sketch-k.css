@@ -1,0 +1,706 @@
+/**
+ * Sketch K — "Cut sheet".
+ *
+ * The page argues one thing: three containers, the same facts, and one of them
+ * cannot hold all of them. The argument is made structurally — the CSV column
+ * is genuinely shorter than the other two, because it carries less. Height is
+ * the only chart on the page.
+ *
+ * Palette is deliberately not paper-white and not cream: a cool slate stock
+ * with near-white cut cards on top. Health hues appear once, as data, inside
+ * the example record. Everything else is ink.
+ */
+
+@font-face {
+  font-family: 'Zodiak K';
+  src: url('/fonts/zodiak-k-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Zodiak K';
+  src: url('/fonts/zodiak-k-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Zodiak K';
+  src: url('/fonts/zodiak-k-700-italic.woff2') format('woff2');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+.k {
+  --stock: #d9dde2;
+  --stock-deep: #ccd2d9;
+  --card: #fbfbfc;
+  --ink: #101318;
+  --ink-2: #3c444d;
+  --ink-3: #515b64;
+  --rule: rgba(16, 19, 24, 0.14);
+  --rule-strong: rgba(16, 19, 24, 0.3);
+
+  /* Two functional colours only. Kept dark enough for small type on both the
+     stock and the card — measured, not guessed. */
+  --keep: #1f6b4f;
+  --cut: #a32232;
+
+  --display: 'Zodiak K', Georgia, 'Times New Roman', serif;
+
+  background: var(--stock);
+  color: var(--ink);
+  font-family: var(--sans);
+  min-height: 100vh;
+  padding: clamp(1rem, 3vw, 2.25rem);
+  padding-bottom: clamp(5rem, 10vw, 7rem);
+  overflow-x: hidden;
+}
+
+.k-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+/* ---------------------------------------------------------------- top strip */
+
+.k-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 1.25rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid var(--rule-strong);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.k-strip b {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  color: var(--ink);
+}
+
+.k-strip .k-alpha {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.k-strip .k-alpha i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--cut);
+}
+
+/* -------------------------------------------------------------------- hero */
+
+.k-hero {
+  padding: clamp(2.25rem, 5.5vw, 3.75rem) 0 clamp(2rem, 5vw, 3.25rem);
+}
+
+.k-hero-row {
+  display: grid;
+  gap: clamp(1.5rem, 3.5vw, 2.75rem);
+  grid-template-columns: minmax(0, 1fr);
+  margin-top: clamp(1.5rem, 3.5vw, 2.5rem);
+}
+
+@media (min-width: 62rem) {
+  .k-hero-row {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    align-items: start;
+  }
+}
+
+.k-eyebrow {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  margin-bottom: clamp(1rem, 2.5vw, 1.6rem);
+}
+
+.k-h1 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(2.6rem, 8.6vw, 6.4rem);
+  line-height: 0.86;
+  letter-spacing: -0.028em;
+  text-transform: lowercase;
+  margin: 0;
+}
+
+.k-h1 em {
+  font-style: italic;
+  font-weight: 700;
+  color: var(--cut);
+  letter-spacing: -0.035em;
+}
+
+.k-lede {
+  max-width: 38ch;
+  font-size: clamp(1.02rem, 1.6vw, 1.2rem);
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+.k-lede strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* the artefact ------------------------------------------------------------ */
+
+.k-artefact {
+  background: var(--card);
+  border-radius: 14px;
+  padding: clamp(1rem, 2.2vw, 1.35rem);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.7) inset,
+    0 12px 30px -18px rgba(16, 19, 24, 0.5);
+  min-width: 0;
+}
+
+.k-artefact-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.9rem;
+  align-items: baseline;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 0.8rem;
+}
+
+.k-artefact pre {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: clamp(0.7rem, 1.05vw, 0.8rem);
+  line-height: 1.75;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.k-artefact .k-key {
+  color: var(--ink);
+  font-weight: 500;
+}
+.k-artefact .k-str {
+  color: #4a5560;
+}
+.k-artefact .k-num {
+  color: #244a63;
+}
+.k-artefact .k-type {
+  color: color-mix(in oklab, var(--h-heart) 52%, #101014);
+  font-weight: 500;
+}
+
+.k-artefact figcaption code,
+.k-col-foot code {
+  font-family: var(--mono);
+  font-size: 0.92em;
+  color: var(--ink);
+}
+
+.k-artefact figcaption {
+  margin-top: 0.9rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--rule);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+
+/* --------------------------------------------------------------- the sheet */
+
+.k-sheet-head {
+  display: grid;
+  gap: 0.75rem;
+  padding-top: clamp(1.5rem, 3vw, 2.5rem);
+  border-top: 1px solid var(--rule-strong);
+}
+
+@media (min-width: 52rem) {
+  .k-sheet-head {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 26rem);
+    align-items: end;
+    gap: 2rem;
+  }
+}
+
+.k-h2 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(1.7rem, 3.6vw, 2.6rem);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  text-transform: lowercase;
+  margin: 0;
+}
+
+.k-h2 em {
+  font-style: italic;
+  font-weight: 700;
+}
+
+.k-sheet-note {
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+
+.k-cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(0.75rem, 1.6vw, 1.1rem);
+  align-items: start;
+  margin-top: clamp(1.5rem, 3vw, 2.25rem);
+}
+
+@media (min-width: 46rem) {
+  .k-cols {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.k-col {
+  background: var(--card);
+  border-radius: 14px;
+  padding: clamp(0.9rem, 1.6vw, 1.15rem);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.7) inset,
+    0 14px 34px -20px rgba(16, 19, 24, 0.55);
+  min-width: 0;
+}
+
+.k-col--default {
+  outline: 2px solid var(--ink);
+  outline-offset: 0;
+}
+
+.k-col-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.k-col-head h3 {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(1.25rem, 2.4vw, 1.6rem);
+  letter-spacing: -0.02em;
+  margin: 0;
+  text-transform: lowercase;
+}
+
+.k-ext {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  color: var(--ink-3);
+}
+
+.k-col-sub {
+  margin-top: 0.5rem;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  color: var(--ink-2);
+  min-height: 4.5em;
+}
+
+.k-badge {
+  display: inline-block;
+  margin-top: 0.65rem;
+  font-family: var(--mono);
+  font-size: 0.63rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  padding: 0.24rem 0.45rem;
+  border-radius: 5px;
+  background: var(--ink);
+  color: #fff;
+}
+
+.k-badge--ghost {
+  background: transparent;
+  color: var(--ink-3);
+  border: 1px solid var(--rule-strong);
+}
+
+.k-fields {
+  margin-top: 0.9rem;
+  border-top: 1px solid var(--rule);
+}
+
+.k-fields li {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--mono);
+  font-size: clamp(0.68rem, 1.1vw, 0.76rem);
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+
+.k-fields li::before {
+  content: '';
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 1px;
+  background: var(--keep);
+}
+
+.k-fields li b {
+  font-weight: 400;
+}
+
+.k-fields li i {
+  font-style: normal;
+  margin-left: auto;
+  font-size: 0.63rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+  text-align: right;
+  flex: none;
+}
+
+/* the cut: thinner rows, hatched, no data in them */
+.k-fields li.k-gone {
+  padding: 0.1rem 0.35rem;
+  font-size: 0.63rem;
+  line-height: 1.35;
+  gap: 0.35rem;
+  color: var(--cut);
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(163, 34, 50, 0.16) 0 1px,
+    transparent 1px 6px
+  );
+  background-size: 8.49px 8.49px;
+  animation: k-drift 5.5s linear infinite;
+}
+
+.k-fields li.k-gone::before {
+  width: 5px;
+  height: 5px;
+  background: var(--cut);
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+  border-radius: 0;
+}
+
+.k-fields li.k-gone i {
+  font-size: 0.6rem;
+}
+
+.k-fields li.k-gone b {
+  text-decoration: line-through;
+  text-decoration-color: rgba(163, 34, 50, 0.6);
+}
+
+.k-fields li.k-gone i {
+  color: var(--cut);
+}
+
+@keyframes k-drift {
+  to {
+    background-position: 8.49px 0;
+  }
+}
+
+.k-col-foot {
+  margin-top: 0.9rem;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+
+.k-col-foot b {
+  color: var(--cut);
+  font-weight: 600;
+}
+
+/* The CSV card is physically cut off at the bottom. It is the only card on the
+   sheet that does not get a finished edge, because it is the only one that does
+   not carry everything. */
+.k-col-wrap {
+  min-width: 0;
+}
+
+.k-col--cut {
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.7) inset;
+  filter: drop-shadow(0 14px 20px rgba(16, 19, 24, 0.22));
+  border-radius: 14px 14px 0 0;
+  padding-bottom: 1.05rem;
+  clip-path: polygon(
+    0% 0%,
+    100% 0%,
+    100.0000% calc(100% - 11px),
+    92.8571% 100%,
+    85.7143% calc(100% - 11px),
+    78.5714% 100%,
+    71.4286% calc(100% - 11px),
+    64.2857% 100%,
+    57.1429% calc(100% - 11px),
+    50.0000% 100%,
+    42.8571% calc(100% - 11px),
+    35.7143% 100%,
+    28.5714% calc(100% - 11px),
+    21.4286% 100%,
+    14.2857% calc(100% - 11px),
+    7.1429% 100%,
+    0.0000% calc(100% - 11px)
+  );
+}
+
+/* the caption that admits the chart is the layout ------------------------- */
+
+.k-measure {
+  margin-top: clamp(1.4rem, 3vw, 2rem);
+  padding-top: clamp(0.9rem, 1.8vw, 1.15rem);
+  border-top: 1px solid var(--rule-strong);
+  display: grid;
+  gap: 0.55rem;
+  grid-template-columns: minmax(0, 1fr);
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+
+/* The note sits in the third column, directly under the card it is talking
+   about, so the arrow points at something. */
+@media (min-width: 46rem) {
+  .k-measure {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(0.75rem, 1.6vw, 1.1rem);
+    margin-top: clamp(0.9rem, 1.8vw, 1.25rem);
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  .k-measure b,
+  .k-measure p {
+    grid-column: 3;
+  }
+}
+
+.k-measure b {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--cut);
+  line-height: 1.5;
+}
+
+.k-measure span.k-strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.k-measure code {
+  font-family: var(--mono);
+  font-size: 0.86em;
+  color: var(--cut);
+  overflow-wrap: anywhere;
+}
+
+/* ------------------------------------------------------------------- notes */
+
+.k-notes {
+  display: grid;
+  gap: clamp(0.75rem, 1.6vw, 1.1rem);
+  grid-template-columns: minmax(0, 1fr);
+  margin-top: clamp(2rem, 4.5vw, 3.25rem);
+  padding-top: clamp(1.5rem, 3vw, 2.25rem);
+  border-top: 1px solid var(--rule-strong);
+}
+
+@media (min-width: 46rem) {
+  .k-notes {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.k-note h3 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(1.15rem, 2vw, 1.42rem);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin: 0 0 0.5rem;
+  text-transform: lowercase;
+}
+
+.k-note h3 em {
+  font-style: italic;
+  font-weight: 700;
+}
+
+.k-note p {
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+
+.k-tomb {
+  margin-top: 0.75rem;
+  padding: 0.6rem 0.7rem;
+  border-radius: 9px;
+  background: var(--card);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  line-height: 1.7;
+  color: var(--ink-2);
+  overflow-wrap: anywhere;
+  box-shadow: 0 10px 26px -20px rgba(16, 19, 24, 0.6);
+}
+
+.k-tomb .k-key {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.k-tomb .k-true {
+  color: var(--cut);
+  font-weight: 500;
+}
+
+.k-spool {
+  margin-top: 0.85rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 9px;
+  background: var(--card);
+  box-shadow: 0 10px 26px -20px rgba(16, 19, 24, 0.6);
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  line-height: 1.85;
+  color: var(--ink-3);
+  overflow: hidden;
+}
+
+.k-spool span {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+}
+
+.k-spool span:last-child {
+  color: color-mix(in oklab, var(--h-heart) 55%, #333b42);
+}
+
+.k-spool span:last-child::after {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 0.8em;
+  margin-left: 2px;
+  vertical-align: -1px;
+  background: currentColor;
+  animation: k-caret 1.2s steps(2) infinite;
+}
+
+.k-spool--diff {
+  line-height: 2;
+  color: var(--ink-2);
+}
+
+.k-spool--diff span:last-child {
+  color: var(--ink-3);
+}
+
+@keyframes k-caret {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* -------------------------------------------------------------------- foot */
+
+.k-foot {
+  margin-top: clamp(2rem, 4vw, 3rem);
+  padding-top: clamp(1.25rem, 2.5vw, 1.75rem);
+  border-top: 1px solid var(--rule-strong);
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 52rem) {
+  .k-foot {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: 2.5rem;
+  }
+}
+
+.k-foot p {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+.k-foot p.k-foot-lead {
+  font-size: clamp(1rem, 1.5vw, 1.12rem);
+  color: var(--ink);
+}
+
+.k-foot-lead em {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 700;
+}
+
+.k-meta {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  line-height: 2;
+}
+
+.k-link {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(16, 19, 24, 0.35);
+}
+
+.k-link:hover {
+  color: var(--cut);
+  text-decoration-color: currentColor;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .k-fields li.k-gone {
+    animation: none;
+  }
+
+  .k-spool span:last-child::after {
+    animation: none;
+  }
+}

@@ -1,0 +1,317 @@
+/**
+ * Sketch N — "Redline"
+ *
+ * Extra faces beyond sketch-base (Switzer, IBM Plex Mono): Erode carries the
+ * corrected copy — it reads like something set for print, which is the point,
+ * since this whole page is a document being proofed in front of you. General
+ * Sans carries the margin annotations, because they are meant to read fast.
+ */
+@font-face {
+  font-family: 'Erode';
+  src: url('/fonts/erode-g-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Erode';
+  src: url('/fonts/erode-g-400-italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Erode';
+  src: url('/fonts/erode-g-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Erode';
+  src: url('/fonts/erode-g-600.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'General Sans';
+  src: url('/fonts/general-sans-400.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'General Sans';
+  src: url('/fonts/general-sans-500.woff2') format('woff2');
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'General Sans';
+  src: url('/fonts/general-sans-600.woff2') format('woff2');
+  font-weight: 600;
+  font-display: swap;
+}
+
+.n-page {
+  --paper: #edf1ee;
+  --paper-2: #e4e9e4;
+  --ink: #16232a;
+  --ink-soft: #3c4a49;
+  --draft: #6c5c4f;
+  --rust: #9c3a30;
+  --serif: 'Erode', 'Sentient', ui-serif, Georgia, serif;
+  --annot: 'General Sans', var(--sans);
+
+  background: var(--paper);
+  background-image:
+    linear-gradient(180deg, var(--paper) 0%, var(--paper) 60%, var(--paper-2) 100%);
+  color: var(--ink);
+  min-height: 100vh;
+  padding-bottom: 7rem;
+}
+
+.n-page * {
+  min-width: 0;
+}
+
+.n-masthead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  max-width: 62rem;
+  margin: 0 auto;
+  padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1.25rem, 4vw, 2rem) 0;
+  font-family: var(--annot);
+}
+
+.n-wordmark {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  color: var(--ink);
+}
+
+.n-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.n-status i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--rust);
+  display: inline-block;
+}
+
+.n-hero {
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: clamp(2.5rem, 7vw, 5rem) clamp(1.25rem, 4vw, 2rem) clamp(2rem, 5vw, 3rem);
+}
+
+.n-eyebrow {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--rust);
+  margin-bottom: 1.1rem;
+}
+
+.n-draft-line {
+  font-family: var(--annot);
+  font-size: clamp(1.05rem, 2.6vw, 1.3rem);
+  font-weight: 500;
+  color: var(--draft);
+  text-decoration: line-through wavy var(--rust) 1.5px;
+  text-decoration-skip-ink: none;
+  text-underline-offset: 3px;
+  margin-bottom: 0.85rem;
+  max-width: 34ch;
+}
+
+.n-hero h1.n-final {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(2.1rem, 6vw, 3.6rem);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  max-width: 20ch;
+}
+
+.n-hero h1.n-final em {
+  font-style: italic;
+  color: var(--rust);
+}
+
+.n-lede {
+  margin-top: 1.4rem;
+  font-family: var(--annot);
+  font-size: clamp(1rem, 1.6vw, 1.1rem);
+  line-height: 1.6;
+  color: var(--ink-soft);
+  max-width: 46ch;
+}
+
+/* ---- the manuscript: a running proof of corrections ---- */
+
+.n-manuscript {
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: 0 clamp(1.25rem, 4vw, 2rem);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2.4rem, 5vw, 3.2rem);
+}
+
+.n-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.1rem;
+  padding-top: clamp(1.6rem, 3vw, 2rem);
+  border-top: 1px solid color-mix(in oklab, var(--ink) 14%, transparent);
+}
+
+.n-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.n-mark {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-soft);
+  letter-spacing: 0.04em;
+}
+
+.n-item .n-draft-line {
+  font-size: clamp(0.95rem, 1.6vw, 1.05rem);
+  max-width: 52ch;
+}
+
+.n-item .n-correction {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(1.25rem, 2.6vw, 1.55rem);
+  line-height: 1.32;
+  color: var(--ink);
+  max-width: 42ch;
+}
+
+.n-annot {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  font-family: var(--annot);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  max-width: 42ch;
+}
+
+.n-annot .n-dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-top: 0.42em;
+}
+
+.n-annot span {
+  color: var(--ink-soft);
+}
+
+.n-annot b {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* wide screens: annotation floats in the outer margin like a real proofreader's note */
+@media (min-width: 68rem) {
+  .n-manuscript {
+    max-width: 60rem;
+  }
+
+  .n-item {
+    grid-template-columns: minmax(0, 42ch) minmax(0, 16rem);
+    column-gap: 2.5rem;
+    align-items: center;
+  }
+
+  .n-annot {
+    padding-top: 0;
+  }
+}
+
+.n-close {
+  max-width: 46rem;
+  margin: clamp(3rem, 6vw, 4.5rem) auto 0;
+  padding: clamp(1.6rem, 4vw, 2rem) clamp(1.25rem, 4vw, 2rem) 0;
+  border-top: 1px solid color-mix(in oklab, var(--ink) 20%, transparent);
+  font-family: var(--annot);
+}
+
+.n-close p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  max-width: 50ch;
+}
+
+.n-close p + p {
+  margin-top: 0.75rem;
+}
+
+.n-close a {
+  color: var(--ink);
+  text-decoration-color: var(--rust);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+
+.n-signoff {
+  margin-top: 1.4rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .n-item {
+    animation: n-settle 0.5s ease both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 20%;
+  }
+}
+
+@keyframes n-settle {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .n-item {
+    animation: none;
+  }
+}

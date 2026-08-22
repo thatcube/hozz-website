@@ -1,0 +1,88 @@
+---
+import SketchLayout from '../../layouts/SketchLayout.astro';
+import '../../styles/sketch-j.css';
+---
+
+<SketchLayout title="Sketch J — Unsellable · Hozz" letter="J" name="Unsellable">
+  <main class="j-page">
+    <header class="j-topbar">
+      <a class="j-wordmark" href="/" aria-label="Hozz home">hozz<span>_</span></a>
+      <p class="j-topnote">Apple Health export <span aria-hidden="true">/</span> early alpha</p>
+      <a class="j-toplink" href="#proof">The proof <span aria-hidden="true">↘</span></a>
+    </header>
+
+    <section class="j-hero" aria-labelledby="hero-title">
+      <div class="j-hero-copy">
+        <p class="j-eyebrow"><span class="j-eyebrow-mark" aria-hidden="true">+</span> Economics as privacy</p>
+        <h1 id="hero-title">Free forever is a <em>security</em> feature.</h1>
+        <p class="j-lede">
+          Hozz exports Apple Health data to destinations you own. No subscription, no account,
+          no hosted relay — because there is no business model waiting to turn your history into one.
+        </p>
+        <a class="j-cta" href="#proof">See how that holds up <span aria-hidden="true">↘</span></a>
+      </div>
+
+      <div class="j-zero" aria-label="Hozz has no price, no paid tier and nothing to upsell">
+        <div class="j-zero-orbit j-zero-orbit-one" aria-hidden="true"></div>
+        <div class="j-zero-orbit j-zero-orbit-two" aria-hidden="true"></div>
+        <div class="j-zero-core">
+          <span class="j-zero-value">0</span>
+          <span class="j-zero-label">price<br />forever</span>
+        </div>
+        <div class="j-zero-sticker">nothing<br />to upsell</div>
+        <p class="j-zero-caption">the lock is the business model</p>
+      </div>
+    </section>
+
+    <section class="j-thesis" aria-label="The central argument">
+      <div class="j-thesis-label">A promise can change.</div>
+      <div class="j-thesis-rule" aria-hidden="true"></div>
+      <p class="j-thesis-statement">A structure has nowhere to go.</p>
+    </section>
+
+    <section class="j-proof" id="proof" aria-labelledby="proof-title">
+      <div class="j-proof-heading">
+        <p class="j-eyebrow"><span class="j-eyebrow-mark" aria-hidden="true">+</span> Check the structure</p>
+        <h2 id="proof-title">What “free” means<br /><em>in practice.</em></h2>
+        <p>Read the source. Follow the data. Find the missing incentive.</p>
+      </div>
+
+      <div class="j-proof-grid">
+        <article class="j-proof-card j-proof-card-source">
+          <div class="j-card-index">01 <span>source</span></div>
+          <h3>Forkable by design.</h3>
+          <p>
+            GPL-3.0 with an App Store distribution exception. The source is public, so anyone can
+            read what happens to their data — and fork it if the developer disappears.
+          </p>
+          <code>licence = GPL-3.0 + App Store exception</code>
+        </article>
+
+        <article class="j-proof-card j-proof-card-path">
+          <div class="j-card-index">02 <span>path</span></div>
+          <h3>There is no middle.</h3>
+          <p>
+            Nothing leaves the iPhone until you add a destination and confirm it. No server is
+            operated by the developer. Your endpoint is the endpoint.
+          </p>
+          <code>health data → your destination</code>
+        </article>
+
+        <article class="j-proof-card j-proof-card-money">
+          <div class="j-card-index">03 <span>money</span></div>
+          <h3>Nothing to convert.</h3>
+          <p>
+            No paid features, Pro tier, trial, paywall, analytics, advertising or telemetry.
+            Optional GitHub Sponsors support this and Brandon’s other free apps.
+          </p>
+          <code>revenue pressure = 0</code>
+        </article>
+      </div>
+    </section>
+
+    <footer class="j-footer">
+      <span>Hozz · free, open source, early alpha</span>
+      <span>built by one person, in the open</span>
+    </footer>
+  </main>
+</SketchLayout>

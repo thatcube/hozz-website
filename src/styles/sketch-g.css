@@ -1,0 +1,561 @@
+/**
+ * Sketch G — "Addressed"
+ *
+ * Subject: the five places Hozz can send your data — every one somewhere you
+ * already own. The design treats the *address* as the hero. Each destination is
+ * anchored by its real URI or transport, set large in mono, because the whole
+ * argument is that this is a list of your own things, not a menu of other
+ * companies' clouds.
+ *
+ * The risk: mono-as-display. A string like `mqtts://` or `_hozz._tcp` is the
+ * biggest coloured element in each row. Stencil labels frame it like markings
+ * stencilled on a crate addressed to somewhere you keep. Erode — an inky,
+ * organic serif — carries the human statements against the machine addresses.
+ */
+
+@font-face {
+  font-family: 'Erode G';
+  src: url('/fonts/erode-g-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Erode G';
+  src: url('/fonts/erode-g-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Erode G';
+  src: url('/fonts/erode-g-600.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Erode G';
+  src: url('/fonts/erode-g-400-italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Bespoke Stencil G';
+  src: url('/fonts/bespoke-stencil-g-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'General Sans G';
+  src: url('/fonts/general-sans-400.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'General Sans G';
+  src: url('/fonts/general-sans-500.woff2') format('woff2');
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'General Sans G';
+  src: url('/fonts/general-sans-600.woff2') format('woff2');
+  font-weight: 600;
+  font-display: swap;
+}
+
+.g {
+  /* Cool slate paper — not cream, not system grey, not near-black. */
+  --paper: #e6e9ec;
+  --paper-2: #dee2e6;
+  --ink: #15171c;
+  --muted: #565c66;
+  --faint: #7b828c;
+  --rule: #c6cbd1;
+  --rule-soft: #d3d8dd;
+
+  /* One signature hue: "yours / local", a deep signal blue drawn from the
+     Health "other" blue and taken down until it reads as text on the slate. */
+  --own: color-mix(in oklab, var(--h-other) 64%, #0a0c12);
+
+  --serif: 'Erode G', 'Sentient', Georgia, serif;
+  --stencil: 'Bespoke Stencil G', 'IBM Plex Mono', monospace;
+  --gsans: 'General Sans G', var(--sans);
+
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--gsans);
+  /* A faint engineering grid — texture, never decoration. */
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(21, 23, 28, 0.05) 1px, transparent 0);
+  background-size: 26px 26px;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.wrap {
+  width: min(100% - 2.5rem, 1080px);
+  margin-inline: auto;
+}
+
+/* ── Masthead ─────────────────────────────────────────────────────────────── */
+.mast {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding-block: clamp(1.4rem, 3vw, 2.2rem);
+  border-bottom: 1px solid var(--rule);
+}
+
+.mark {
+  font-family: var(--stencil);
+  font-weight: 500;
+  font-size: 1.35rem;
+  letter-spacing: 0.14em;
+  text-decoration: none;
+  color: var(--ink);
+}
+
+.mast .flag {
+  font-family: var(--stencil);
+  font-weight: 500;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.mast .flag::before {
+  content: '';
+  inline-size: 0.5rem;
+  block-size: 0.5rem;
+  border-radius: 999px;
+  background: var(--own);
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--own) 20%, transparent);
+}
+
+/* ── Hero ─────────────────────────────────────────────────────────────────── */
+.hero {
+  padding-block: clamp(3rem, 8vw, 6.5rem) clamp(2.5rem, 6vw, 4.5rem);
+}
+
+.hero-grid {
+  display: grid;
+  gap: clamp(2rem, 5vw, 3rem);
+  grid-template-columns: 1fr;
+}
+
+.hero-lead {
+  max-width: 40ch;
+}
+
+@media (min-width: 860px) {
+  .hero-grid {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+  }
+}
+
+/* A compact manifest of where it can go — previews the ledger and gives the
+   hero a right edge instead of a void. */
+.hero-index {
+  align-self: end;
+}
+
+.hero-index .idx-head {
+  font-family: var(--stencil);
+  font-weight: 500;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+  padding-bottom: 0.7rem;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 0.4rem;
+}
+
+.hero-index li {
+  display: grid;
+  grid-template-columns: 1.8rem 0.7rem 1fr;
+  align-items: center;
+  gap: 0.7rem;
+  padding-block: 0.5rem;
+  border-bottom: 1px solid var(--rule-soft);
+}
+
+.hero-index .n {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.hero-index .dot {
+  inline-size: 0.55rem;
+  block-size: 0.55rem;
+  border-radius: 999px;
+  background: var(--hue);
+}
+
+.hero-index .nm {
+  font-size: 0.98rem;
+  font-weight: 500;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.eyebrow {
+  font-family: var(--stencil);
+  font-weight: 500;
+  font-size: 0.78rem;
+  letter-spacing: 0.24em;
+  color: var(--own);
+  margin-bottom: clamp(1.4rem, 4vw, 2.2rem);
+}
+
+.hero h1 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(2.5rem, 1.1rem + 6vw, 5.2rem);
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.hero h1 em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--own);
+}
+
+.hero .lede {
+  margin-top: clamp(1.6rem, 4vw, 2.4rem);
+  max-width: 46ch;
+  font-size: clamp(1.05rem, 0.98rem + 0.5vw, 1.28rem);
+  line-height: 1.5;
+  letter-spacing: -0.006em;
+  color: color-mix(in oklab, var(--ink) 82%, var(--paper));
+}
+
+.hero .lede b {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* ── Ledger heading ───────────────────────────────────────────────────────── */
+.ledger-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+  flex-wrap: wrap;
+  padding-top: clamp(1.4rem, 3vw, 2rem);
+  border-top: 2px solid var(--ink);
+}
+
+.ledger-head h2 {
+  font-family: var(--stencil);
+  font-weight: 500;
+  font-size: 0.82rem;
+  letter-spacing: 0.2em;
+  color: var(--ink);
+}
+
+.ledger-head p {
+  max-width: 52ch;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.ledger-head p b {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* ── The ledger ───────────────────────────────────────────────────────────── */
+.ledger {
+  margin-top: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.row {
+  --hue: var(--own);
+  display: grid;
+  grid-template-columns: 3.5rem 1fr;
+  gap: 0 clamp(1rem, 3vw, 2.25rem);
+  padding-block: clamp(1.6rem, 3.5vw, 2.4rem);
+  border-top: 1px solid var(--rule);
+  position: relative;
+}
+
+.row:first-child {
+  border-top: none;
+}
+
+/* Left gutter: stencil index + a node on the shared vertical bus, so five rows
+   read as one source tapping five owned endpoints. */
+.gutter {
+  grid-row: 1 / -1;
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.gutter::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  bottom: calc(-1 * clamp(1.6rem, 3.5vw, 2.4rem) - 1px);
+  left: 50%;
+  width: 2px;
+  translate: -50% 0;
+  background: var(--rule-soft);
+}
+
+.row:last-child .gutter::before {
+  bottom: 50%;
+}
+
+.idx {
+  font-family: var(--stencil);
+  font-weight: 500;
+  font-size: 1.05rem;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  background: var(--paper);
+  padding-block: 0.1rem 0.4rem;
+  z-index: 1;
+}
+
+.node {
+  position: absolute;
+  top: 2.4rem;
+  left: 50%;
+  translate: -50% 0;
+  inline-size: 0.8rem;
+  block-size: 0.8rem;
+  border-radius: 999px;
+  background: var(--hue);
+  box-shadow: 0 0 0 4px var(--paper), 0 0 0 6px color-mix(in oklab, var(--hue) 26%, transparent);
+  z-index: 2;
+}
+
+.body {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+/* At width, the row opens into a manifest line: name + address on the left,
+   what it sends on the right, transport facts underneath. Fills the horizontal
+   space the hero deliberately leaves. */
+@media (min-width: 780px) {
+  .row:not(.empty) .body {
+    grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.9fr);
+    column-gap: clamp(1.5rem, 4vw, 3rem);
+    grid-template-areas:
+      'name transport'
+      'addr transport'
+      'meta meta';
+    align-items: start;
+  }
+  .row:not(.empty) .name {
+    grid-area: name;
+  }
+  .row:not(.empty) .addr {
+    grid-area: addr;
+    align-self: start;
+  }
+  .row:not(.empty) .transport {
+    grid-area: transport;
+    margin-top: 0.35rem;
+  }
+  .row:not(.empty) .meta {
+    grid-area: meta;
+    margin-top: 1.1rem;
+  }
+}
+
+.body .name {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: clamp(1.35rem, 1.1rem + 1vw, 1.85rem);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+}
+
+/* The hero of every row: the real address, set as display type in mono. */
+.addr {
+  margin-top: 0.7rem;
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: clamp(1.05rem, 0.82rem + 1.35vw, 1.85rem);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.addr .scheme {
+  color: color-mix(in oklab, var(--hue) 52%, #090b10);
+}
+
+.addr .tag {
+  display: inline-block;
+  margin-left: 0.5rem;
+  font-family: var(--stencil);
+  font-weight: 500;
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  color: var(--muted);
+  vertical-align: 0.32em;
+}
+
+.transport {
+  margin-top: 0.85rem;
+  max-width: 48ch;
+  font-size: clamp(1rem, 0.96rem + 0.2vw, 1.1rem);
+  line-height: 1.5;
+  letter-spacing: -0.006em;
+  color: color-mix(in oklab, var(--ink) 80%, var(--paper));
+}
+
+.meta {
+  margin-top: 0.85rem;
+  font-family: var(--mono);
+  font-weight: 400;
+  font-size: 0.78rem;
+  letter-spacing: 0.01em;
+  color: var(--muted);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.9rem;
+}
+
+.meta span {
+  white-space: nowrap;
+}
+
+/* ── The empty first slot: there is no default. ───────────────────────────── */
+.row.empty .idx {
+  color: var(--muted);
+}
+
+.row.empty .node {
+  background: transparent;
+  border: 2px dashed var(--faint);
+  box-shadow: 0 0 0 4px var(--paper);
+}
+
+.row.empty .name {
+  color: var(--muted);
+}
+
+.slot {
+  margin-top: 0.7rem;
+  font-family: var(--mono);
+  font-size: clamp(1rem, 0.85rem + 0.8vw, 1.5rem);
+  letter-spacing: -0.01em;
+  color: var(--muted);
+  border: 1px dashed var(--rule);
+  border-radius: 4px;
+  padding: 0.55rem 0.85rem;
+  display: inline-block;
+}
+
+/* ── Independence strip ───────────────────────────────────────────────────── */
+.indep {
+  margin-top: clamp(3rem, 7vw, 5rem);
+  padding-top: clamp(1.6rem, 3vw, 2.2rem);
+  border-top: 2px solid var(--ink);
+}
+
+.indep h2 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.4rem);
+  line-height: 1.1;
+  letter-spacing: -0.014em;
+  max-width: 24ch;
+}
+
+.indep h2 em {
+  font-style: italic;
+  color: var(--own);
+}
+
+.facts {
+  margin-top: clamp(1.6rem, 4vw, 2.5rem);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: clamp(1.4rem, 3vw, 2.4rem);
+}
+
+.fact dt {
+  font-family: var(--stencil);
+  font-weight: 500;
+  font-size: 0.74rem;
+  letter-spacing: 0.16em;
+  color: var(--own);
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 0.7rem;
+}
+
+.fact dd {
+  margin: 0;
+  font-size: 0.98rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.fact dd code {
+  font-family: var(--mono);
+  font-size: 0.86em;
+  color: var(--ink);
+  background: var(--paper-2);
+  padding: 0.05em 0.35em;
+  border-radius: 3px;
+}
+
+/* ── Footer ───────────────────────────────────────────────────────────────── */
+.foot {
+  margin-top: clamp(3rem, 7vw, 5rem);
+  padding-block: 1.4rem clamp(4.5rem, 9vw, 6rem);
+  border-top: 1px solid var(--rule);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 2rem;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.foot a {
+  font-family: var(--mono);
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--faint);
+}
+
+.foot a:hover {
+  border-bottom-color: var(--ink);
+}
+
+@media (max-width: 460px) {
+  .row {
+    grid-template-columns: 2.6rem 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
