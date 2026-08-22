@@ -1,0 +1,273 @@
+---
+import SketchLayout from '../../layouts/SketchLayout.astro';
+import '../../styles/sketch-u.css';
+---
+
+<SketchLayout title="Sketch U — The Quiet Packer · Hozz" letter="U" name="The Quiet Packer">
+  <main>
+    <header class="site-head wrap">
+      <a class="wordmark" href="#top" aria-label="Hozz home">
+        <svg viewBox="0 0 28 28" aria-hidden="true">
+          <rect x="1" y="1" width="26" height="26" rx="8"></rect>
+          <path d="M8 8v12M20 8v12M8 14h12"></path>
+        </svg>
+        <span>Hozz</span>
+      </a>
+      <a class="head-link" href="https://github.com/thatcube/hozz">View the source <span>↗</span></a>
+    </header>
+
+    <section class="hero wrap" id="top">
+      <div class="hero-copy">
+        <p class="eyebrow"><span></span> Free · open source · early alpha</p>
+        <h1>Your health history.<br /><em>Neatly packed.</em></h1>
+        <p class="hero-lede">
+          Hozz exports Apple Health data to places you own. Automatically, privately, and without a subscription.
+        </p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="https://github.com/thatcube/hozz">Get Hozz on GitHub <span>↗</span></a>
+          <a class="button button-quiet" href="#how">See how it works <span>↓</span></a>
+        </div>
+        <p class="microcopy">iPhone app + companion Mac app. No account. No analytics.</p>
+      </div>
+
+      <figure class="packer" aria-labelledby="packer-caption">
+        <div class="packer-grid" aria-hidden="true"></div>
+        <div class="loose-records" aria-hidden="true">
+          <span class="record record-heart"><i></i><b>heartRate</b><small>72 bpm</small></span>
+          <span class="record record-step"><i></i><b>stepCount</b><small>438</small></span>
+          <span class="record record-sleep"><i></i><b>sleepAnalysis</b><small>asleep</small></span>
+        </div>
+        <div class="packing-brace brace-top" aria-hidden="true"></div>
+        <div class="packing-brace brace-bottom" aria-hidden="true"></div>
+        <div class="batch" aria-hidden="true">
+          <span>batch.ndjson</span>
+          <b>3 records</b>
+          <i></i><i></i><i></i>
+        </div>
+        <svg class="delivery-line" viewBox="0 0 560 310" aria-hidden="true">
+          <path d="M334 156 C401 156 421 241 489 241"></path>
+          <circle class="traveller" cx="0" cy="0" r="4"></circle>
+          <circle cx="489" cy="241" r="14"></circle>
+          <path d="M483 241h12M489 235v12"></path>
+        </svg>
+        <div class="destination-label" aria-hidden="true">
+          <span>YOUR DESTINATION</span>
+          <b>Delivered</b>
+        </div>
+        <figcaption id="packer-caption">Records are gathered into a deterministic batch, then sent only where you choose.</figcaption>
+      </figure>
+    </section>
+
+    <section class="promise reveal">
+      <div class="wrap promise-grid">
+        <p class="section-label">What Hozz does</p>
+        <div>
+          <h2>Health data that leaves<br />on <em>your</em> terms.</h2>
+          <p>Choose the types, timing, format, and destination. Nothing leaves your phone until you add a destination and confirm it.</p>
+        </div>
+      </div>
+      <div class="wrap fact-row" aria-label="Hozz privacy facts">
+        <p><strong>No</strong><span>hosted relay</span></p>
+        <p><strong>No</strong><span>default destination</span></p>
+        <p><strong>No</strong><span>account or tracking</span></p>
+      </div>
+    </section>
+
+    <section class="destinations wrap reveal" aria-labelledby="destinations-title">
+      <div class="section-head">
+        <p class="section-label">Where it sends</p>
+        <h2 id="destinations-title">Five ways back to you.</h2>
+      </div>
+      <ul class="destination-list">
+        <li>
+          <svg viewBox="0 0 40 40" aria-hidden="true"><rect x="6" y="8" width="28" height="22" rx="3"></rect><path d="M13 35h14M20 30v5"></path></svg>
+          <div><h3>This Mac</h3><p>NDJSON over your local network.</p></div>
+          <span>01</span>
+        </li>
+        <li>
+          <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M5 13h12l3 4h15v16H5zM5 13V9h12l3 4"></path></svg>
+          <div><h3>A folder</h3><p>Files, cloud drives, SMB, or on-device.</p></div>
+          <span>02</span>
+        </li>
+        <li>
+          <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M7 20 20 8l13 12v14H7zM15 34V23h10v11"></path></svg>
+          <div><h3>Home Assistant</h3><p>Metrics JSON to your smart home.</p></div>
+          <span>03</span>
+        </li>
+        <li>
+          <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="14"></circle><path d="M6 20h28M20 6c5 5 7 9 7 14s-2 9-7 14c-5-5-7-9-7-14s2-9 7-14Z"></path></svg>
+          <div><h3>A web address</h3><p>POST to an endpoint you control.</p></div>
+          <span>04</span>
+        </li>
+        <li>
+          <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="3"></circle><path d="M13 27a10 10 0 0 1 0-14M27 13a10 10 0 0 1 0 14M9 31a16 16 0 0 1 0-22M31 9a16 16 0 0 1 0 22"></path></svg>
+          <div><h3>MQTT</h3><p>MQTT 3.1.1, with secure connections.</p></div>
+          <span>05</span>
+        </li>
+      </ul>
+    </section>
+
+    <section class="how reveal" id="how" aria-labelledby="how-title">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="section-label">How it works</p>
+          <h2 id="how-title">How do I export my Apple Health data?</h2>
+          <p>Install Hozz on your iPhone, then follow three steps.</p>
+        </div>
+        <ol class="steps">
+          <li>
+            <span class="step-number">1</span>
+            <div><h3>Add a destination.</h3><p>Pick your Mac, a folder, Home Assistant, MQTT, or a web address.</p></div>
+          </li>
+          <li>
+            <span class="step-number">2</span>
+            <div><h3>Choose what moves.</h3><p>Select Health types and run on arrival, hourly, daily, or manually.</p></div>
+          </li>
+          <li>
+            <span class="step-number">3</span>
+            <div><h3>Test. Then confirm.</h3><p>Hozz sends new records automatically after you approve the route.</p></div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="proof wrap reveal" aria-labelledby="proof-title">
+      <div class="proof-copy">
+        <p class="section-label">Made not to skip</p>
+        <h2 id="proof-title">Stop it. Restart it.<br />Your place is saved.</h2>
+        <p>Hozz advances each Health type only after its records are durably staged. An interruption can repeat work, but cannot skip records.</p>
+        <ul>
+          <li><span>✓</span> Resumable manual exports</li>
+          <li><span>✓</span> Safe retries with content-derived IDs</li>
+          <li><span>✓</span> Deletions preserved as tombstones</li>
+          <li><span>✓</span> 178 XCTest tests</li>
+        </ul>
+      </div>
+      <div class="checkpoint-card" aria-label="Example durable export sequence">
+        <div class="checkpoint-top">
+          <span>DURABLE EXPORT</span>
+          <span>CHECKPOINT 03</span>
+        </div>
+        <div class="checkpoint-track" aria-hidden="true">
+          <span class="check-dot done"></span>
+          <span class="check-line done"></span>
+          <span class="check-dot done"></span>
+          <span class="check-line done"></span>
+          <span class="check-dot current"></span>
+          <span class="check-line"></span>
+          <span class="check-dot"></span>
+        </div>
+        <ol>
+          <li><b>Read</b><span>HealthKit anchor</span></li>
+          <li><b>Stage</b><span>Durable batch</span></li>
+          <li class="active"><b>Deliver</b><span>Confirmed</span></li>
+          <li><b>Advance</b><span>Next anchor</span></li>
+        </ol>
+        <p>heartRate <span>·</span> 2026-08-22T14:32:08Z</p>
+      </div>
+    </section>
+
+    <section class="formats reveal" aria-labelledby="formats-title">
+      <div class="wrap formats-inner">
+        <div class="section-head">
+          <p class="section-label">Your file, your call</p>
+          <h2 id="formats-title">Pick the shape of your data.</h2>
+        </div>
+        <div class="format-table">
+          <table>
+            <caption>Available export formats</caption>
+            <thead>
+              <tr><th>Format</th><th>Best for</th><th>Detail</th></tr>
+            </thead>
+            <tbody>
+              <tr><th>NDJSON <i>Default</i></th><td>Streaming</td><td>Lossless*</td></tr>
+              <tr><th>JSON</th><td>Complete files</td><td>Structured</td></tr>
+              <tr><th>CSV</th><td>Spreadsheets</td><td>Lossy</td></tr>
+              <tr><th>Metrics JSON</th><td>Dashboards</td><td>Aggregated</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="format-note">*Lossless for encoded fields. CSV cannot hold metadata or nested workout detail.</p>
+      </div>
+    </section>
+
+    <section class="mac wrap reveal" aria-labelledby="mac-title">
+      <div class="mac-card">
+        <div class="mac-copy">
+          <p class="section-label">On your Mac</p>
+          <h2 id="mac-title">Receive it. Browse it. Ask it.</h2>
+          <p>The companion app stores local batches, charts your history, and includes a read-only MCP server for assistants you choose.</p>
+          <p class="caveat">A cloud assistant may upload what it reads. That is the assistant's behaviour—not Hozz's.</p>
+        </div>
+        <div class="mac-facts" aria-label="Mac app capabilities">
+          <p><span>STORE</span><b>hozz-received.sqlite</b></p>
+          <p><span>VIEW</span><b>hour · day · week · month</b></p>
+          <p><span>MCP</span><b>read-only · four tools</b></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="close">
+      <div class="wrap close-inner reveal">
+        <div class="close-mark" aria-hidden="true">
+          <span></span><span></span><span></span>
+          <svg viewBox="0 0 160 50"><path d="M3 25h154"></path><circle cx="80" cy="25" r="9"></circle></svg>
+        </div>
+        <p class="section-label">Free forever</p>
+        <h2>Put your health history<br />somewhere you control.</h2>
+        <p>Open source. No subscription. No hidden trip through someone else's server.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="https://github.com/thatcube/hozz">Explore Hozz on GitHub <span>↗</span></a>
+          <a class="button button-quiet" href="https://github.com/sponsors/thatcube">Sponsor development <span>↗</span></a>
+        </div>
+        <footer>
+          <span>Hozz · by Brandon Moore</span>
+          <span>GPL-3.0 with App Store exception</span>
+        </footer>
+      </div>
+    </section>
+  </main>
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "name": "Hozz",
+        "applicationCategory": "HealthApplication",
+        "operatingSystem": "iOS, macOS",
+        "description": "A free, open-source iPhone app and companion Mac app that exports Apple Health data to destinations you own.",
+        "url": "https://github.com/thatcube/hozz",
+        "license": "https://www.gnu.org/licenses/gpl-3.0.html",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [{
+          "@type": "Question",
+          "name": "How do I export my Apple Health data?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Install Hozz on your iPhone, add a destination you own, choose the Health types and schedule, test the destination, then confirm. Hozz sends new records automatically after you approve the route."
+          }
+        }]
+      }
+    ]
+  })} />
+
+  <script is:inline>
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (!reduced.matches && 'IntersectionObserver' in window) {
+      document.documentElement.classList.add('can-reveal');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12 });
+      document.querySelectorAll('.reveal').forEach((element) => observer.observe(element));
+    }
+  </script>
+</SketchLayout>

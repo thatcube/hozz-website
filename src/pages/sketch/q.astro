@@ -1,0 +1,162 @@
+---
+import SketchLayout from '../../layouts/SketchLayout.astro';
+import '../../styles/sketch-q.css';
+
+const steps = [
+  {
+    mark: '01',
+    title: 'Choose what opens',
+    body: 'Apple shows the permission sheet. You choose each kind of Health data Hozz can read—and can close it again at any time.',
+  },
+  {
+    mark: '02',
+    title: 'Let it keep its place',
+    body: 'Each export resumes where the last one stopped. Interrupted runs pick up safely, without silently skipping or duplicating data.',
+  },
+  {
+    mark: '03',
+    title: 'Name the destination',
+    body: 'Nothing moves until you choose where it goes. There is no Hozz account or cloud waiting in the middle.',
+  },
+];
+
+const destinations = [
+  ['File', 'A complete, verifiable archive you keep.'],
+  ['Server', 'TLS-first delivery to one you operate.'],
+  ['CSV + JSON', 'Useful projections, clearly labelled as lossy.'],
+  ['Your Mac', 'Direct over your own local network.'],
+  ['Local AI', 'Questions answered through MCP on your Mac.'],
+];
+---
+
+<SketchLayout title="Sketch Q — Closed circuit · Hozz" letter="Q" name="Closed circuit">
+  <main>
+    <nav class="q-nav" aria-label="Primary">
+      <a class="wordmark" href="#top" aria-label="Hozz, back to top">
+        <span aria-hidden="true">H</span>Hozz
+      </a>
+      <div class="nav-links">
+        <a href="#how">How it works</a>
+        <a href="#where">Destinations</a>
+      </div>
+      <a class="source-link" href="https://github.com/thatcube/hozz">View source <span aria-hidden="true">↗</span></a>
+    </nav>
+
+    <section class="hero" id="top">
+      <div class="hero-copy">
+        <p class="eyebrow"><span></span> Apple Health export, without the middleman</p>
+        <h1>Take it with you.<br /><em>Keep it yours.</em></h1>
+        <p class="lede">
+          Hozz moves your Apple Health history to a file, server, or computer you choose.
+          No account, no subscription, and no cloud in between.
+        </p>
+        <div class="hero-actions">
+          <a class="primary-action" href="#how">See how it moves <span aria-hidden="true">↓</span></a>
+          <p>Free forever · Open source</p>
+        </div>
+      </div>
+
+      <div class="circuit" aria-label="A private route from Apple Health to a destination you control">
+        <svg class="circuit-line" viewBox="0 0 600 520" role="img" aria-hidden="true">
+          <path class="route-shadow" d="M96 78H428Q516 78 516 166V354Q516 442 428 442H170Q84 442 84 356V266Q84 222 128 222H380Q424 222 424 266V316Q424 350 390 350H252" />
+          <path class="route" d="M96 78H428Q516 78 516 166V354Q516 442 428 442H170Q84 442 84 356V266Q84 222 128 222H380Q424 222 424 266V316Q424 350 390 350H252" />
+          <path class="route-dash" d="M96 78H428Q516 78 516 166V354Q516 442 428 442H170Q84 442 84 356V266Q84 222 128 222H380Q424 222 424 266V316Q424 350 390 350H252" />
+        </svg>
+        <div class="circuit-node source-node">
+          <span class="node-symbol health-mark" aria-hidden="true">♥</span>
+          <span><b>Apple Health</b><small>on your device</small></span>
+        </div>
+        <div class="circuit-node destination-node">
+          <span class="node-symbol" aria-hidden="true">↘</span>
+          <span><b>Your place</b><small>and nowhere else</small></span>
+        </div>
+        <div class="gate">
+          <span class="gate-label">HOZZ</span>
+          <span class="gate-core" aria-hidden="true"><i></i></span>
+          <small>No copy kept</small>
+        </div>
+        <p class="circuit-note">One closed route.<br />You hold both ends.</p>
+      </div>
+    </section>
+
+    <section class="proof" aria-label="Privacy promises">
+      <p>Your data passes through Hozz, <strong>not through us.</strong></p>
+      <ul>
+        <li><span aria-hidden="true">×</span> Account</li>
+        <li><span aria-hidden="true">×</span> Analytics</li>
+        <li><span aria-hidden="true">×</span> Subscription</li>
+        <li><span aria-hidden="true">×</span> Hozz server</li>
+      </ul>
+    </section>
+
+    <section class="how section-shell" id="how">
+      <header class="section-heading">
+        <p class="eyebrow"><span></span> A route with three gates</p>
+        <h2>You set the whole <em>journey.</em></h2>
+      </header>
+      <ol class="steps">
+        {steps.map((step) => (
+          <li>
+            <span class="step-mark">{step.mark}</span>
+            <div>
+              <h3>{step.title}</h3>
+              <p>{step.body}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="where section-shell" id="where">
+      <header class="section-heading">
+        <p class="eyebrow"><span></span> The other end is yours</p>
+        <h2>Send it somewhere<br /><em>you control.</em></h2>
+      </header>
+      <div class="destination-list">
+        {destinations.map(([title, body], index) => (
+          <article>
+            <span class="destination-index">{String(index + 1).padStart(2, '0')}</span>
+            <h3>{title}</h3>
+            <p>{body}</p>
+            <span class="destination-arrow" aria-hidden="true">↗</span>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="honesty section-shell">
+      <div class="honesty-copy">
+        <p class="eyebrow"><span></span> Honest by design</p>
+        <h2>Unknown stays <em>unknown.</em></h2>
+        <p>
+          Apple does not reveal whether a Health category was denied or simply has no data.
+          Hozz reports “denied or empty” instead of inventing certainty.
+        </p>
+      </div>
+      <div class="status-window" aria-label="Example Hozz coverage report">
+        <div class="window-top">
+          <span>COVERAGE REPORT</span>
+          <span>LOCAL</span>
+        </div>
+        <div class="status-row good"><i></i><code>stepCount</code><strong>allowed</strong></div>
+        <div class="status-row unknown"><i></i><code>sleepAnalysis</code><strong>denied or empty</strong></div>
+        <div class="status-row flat"><i></i><code>clinicalRecord</code><strong>not supported yet</strong></div>
+      </div>
+    </section>
+
+    <footer class="close">
+      <div class="close-lock" aria-hidden="true">
+        <span></span>
+      </div>
+      <p class="eyebrow"><span></span> Built in the open</p>
+      <h2>Your health history<br />should answer to <em>you.</em></h2>
+      <p>Hozz is free forever, open source, and currently in early alpha.</p>
+      <a class="primary-action" href="https://github.com/thatcube/hozz">Follow the build <span aria-hidden="true">↗</span></a>
+      <div class="close-meta">
+        <span>NO ACCOUNT</span>
+        <span>NO TRACKING</span>
+        <span>NO CLOUD</span>
+      </div>
+    </footer>
+  </main>
+</SketchLayout>

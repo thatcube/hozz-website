@@ -19,19 +19,19 @@ const FIND = [
   {
     n: '01',
     title: 'Bonjour first',
-    body: 'The phone browses for _hozz._tcp on the local network. The Mac app starts an NWListener HTTP receiver and advertises itself — no address to type when the LAN cooperates.',
+    body: 'Hozz looks for _hozz._tcp on your local network. No hostname to type.',
     code: 'service: _hozz._tcp\nport:   54330',
   },
   {
     n: '02',
-    title: 'Keychain, your account',
-    body: 'Receiver records also publish through the user’s own iCloud Keychain access group. Same Apple ID on phone and Mac: they find each other without a manual token copy.',
+    title: 'Your Keychain',
+    body: 'Your iCloud Keychain shares receiver details between devices on the same Apple ID.',
     code: 'token via Keychain\naccess group · same Apple ID',
   },
   {
     n: '03',
-    title: 'Sweep, then honesty',
-    body: 'Fallback is a private /24 local-network sweep on port 54330. Every remembered address is probed before it is offered. A machine that does not answer shows as offline — not saved as a dead destination.',
+    title: 'Local fallback',
+    body: 'If Bonjour misses, Hozz checks the local /24 on port 54330. Dead addresses stay offline.',
     code: 'probe before reuse\noffline ≠ remembered',
   },
 ];
@@ -47,6 +47,16 @@ const LISTENER = [
   { k: 'Cloud path', v: 'none · local network only' },
 ];
 
+const DESTINATIONS = [
+  { name: 'This Mac', detail: 'SQLite over your LAN' },
+  { name: 'Files', detail: 'Any folder in the Files picker' },
+  { name: 'Your server', detail: 'HTTPS endpoint you run' },
+  { name: 'MQTT', detail: 'A broker you choose' },
+  { name: 'Home Assistant', detail: 'Metrics to your home' },
+];
+
+const FORMATS = ['NDJSON', 'JSON', 'CSV', 'Metrics JSON'];
+
 const LOG = [
   { t: '14:02:11', tag: 'accepted', kind: 'ok', msg: 'batch received · types listed, values not logged' },
   { t: '14:02:11', tag: 'duplicate', kind: 'dup', msg: 'identical batch hash · skipped' },
@@ -54,31 +64,73 @@ const LOG = [
   { t: '13:41:02', tag: 'test', kind: 'test', msg: 'connectivity probe · no samples written' },
   { t: '13:40:55', tag: 'rejected', kind: 'rej', msg: 'missing or stale token' },
 ];
+
+const FAQ_ANSWER =
+  'Install Hozz on your iPhone, choose the Apple Health types to export, then add a destination you control: the companion Mac app, a folder in Files, your HTTPS endpoint, MQTT, or Home Assistant. Send a test batch, then choose manual, on-arrival, hourly, or daily delivery. New records continue from the last durable checkpoint. Nothing leaves your phone until you confirm a destination.';
+
+const STRUCTURED_DATA = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'SoftwareApplication',
+      name: 'Hozz',
+      applicationCategory: 'HealthApplication',
+      operatingSystem: 'iOS, macOS',
+      description:
+        'Free, open-source Apple Health export software that sends data from your iPhone to destinations you control.',
+      url: GITHUB,
+      codeRepository: GITHUB,
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'USD',
+      },
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'How do I export my Apple Health data?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: FAQ_ANSWER,
+          },
+        },
+      ],
+    },
+  ],
+};
 ---
 
 <SketchLayout title="Sketch M — Received · Hozz" letter="M" name="Received">
+  <script type="application/ld+json" set:html={JSON.stringify(STRUCTURED_DATA)} />
   <main class="m">
     <header class="m-bar">
       <a class="m-word" href="#top" id="top">Hozz</a>
-      <p class="m-bar-meta">
+      <nav class="m-bar-meta" aria-label="Page">
+        <a href="#export">Export</a>
+        <a href="#find">Discovery</a>
+        <a href="#start">Start</a>
         <span>Mac receiver · early alpha</span>
-        <span><b>GPL-3.0</b> · App Store exception</span>
-        <span>free · no account</span>
-      </p>
+      </nav>
     </header>
 
     <section class="m-hero" aria-labelledby="m-title">
-      <div class="m-hero-copy">
+      <div class="m-hero-copy m-reveal">
         <p class="m-kicker"><i aria-hidden="true"></i> Listening on your desk</p>
         <h1 class="m-title" id="m-title">Your history,<br /><em>received</em> —<br />not uploaded.</h1>
         <p class="m-lede">
-          The Hozz Mac app is a <strong>local receiver and browser</strong> for Apple Health
-          batches your iPhone sends. Accepted data lands in a plain SQLite file on that Mac.
-          The cloud is never on the path.
+          Hozz copies Apple Health data from your iPhone to a Mac you own.
+          It arrives as SQLite. <strong>No relay. No Hozz account.</strong>
         </p>
+        <div class="m-actions">
+          <a class="m-button is-primary" href="#start">How to start</a>
+          <a class="m-button" href={GITHUB}>See the source</a>
+        </div>
       </div>
 
-      <aside class="m-file" aria-label="The file the Mac app writes">
+      <aside class="m-file m-reveal" aria-label="The file the Mac app writes">
         <div class="m-file-top">
           <span class="m-file-kind">Local database</span>
           <span class="m-file-state">on this Mac only</span>
@@ -103,16 +155,54 @@ const LOG = [
           </div>
         </dl>
         <p class="m-file-note">
-          That file is the product surface. Browse it on the Mac, export a type as CSV, or point
-          tools at the machine you already trust.
+          Open it with SQLite tools. Browse it on the Mac, or export a type as CSV.
         </p>
       </aside>
     </section>
 
-    <section class="m-section" aria-labelledby="find-title">
+    <section class="m-export m-reveal" id="export" aria-labelledby="export-title">
+      <div class="m-export-copy">
+        <p class="m-kicker">On the phone</p>
+        <h2 id="export-title">Export Health. Keep the route yours.</h2>
+        <p>
+          Choose Health types once. Hozz sends new records on your schedule and resumes
+          from its last checkpoint.
+        </p>
+        <ul class="m-formats" aria-label="Export formats">
+          {FORMATS.map((format) => <li>{format}</li>)}
+        </ul>
+        <p class="m-format-note">NDJSON is the faithful default. CSV is intentionally flat.</p>
+      </div>
+
+      <figure class="m-route" aria-labelledby="route-caption">
+        <svg viewBox="0 0 320 160" role="img" aria-label="Apple Health travels directly from your iPhone to destinations you control">
+          <path class="m-route-line" pathLength="1" d="M30 80 C62 80 64 30 130 30 H290 M130 30 C110 30 110 80 90 80 M90 80 C110 80 110 130 130 130 H290" />
+          <circle class="m-route-dot" r="4" />
+          <circle class="m-route-node" cx="30" cy="80" r="18" />
+          <circle class="m-route-node" cx="90" cy="80" r="18" />
+          <circle class="m-route-node" cx="290" cy="30" r="18" />
+          <circle class="m-route-node" cx="290" cy="130" r="18" />
+          <text x="30" y="84" text-anchor="middle">Health</text>
+          <text x="90" y="84" text-anchor="middle">Hozz</text>
+          <text x="290" y="34" text-anchor="middle">Mac</text>
+          <text x="290" y="134" text-anchor="middle">Yours</text>
+        </svg>
+        <figcaption id="route-caption">Direct routes. Hozz hosts no middle.</figcaption>
+        <ul class="m-destinations">
+          {DESTINATIONS.map((destination) => (
+            <li>
+              <strong>{destination.name}</strong>
+              <span>{destination.detail}</span>
+            </li>
+          ))}
+        </ul>
+      </figure>
+    </section>
+
+    <section class="m-section m-reveal" id="find" aria-labelledby="find-title">
       <div class="m-section-head">
         <h2 id="find-title">How the phone finds the desk</h2>
-        <p>Setup is designed so you do not type an address. Three ways, in order — each one local.</p>
+        <p>No IP address to type. Three local paths, in order.</p>
       </div>
       <div class="m-find-grid">
       <ol class="m-spine">
@@ -133,17 +223,16 @@ const LOG = [
         <p class="m-beacon-label">Advertised service</p>
         <p class="m-beacon-svc">_hozz._tcp</p>
         <p class="m-beacon-port"><span>port</span> 54330</p>
-        <p class="m-beacon-note">NWListener on the Mac. The phone browses; you do not type a host.</p>
+        <p class="m-beacon-note">The Mac advertises. Your phone listens.</p>
       </aside>
       </div>
     </section>
 
-    <section class="m-rails" aria-label="Receiver contract and activity log">
+    <section class="m-rails m-reveal" aria-label="Receiver contract and activity log">
       <div class="m-rail">
         <h2>Receiver contract</h2>
         <p>
-          What the Mac process actually runs. Folder watch covers the case where the LAN refuses
-          inbound connections — point both ends at a synced folder and batches arrive as files.
+          The real transport. Folder watch also accepts batches from a synced folder.
         </p>
         <dl class="m-props">
           {
@@ -160,8 +249,7 @@ const LOG = [
       <div class="m-rail">
         <h2>Activity, without samples</h2>
         <p>
-          The Activity tab records deliveries the receiver saw. Status only — accepted, duplicate,
-          paired, test, rejected. Sample values are not written to the log.
+          Delivery status only. Sample values never enter the log.
         </p>
         <div class="m-log" role="list">
           {
@@ -175,13 +263,12 @@ const LOG = [
           }
         </div>
         <p class="m-log-foot">
-          Example lines for illustration. Honest per-device status is based on when data last
-          arrived — not a green tick that guesses.
+          Illustrative lines. Device status comes from the last real delivery.
         </p>
       </div>
     </section>
 
-    <figure class="m-schema" aria-labelledby="schema-title">
+    <figure class="m-schema m-reveal" aria-labelledby="schema-title">
       <div class="m-schema-top">
         <h2 id="schema-title">What “stored on your Mac” means</h2>
         <span>illustrative shape · not a live dump</span>
@@ -196,16 +283,44 @@ const LOG = [
 );</code></pre>
     </figure>
 
-    <footer class="m-close">
-      <p>
-        Phone to desk. Local network only. Nothing leaves the iPhone until you add a destination
-        and confirm it.
-      </p>
-      <p class="m-sub">
-        Prefer a script? There is a small standalone Python receiver in <code>receiver/</code> for a
-        dependency-free listen path. Hozz is free, open source, early alpha — companion Mac app by a
-        solo developer. <a href={GITHUB}>Source on GitHub</a>
-      </p>
+    <section class="m-answer m-reveal" id="start" aria-labelledby="answer-title">
+<p class="m-kicker">A useful answer</p>
+<h2 id="answer-title">How do I export my Apple Health data?</h2>
+<p>
+  Pick the Health types you want. Add your Mac, a Files folder, your server, MQTT, or
+  Home Assistant. Send a test. Then choose manual, on-arrival, hourly, or daily delivery.
+</p>
+<p>Nothing leaves your phone until you confirm a destination.</p>
+    </section>
+
+    <footer class="m-close m-reveal">
+<div>
+  <p class="m-close-title">Start with one destination.</p>
+  <p class="m-sub">Free. Open source. No account. Early alpha.</p>
+</div>
+<div class="m-actions">
+  <a class="m-button is-primary" href={GITHUB}>Follow the build</a>
+  <a class="m-button" href="#top">Back to top</a>
+</div>
     </footer>
   </main>
+  <script is:inline>
+    const root = document.querySelector('.m');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (root && !reducedMotion && 'IntersectionObserver' in window) {
+root.classList.add('m-ready');
+const observer = new IntersectionObserver(
+  (entries) => {
+    for (const entry of entries) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
+    }
+  },
+  { threshold: 0.12 }
+);
+root.querySelectorAll('.m-reveal').forEach((element) => observer.observe(element));
+    }
+  </script>
 </SketchLayout>

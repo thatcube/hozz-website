@@ -8,32 +8,46 @@
  * someone to.
  *
  * The spectrum appears exactly once, as a hairline the width of the page, and it
- * is the only colour in the design. Everything the Health app does with fourteen
- * gradients, this does with one rule and a lot of restraint.
+ * is the only colour in the design. The single graphic is a dotted spine with a
+ * dot travelling down it, emitting outward to five destinations — hairline
+ * strokes, no fill, no colour. Everything the Health app does with fourteen
+ * gradients, this does with two rules and a lot of restraint.
  */
 import SketchLayout from '../../layouts/SketchLayout.astro';
 import { HEALTH_CATEGORIES } from '../../data/health';
-import { GITHUB_URL } from '../../data/site';
+import { GITHUB_URL, DONATE_URL } from '../../data/site';
+import '../../styles/sketch-c.css';
+
+const STEPS = [
+  'Choose which Health types it may read. iOS asks, not Hozz.',
+  'Add a destination you own.',
+  'Send a test batch before you trust it.',
+  'Set a schedule, or export by hand.',
+];
+
+/** Every fact here is from the app: format, transport, port, QoS. */
+const DESTINATIONS = [
+  { name: 'This Mac', fact: 'NDJSON · Bonjour · :54330' },
+  { name: 'Folder', fact: 'iCloud · Dropbox · SMB · on-device' },
+  { name: 'Home Assistant', fact: 'Metrics JSON webhook' },
+  { name: 'Web address', fact: 'POST to your own endpoint' },
+  { name: 'MQTT', fact: 'mqtts:// · retained · QoS 0' },
+];
+
+const FORMATS = [
+  { name: 'NDJSON', note: 'The default. Streamable, and lossless.' },
+  { name: 'JSON', note: 'One document, whole records.' },
+  { name: 'CSV', note: 'Lossy, and says so. Nested detail will not fit a grid.' },
+  { name: 'Metrics JSON', note: 'Compact, for dashboards.' },
+];
 
 const CLAIMS = [
+  { lead: 'No server of mine.', rest: 'Nothing to breach, nothing to subpoena.', cat: 'heart' },
+  { lead: 'No account.', rest: 'It never asks who you are.', cat: 'body' },
+  { lead: 'No paid tier, ever.', rest: 'Nothing held back to sell you later.', cat: 'nutrition' },
   {
-    lead: 'There is no server of mine',
-    rest: 'in the middle of this. No relay, no database, nothing to breach and nothing to subpoena.',
-    cat: 'heart',
-  },
-  {
-    lead: 'There is no account',
-    rest: 'to make, because there is nothing to make one on. The app never asks who you are.',
-    cat: 'activity',
-  },
-  {
-    lead: 'There is no paid tier',
-    rest: 'coming later. Hozz has nothing to upsell, so it has no reason to hold anything back.',
-    cat: 'nutrition',
-  },
-  {
-    lead: 'And it will never claim',
-    rest: 'it got everything, because Apple will not let it know whether it did.',
+    lead: 'It will not claim it got everything.',
+    rest: 'Apple will not let it know that it did.',
     cat: 'other',
   },
 ];
@@ -41,149 +55,202 @@ const CLAIMS = [
 const stops = HEALTH_CATEGORIES.map(
   (c, i) => `${c.to} ${(i / HEALTH_CATEGORIES.length) * 100}% ${((i + 1) / HEALTH_CATEGORIES.length) * 100}%`,
 ).join(', ');
+
+/* Every statement below is checkable against the repository. */
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'SoftwareApplication',
+      name: 'Hozz',
+      applicationCategory: 'HealthApplication',
+      operatingSystem: 'iOS, macOS',
+      description:
+        'A free, open-source iPhone app with a companion Mac app that exports Apple Health data to destinations you own — your Mac, a folder, Home Assistant, your own web endpoint, or an MQTT broker.',
+      license: 'https://www.gnu.org/licenses/gpl-3.0.html',
+      codeRepository: GITHUB_URL,
+      isAccessibleForFree: true,
+      author: { '@type': 'Person', name: 'Brandon Moore' },
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'How do I export my Apple Health data?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text:
+              'Install Hozz on your iPhone and choose which Health types it may read — iOS asks for that permission, not Hozz. Add a destination you own: a Mac running the companion app, a folder in Files, Home Assistant, your own web endpoint, or an MQTT broker. Send a test batch, then pick a schedule — on arrival, hourly, daily, or manual. Nothing leaves the phone until a destination exists and you confirm it.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'What file formats does Hozz export Apple Health data to?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text:
+              'NDJSON is the default: streamable and lossless. JSON and Metrics JSON are also available. CSV is offered but is explicitly lossy, because metadata and nested workout detail do not fit a grid. Deletions are carried as tombstones rather than silently dropped, and encoding is deterministic, so the same records produce the same bytes regardless of locale or time zone.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Does Hozz send my health data to its own servers?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text:
+              'No. There is no Hozz server, no relay, no hosted account and no default destination. Data goes only to destinations you add yourself, and nothing is sent until you confirm one.',
+          },
+        },
+      ],
+    },
+  ],
+};
 ---
 
 <SketchLayout title="Sketch C — Quiet · Hozz" letter="C" name="Quiet">
-  <main>
+  <script is:inline>
+    /* Reveals are opt-in: with scripting off, nothing is ever hidden. */
+    document.documentElement.classList.add('js');
+  </script>
+
+  <main id="sc">
     <header>
       <p class="mark">Hozz</p>
       <h1>
-        Your health data is the most detailed record anyone holds about you.
+        Apple Health has years of you in it.
         <span>You should have a copy.</span>
       </h1>
       <p class="stand">
-        A free, open-source app for iPhone and iPad that copies what Apple Health
-        knows about you into a file you keep, or onto a server you run.
+        Hozz exports it to somewhere you own. Free, open source, nothing in the
+        middle.
       </p>
+      <p class="meta">iPhone + companion Mac app · GPL-3.0 · early alpha</p>
     </header>
 
     <!-- The only colour on the page, and it is the fourteen Health categories in
          the order Apple lists them. -->
-    <div class="spectrum" style={`--stops: ${stops}`} aria-hidden="true"></div>
-    <p class="legend">
-      Fourteen categories. Every one of them in scope, not a curated handful.
-    </p>
+    <div class="colour r">
+      <div class="spectrum" style={`--stops: ${stops}`} aria-hidden="true"></div>
+      <p class="legend">Fourteen categories. All of them in scope.</p>
+    </div>
 
-    <section class="claims">
-      {
-        CLAIMS.map((c) => (
-          <p class="claim" style={`--hue: var(--h-${c.cat})`}>
-            <b>{c.lead}</b> {c.rest}
-          </p>
-        ))
-      }
+    <section aria-labelledby="how">
+      <h2 id="how" class="r">How do I export my Apple Health data?</h2>
+      <p class="lede r">Four steps, once. Then it keeps up on its own.</p>
+      <ol class="steps r">
+        {STEPS.map((s) => <li><span>{s}</span></li>)}
+      </ol>
+      <p class="note r">
+        Nothing leaves the phone until you add a destination and confirm it.
+      </p>
+    </section>
+
+    <section aria-labelledby="where">
+      <h2 id="where" class="r">Where it sends</h2>
+      <p class="lede r">Five destinations. Every one of them yours.</p>
+
+      <!-- The page's one graphic: a dotted spine off the source, branching to
+           each destination, with a dot travelling down it and arriving in each
+           ring. Stroke and dot only — the rules are decoration, the list they
+           are drawn around is the information. -->
+      <div class="pipe r">
+        <p class="src"><span class="ring ring--src" aria-hidden="true"></span>Apple Health</p>
+        <span class="spine" aria-hidden="true"><span class="pip"></span></span>
+        <ul class="dests">
+          {
+            DESTINATIONS.map((d, i) => (
+              <li style={`--i: ${i}`}>
+                <span class="ring" aria-hidden="true" />
+                <h3>{d.name}</h3>
+                <p class="fact">{d.fact}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <section aria-labelledby="formats">
+      <h2 id="formats" class="r">What comes out</h2>
+      <table class="r">
+        <thead>
+          <tr><th scope="col">Format</th><th scope="col">What it is</th></tr>
+        </thead>
+        <tbody>
+          {
+            FORMATS.map((f) => (
+              <tr>
+                <th scope="row">{f.name}</th>
+                <td>{f.note}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+      <p class="note r">
+        Deletions travel as tombstones. Same records, same bytes, any time zone.
+      </p>
+    </section>
+
+    <section aria-labelledby="never">
+      <h2 id="never" class="r">What it will never do.</h2>
+      <div class="claims">
+        {
+          CLAIMS.map((c) => (
+            <p class="claim r" style={`--hue: var(--h-${c.cat})`}>
+              <b>{c.lead}</b> {c.rest}
+            </p>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="close" aria-labelledby="get">
+      <h2 id="get" class="r">Take your history with you.</h2>
+      <p class="lede r">
+        Free now, free later. Read the code before you trust it.
+      </p>
+      <p class="actions r">
+        <a class="pill" href={GITHUB_URL} rel="noopener">
+          Get Hozz on GitHub
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+            <path d="M1 6.5h10M7 2.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+        <a class="quiet-link" href={DONATE_URL} rel="noopener">Sponsor the work</a>
+      </p>
     </section>
 
     <footer>
-      <p>Pre-alpha. Nothing to install yet.</p>
-      <a href={GITHUB_URL} rel="noopener">github.com/thatcube/hozz</a>
+      <p>Early alpha · coverage partial · 178 tests</p>
+      <p>One developer. No investors.</p>
     </footer>
   </main>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)} />
+
+  <script is:inline>
+    /* Quiet reveals. Reduced motion is handled in CSS, which simply leaves every
+       element in its arrived state. */
+    (function () {
+      var items = document.querySelectorAll('#sc .r');
+      if (!('IntersectionObserver' in window)) {
+        items.forEach(function (el) { el.classList.add('is-in'); });
+        return;
+      }
+      var io = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (e) {
+            if (!e.isIntersecting) return;
+            e.target.classList.add('is-in');
+            io.unobserve(e.target);
+          });
+        },
+        { rootMargin: '0px 0px -8% 0px', threshold: 0.15 },
+      );
+      items.forEach(function (el) { io.observe(el); });
+    })();
+  </script>
 </SketchLayout>
-
-<style>
-  body {
-    background: #f2f2f7;
-    color: #0b0b0d;
-  }
-
-  main {
-    width: min(100% - 2.5rem, 940px);
-    margin-inline: auto;
-    padding-block: clamp(3.5rem, 9vw, 8rem) 6rem;
-  }
-
-  .mark {
-    font-size: 1.05rem;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    margin-bottom: clamp(3rem, 8vw, 6rem);
-  }
-
-  h1 {
-    font-size: clamp(1.9rem, 1rem + 3.6vw, 3.5rem);
-    font-weight: 700;
-    line-height: 1.14;
-    letter-spacing: -0.038em;
-    text-wrap: pretty;
-    max-width: 22ch;
-  }
-
-  /* The second sentence is the one that asks something of you, so it is the one
-     set apart. */
-  h1 span {
-    display: block;
-    margin-top: 0.5em;
-    font-weight: 800;
-  }
-
-  .stand {
-    margin-top: clamp(1.75rem, 4vw, 2.75rem);
-    max-width: 52ch;
-    font-size: clamp(1.05rem, 1rem + 0.4vw, 1.25rem);
-    line-height: 1.55;
-    letter-spacing: -0.012em;
-    color: #46454c;
-  }
-
-  .spectrum {
-    margin-top: clamp(4rem, 10vw, 8rem);
-    block-size: 10px;
-    border-radius: 999px;
-    background: linear-gradient(90deg, var(--stops));
-  }
-
-  .legend {
-    margin-top: 0.9rem;
-    font-size: 0.9375rem;
-    color: #55545c;
-  }
-
-  /* ── Claims ───────────────────────────────────────────────────────────── */
-  .claims {
-    margin-top: clamp(4rem, 10vw, 8rem);
-    display: grid;
-    gap: clamp(2rem, 5vw, 3.25rem);
-  }
-
-  .claim {
-    font-size: clamp(1.25rem, 1rem + 1.5vw, 2rem);
-    font-weight: 500;
-    line-height: 1.32;
-    letter-spacing: -0.03em;
-    text-wrap: pretty;
-    max-width: 30ch;
-    color: #46454c;
-  }
-
-  /* One phrase per claim carries the hue, and it is always the phrase you would
-     hold me to. Category hues are built for a screen rather than for body copy,
-     so each is taken down until it reads cleanly on the grey. */
-  .claim b {
-    font-weight: 800;
-    color: color-mix(in oklab, var(--hue) 62%, #05050a);
-  }
-
-  footer {
-    margin-top: clamp(5rem, 12vw, 9rem);
-    padding-top: 1.25rem;
-    border-top: 1px solid #d7d7de;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 0.75rem 2rem;
-    font-size: 0.9375rem;
-    color: #55545c;
-  }
-
-  footer a {
-    font-weight: 600;
-    color: #0b0b0d;
-    text-decoration: none;
-    border-bottom: 1px solid #b9b8c2;
-  }
-
-  footer a:hover {
-    border-bottom-color: #0b0b0d;
-  }
-</style>

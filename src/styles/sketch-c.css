@@ -1,0 +1,556 @@
+/**
+ * Sketch C — "Quiet".
+ *
+ * Everything is namespaced under #sc so this file can never reach another
+ * sketch. The rule of the direction: Apple system grey, near-black type, and
+ * the fourteen-stop spectrum hairline as the only colour on the page. Graphics
+ * are hairline strokes and dotted rules — no fills, no cards, no panels.
+ */
+
+#sc {
+  --paper: #f2f2f7;
+  --ink: #0b0b0d;
+  --ink-2: #3d3c44; /* body copy — measured 8.9:1 on --paper */
+  --ink-3: #55545c; /* captions  — measured 6.3:1 on --paper */
+  --rule: #d5d5dd;
+  --rule-2: #b6b5c1; /* the dotted guides */
+  --stroke: #a1a0ac; /* hairline rings */
+
+  width: min(100% - 2.5rem, 800px);
+  margin-inline: auto;
+  padding-block: clamp(3rem, 8vw, 7rem) 5rem;
+  color: var(--ink);
+}
+
+body:has(#sc) {
+  background: #f2f2f7;
+  color: #0b0b0d;
+}
+
+#sc :is(h1, h2, h3) {
+  text-wrap: balance;
+  letter-spacing: -0.035em;
+}
+
+/* ── Reveals ──────────────────────────────────────────────────────────────
+   Gated on html.js so the page is fully legible with scripting off. */
+html.js #sc .r {
+  opacity: 0;
+  translate: 0 10px;
+  transition:
+    opacity 0.3s ease,
+    translate 0.3s ease;
+}
+
+html.js #sc .r.is-in {
+  opacity: 1;
+  translate: 0 0;
+}
+
+/* ── Masthead ─────────────────────────────────────────────────────────── */
+#sc .mark {
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin-bottom: clamp(2.5rem, 7vw, 5rem);
+}
+
+#sc h1 {
+  font-size: clamp(1.9rem, 1rem + 3.6vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1.14;
+  letter-spacing: -0.038em;
+  text-wrap: pretty;
+  max-width: 17ch;
+}
+
+/* The second sentence is the one that asks something of you, so it is the one
+   set apart. */
+#sc h1 span {
+  display: block;
+  margin-top: 0.44em;
+  font-weight: 800;
+}
+
+#sc .stand {
+  margin-top: clamp(1.5rem, 4vw, 2.25rem);
+  max-width: 40ch;
+  font-size: clamp(1.05rem, 1rem + 0.4vw, 1.25rem);
+  line-height: 1.5;
+  letter-spacing: -0.012em;
+  color: var(--ink-2);
+}
+
+#sc .meta {
+  margin-top: 1.4rem;
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  letter-spacing: -0.01em;
+  color: var(--ink-3);
+}
+
+/* ── The one piece of colour ──────────────────────────────────────────── */
+#sc .colour {
+  margin-top: clamp(3rem, 8vw, 6rem);
+}
+
+#sc .spectrum {
+  block-size: 10px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--stops));
+}
+
+/* Driven from the wrapper, because an element clipped to nothing is not
+   reliably reported as visible by an IntersectionObserver. */
+html.js #sc .colour .spectrum {
+  clip-path: inset(0 100% 0 0 round 999px);
+  transition: clip-path 0.6s cubic-bezier(0.22, 0.8, 0.24, 1) 0.05s;
+}
+
+html.js #sc .colour.is-in .spectrum {
+  clip-path: inset(0 0 0 0 round 999px);
+}
+
+#sc .legend {
+  margin-top: 0.85rem;
+  font-size: 0.9375rem;
+  color: var(--ink-3);
+}
+
+/* ── Sections ─────────────────────────────────────────────────────────── */
+#sc section {
+  margin-top: clamp(3.5rem, 9vw, 7rem);
+}
+
+#sc h2 {
+  font-size: clamp(1.35rem, 1rem + 1.5vw, 2rem);
+  font-weight: 700;
+  line-height: 1.2;
+  max-width: 24ch;
+}
+
+#sc .lede {
+  margin-top: 1rem;
+  max-width: 46ch;
+  font-size: clamp(1rem, 0.97rem + 0.2vw, 1.0625rem);
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+
+#sc .note {
+  margin-top: 1.5rem;
+  max-width: 52ch;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--ink-3);
+}
+
+/* ── Steps ────────────────────────────────────────────────────────────── */
+#sc .steps {
+  margin-top: 2rem;
+  display: grid;
+  gap: 0;
+  counter-reset: step;
+  max-width: 42rem;
+}
+
+#sc .steps li {
+  counter-increment: step;
+  display: grid;
+  grid-template-columns: 2.25rem 1fr;
+  align-items: baseline;
+  gap: 0 0.5rem;
+  padding-block: 0.85rem;
+  border-top: 1px solid var(--rule);
+  font-size: clamp(1rem, 0.95rem + 0.35vw, 1.125rem);
+  line-height: 1.4;
+  letter-spacing: -0.018em;
+}
+
+#sc .steps li:last-child {
+  border-bottom: 1px solid var(--rule);
+}
+
+#sc .steps li::before {
+  content: counter(step, decimal-leading-zero);
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--ink-3);
+}
+
+/* ── The pipeline: a source, a dotted spine, five destinations ─────────
+   Geometry is fixed in px so the five rows are identical at every width and
+   the travelling dot stays in step with the branches it feeds.
+     --x    centre of the spine, and of the source ring above it
+     --stub length of each dotted branch
+     --node distance from a row's top to the line its ring sits on */
+#sc .pipe {
+  --x: 5px;
+  --stub: 32px;
+  --node: 23px;
+  position: relative;
+  margin-top: 2rem;
+  max-width: 40rem;
+}
+
+#sc .src {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+}
+
+#sc .ring {
+  flex: none;
+  inline-size: 11px;
+  block-size: 11px;
+  border: 1px solid var(--stroke);
+  border-radius: 50%;
+}
+
+#sc .ring--src {
+  border-color: var(--ink);
+  background: radial-gradient(circle at 50% 50%, var(--ink) 0 2.5px, transparent 2.5px);
+}
+
+/* The vertical dotted rule the dot travels down. */
+#sc .spine {
+  position: absolute;
+  left: var(--x);
+  top: 10px;
+  bottom: 47px;
+  inline-size: 1px;
+  background: repeating-linear-gradient(
+    180deg,
+    var(--rule-2) 0 2px,
+    transparent 2px 6px
+  );
+}
+
+#sc .pip {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  inline-size: 5px;
+  block-size: 5px;
+  margin-left: -2.5px;
+  margin-top: -2.5px;
+  border-radius: 50%;
+  background: var(--ink);
+  opacity: 0;
+}
+
+html.js #sc .pip {
+  animation: sc-fall 5s linear infinite;
+}
+
+@keyframes sc-fall {
+  0% {
+    top: 0%;
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+
+#sc .dests {
+  margin-top: 0.9rem;
+}
+
+#sc .dests li {
+  position: relative;
+  padding: 0.8rem 0 0.8rem calc(var(--x) + var(--stub) + 11px + 0.75rem);
+  border-top: 1px solid var(--rule);
+}
+
+#sc .dests li:last-child {
+  border-bottom: 1px solid var(--rule);
+}
+
+/* Each branch is a dotted stub off the spine, ending at a hairline ring. */
+#sc .dests li::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--x) + 1px);
+  top: var(--node);
+  inline-size: var(--stub);
+  block-size: 1px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--rule-2) 0 2px,
+    transparent 2px 6px
+  );
+}
+
+#sc .dests li > .ring {
+  position: absolute;
+  left: calc(var(--x) + var(--stub));
+  top: calc(var(--node) - 5.5px);
+}
+
+/* The dot the spine emits outward, which comes to rest inside the ring. */
+#sc .dests li::after {
+  content: '';
+  position: absolute;
+  left: calc(var(--x) + 1px);
+  top: calc(var(--node) - 2.5px);
+  inline-size: 5px;
+  block-size: 5px;
+  border-radius: 50%;
+  background: var(--ink);
+  opacity: 0;
+  translate: calc(var(--stub) + 2px) 0;
+}
+
+html.js #sc .dests li::after {
+  animation: sc-emit 5s cubic-bezier(0.32, 0, 0.2, 1) infinite;
+  animation-delay: calc(var(--i) * 1.06s + 0.74s);
+}
+
+@keyframes sc-emit {
+  0% {
+    translate: 0 0;
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  17%,
+  30% {
+    translate: calc(var(--stub) + 2px) 0;
+    opacity: 1;
+  }
+  46%,
+  100% {
+    translate: calc(var(--stub) + 2px) 0;
+    opacity: 0;
+  }
+}
+
+#sc .dests h3 {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+#sc .fact {
+  margin-top: 0.28rem;
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--ink-3);
+}
+
+/* ── Formats ──────────────────────────────────────────────────────────── */
+#sc table {
+  margin-top: 1.75rem;
+  inline-size: 100%;
+  max-width: 40rem;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+#sc th,
+#sc td {
+  padding-block: 0.75rem;
+  padding-right: 1rem;
+  border-top: 1px solid var(--rule);
+  vertical-align: baseline;
+}
+
+#sc tbody tr:last-child :is(th, td) {
+  border-bottom: 1px solid var(--rule);
+}
+
+#sc thead th {
+  border-top: 0;
+  padding-block-end: 0.4rem;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+#sc tbody th {
+  font-family: var(--mono);
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+#sc td {
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+
+/* ── Claims ───────────────────────────────────────────────────────────── */
+#sc .claims {
+  margin-top: clamp(2rem, 5vw, 3rem);
+  display: grid;
+  gap: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+#sc .claim {
+  font-size: clamp(1.25rem, 1rem + 1.5vw, 2rem);
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.03em;
+  text-wrap: pretty;
+  max-width: 30ch;
+  color: var(--ink-2);
+}
+
+/* One phrase per claim carries the hue, and it is always the phrase you would
+   hold me to. Category hues are built for a screen rather than for body copy,
+   so each is taken down until it reads cleanly on the grey. */
+#sc .claim b {
+  font-weight: 800;
+  color: color-mix(in oklab, var(--hue) 52%, #04040a);
+}
+
+/* ── Close ────────────────────────────────────────────────────────────── */
+#sc .close {
+  margin-top: clamp(3rem, 7vw, 5rem);
+  padding-top: clamp(2.25rem, 5vw, 3.5rem);
+  border-top: 1px solid var(--rule);
+}
+
+#sc .actions {
+  margin-top: 1.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+}
+
+#sc .pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.35rem;
+  border-radius: 9999px;
+  background: var(--ink);
+  color: #fff;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  text-decoration: none;
+  transition:
+    background-color 0.18s ease,
+    translate 0.18s ease;
+}
+
+#sc .pill:hover {
+  background: #2c2b33;
+  translate: 0 -1px;
+}
+
+/* The shared focus ring is currentColor, which on a near-black pill is white —
+   and white is invisible on this page. */
+#sc .pill:focus-visible {
+  outline-color: var(--ink);
+}
+
+#sc .pill svg {
+  transition: translate 0.18s ease;
+}
+
+#sc .pill:hover svg {
+  translate: 2px 0;
+}
+
+#sc .quiet-link {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--rule-2);
+  transition: border-color 0.18s ease;
+}
+
+#sc .quiet-link:hover {
+  border-bottom-color: var(--ink);
+}
+
+#sc footer {
+  margin-top: clamp(3.5rem, 9vw, 6rem);
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem 2rem;
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  color: var(--ink-3);
+}
+
+@media (max-width: 26rem) {
+  #sc .pipe {
+    --stub: 20px;
+  }
+}
+
+/* ── Stillness ────────────────────────────────────────────────────────────
+   Nothing here carries information by moving, so movement simply stops and
+   every element is left in its resting, arrived state. */
+@media (prefers-reduced-motion: reduce) {
+  html.js #sc .r,
+  html.js #sc .r.is-in {
+    opacity: 1;
+    translate: 0 0;
+    transition: none;
+  }
+
+  html.js #sc .colour .spectrum,
+  html.js #sc .colour.is-in .spectrum {
+    clip-path: none;
+    transition: none;
+  }
+
+  html.js #sc .pip,
+  html.js #sc .dests li::after {
+    animation: none;
+  }
+
+  /* The pip only ever meant "in transit", so with movement off it has nothing
+     to say. The emitted dots stay put inside their rings, which reads as
+     arrived — the state the diagram is describing. */
+  #sc .pip {
+    display: none;
+  }
+
+  #sc .dests li::after {
+    display: none;
+  }
+
+  #sc .pill,
+  #sc .pill svg,
+  #sc .quiet-link {
+    transition: none;
+  }
+
+  #sc .pill:hover {
+    translate: 0 0;
+  }
+
+  #sc .pill:hover svg {
+    translate: 0 0;
+  }
+}

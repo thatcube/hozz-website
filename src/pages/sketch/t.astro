@@ -1,0 +1,451 @@
+---
+/**
+ * Sketch T — "Instrument".
+ *
+ * The argument: Hozz is not a service you join, it is an instrument you point
+ * at your own data. So the page is built like one — a calibrated edge down the
+ * left, hairline geometry, and exactly one colour, used only to mark state.
+ *
+ * The device: the marker on that edge is monotonic. It advances as you scroll
+ * and refuses to come back when you scroll up, because that is precisely the
+ * guarantee the export anchor makes. The page behaves like the product.
+ */
+import SketchLayout from '../../layouts/SketchLayout.astro';
+import '../../styles/sketch-t.css';
+import { GITHUB_URL, DONATE_URL, LICENSE_URL } from '../../data/site';
+
+const destinations = [
+  { name: 'This Mac', meta: 'ndjson · :54330', note: 'Over your local network. Found by Bonjour, opened with a token.' },
+  { name: 'Folder', meta: 'files picker', note: 'iCloud Drive, Dropbox, OneDrive, Google Drive, SMB, or on the device.' },
+  { name: 'Home Assistant', meta: 'metrics json', note: 'Straight into your own dashboards over webhook or REST.' },
+  { name: 'Web address', meta: 'POST', note: 'Any endpoint you run. NDJSON, JSON, CSV or Metrics JSON.' },
+  { name: 'MQTT', meta: 'mqtts:// · qos 0', note: 'Your broker, retained, MQTT 3.1.1.' },
+];
+
+/* Five arcs from one origin down into the five columns below. */
+const fanX = [100, 300, 500, 700, 900];
+const fanPaths = fanX.map((x) => `M500 2 C 500 56, ${x} 50, ${x} 106`);
+
+const schedule = [
+  { name: 'on arrival', note: 'as records land' },
+  { name: 'hourly', note: 'iOS permitting' },
+  { name: 'daily', note: 'once a day' },
+  { name: 'manual', note: 'only when you ask' },
+];
+
+const mcpTools = ['list_health_types', 'summarise_health_data', 'aggregate_health_data', 'list_health_samples'];
+
+const formats = [
+  { name: 'NDJSON', shape: 'One record per line. Streams; the default.', keeps: 'yes', keepsLabel: 'Everything' },
+  { name: 'JSON', shape: 'One document, one array.', keeps: 'yes', keepsLabel: 'Everything' },
+  { name: 'CSV', shape: 'A grid, for spreadsheets.', keeps: 'no', keepsLabel: 'No — lossy' },
+  { name: 'Metrics JSON', shape: 'Values grouped by type.', keeps: 'mid', keepsLabel: 'Summary' },
+];
+
+const faq = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'How do I export my Apple Health data?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text:
+          'Install Hozz on your iPhone and add a destination — the companion Mac app, a folder in the Files app, Home Assistant, a web address you run, or an MQTT broker. Choose which Health types to include, send a test batch, then pick a schedule: on arrival, hourly, daily or manual. From then on new records are exported automatically. Nothing leaves the phone until you add a destination and confirm it.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What file formats can Apple Health data be exported to?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text:
+          'Hozz writes NDJSON (the default — one record per line, streamable and lossless for encoded fields), JSON, CSV and Metrics JSON. CSV is explicitly lossy: metadata and nested workout detail do not fit a grid. Deletions are carried as tombstones rather than silently dropped, and encoding is deterministic, so output is byte-identical regardless of locale or time zone.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can an export miss records?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text:
+          'Hozz does not use date-window watermarks. Each Health type carries its own opaque anchor from HKAnchoredObjectQuery, and that anchor is only advanced once records are durably staged. An interruption can repeat work, but it cannot skip records. Retries are safe because records carry content-derived IDs and an Idempotency-Key.',
+      },
+    },
+  ],
+};
+
+const app = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Hozz',
+  applicationCategory: 'HealthApplication',
+  operatingSystem: 'iOS, macOS',
+  description:
+    'Free, open-source iPhone app with a companion Mac app that exports Apple Health data to destinations you own: a Mac on your network, a folder, Home Assistant, a web address, or an MQTT broker.',
+  license: LICENSE_URL,
+  isAccessibleForFree: true,
+  author: { '@type': 'Person', name: 'Brandon Moore' },
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  url: GITHUB_URL,
+};
+---
+
+<SketchLayout title="Sketch T — Instrument · Hozz" letter="T" name="Instrument">
+  <div class="t-rail" aria-hidden="true">
+    <i class="t-spine"></i>
+    <i class="t-minor"></i>
+    <i class="t-major"></i>
+    <span class="t-trail"></span>
+    <span class="t-pip"></span>
+  </div>
+
+  <main class="t">
+    <!-- ─── hero ─────────────────────────────────────────────────────── -->
+    <header class="t-hero">
+      <div class="t-shell t-hero-grid">
+        <div>
+          <p class="t-eyebrow">Free · open source · iPhone + Mac</p>
+          <h1>Get your Health&nbsp;data out.</h1>
+          <p class="t-lede">
+            Hozz exports Apple Health to places you already own. No account, no relay, no default
+            destination — nothing leaves the phone until you say where.
+          </p>
+
+          <div class="t-acts">
+            <a class="t-btn" href={GITHUB_URL} rel="noopener">
+              Read the source on GitHub
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+                <path d="M3 10 10 3M4.4 3H10v5.6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
+            <a class="t-btn t-btn--ghost" href="#how">How the export works</a>
+          </div>
+
+          <p class="t-status"><b></b> early alpha — it works, coverage is partial</p>
+        </div>
+
+        <figure class="t-slip t-rise">
+          <figcaption class="t-slip-head">
+            <span>example · ndjson</span>
+            <span>one line, one record</span>
+          </figcaption>
+          <pre><code>{'{'}<span>"type":</span>"heartRate",<span>"value":</span>58,
+ <span>"unit":</span>"count/min",<span>"source":</span>"Apple Watch"{'}'}
+{'{'}<span>"type":</span>"sleepAnalysis",<span>"stage":</span>"deep"{'}'}
+<span class="t-del">{'{'}"type":"bodyMass","deleted":true{'}'}</span></code></pre>
+          <p class="t-slip-foot">
+            The last line is a tombstone. Deletions travel too — they are not silence.
+          </p>
+        </figure>
+
+        <div class="t-dial t-rise">
+          <p class="t-dial-cap">Schedule — one per destination</p>
+          <div class="t-dial-rule" aria-hidden="true"></div>
+          <ul class="t-dial-stops" aria-label="Export schedules">
+            {schedule.map((s) => (
+              <li>
+                {s.name}
+                <i>{s.note}</i>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    <!-- ─── destinations ─────────────────────────────────────────────── -->
+    <section class="t-sec" aria-labelledby="t-dest-h">
+      <div class="t-shell">
+        <div class="t-head t-rise">
+          <p class="t-eyebrow" data-n="01">Where it goes</p>
+          <h2 id="t-dest-h">Five places. All of them yours.</h2>
+          <p class="t-note">
+            Hozz has no server. Every destination is somewhere you already control, and each one
+            keeps its own place in the queue — so a broken one can't hold up the rest.
+          </p>
+        </div>
+
+        <div class="t-fan t-rise">
+          <p class="t-fan-origin"><b aria-hidden="true"></b> Health, on your iPhone</p>
+          <svg viewBox="0 0 1000 128" preserveAspectRatio="none" aria-hidden="true">
+            {fanPaths.map((d) => <path class="t-fan-path" d={d} />)}
+            {fanX.map((x) => <circle class="t-fan-end" cx={x} cy="106" r="4" />)}
+            {fanX.map((x) => <line class="t-fan-drop" x1={x} y1="110" x2={x} y2="128" />)}
+            {fanPaths.map((d, i) => (
+              <circle
+                class="t-dot"
+                r="3.4"
+                cx="0"
+                cy="0"
+                style={`offset-path: path('${d}'); animation-delay: ${(i * 0.44).toFixed(2)}s;`}
+              />
+            ))}
+          </svg>
+        </div>
+
+        <ul class="t-dests t-rise">
+          {destinations.map((d) => (
+            <li class="t-dest">
+              <span>{d.meta}</span>
+              <h3>{d.name}</h3>
+              <p>{d.note}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- ─── how ──────────────────────────────────────────────────────── -->
+    <section class="t-sec t-sec--sunk" id="how" aria-labelledby="t-how-h">
+      <div class="t-shell">
+        <div class="t-head t-rise">
+          <p class="t-eyebrow" data-n="02">Four steps</p>
+          <h2 id="t-how-h">How do I export my Apple Health data?</h2>
+          <p class="t-note">
+            Add somewhere to send it, choose what to send, prove it arrives, then leave it running.
+            The first export can be big — kill the app, reboot, come back; it resumes at the last
+            checkpoint.
+          </p>
+        </div>
+
+        <ol class="t-steps t-rise">
+          <li>
+            <h3>Add a destination.</h3>
+            <p>Your Mac, a folder, Home Assistant, a web address, or an MQTT broker.</p>
+          </li>
+          <li>
+            <h3>Pick the types.</h3>
+            <p>
+              <code>stepCount</code>, <code>sleepAnalysis</code>, <code>heartRateVariabilitySDNN</code>,
+              <code>vo2Max</code> — or everything you have.
+            </p>
+          </li>
+          <li>
+            <h3>Send a test.</h3>
+            <p>One batch, before you trust it with years of history.</p>
+          </li>
+          <li>
+            <h3>Choose a schedule.</h3>
+            <p>On arrival, hourly, daily, or manual. After that, new records go on their own.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ─── formats ──────────────────────────────────────────────────── -->
+    <section class="t-sec" aria-labelledby="t-fmt-h">
+      <div class="t-shell">
+        <div class="t-head t-rise">
+          <p class="t-eyebrow" data-n="03">What comes out</p>
+          <h2 id="t-fmt-h">Four formats. One of them <span class="t-em">loses things</span>.</h2>
+          <p class="t-note">
+            We'd rather say so than let you find out later.
+          </p>
+        </div>
+
+        <div class="t-tablewrap t-rise">
+          <table>
+            <caption>Export formats</caption>
+            <thead>
+              <tr>
+                <th scope="col">Format</th>
+                <th scope="col">Shape</th>
+                <th scope="col">Keeps</th>
+              </tr>
+            </thead>
+            <tbody>
+              {formats.map((f) => (
+                <tr>
+                  <th scope="row">{f.name}</th>
+                  <td data-label="Shape">{f.shape}</td>
+                  <td data-label="Keeps" class={f.keeps === 'no' ? 't-no' : f.keeps === 'yes' ? 't-yes' : ''}>
+                    {f.keepsLabel}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <ul class="t-after t-rise">
+          <li>CSV drops metadata and nested workout detail. A grid has nowhere to put them.</li>
+          <li>Encoding is deterministic — the same records give byte-identical output, whatever your locale or time zone.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ─── the anchor ───────────────────────────────────────────────── -->
+    <section class="t-sec t-sec--sunk" aria-labelledby="t-anc-h">
+      <div class="t-shell t-anchor-grid">
+        <div class="t-rise">
+          <p class="t-eyebrow" data-n="04">Durability</p>
+          <h2 id="t-anc-h">It can repeat. It <span class="t-em">can't skip</span>.</h2>
+          <p class="t-note" style="margin-top:1rem">
+            No date windows, no "since Tuesday". Every Health type carries its own opaque anchor
+            from HealthKit, and the anchor only moves once records are durably staged. Interrupt it
+            and you may get the same record twice — never zero times.
+          </p>
+
+          <dl class="t-facts">
+            <div>
+              <dt>safe retries</dt>
+              <dd>Content-derived IDs and an <code class="t-mono">Idempotency-Key</code>: the same record twice is still one record.</dd>
+            </div>
+            <div>
+              <dt>held to it by</dt>
+              <dd>178 XCTest tests.</dd>
+            </div>
+          </dl>
+        </div>
+
+        <figure class="t-ratchet t-rise">
+          <div class="t-ratchet-scale" aria-hidden="true">
+            <span class="t-ratchet-track"><span class="t-ratchet-mark"></span></span>
+          </div>
+          <div class="t-ratchet-legend" aria-hidden="true">
+            <span>anchor</span>
+            <span>forward only</span>
+          </div>
+          <figcaption class="t-note" style="margin-top:1rem;font-size:0.875rem">
+            The marker above holds its ground through a repeat instead of sliding back. So does the
+            one on the left edge of this page — scroll up and it stays where it reached. That is the
+            whole guarantee, drawn.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ─── read it back ─────────────────────────────────────────────── -->
+    <section class="t-sec" aria-labelledby="t-mac-h">
+      <div class="t-shell t-mac-grid">
+        <div class="t-head t-rise">
+          <p class="t-eyebrow" data-n="05">On the Mac</p>
+          <h2 id="t-mac-h">Then read it back.</h2>
+          <p class="t-note">
+            The Mac app receives your batches, keeps them in a plain SQLite file, and charts them by
+            hour, day, week or month. It watches a folder too, if that's how your files arrive.
+          </p>
+          <p class="t-note" style="margin-top:0.9rem">
+            A read-only MCP server ships inside it, so an assistant can ask about your history
+            without being able to touch it.
+          </p>
+          <p class="t-caveat">
+            Honest caveat: a cloud assistant may upload whatever it reads. That is the assistant's
+            behaviour, not Hozz's.
+          </p>
+        </div>
+
+        <figure class="t-store t-rise">
+          <figcaption class="t-store-head">
+            <svg width="13" height="14" viewBox="0 0 13 14" fill="none" aria-hidden="true">
+              <ellipse cx="6.5" cy="3" rx="5.6" ry="2.3" stroke="currentColor" stroke-width="1.1"/>
+              <path d="M.9 3v8c0 1.27 2.5 2.3 5.6 2.3s5.6-1.03 5.6-2.3V3" stroke="currentColor" stroke-width="1.1"/>
+              <path d="M.9 7c0 1.27 2.5 2.3 5.6 2.3S12.1 8.27 12.1 7" stroke="currentColor" stroke-width="1.1"/>
+            </svg>
+            hozz-received.sqlite
+          </figcaption>
+          <ul>
+            {mcpTools.map((tool) => (
+              <li>
+                {tool}
+                <em>read</em>
+              </li>
+            ))}
+          </ul>
+          <p class="t-store-foot">four MCP tools · cannot change or delete</p>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ─── close ────────────────────────────────────────────────────── -->
+    <section class="t-close" aria-labelledby="t-end-h">
+      <div class="t-shell">
+        <div class="t-rise">
+          <p class="t-eyebrow" data-n="06">Free, and staying that way</p>
+          <h2 id="t-end-h">Your history. Your disk.</h2>
+          <p class="t-note" style="margin-top:1rem">
+            Written by one developer, licensed GPL-3.0 with an App Store exception. There is no
+            paid tier to upsell you to, because there is no tier.
+          </p>
+
+          <ul class="t-nots" aria-label="Things Hozz does not have">
+            <li>no account</li>
+            <li>no subscription</li>
+            <li>no analytics</li>
+            <li>no ads</li>
+            <li>no hosted relay</li>
+            <li>no default destination</li>
+          </ul>
+
+          <div class="t-acts">
+            <a class="t-btn" href={GITHUB_URL} rel="noopener">Get Hozz on GitHub</a>
+            <a class="t-btn t-btn--ghost" href={DONATE_URL} rel="noopener">Sponsor the work</a>
+          </div>
+        </div>
+
+        <div class="t-foot t-mono">
+          <span>Hozz · Apple Health export · early alpha</span>
+          <span><a href={LICENSE_URL} rel="noopener">GPL-3.0 with App Store exception</a></span>
+        </div>
+      </div>
+    </section>
+
+    <script type="application/ld+json" set:html={JSON.stringify(faq)} />
+    <script type="application/ld+json" set:html={JSON.stringify(app)} />
+  </main>
+
+  <script is:inline>
+    (() => {
+      const root = document.documentElement;
+      const still = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+      /* Reveals — only armed when JS runs, so no-JS keeps every word. */
+      if (!still.matches && 'IntersectionObserver' in window) {
+        root.classList.add('t-js');
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const e of entries) {
+              if (e.isIntersecting) {
+                e.target.classList.add('is-in');
+                io.unobserve(e.target);
+              }
+            }
+          },
+          { rootMargin: '0px 0px -12% 0px', threshold: 0.06 },
+        );
+        document.querySelectorAll('.t-rise').forEach((el) => io.observe(el));
+      }
+
+      /* The ratchet. Progress is clamped to its own high-water mark, so the
+         marker advances and never retreats — the anchor, made physical. */
+      const rail = document.querySelector('.t-rail');
+      const pip = document.querySelector('.t-pip');
+      if (!rail || !pip) return;
+
+      let peak = 0;
+      let queued = false;
+
+      const place = () => {
+        queued = false;
+        const span = document.documentElement.scrollHeight - window.innerHeight;
+        const p = span > 0 ? window.scrollY / span : 0;
+        peak = Math.min(1, Math.max(peak, p));
+        const travel = rail.clientHeight - pip.offsetHeight - 4;
+        rail.style.setProperty('--pip-y', (2 + peak * travel).toFixed(1) + 'px');
+      };
+
+      const onScroll = () => {
+        if (!queued) {
+          queued = true;
+          requestAnimationFrame(place);
+        }
+      };
+
+      place();
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', place);
+    })();
+  </script>
+</SketchLayout>

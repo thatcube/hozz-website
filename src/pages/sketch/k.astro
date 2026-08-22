@@ -3,13 +3,14 @@
  * Sketch K — "Cut sheet".
  *
  * Subject: what you actually get out, and the honest admission that CSV loses
- * information. The idea is that the comparison is not illustrated, it is built:
- * the CSV card is genuinely shorter than the NDJSON and JSON cards because it
- * carries fewer field groups. Height is the chart.
+ * information. The comparison is not illustrated, it is built: the CSV card is
+ * genuinely shorter than the NDJSON and JSON cards because it carries fewer
+ * field groups. Height is the chart — and on scroll the three cards wipe open
+ * at the same speed, so CSV visibly finishes first.
  */
 import SketchLayout from '../../layouts/SketchLayout.astro';
 import '../../styles/sketch-k.css';
-import { GITHUB_URL, LICENSE_URL } from '../../data/site';
+import { GITHUB_URL, DONATE_URL, LICENSE_URL, SITE } from '../../data/site';
 
 type Field = { name: string; note: string };
 
@@ -26,19 +27,98 @@ const fields: Field[] = [
 ];
 
 const cutInCsv = new Set(['metadata', 'workout · activities', 'workout · events']);
+
+const destinations = [
+  { name: 'This Mac', note: 'NDJSON over your own network, token auth', icon: 'mac' },
+  { name: 'Folder', note: 'iCloud Drive, Dropbox, OneDrive, SMB, on-device', icon: 'folder' },
+  { name: 'Home Assistant', note: 'Metrics JSON to your webhook', icon: 'house' },
+  { name: 'Web address', note: 'NDJSON, JSON or CSV, POSTed to your endpoint', icon: 'globe' },
+  { name: 'MQTT', note: 'Retained messages, QoS 0', icon: 'cast' },
+];
+
+const steps = [
+  'Install Hozz and tick the Health types you want. iOS asks, not Hozz.',
+  'Add a destination — a folder, your Mac, or your own server.',
+  'Test it once. Hozz shows you what actually came back.',
+  'Export now, or leave a schedule running: on arrival, hourly, daily.',
+];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'SoftwareApplication',
+      name: 'Hozz',
+      applicationCategory: 'HealthApplication',
+      operatingSystem: 'iOS, macOS',
+      description:
+        'Free, open-source iPhone app with a companion Mac app that exports Apple Health data to destinations you own — a folder, your Mac, Home Assistant, your own web endpoint or an MQTT broker — as NDJSON, JSON, CSV or Metrics JSON.',
+      url: SITE,
+      author: { '@type': 'Person', name: 'Brandon Moore' },
+      license: LICENSE_URL,
+      codeRepository: GITHUB_URL,
+      isAccessibleForFree: true,
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      softwareVersion: 'early alpha',
+      featureList: [
+        'Export Apple Health data as NDJSON, JSON, CSV or Metrics JSON',
+        'Send to a folder, a Mac on your network, Home Assistant, a web endpoint or MQTT',
+        'Automatic export on a schedule, with a separate cursor per destination',
+        'Resumable manual export from the last durable checkpoint',
+        'Deletions carried as tombstones',
+      ],
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'How do I export my Apple Health data?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text:
+              'Install Hozz on your iPhone and allow the Health types you want it to read — iOS asks, not the app. Add a destination: a folder in the Files app, a Mac on your network, Home Assistant, your own web address, or an MQTT broker. Test the destination once to see what came back. Then export immediately, or leave a schedule running so new records go out on arrival, hourly or daily. Nothing leaves the phone until you add a destination and confirm it.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Which Apple Health export format keeps everything?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text:
+              'NDJSON and JSON carry every field Hozz encodes, including metadata and nested workout activities and events. CSV is explicitly lossy: a spreadsheet grid has no column shaped like a nested dictionary, so metadata and nested workout detail are dropped. NDJSON is the default and is streamable and resumable.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Does Hozz upload my health data anywhere?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text:
+              'No. There is no account, no analytics, no hosted relay and no default destination. Data goes only to destinations you add yourself, and nothing leaves the iPhone until you confirm one.',
+          },
+        },
+      ],
+    },
+  ],
+};
 ---
 
 <SketchLayout title="Sketch K — Cut sheet · Hozz" letter="K" name="Cut sheet">
   <main class="k">
+    <script is:inline>
+      document.documentElement.classList.add('k-js');
+    </script>
+
     <div class="k-inner">
       <header class="k-strip">
         <b>hozz</b>
-        <span>what comes out · export formats</span>
+        <span>apple health → files you own</span>
         <span class="k-alpha"><i aria-hidden="true"></i> early alpha · partial coverage</span>
       </header>
 
       <section class="k-hero" aria-labelledby="k-title">
-        <p class="k-eyebrow">The artefact, not the promise</p>
+        <p class="k-eyebrow">Free · open source · no account</p>
         <h1 class="k-h1" id="k-title">
           one record.<br />
           three containers.<br />
@@ -46,57 +126,125 @@ const cutInCsv = new Set(['metadata', 'workout · activities', 'workout · event
         </h1>
 
         <div class="k-hero-row">
-          <p class="k-lede">
-            Hozz writes Apple Health data to files you own — nothing leaves the iPhone until you add
-            a destination and confirm it. So the only question left is what actually lands on disk.{' '}
-            <strong>Including the format that throws part of it away.</strong>
-          </p>
-
-          <figure class="k-artefact">
-          <div class="k-artefact-head">
-            <span>export.ndjson · line 1 of many</span>
-            <span>example</span>
+          <div class="k-hero-say">
+            <p class="k-lede">
+              A free iPhone app that copies your Apple Health data somewhere you own. Nothing leaves
+              the phone until you add a destination and confirm it.{' '}
+              <strong>The only question left is what lands on disk.</strong>
+            </p>
+            <p class="k-cta">
+              <a class="k-btn" href={GITHUB_URL} rel="noopener">Get Hozz <span aria-hidden="true">↗</span></a>
+              <a class="k-btn k-btn--ghost" href="#k-formats">See the formats</a>
+            </p>
+            <p class="k-cta-note">GPL-3.0 · iPhone + Mac · nothing to sign up for</p>
           </div>
-          <pre><code>&#123;<span class="k-key">"type"</span>: <span class="k-type">"heartRate"</span>, <span class="k-key">"value"</span>: <span class="k-num">58</span>, <span class="k-key">"unit"</span>: <span class="k-str">"count/min"</span>, <span class="k-key">"startDate"</span>: <span class="k-str">"2026-03-11T07:02:14Z"</span>, <span class="k-key">"endDate"</span>: <span class="k-str">"2026-03-11T07:02:14Z"</span>, <span class="k-key">"sourceName"</span>: <span class="k-str">"Apple Watch"</span>, <span class="k-key">"metadata"</span>: &#123;<span class="k-key">"HKMetadataKeyHeartRateMotionContext"</span>: <span class="k-num">1</span>&#125;&#125;</code></pre>
-          <figcaption>
-            One line, one record, newline-delimited. The values are an illustration; the field and
-            type names are HealthKit's own. Read it with <code>jq</code>, a spreadsheet, or your own
-            twenty-line script — that is the whole point of the format.
-          </figcaption>
+
+          <figure class="k-artefact" data-reveal>
+            <div class="k-artefact-head">
+              <span>export.ndjson · line 1 of many</span>
+              <span>example</span>
+            </div>
+            <pre><code>&#123;<span class="k-key">"type"</span>: <span class="k-type">"heartRate"</span>, <span class="k-key">"value"</span>: <span class="k-num">58</span>, <span class="k-key">"unit"</span>: <span class="k-str">"count/min"</span>, <span class="k-key">"startDate"</span>: <span class="k-str">"2026-03-11T07:02:14Z"</span>, <span class="k-key">"endDate"</span>: <span class="k-str">"2026-03-11T07:02:14Z"</span>, <span class="k-key">"sourceName"</span>: <span class="k-str">"Apple Watch"</span>, <span class="k-key">"metadata"</span>: &#123;<span class="k-key">"HKMetadataKeyHeartRateMotionContext"</span>: <span class="k-num">1</span>&#125;&#125;</code></pre>
+            <figcaption>
+              One line, one record. The values are an example; the field names are HealthKit's own.
+              Read it with <code>jq</code>, a spreadsheet, or twenty lines of your own.
+            </figcaption>
           </figure>
         </div>
       </section>
 
-      <section aria-labelledby="k-sheet">
+      <section class="k-where" aria-labelledby="k-where-title">
+        <div class="k-where-say">
+          <h2 class="k-h2" id="k-where-title">five places to send it.<br />every one of them <em>yours.</em></h2>
+          <p class="k-sheet-note">No relay. No default. No server of mine.</p>
+          <p class="k-sheet-note">
+            Each destination keeps its own cursor, so one broken endpoint cannot block or skip the
+            rest. Retries are safe: content-derived IDs, plus an <code>Idempotency-Key</code>.
+          </p>
+        </div>
+
+        <div class="k-dest-wrap">
+          <figure class="k-hub" data-reveal>
+            <svg viewBox="0 0 148 84" role="img" aria-label="Diagram: a batch of Health records leaving the iPhone." class="k-hub-svg">
+              <rect x="0.7" y="0.7" width="146.6" height="82.6" rx="13" />
+              <g class="k-hub-rows">
+                <circle cx="19" cy="24" r="2.1" />
+                <path d="M28 24h74" />
+                <circle cx="19" cy="38" r="2.1" />
+                <path d="M28 38h94" />
+                <circle cx="19" cy="52" r="2.1" />
+                <path d="M28 52h58" />
+                <circle cx="19" cy="66" r="2.1" />
+                <path d="M28 66h84" />
+              </g>
+            </svg>
+            <figcaption>your iPhone · new records only</figcaption>
+          </figure>
+
+          <div class="k-dest-run">
+            <span class="k-hub-wire" aria-hidden="true"></span>
+            <span class="k-flow" aria-hidden="true"></span>
+            <span class="k-flow k-flow--b" aria-hidden="true"></span>
+            <span class="k-flow k-flow--c" aria-hidden="true"></span>
+            <ul class="k-dest">
+            {destinations.map((d) => (
+              <li data-reveal>
+                <span class="k-dest-icon" aria-hidden="true">
+                  {d.icon === 'mac' && (
+                    <svg viewBox="0 0 20 20"><rect x="2.6" y="4.2" width="14.8" height="9.6" rx="1.6" /><path d="M6.6 17h6.8M10 13.8V17" /></svg>
+                  )}
+                  {d.icon === 'folder' && (
+                    <svg viewBox="0 0 20 20"><path d="M2.6 6.3a1.6 1.6 0 0 1 1.6-1.6h3.2l1.5 1.9h7.1A1.6 1.6 0 0 1 17.4 8.2v6.1a1.6 1.6 0 0 1-1.6 1.6H4.2a1.6 1.6 0 0 1-1.6-1.6z" /></svg>
+                  )}
+                  {d.icon === 'house' && (
+                    <svg viewBox="0 0 20 20"><path d="M2.9 9.3 10 3.4l7.1 5.9" /><path d="M4.8 10.7v5.1a.9.9 0 0 0 .9.9h8.6a.9.9 0 0 0 .9-.9v-5.1" /></svg>
+                  )}
+                  {d.icon === 'globe' && (
+                    <svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="6.9" /><path d="M3.1 10h13.8" /><ellipse cx="10" cy="10" rx="3.1" ry="6.9" /></svg>
+                  )}
+                  {d.icon === 'cast' && (
+                    <svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="1.7" /><path d="M6.4 6.4a5.1 5.1 0 0 0 0 7.2M13.6 6.4a5.1 5.1 0 0 1 0 7.2" /><path d="M3.9 3.9a8.6 8.6 0 0 0 0 12.2M16.1 3.9a8.6 8.6 0 0 1 0 12.2" /></svg>
+                  )}
+                </span>
+                <b>{d.name}</b>
+                <i>{d.note}</i>
+              </li>
+            ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="k-formats" aria-labelledby="k-sheet">
         <div class="k-sheet-head">
           <h2 class="k-h2" id="k-sheet">a grid has <em>columns.</em><br />three of these are not columns.</h2>
           <p class="k-sheet-note">
-            The field groups below are named the way HealthKit names them. NDJSON and JSON hold all
-            nine. CSV is a spreadsheet, and a spreadsheet has no cell shaped like a nested
-            dictionary.
+            Named the way HealthKit names them. NDJSON and JSON hold all nine. A spreadsheet has no
+            cell shaped like a nested dictionary.
           </p>
         </div>
 
         <div class="k-cols">
+          <div class="k-gauge" aria-hidden="true">
+            <span class="k-gauge-full"></span>
+            <div class="k-gauge-bar"><i style="--h: 118px"></i><b>ndjson</b><u>9/9</u></div>
+            <div class="k-gauge-bar"><i style="--h: 118px"></i><b>json</b><u>9/9</u></div>
+            <div class="k-gauge-bar k-gauge-bar--cut"><i style="--h: 78px"></i><b>csv</b><u>6/9</u></div>
+          </div>
+
           <div class="k-col-wrap"><article class="k-col k-col--default">
             <div class="k-col-head">
               <h3>ndjson</h3>
               <span class="k-ext">.zip → .ndjson</span>
             </div>
-            <p class="k-col-sub">
-              One record per line. Streamable, resumable, and lossless for the fields Hozz currently
-              encodes.
-            </p>
+            <p class="k-col-sub">One record per line. Streamable, resumable, lossless.</p>
             <span class="k-badge">Default</span>
             <ul class="k-fields">
               {fields.map((f) => (
                 <li><b>{f.name}</b><i>{f.note}</i></li>
               ))}
             </ul>
-            <p class="k-col-foot">
-              Also available raw and un-zipped, as a plain <code>.ndjson</code> you can pipe straight
-              into something else.
-            </p>
+            <p class="k-col-foot">Also raw and un-zipped, ready to pipe into something else.</p>
           </article></div>
 
           <div class="k-col-wrap"><article class="k-col">
@@ -104,19 +252,14 @@ const cutInCsv = new Set(['metadata', 'workout · activities', 'workout · event
               <h3>json</h3>
               <span class="k-ext">.zip → .json</span>
             </div>
-            <p class="k-col-sub">
-              A single JSON array. Convenient for smaller exports and for tools that expect one JSON
-              value rather than a stream.
-            </p>
+            <p class="k-col-sub">One array. For tools that want a single JSON value.</p>
             <span class="k-badge k-badge--ghost">Same facts</span>
             <ul class="k-fields">
               {fields.map((f) => (
                 <li><b>{f.name}</b><i>{f.note}</i></li>
               ))}
             </ul>
-            <p class="k-col-foot">
-              Identical content to NDJSON, wrapped in brackets instead of newlines.
-            </p>
+            <p class="k-col-foot">Identical content to NDJSON — brackets instead of newlines.</p>
           </article></div>
 
           <div class="k-col-wrap"><article class="k-col k-col--cut">
@@ -124,10 +267,7 @@ const cutInCsv = new Set(['metadata', 'workout · activities', 'workout · event
               <h3>csv</h3>
               <span class="k-ext">.zip → many .csv</span>
             </div>
-            <p class="k-col-sub">
-              One file per Health type, plus deletions and an export log. Opens in a spreadsheet
-              without you writing anything.
-            </p>
+            <p class="k-col-sub">One file per Health type. Opens in a spreadsheet with no work.</p>
             <span class="k-badge k-badge--ghost">Lossy — on purpose</span>
             <ul class="k-fields">
               {fields.map((f) =>
@@ -144,37 +284,48 @@ const cutInCsv = new Set(['metadata', 'workout · activities', 'workout · event
           </article></div>
         </div>
 
-        <div class="k-measure">
+        <div class="k-measure" data-reveal data-reveal-late>
           <b>Read the height ↑</b>
           <p>
-            <span class="k-strong">This card is cut off, not finished, and it ends before the other
-            two.</span>{' '}<code>metadata</code>, <code>workout.activities</code> and{' '}
-            <code>workout.events</code> are drawn at the size of the hole they leave — six of nine
-            groups carried. Most products let you find that out months later, in a file you had
-            already trusted. Pick CSV knowing the price, or pick NDJSON and lose nothing.
+            <span class="k-strong">CSV ends early because it carries less.</span> Six of nine groups.
+            Pick it knowing the price, or pick NDJSON and lose nothing.
           </p>
         </div>
       </section>
 
-      <section class="k-notes" aria-label="Three things the format does on your behalf">
-        <article class="k-note">
+      <section class="k-how" aria-labelledby="k-how-title">
+        <div class="k-how-say">
+          <h2 class="k-h2" id="k-how-title">how do I export my<br />apple health data?</h2>
+          <p class="k-sheet-note">Four steps. Then it keeps itself up to date.</p>
+        </div>
+        <ol class="k-steps">
+          {steps.map((s) => (
+            <li data-reveal>{s}</li>
+          ))}
+        </ol>
+        <p class="k-how-foot">
+          Manual exports resume from the last durable checkpoint — kill the app, reboot, come back.
+          Interruption can repeat work; it cannot skip records, and 178 tests keep it that way.
+        </p>
+      </section>
+
+      <section class="k-notes" aria-labelledby="k-notes-title">
+        <h2 class="k-h2 k-notes-title" id="k-notes-title">three things the format does <em>for you.</em></h2>
+
+        <article class="k-note" data-reveal>
           <h3>deletions <em>arrive too</em></h3>
-          <p>
-            If you removed a record in Health, the export says so — a tombstone travels alongside the
-            data instead of the record silently not being there.
-          </p>
+          <p>Delete a record in Health and the export says so. A tombstone travels with the data.</p>
           <div class="k-tomb">
             &#123;<span class="k-key">"uuid"</span>: "…", <span class="k-key">"deleted"</span>:
             <span class="k-true"> true</span>&#125;
           </div>
         </article>
 
-        <article class="k-note">
+        <article class="k-note" data-reveal>
           <h3>the spool is the <em>real</em> format</h3>
           <p>
-            Every manual export is assembled from one canonical NDJSON spool, because a spool streams,
-            survives interruption, and can be packaged without recompressing. The format you picked is
-            produced from it at the end.
+            Every export is built from one canonical NDJSON spool. It streams, survives interruption,
+            and packages without recompressing.
           </p>
           <div class="k-spool" aria-hidden="true">
             <span>&#123;"type":"stepCount","value":812,"startDate":"2026-03-11T06:00:00Z"&#125;</span>
@@ -185,12 +336,11 @@ const cutInCsv = new Set(['metadata', 'workout · activities', 'workout · event
           </div>
         </article>
 
-        <article class="k-note">
+        <article class="k-note" data-reveal>
           <h3>the same bytes, <em>twice</em></h3>
           <p>
-            Encoding is deterministic. The same records produce byte-identical output regardless of
-            your locale or time zone, so two exports can be diffed against each other and the
-            difference means something.
+            Deterministic encoding. Same records, byte-identical output, whatever your locale or time
+            zone — so a diff means something.
           </p>
           <div class="k-spool k-spool--diff" aria-hidden="true">
             <span>$ diff monday.ndjson monday-again.ndjson</span>
@@ -199,17 +349,24 @@ const cutInCsv = new Set(['metadata', 'workout · activities', 'workout · event
         </article>
       </section>
 
+      <section class="k-close" aria-labelledby="k-close-title">
+        <h2 class="k-h2 k-close-h" id="k-close-title">your health history,<br />in a file <em>you own.</em></h2>
+        <p class="k-close-p">Free forever. No account, no analytics, nothing in the middle.</p>
+        <p class="k-cta">
+          <a class="k-btn" href={GITHUB_URL} rel="noopener">Get Hozz <span aria-hidden="true">↗</span></a>
+          <a class="k-btn k-btn--ghost" href={DONATE_URL} rel="noopener">Sponsor the work <span aria-hidden="true">↗</span></a>
+        </p>
+      </section>
+
       <footer class="k-foot">
         <div>
           <p class="k-foot-lead">
-            Automatic destinations choose a delivery format — NDJSON, JSON, CSV, or <em>Metrics
-            JSON</em>, which groups points by metric name for Home Assistant, MQTT and dashboards.
+            Automatic destinations also speak <em>Metrics JSON</em> — points grouped by metric name,
+            for Home Assistant, MQTT and dashboards.
           </p>
           <p style="margin-top: 0.9rem">
-            Exported today: quantity samples, category samples, workout records, historical
-            deletions. Catalogued but <strong>not</strong> claimed as coverage: correlations, routes,
-            ECG, audiograms, series, characteristics, documents, scored assessments, clinical
-            records. It works; it is not finished.
+            Exported today: quantity samples, category samples, workouts, deletions. Not yet claimed:
+            ECG, routes, audiograms, series, clinical records. It works; it is not finished.
           </p>
         </div>
         <p class="k-meta">
@@ -218,9 +375,79 @@ const cutInCsv = new Set(['metadata', 'workout · activities', 'workout · event
           No account · no analytics · no hosted relay<br />
           iPhone app with a companion Mac app<br />
           By Brandon Moore<br />
-          <a class="k-link" href={GITHUB_URL} rel="noopener">Read the exporter yourself ↗</a>
+          <a class="k-link" href={GITHUB_URL} rel="noopener">Read the exporter source on GitHub ↗</a>
         </p>
       </footer>
     </div>
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+    <script is:inline>
+      (function () {
+        var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+        function reveal() {
+          var nodes = document.querySelectorAll('.k [data-reveal]');
+          if (reduce.matches || !('IntersectionObserver' in window)) {
+            nodes.forEach(function (n) {
+              n.classList.add('is-in');
+            });
+            return;
+          }
+          var io = new IntersectionObserver(
+            function (entries) {
+              entries.forEach(function (e) {
+                if (!e.isIntersecting) return;
+                e.target.classList.add('is-in');
+                io.unobserve(e.target);
+              });
+            },
+            { rootMargin: '0px 0px -8% 0px', threshold: 0.12 },
+          );
+          nodes.forEach(function (n, i) {
+            n.style.setProperty('--k-i', String(i % 5));
+            io.observe(n);
+          });
+        }
+
+        /* The three cards wipe open at one constant speed, so the short one
+           finishes first. The difference in height becomes a difference in
+           time — which is the whole argument of the page. */
+        function wipe() {
+          var cols = document.querySelector('.k-cols');
+          if (!cols) return;
+          var wraps = Array.prototype.slice.call(cols.querySelectorAll('.k-col-wrap'));
+          if (reduce.matches || !('IntersectionObserver' in window)) return;
+          cols.classList.add('is-armed');
+          var io = new IntersectionObserver(
+            function (entries) {
+              entries.forEach(function (e) {
+                if (!e.isIntersecting) return;
+                io.disconnect();
+                var gauge = cols.querySelector('.k-gauge');
+                if (gauge) gauge.classList.add('is-in');
+                wraps.forEach(function (w) {
+                  var h = w.getBoundingClientRect().height;
+                  w.style.setProperty('--k-draw', (h / 760).toFixed(3) + 's');
+                  w.addEventListener(
+                    'animationend',
+                    function () {
+                      w.classList.add('is-done');
+                    },
+                    { once: true },
+                  );
+                  w.classList.add('is-in');
+                });
+              });
+            },
+            { threshold: 0.06 },
+          );
+          io.observe(cols);
+        }
+
+        reveal();
+        wipe();
+      })();
+    </script>
   </main>
 </SketchLayout>

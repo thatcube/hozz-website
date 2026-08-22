@@ -143,7 +143,7 @@
   /* --- Space ------------------------------------------------------------- */
   --maxw: 1140px;
   --gutter: clamp(1.25rem, 4.5vw, 3.25rem);
-  --section-y: clamp(4.5rem, 9vw, 9rem);
+  --section-y: clamp(4rem, 7.5vw, 7.5rem);
 
   --r-lg: 30px;
   --r-md: 20px;
@@ -253,6 +253,44 @@ ol {
   color: var(--paper);
 }
 
+/* Visually hidden, still read aloud — used for table captions that would be
+   noise on screen but are structure to a screen reader. */
+.sr-only {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Scroll reveals — a short fade and a small rise as a block enters. Hidden only
+   when scripting is on, so a browser without JS gets the whole page as normal,
+   and switched off entirely when the visitor asks for less motion.
+   -------------------------------------------------------------------------- */
+
+.js .reveal {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
+.js .reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
 /* --------------------------------------------------------------------------
    Layout primitives
    -------------------------------------------------------------------------- */
@@ -316,6 +354,12 @@ ol {
 .em {
   font-style: italic;
   font-weight: 400;
+  /* A touch of ink so every category hue clears 3:1 at display size without
+     losing which category it is. */
+  color: color-mix(in oklab, var(--tint) 84%, var(--ink));
+}
+
+.section--ink .em {
   color: var(--tint);
 }
 

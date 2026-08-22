@@ -1,0 +1,477 @@
+---
+import SketchLayout from '../../layouts/SketchLayout.astro';
+import '../../styles/sketch-w.css';
+
+/* ---------------------------------------------------------------------------
+   The Day Dial.
+   A 24-hour ring. A hand ticks one hour per second. As it passes the hour a
+   destination is scheduled for, that destination's record flies outward along
+   a dotted spoke. Geometry is computed here so the SVG and the HTML labels
+   agree exactly.
+--------------------------------------------------------------------------- */
+
+const C = 300; // centre, in viewBox units (0 0 600 600)
+const R_HUB = 62;
+const R_RING = 140;
+const R_TICK_MINOR = 151;
+const R_TICK_MAJOR = 163;
+const R_NUMERAL = 183;
+const R_SPOKE_IN = 162;
+const R_SPOKE_OUT = 224;
+const R_GATE = 232;
+const R_FLY_IN = 150;
+const R_LABEL = 304;
+
+const polar = (hour: number, radius: number) => {
+  const rad = ((hour * 15 - 90) * Math.PI) / 180;
+  return { x: C + radius * Math.cos(rad), y: C + radius * Math.sin(rad), dx: Math.cos(rad), dy: Math.sin(rad) };
+};
+
+const ticks = Array.from({ length: 24 }, (_, hour) => {
+  const major = hour % 6 === 0;
+  const a = polar(hour, R_RING);
+  const b = polar(hour, major ? R_TICK_MAJOR : R_TICK_MINOR);
+  return { hour, major, x1: a.x, y1: a.y, x2: b.x, y2: b.y };
+});
+
+const numerals = [0, 6, 12, 18].map((hour) => {
+  const p = polar(hour, R_NUMERAL);
+  return { hour, x: p.x, y: p.y, label: String(hour).padStart(2, '0') };
+});
+
+const destinations = [
+  {
+    hour: 2,
+    name: 'This Mac',
+    schedule: 'on arrival',
+    detail: 'NDJSON straight over your local network.',
+    fact: 'Bonjour _hozz._tcp · port 54330 · token auth',
+  },
+  {
+    hour: 7,
+    name: 'A folder',
+    schedule: 'hourly',
+    detail: 'Anywhere the Files picker can reach.',
+    fact: 'iCloud Drive · Dropbox · OneDrive · Google Drive · SMB · on-device',
+  },
+  {
+    hour: 13,
+    name: 'Home Assistant',
+    schedule: 'hourly',
+    detail: 'Metrics JSON to a webhook you already run.',
+    fact: 'REST / webhook',
+  },
+  {
+    hour: 17,
+    name: 'Your own URL',
+    schedule: 'daily',
+    detail: 'A POST to your endpoint, in the shape you pick.',
+    fact: 'NDJSON · JSON · CSV · Metrics JSON',
+  },
+  {
+    hour: 21,
+    name: 'MQTT',
+    schedule: 'manual',
+    detail: 'Published to your broker and left there.',
+    fact: 'MQTT 3.1.1 · mqtt:// or mqtts:// · retained · QoS 0',
+  },
+];
+
+const spokes = destinations.map((d, i) => {
+  const angle = d.hour * 15;
+  const label = polar(d.hour, R_LABEL);
+  // Percent of the figure box: the SVG occupies the middle 62%.
+  const scale = 0.62;
+  return {
+    ...d,
+    index: i + 1,
+    angle,
+    delay: d.hour,
+    labelLeft: 50 + ((label.x - C) / 600) * 100 * scale,
+    labelTop: 50 + ((label.y - C) / 600) * 100 * scale,
+    align: label.dx > 0.2 ? 'right' : label.dx < -0.2 ? 'left' : 'centre',
+  };
+});
+
+const types = [
+  ['heartRate', 'heart'],
+  ['stepCount', 'activity'],
+  ['sleepAnalysis', 'sleep'],
+  ['activeEnergyBurned', 'activity'],
+  ['heartRateVariabilitySDNN', 'heart'],
+  ['oxygenSaturation', 'respiratory'],
+  ['bodyMass', 'body'],
+  ['dietaryProtein', 'nutrition'],
+  ['walkingSpeed', 'mobility'],
+  ['mindfulSession', 'mind'],
+  ['vo2Max', 'activity'],
+  ['electrocardiogram', 'heart'],
+  ['respiratoryRate', 'respiratory'],
+  ['restingHeartRate', 'heart'],
+  ['appleStandTime', 'activity'],
+];
+
+const steps = [
+  {
+    title: 'Install Hozz on your iPhone',
+    body: 'Free, open source, no account to make.',
+  },
+  {
+    title: 'Add a destination you own',
+    body: 'Your Mac, a folder, a URL, Home Assistant or an MQTT broker.',
+  },
+  {
+    title: 'Pick the Health types and a schedule',
+    body: 'On arrival, hourly, daily or manual. Send a test batch first.',
+  },
+  {
+    title: 'Confirm, then forget about it',
+    body: 'New records go out on their own. Nothing moves before you confirm.',
+  },
+];
+
+const formats = [
+  ['NDJSON', 'The default. One record per line, streamable, lossless for encoded fields.'],
+  ['JSON', 'When the thing at the other end wants a whole document.'],
+  ['CSV', 'Spreadsheets. Explicitly lossy — metadata and nested workout detail do not fit a grid.'],
+  ['Metrics JSON', 'Dashboards. This is what Home Assistant receives.'],
+];
+
+const faq = [
+  {
+    q: 'How do I export my Apple Health data?',
+    a: 'Install Hozz on your iPhone, add a destination you control — your Mac, a folder, a web address, Home Assistant or an MQTT broker — choose which Health types to include and a schedule, send a test batch, then confirm. From then on new records are exported automatically. Nothing leaves the phone until you add a destination and confirm it.',
+  },
+  {
+    q: 'What format does Hozz export Apple Health data in?',
+    a: 'NDJSON by default, plus JSON, CSV and Metrics JSON. CSV is explicitly lossy: metadata and nested workout detail do not fit a grid. Encoding is deterministic, so the same records produce byte-identical output regardless of locale or time zone.',
+  },
+  {
+    q: 'Does Hozz send my health data to a server it owns?',
+    a: 'No. There is no Hozz account, no hosted relay and no default destination. Every destination is one you add yourself, and nothing is sent until you confirm it.',
+  },
+  {
+    q: 'Can an export miss records if it is interrupted?',
+    a: 'No. Hozz keeps a per-type opaque anchor from HKAnchoredObjectQuery and only advances it once records are durably staged. An interruption can repeat work, but it cannot skip records. Retries are safe because every record carries a content-derived id and an Idempotency-Key.',
+  },
+];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'SoftwareApplication',
+      name: 'Hozz',
+      applicationCategory: 'HealthApplication',
+      operatingSystem: 'iOS, macOS',
+      description:
+        'Hozz is a free, open-source iPhone and Mac app that exports Apple Health data to destinations you own: a Mac on your local network, a folder, Home Assistant, your own web address or an MQTT broker.',
+      license: 'https://www.gnu.org/licenses/gpl-3.0.html',
+      isAccessibleForFree: true,
+      author: { '@type': 'Person', name: 'Brandon Moore' },
+      codeRepository: 'https://github.com/thatcube/hozz',
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: faq.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  ],
+};
+---
+
+<SketchLayout title="Sketch W — Day Dial · Hozz" letter="W" name="Day Dial">
+  <noscript>
+    <style is:inline>.w-reveal { opacity: 1; transform: none; }</style>
+  </noscript>
+
+  <a class="w-skip" href="#main">Skip to content</a>
+
+  <header class="w-nav">
+    <a class="w-mark" href="#top" aria-label="Hozz — top of page">
+      <span class="w-mark-dial" aria-hidden="true"></span>
+      Hozz
+    </a>
+    <nav class="w-nav-links" aria-label="Sections">
+      <a href="#how">How it works</a>
+      <a href="#where">Destinations</a>
+      <a href="#honest">Limits</a>
+    </nav>
+    <a class="w-pill w-pill-ghost" href="https://github.com/thatcube/hozz">Source <span aria-hidden="true">↗</span></a>
+  </header>
+
+  <main id="main">
+    <section class="w-hero" id="top">
+      <div class="w-hero-copy w-reveal">
+        <p class="w-eyebrow"><span class="w-eyebrow-tick" aria-hidden="true"></span>Early alpha · Free · Open source</p>
+        <h1>Get your Apple Health data <em>out</em>.</h1>
+        <p class="w-lede">
+          Hozz copies new records to somewhere you own — your Mac, a folder, your own server — and keeps
+          doing it, hour after hour. No account. No cloud in the middle.
+        </p>
+        <div class="w-actions">
+          <a class="w-pill w-pill-solid" href="https://github.com/thatcube/hozz">Read the source <span aria-hidden="true">↗</span></a>
+          <a class="w-pill w-pill-ghost" href="#how">How it works</a>
+        </div>
+        <p class="w-hero-fact">iPhone + Mac · GPL-3.0 · nothing leaves until you say so</p>
+      </div>
+
+      <figure class="w-dial w-reveal" style="--reveal-delay: 90ms">
+        <div class="w-dial-box">
+          <svg class="w-dial-svg" viewBox="0 0 600 600" role="img" aria-hidden="true" focusable="false">
+            <circle class="w-own-ring" cx="300" cy="300" r={R_GATE} />
+            <circle class="w-hub" cx="300" cy="300" r={R_HUB} />
+            <circle class="w-hour-ring" cx="300" cy="300" r={R_RING} />
+            <circle class="w-day-arc" cx="300" cy="300" r={R_RING} />
+
+            {ticks.map((t) => (
+              <line class={t.major ? 'w-tick w-tick-major' : 'w-tick'} x1={t.x1} y1={t.y1} x2={t.x2} y2={t.y2} />
+            ))}
+
+            {numerals.map((n) => (
+              <text class="w-numeral" x={n.x} y={n.y} text-anchor="middle" dominant-baseline="central">{n.label}</text>
+            ))}
+
+            <text class="w-hub-line w-hub-line-1" x="300" y="290" text-anchor="middle">Apple Health</text>
+            <text class="w-hub-line w-hub-line-2" x="300" y="312" text-anchor="middle">on your iPhone</text>
+
+            {spokes.map((s) => (
+              <g class="w-spoke" transform={`rotate(${s.angle} 300 300)`}>
+                <line class="w-spoke-line" x1={300} y1={300 - R_SPOKE_IN} x2={300} y2={300 - R_SPOKE_OUT} />
+                <circle class="w-gate" cx="300" cy={300 - R_GATE} r="7" style={`--delay: ${s.delay}s`} />
+                <circle class="w-flyer" cx="300" cy={300 - R_FLY_IN} r="4" style={`--delay: ${s.delay}s`} />
+              </g>
+            ))}
+
+            <g class="w-hand-group">
+              <line class="w-hand" x1="300" y1="228" x2="300" y2="172" />
+              <circle class="w-hand-tip" cx="300" cy="166" r="4.5" />
+            </g>
+          </svg>
+
+          <ul class="w-dial-labels">
+            {spokes.map((s) => (
+              <li
+                class={`w-dial-label w-align-${s.align}`}
+                style={`left: ${s.labelLeft}%; top: ${s.labelTop}%`}
+              >
+                <b>{s.name}</b>
+                <span>{s.schedule}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <figcaption>
+          One day, from the inside. Every destination keeps its own schedule — and its own place in
+          the queue.
+        </figcaption>
+      </figure>
+    </section>
+
+    <hr class="w-ruler" aria-hidden="true" />
+
+    <section class="w-band" id="what">
+      <h2 class="w-h2 w-reveal">What it actually does</h2>
+      <ul class="w-grid-3">
+        <li class="w-reveal">
+          <span class="w-num" aria-hidden="true">01</span>
+          <h3>Sends new records on its own</h3>
+          <p>Pick the Health types. Pick a schedule — on arrival, hourly, daily or manual. Test it before you trust it.</p>
+        </li>
+        <li class="w-reveal" style="--reveal-delay: 70ms">
+          <span class="w-num" aria-hidden="true">02</span>
+          <h3>Cannot skip a record</h3>
+          <p>Anchors advance only once data is durably staged. An interruption can repeat work; it can't skip. 178 tests hold that line.</p>
+        </li>
+        <li class="w-reveal" style="--reveal-delay: 140ms">
+          <span class="w-num" aria-hidden="true">03</span>
+          <h3>Carries deletions too</h3>
+          <p>Delete something in Health and a tombstone follows it out, so your copy stays true instead of quietly stale.</p>
+        </li>
+      </ul>
+
+      <div class="w-types w-reveal">
+        <p class="w-types-head">It reads only the types you allow. Examples:</p>
+        <ul class="w-types-list">
+          {types.map(([id, hue]) => (
+            <li><span class="w-hue" style={`--hue: var(--h-${hue})`} aria-hidden="true"></span>{id}</li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <hr class="w-ruler" aria-hidden="true" />
+
+    <section class="w-band" id="how">
+      <div class="w-two">
+        <div class="w-reveal">
+          <h2 class="w-h2">How do I export my Apple Health data?</h2>
+          <p class="w-band-lede">
+            Four steps, once. Apple's permission sheet decides what Hozz can read, and you can close it
+            again whenever you like.
+          </p>
+        </div>
+        <ol class="w-steps">
+          {steps.map((s, i) => (
+            <li class="w-reveal" style={`--reveal-delay: ${i * 60}ms`}>
+              <span class="w-step-mark" aria-hidden="true">{i + 1}</span>
+              <div>
+                <h3>{s.title}</h3>
+                <p>{s.body}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <hr class="w-ruler" aria-hidden="true" />
+
+    <section class="w-band" id="where">
+      <h2 class="w-h2 w-reveal">Where it sends</h2>
+      <p class="w-band-lede w-reveal">Five destinations. All of them yours. There is no default one.</p>
+      <ul class="w-dests">
+        {spokes.map((s, i) => (
+          <li class="w-reveal" style={`--reveal-delay: ${i * 50}ms`}>
+            <span class="w-dest-hour">
+              <b>{String(s.hour).padStart(2, '0')}:00</b>
+              <i>{s.schedule}</i>
+            </span>
+            <div class="w-dest-body">
+              <h3>{s.name}</h3>
+              <p>{s.detail}</p>
+              <p class="w-fact">{s.fact}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <hr class="w-ruler" aria-hidden="true" />
+
+    <section class="w-band" id="formats">
+      <div class="w-two">
+        <div class="w-reveal">
+          <h2 class="w-h2">Four shapes to leave in</h2>
+          <p class="w-band-lede">
+            Encoding is deterministic: the same records produce byte-identical output, whatever your
+            locale or time zone.
+          </p>
+        </div>
+        <div class="w-table-wrap w-reveal">
+          <table class="w-table">
+            <caption class="w-visually-hidden">Export formats offered by Hozz and what each is for</caption>
+            <thead>
+              <tr><th scope="col">Format</th><th scope="col">What it's for</th></tr>
+            </thead>
+            <tbody>
+              {formats.map(([name, use]) => (
+                <tr>
+                  <th scope="row">{name}</th>
+                  <td>{use}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <hr class="w-ruler" aria-hidden="true" />
+
+    <section class="w-band" id="mac">
+      <div class="w-two">
+        <div class="w-reveal">
+          <h2 class="w-h2">And then, your Mac</h2>
+          <p class="w-band-lede">
+            The companion app catches batches on your own network, files them into <code>hozz-received.sqlite</code>, and charts them by hour, day, week or month. It watches a folder too.
+          </p>
+        </div>
+        <div class="w-mcp w-reveal">
+          <p class="w-mcp-head">A read-only MCP server ships inside it, so a local assistant can ask:</p>
+          <ul class="w-mcp-tools">
+            <li>list_health_types</li>
+            <li>summarise_health_data</li>
+            <li>aggregate_health_data</li>
+            <li>list_health_samples</li>
+          </ul>
+          <p class="w-mcp-note">
+            It cannot change or delete anything. Point a cloud assistant at it and that assistant may
+            upload what it reads — that's the assistant's behaviour, not Hozz's.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="w-ruler" aria-hidden="true" />
+
+    <section class="w-band" id="honest">
+      <h2 class="w-h2 w-reveal">What it won't fake</h2>
+      <ul class="w-honest">
+        <li class="w-reveal">
+          <h3>No green tick</h3>
+          <p>
+            Apple won't let an app tell <em>you denied this type</em> from <em>you have no data</em>. So
+            Hozz reports <b>denied-or-empty</b>, <b>unavailable</b>, <b>unsupported</b> or <b>failed</b>,
+            and lets you judge.
+          </p>
+        </li>
+        <li class="w-reveal" style="--reveal-delay: 70ms">
+          <h3>iOS owns the clock</h3>
+          <p>
+            The dial above is the intent, not a promise. iOS decides when background work runs, most
+            types settle near hourly, and Health can't be read while the phone is locked.
+          </p>
+        </li>
+        <li class="w-reveal" style="--reveal-delay: 140ms">
+          <h3>Early alpha</h3>
+          <p>It works and it's tested. Coverage is still partial, and it says so in the app rather than in the small print.</p>
+        </li>
+      </ul>
+    </section>
+
+    <section class="w-close">
+      <div class="w-close-inner w-reveal">
+        <h2>Free. Forever. Yours to read.</h2>
+        <p>
+          One developer, GPL-3.0 with an App Store exception. No subscription, no telemetry, nothing to
+          sign up for.
+        </p>
+        <div class="w-actions">
+          <a class="w-pill w-pill-solid" href="https://github.com/thatcube/hozz">Hozz on GitHub <span aria-hidden="true">↗</span></a>
+          <a class="w-pill w-pill-ghost" href="https://github.com/sponsors/thatcube">Sponsor the work <span aria-hidden="true">↗</span></a>
+        </div>
+        <p class="w-close-fact">Shortcuts: Sync Health Data · Check Health Sync Status · home-screen widget shows the last sync state</p>
+      </div>
+    </section>
+  </main>
+
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+
+  <script is:inline>
+    (function () {
+      var els = document.querySelectorAll('.w-reveal');
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+      if (reduce.matches || !('IntersectionObserver' in window)) {
+        els.forEach(function (el) { el.classList.add('is-in'); });
+        return;
+      }
+      var io = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-in');
+              io.unobserve(entry.target);
+            }
+          });
+        },
+        { rootMargin: '0px 0px -8% 0px', threshold: 0.08 }
+      );
+      els.forEach(function (el) { io.observe(el); });
+    })();
+  </script>
+</SketchLayout>

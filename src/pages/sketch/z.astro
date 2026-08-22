@@ -1,0 +1,185 @@
+---
+import SketchLayout from '../../layouts/SketchLayout.astro';
+import '../../styles/sketch-z.css';
+
+const records = [
+  ['heartRateVariabilitySDNN', '48 ms', 'heart'],
+  ['stepCount', '8,241', 'activity'],
+  ['sleepAnalysis', '7h 12m', 'sleep'],
+  ['oxygenSaturation', '97%', 'respiratory'],
+  ['walkingSpeed', '3.1 mph', 'mobility'],
+  ['dietaryWater', '2.4 L', 'nutrition'],
+  ['bodyMass', '178.4 lb', 'body'],
+];
+
+const destinations = [
+  ['File', 'A complete, verifiable archive you keep.', '↓'],
+  ['Your server', 'TLS-first delivery to a server you operate.', '↗'],
+  ['CSV + JSON', 'Useful, clearly labelled lossy projections.', '↘'],
+  ['Your Mac', 'Direct transfer over your own network.', '→'],
+  ['Local AI', 'Ask questions through MCP, read on your Mac.', '⌁'],
+];
+---
+
+<SketchLayout title="Sketch Z — Permission window · Hozz" letter="Z" name="Permission window">
+  <main id="top">
+    <nav class="z-nav" aria-label="Primary navigation">
+      <a class="brand" href="#top" aria-label="Hozz, back to top">
+        <span aria-hidden="true"><i></i><i></i></span>
+        Hozz
+      </a>
+      <div class="nav-links">
+        <a href="#does">What it does</a>
+        <a href="#how">How it works</a>
+        <a href="#where">Where it goes</a>
+      </div>
+      <a class="source" href="https://github.com/thatcube/hozz">
+        GitHub <span aria-hidden="true">↗</span>
+      </a>
+    </nav>
+
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="kicker"><span></span> Private Apple Health export</p>
+        <h1 id="hero-title">Open only what <em>you choose.</em></h1>
+        <p class="hero-lede">
+          Hozz moves your Apple Health history somewhere you control.
+          No account, no subscription, and no Hozz cloud in the middle.
+        </p>
+        <div class="hero-actions">
+          <a class="button" href="#how">See how it works <span aria-hidden="true">↓</span></a>
+          <p>Free forever · Open source · Pre-alpha</p>
+        </div>
+      </div>
+
+      <div class="permission-figure" role="img" aria-label="A permission window reveals only the Apple Health data you choose to share with Hozz">
+        <div class="figure-label top-label"><span>APPLE HEALTH</span><span>ON THIS DEVICE</span></div>
+        <div class="record-stack" aria-hidden="true">
+          {records.map(([id, value, category]) => (
+            <div class={`record ${category}`}>
+              <i aria-hidden="true"></i>
+              <code>{id}</code>
+              <span>{value}</span>
+            </div>
+          ))}
+          <div class="permission-window" aria-hidden="true">
+            <span>YOU ALLOWED THIS</span>
+            <i></i>
+            <div class="visible-record">
+              <b></b><code>heartRateVariabilitySDNN</code><small>48 ms</small>
+            </div>
+            <div class="visible-record">
+              <b></b><code>stepCount</code><small>8,241</small>
+            </div>
+          </div>
+        </div>
+        <div class="figure-label bottom-label"><span>THE REST STAYS CLOSED</span><span>YOU CAN CHANGE THIS</span></div>
+      </div>
+    </section>
+
+    <section class="quiet-proof" aria-label="Hozz privacy promises">
+      <p>Hozz is an exit, not a new place to store your health.</p>
+      <ul>
+        <li><span></span>No account</li>
+        <li><span></span>No analytics</li>
+        <li><span></span>No server of ours</li>
+        <li><span></span>No copy kept</li>
+      </ul>
+    </section>
+
+    <section class="does shell" id="does">
+      <header class="section-head">
+        <p class="kicker"><span></span> What it does</p>
+        <h2>A private exit for your <em>health history.</em></h2>
+      </header>
+      <div class="does-grid">
+        <p class="does-lede">
+          Your Health data already tells the story of your body. Hozz lets you take that
+          story out of one app and keep a faithful copy on your terms.
+        </p>
+        <div class="breadth" aria-label="Examples of supported health categories">
+          <span>Heart</span><span>Activity</span><span>Sleep</span><span>Mobility</span>
+          <span>Respiratory</span><span>Nutrition</span><span>Body</span><span>Mind</span>
+          <span>Cycle</span><span>Hearing</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="how shell" id="how">
+      <header class="section-head compact">
+        <p class="kicker"><span></span> How it works</p>
+        <h2>Three decisions.<br /><em>All yours.</em></h2>
+      </header>
+      <ol class="steps">
+        <li>
+          <span class="step-number">1</span>
+          <div>
+            <h3>Choose what opens</h3>
+            <p>iOS asks which kinds of Health data Hozz can read. Leave anything closed, or change it later.</p>
+          </div>
+          <span class="step-state">PERMISSION</span>
+        </li>
+        <li>
+          <span class="step-number">2</span>
+          <div>
+            <h3>Let it keep its place</h3>
+            <p>Each kind resumes where it stopped, so interrupted exports can continue without silent gaps or duplicates.</p>
+          </div>
+          <span class="step-state">CHECKPOINT</span>
+        </li>
+        <li>
+          <span class="step-number">3</span>
+          <div>
+            <h3>Name the destination</h3>
+            <p>Nothing leaves until you choose where it goes and confirm it. There is no Hozz server in between.</p>
+          </div>
+          <span class="step-state">YOUR PLACE</span>
+        </li>
+      </ol>
+    </section>
+
+    <section class="where shell" id="where">
+      <header class="section-head where-head">
+        <p class="kicker"><span></span> Where it goes</p>
+        <h2>One opening.<br /><em>Five ways out.</em></h2>
+        <p>The destination is a choice you make, never a default we make for you.</p>
+      </header>
+      <div class="destination-grid">
+        {destinations.map(([title, body, arrow]) => (
+          <article>
+            <span class="destination-arrow" aria-hidden="true">{arrow}</span>
+            <h3>{title}</h3>
+            <p>{body}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="honesty shell" aria-labelledby="honest-title">
+      <div>
+        <p class="kicker"><span></span> Honest when Apple is not specific</p>
+        <h2 id="honest-title">Unknown stays <em>unknown.</em></h2>
+      </div>
+      <p>
+        Apple does not reveal whether a Health category was denied or simply contains no data.
+        Hozz reports <strong>“denied or empty”</strong> instead of pretending it knows.
+      </p>
+      <div class="honesty-state">
+        <span></span>
+        <code>sleepAnalysis</code>
+        <strong>DENIED OR EMPTY</strong>
+      </div>
+    </section>
+
+    <footer class="close">
+      <div class="close-window" aria-hidden="true">
+        <span>YOU</span>
+        <i></i><i></i><i></i><i></i>
+      </div>
+      <p class="kicker"><span></span> Built in public</p>
+      <h2>Your health should<br />open for <em>you.</em></h2>
+      <p>Hozz is free forever, open source, and currently in early alpha.</p>
+      <a class="button light" href="https://github.com/thatcube/hozz">Follow the build <span aria-hidden="true">↗</span></a>
+    </footer>
+  </main>
+</SketchLayout>

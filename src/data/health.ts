@@ -7,7 +7,7 @@
  * grid on this page is the shape of what Health holds; Hozz's whole job is
  * getting a copy of it somewhere you own.
  *
- * Nothing here depicts the Hozz app. Hozz is pre-alpha and has no shipped UI,
+ * Nothing here depicts the Hozz app. Hozz’s UI is not public,
  * and a mock of one would be the single dishonest thing on a site about
  * honesty. Every surface below describes the *source* of the data.
  *

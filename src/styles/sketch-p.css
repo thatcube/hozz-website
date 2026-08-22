@@ -1,0 +1,947 @@
+/**
+ * Sketch P — "Coverage"
+ *
+ * One device carries the whole page: a hairline capsule track that stands for
+ * your health history, filled with hatched segments that stand for batches.
+ * Where two batches overlap the hatching crosses and doubles — repeated work
+ * you can see. Nowhere does the track go white, because nothing is ever
+ * skipped. Everything else on the page is near-monochrome so the track and the
+ * one accent can do the arguing.
+ */
+
+@font-face {
+  font-family: 'Nippo';
+  src: url('/fonts/nippo-m-400.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Nippo';
+  src: url('/fonts/nippo-m-500.woff2') format('woff2');
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Nippo';
+  src: url('/fonts/nippo-m-700.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+}
+
+.p {
+  --paper: #fbfbfc;
+  --wash: #f2f3f6;
+  --card: #ffffff;
+  --ink: #131419;
+  --ink-2: #4e525b;
+  --ink-3: #676c76;
+  --hair: rgba(19, 20, 25, 0.13);
+  --hair-2: rgba(19, 20, 25, 0.08);
+  --acc: #f04e23;
+  --acc-ink: #a83411;
+  --acc-hair: rgba(240, 78, 35, 0.42);
+  --acc-fill: rgba(240, 78, 35, 0.07);
+
+  --display: 'Nippo', 'Switzer', sans-serif;
+
+  --pad: clamp(1.15rem, 4.4vw, 3rem);
+  --shell: 68rem;
+
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: clamp(1rem, 0.94rem + 0.26vw, 1.125rem);
+  line-height: 1.55;
+  letter-spacing: -0.011em;
+  overflow-x: clip;
+  padding-bottom: clamp(4rem, 9vw, 7rem);
+}
+
+.p ::selection {
+  background: rgba(240, 78, 35, 0.2);
+}
+
+.p-shell {
+  width: 100%;
+  max-width: var(--shell);
+  margin-inline: auto;
+  padding-inline: var(--pad);
+}
+
+/* ---------------------------------------------------------------- type ---- */
+
+.p h1,
+.p h2,
+.p h3 {
+  font-family: var(--display);
+  font-weight: 700;
+  letter-spacing: -0.032em;
+  line-height: 1.03;
+  text-wrap: balance;
+}
+
+.p-h1 {
+  font-size: clamp(2.5rem, 1.5rem + 4.3vw, 4.6rem);
+  max-width: 15ch;
+}
+
+.p-h2 {
+  font-size: clamp(1.75rem, 1.2rem + 2.1vw, 2.7rem);
+  max-width: 20ch;
+}
+
+.p-h3 {
+  font-size: 1.0625rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.p-lead {
+  font-size: clamp(1.0625rem, 0.98rem + 0.4vw, 1.25rem);
+  color: var(--ink-2);
+  max-width: 46ch;
+  line-height: 1.5;
+}
+
+.p-body {
+  color: var(--ink-2);
+  max-width: 54ch;
+}
+
+.p-acc {
+  color: var(--acc-ink);
+}
+
+.p-mono {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.01em;
+  color: var(--ink-3);
+}
+
+/* -------------------------------------------------------------- eyebrow ---- */
+
+.p-eyebrow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.p-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.28rem 0.62rem 0.3rem;
+  border: 1px solid var(--acc-hair);
+  border-radius: 999px;
+  color: var(--acc-ink);
+  background: var(--acc-fill);
+}
+
+.p-chip::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--acc);
+}
+
+/* --------------------------------------------------------------- scale ---- */
+
+/* The measuring edge for the coverage track directly below it: a real scale on
+   a real measurement surface, not a decorative rule. Used only there. */
+.p-scale {
+  height: 8px;
+  border-bottom: 1px solid var(--hair);
+  background-image: linear-gradient(to right, var(--hair) 0 1px, transparent 1px);
+  background-size: 12.5% 4px;
+  background-repeat: repeat-x;
+  background-position: left bottom;
+  margin-bottom: 0.4rem;
+}
+
+/* -------------------------------------------------------------- section ---- */
+
+.p-section {
+  padding-block: clamp(3.2rem, 7vw, 5.6rem);
+}
+
+.p-section--wash {
+  background: var(--wash);
+}
+
+.p-head {
+  display: grid;
+  gap: 0.9rem;
+  margin-bottom: clamp(1.8rem, 3.6vw, 2.8rem);
+}
+
+.p-index {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* -------------------------------------------------------------- buttons ---- */
+
+.p-acts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.p-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.72rem 1.25rem;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+  text-decoration: none;
+  transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.p-btn--solid {
+  background: var(--ink);
+  color: #fff;
+}
+
+.p-btn--solid:hover {
+  background: var(--acc-ink);
+}
+
+.p-btn--ghost {
+  border-color: var(--hair);
+  background: var(--card);
+  color: var(--ink);
+}
+
+.p-btn--ghost:hover {
+  border-color: rgba(19, 20, 25, 0.34);
+}
+
+.p-btn:active {
+  transform: translateY(1px);
+}
+
+.p-btn svg {
+  flex: none;
+}
+
+/* ----------------------------------------------------------------- hero ---- */
+
+.p-hero {
+  padding-top: clamp(2.6rem, 6vw, 4.6rem);
+  padding-bottom: clamp(2.2rem, 4.5vw, 3.4rem);
+}
+
+.p-hero-grid {
+  display: grid;
+  gap: clamp(1.1rem, 2.4vw, 1.6rem);
+  max-width: 44rem;
+}
+
+.p-hero-top {
+  display: grid;
+  gap: clamp(2rem, 5vw, 3.4rem);
+  align-items: end;
+}
+
+@media (min-width: 62rem) {
+  .p-hero-top {
+    grid-template-columns: minmax(0, 1.4fr) minmax(15rem, 0.85fr);
+  }
+}
+
+/* A spec block, not a decoration: the five facts a person actually checks. */
+.p-spec {
+  border: 1px solid var(--hair);
+  border-radius: 15px;
+  background: var(--card);
+  padding: 0.35rem 1.05rem;
+  max-width: 26rem;
+}
+
+.p-spec div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.2rem 1rem;
+  padding: 0.62rem 0;
+  border-bottom: 1px solid var(--hair-2);
+}
+
+.p-spec div:last-child {
+  border-bottom: 0;
+}
+
+.p-spec dt {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.p-spec dd {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: -0.012em;
+  text-align: right;
+}
+
+/* ------------------------------------------------------------ the track ---- */
+
+.p-rig {
+  margin-top: clamp(2.6rem, 6vw, 4.4rem);
+}
+
+.p-rig-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.05em;
+  color: var(--ink-3);
+  margin-bottom: 0.55rem;
+}
+
+.p-track {
+  position: relative;
+  height: clamp(40px, 6.4vw, 58px);
+  border: 1px solid var(--hair);
+  border-radius: 9999px;
+  /* Pinstripe sits *under* the batches, so it is only visible where nothing has
+     been exported yet. Empty is the one state the track can show. */
+  background-color: #fff;
+  background-image: linear-gradient(rgba(19, 20, 25, 0.035), rgba(255, 255, 255, 0)),
+    linear-gradient(to right, var(--hair-2) 0 1px, transparent 1px);
+  background-size: 100% 100%, 9px 100%;
+  overflow: hidden;
+}
+
+.p-seg {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  /* Opaque, so the "nothing here yet" pinstripe underneath is hidden wherever
+     records have landed. The doubling of tint is drawn once, deliberately, by
+     .p-band. */
+  background-color: #fef4f2;
+  background-image: repeating-linear-gradient(
+    var(--dir, 45deg),
+    var(--acc-hair) 0 1.3px,
+    transparent 1.3px 8px
+  );
+  box-shadow: inset 1px 0 0 rgba(240, 78, 35, 0.5);
+  clip-path: inset(0 0 0 0);
+}
+
+/* The twice-covered stretch. Both batches' hatch directions are drawn here so
+   they cross, and the tint deepens — repeated work you can see, which is the
+   whole argument. */
+.p-band {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background-color: #fde5df;
+  background-image: repeating-linear-gradient(45deg, var(--acc-hair) 0 1.3px, transparent 1.3px 8px),
+    repeating-linear-gradient(-45deg, var(--acc-hair) 0 1.3px, transparent 1.3px 8px);
+  box-shadow: inset 1px 0 0 rgba(240, 78, 35, 0.5), inset -1px 0 0 rgba(240, 78, 35, 0.5);
+  pointer-events: none;
+}
+
+.p-seg--head {
+  border-right: 2px solid var(--acc);
+}
+
+.p-track-tick {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  border-left: 1px dashed rgba(19, 20, 25, 0.45);
+}
+
+/* Reveal: the segments wipe in left-to-right, so the track is read as being
+   filled rather than as already full. */
+.p-reveal .p-seg,
+.p-reveal .p-band {
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 0.34s cubic-bezier(0.22, 0.68, 0.28, 1);
+  transition-delay: calc(var(--i, 0) * 0.09s);
+}
+
+.p-reveal.p-in .p-seg,
+.p-reveal.p-in .p-band {
+  clip-path: inset(0 0 0 0);
+}
+
+/* ---------------------------------------------------------- destinations --- */
+
+.p-drops {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin-top: -1px;
+}
+
+.p-drop {
+  --fall: clamp(34px, 5vw, 52px);
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 0.45rem;
+  padding-top: var(--fall);
+  text-align: center;
+  min-width: 0;
+}
+
+.p-drop::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  height: var(--fall);
+  border-left: 1px dashed rgba(19, 20, 25, 0.26);
+}
+
+/* The travelling record: one dot per destination, released down the guide. */
+.p-drop::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  margin-left: -2.5px;
+  border-radius: 999px;
+  background: var(--acc);
+  opacity: 0;
+  animation: p-fall 3.4s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  animation-delay: calc(var(--d, 0) * 0.42s);
+}
+
+@keyframes p-fall {
+  0% {
+    transform: translateY(-2px);
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  32% {
+    transform: translateY(calc(var(--fall) + 4px));
+    opacity: 1;
+  }
+  40%,
+  100% {
+    transform: translateY(calc(var(--fall) + 4px));
+    opacity: 0;
+  }
+}
+
+.p-pip {
+  width: 13px;
+  height: 13px;
+  border: 1px solid var(--acc-hair);
+  border-radius: 999px;
+  background: var(--card);
+  display: grid;
+  place-items: center;
+}
+
+.p-pip::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--acc);
+}
+
+.p-drop-name {
+  font-family: var(--mono);
+  font-size: clamp(0.5625rem, 0.42rem + 0.42vw, 0.6875rem);
+  line-height: 1.3;
+  letter-spacing: 0;
+  color: var(--ink-2);
+  padding-inline: 3px;
+}
+
+/* ------------------------------------------------------------- the proof --- */
+
+.p-proof-track {
+  height: clamp(58px, 9vw, 92px);
+}
+
+.p-proof-marks {
+  position: relative;
+  height: 1.5rem;
+  margin-bottom: 0.4rem;
+}
+
+.p-mark {
+  position: absolute;
+  bottom: 0;
+  translate: -50% 0;
+  white-space: nowrap;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.02em;
+  color: var(--acc-ink);
+}
+
+.p-mark--ink {
+  color: var(--ink-2);
+}
+
+/* A hairline bracket that measures the twice-covered stretch. */
+.p-brackets {
+  position: relative;
+  height: 2.6rem;
+}
+
+.p-bracket {
+  position: absolute;
+  top: 0;
+  height: 0.5rem;
+  border: 1px solid rgba(19, 20, 25, 0.3);
+  border-top: 0;
+  border-radius: 0 0 4px 4px;
+}
+
+.p-bracket span {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  left: 50%;
+  translate: -50% 0;
+  white-space: nowrap;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.02em;
+  color: var(--ink-2);
+}
+
+.p-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem 1.5rem;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.02em;
+  color: var(--ink-2);
+}
+
+.p-legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.p-swatch {
+  width: 34px;
+  height: 19px;
+  border-radius: 5px;
+  border: 1px solid var(--hair);
+  background-color: #fef4f2;
+  background-image: repeating-linear-gradient(45deg, var(--acc-hair) 0 1.3px, transparent 1.3px 8px);
+  flex: none;
+}
+
+.p-swatch--x {
+  background-color: #fde5df;
+  background-image: repeating-linear-gradient(45deg, var(--acc-hair) 0 1.3px, transparent 1.3px 8px),
+    repeating-linear-gradient(-45deg, var(--acc-hair) 0 1.3px, transparent 1.3px 8px);
+}
+
+.p-swatch--empty {
+  background-color: #fff;
+  background-image: linear-gradient(to right, var(--hair-2) 0 1px, transparent 1px);
+  background-size: 9px 100%;
+}
+
+.p-proof-note {
+  margin-top: clamp(1.6rem, 3vw, 2.2rem);
+  display: grid;
+  gap: 0.6rem;
+  max-width: 40rem;
+}
+
+/* ----------------------------------------------------------------- steps --- */
+
+.p-steps {
+  counter-reset: p-step;
+  display: grid;
+  gap: 0;
+  border-top: 1px solid var(--hair);
+  max-width: 52rem;
+}
+
+.p-steps li {
+  counter-increment: p-step;
+  display: grid;
+  grid-template-columns: 2.6rem minmax(0, 1fr);
+  gap: 0 1rem;
+  padding: 1.05rem 0;
+  border-bottom: 1px solid var(--hair);
+  align-items: start;
+}
+
+.p-steps li::before {
+  content: counter(p-step, decimal-leading-zero);
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--acc-ink);
+  padding-top: 0.24rem;
+}
+
+.p-steps p {
+  color: var(--ink-2);
+  font-size: 0.9375rem;
+  margin-top: 0.18rem;
+  max-width: 48ch;
+}
+
+/* -------------------------------------------------------------- artefact --- */
+
+.p-artefact {
+  margin-top: clamp(1.6rem, 3vw, 2.2rem);
+  border: 1px solid var(--hair);
+  border-radius: 14px;
+  background: var(--card);
+  overflow: hidden;
+  max-width: 52rem;
+}
+
+.p-artefact-bar {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.55rem 0.9rem;
+  border-bottom: 1px solid var(--hair-2);
+  background: linear-gradient(var(--wash), rgba(255, 255, 255, 0));
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.p-artefact pre {
+  margin: 0;
+  padding: 0.95rem 1rem 1.05rem;
+  overflow-x: auto;
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  line-height: 1.85;
+  color: var(--ink-2);
+  -webkit-overflow-scrolling: touch;
+}
+
+.p-artefact code {
+  white-space: pre;
+}
+
+.p-artefact b {
+  color: var(--acc-ink);
+  font-weight: 400;
+}
+
+/* ------------------------------------------------------------------ grid --- */
+
+.p-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15.5rem, 1fr));
+  gap: 0.7rem;
+}
+
+.p-card {
+  border: 1px solid var(--hair);
+  border-radius: 15px;
+  background: var(--card);
+  padding: 1.15rem 1.15rem 1.25rem;
+  display: grid;
+  gap: 0.5rem;
+  align-content: start;
+  transition: border-color 0.18s ease;
+}
+
+.p-card:hover {
+  border-color: rgba(19, 20, 25, 0.28);
+}
+
+.p-card-top {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.p-card p {
+  color: var(--ink-2);
+  font-size: 0.9375rem;
+  line-height: 1.45;
+}
+
+.p-card .p-mono {
+  margin-top: 0.15rem;
+}
+
+/* The sixth cell that isn't a destination — the grid completes and the point
+   lands in the same breath. */
+.p-card--void {
+  border-style: dashed;
+  background: transparent;
+  align-content: center;
+  gap: 0.3rem;
+}
+
+.p-card--void:hover {
+  border-color: var(--hair);
+}
+
+.p-card--void b {
+  font-family: var(--display);
+  font-size: 1.0625rem;
+  letter-spacing: -0.02em;
+}
+
+.p-card--void p {
+  color: var(--ink-2);
+}
+
+/* ----------------------------------------------------------------- table --- */
+
+.p-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--hair);
+  border-radius: 15px;
+  background: var(--card);
+}
+
+.p-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+  min-width: 34rem;
+}
+
+.p-table th,
+.p-table td {
+  text-align: left;
+  padding: 0.72rem 1rem;
+  border-bottom: 1px solid var(--hair-2);
+  vertical-align: top;
+}
+
+.p-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.p-table thead th {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  font-weight: 400;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-bottom-color: var(--hair);
+}
+
+.p-table td {
+  color: var(--ink-2);
+}
+
+.p-table td:first-child {
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.p-lossy {
+  color: var(--acc-ink);
+}
+
+/* ---------------------------------------------------------------- honest --- */
+
+.p-split {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: clamp(1.6rem, 4vw, 3rem);
+  align-items: start;
+}
+
+.p-plain {
+  display: grid;
+  gap: 0.85rem;
+  border-top: 1px solid var(--hair);
+  padding-top: 0.9rem;
+}
+
+.p-plain li {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.p-plain b {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  letter-spacing: -0.012em;
+}
+
+.p-plain span {
+  color: var(--ink-2);
+  font-size: 0.9375rem;
+  line-height: 1.45;
+}
+
+/* ----------------------------------------------------------------- close --- */
+
+.p-close {
+  padding-top: clamp(3.4rem, 7vw, 5.4rem);
+}
+
+.p-close-inner {
+  border: 1px solid var(--hair);
+  border-radius: 22px;
+  background: var(--card);
+  padding: clamp(1.6rem, 4.4vw, 3rem);
+  display: grid;
+  gap: 1.1rem;
+  justify-items: start;
+  position: relative;
+  overflow: hidden;
+}
+
+.p-close-inner::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 6px;
+  background-color: #fef4f2;
+  background-image: repeating-linear-gradient(45deg, var(--acc-hair) 0 1.3px, transparent 1.3px 8px);
+}
+
+.p-foot {
+  margin-top: 1.6rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.2rem;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.03em;
+  color: var(--ink-3);
+}
+
+.p-foot a {
+  color: var(--ink-2);
+}
+
+/* ---------------------------------------------------------------- reveal --- */
+
+.p-r {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.34s ease, transform 0.34s cubic-bezier(0.22, 0.68, 0.28, 1);
+  transition-delay: calc(var(--i, 0) * 0.05s);
+}
+
+.p-r.p-in {
+  opacity: 1;
+  transform: none;
+}
+
+@media (max-width: 40rem) {
+  .p-steps li {
+    grid-template-columns: 2.1rem minmax(0, 1fr);
+    gap: 0 0.7rem;
+  }
+
+  /* The table stays a table in the DOM; on a narrow screen each row simply
+     reads as a block instead of scrolling sideways. */
+  .p-table {
+    min-width: 0;
+  }
+
+  .p-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .p-table tr {
+    display: block;
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid var(--hair-2);
+  }
+
+  .p-table tr:last-child {
+    border-bottom: 0;
+  }
+
+  .p-table th,
+  .p-table td {
+    display: block;
+    padding: 0;
+    border: 0;
+  }
+
+  .p-table td {
+    font-size: 0.875rem;
+    margin-top: 0.3rem;
+  }
+
+  .p-table td::before {
+    content: attr(data-label) ' ';
+    font-family: var(--mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    display: block;
+    margin-bottom: 0.1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .p *,
+  .p *::before,
+  .p *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .p-r {
+    opacity: 1;
+    transform: none;
+  }
+
+  .p-reveal .p-seg,
+  .p-reveal .p-band {
+    clip-path: inset(0 0 0 0);
+  }
+
+  /* The dot stops travelling and simply rests in its destination, so the
+     picture still says "a record arrived here". */
+  .p-drop::after {
+    opacity: 1;
+    transform: translateY(calc(var(--fall) + 4px));
+  }
+}

@@ -26,7 +26,8 @@ export type CategoryKey = (typeof CATEGORIES)[number]['key'];
 /**
  * Real HealthKit identifiers, not invented ones. Showing the actual API names is
  * the honest version of "it reads a lot of things": anyone who knows HealthKit
- * can check the claim, and anyone who doesn't still reads the breadth.
+ * can check the claim, and anyone who doesn't still reads the breadth. The
+ * readings beside them are examples, and the page says so.
  */
 export const STREAM_LANES: { category: CategoryKey; id: string; sample: string }[][] = [
   [
@@ -60,144 +61,172 @@ export const STREAM_LANES: { category: CategoryKey; id: string; sample: string }
     { category: 'body', id: 'bodyTemperature', sample: '98.4°F' },
   ],
   [
-    { category: 'sleep', id: 'appleSleepingBreathingDisturbances', sample: 'low' },
+    { category: 'activity', id: 'appleStandTime', sample: '11 h' },
     { category: 'body', id: 'leanBodyMass', sample: '145.9 lb' },
     { category: 'heart', id: 'walkingHeartRateAverage', sample: '91 bpm' },
     { category: 'cycle', id: 'menstrualFlow', sample: 'light' },
     { category: 'mind', id: 'stateOfMind', sample: 'pleasant' },
     { category: 'mobility', id: 'stairAscentSpeed', sample: '0.5 m/s' },
     { category: 'nutrition', id: 'dietaryVitaminD', sample: '18 µg' },
-    { category: 'activity', id: 'appleStandTime', sample: '11 h' },
+    { category: 'sleep', id: 'appleSleepingBreathingDisturbances', sample: 'low' },
   ],
 ];
 
-/**
- * Written as promises rather than features, because every one of them is a thing
- * the app refuses to do. Taken from the repository's product promise.
- */
-export const PROMISES = [
-  {
-    category: 'heart' as CategoryKey,
-    title: 'No subscription',
-    body: 'No paywall, no Pro tier, no feature held back. Hozz has nothing to sell you later.',
-  },
-  {
-    category: 'activity' as CategoryKey,
-    title: 'No account',
-    body: 'Nothing to sign up for, because there is nothing on the other end to sign up to.',
-  },
-  {
-    category: 'mobility' as CategoryKey,
-    title: 'No analytics',
-    body: 'No tracking, no telemetry, and no crash reports with your health inside them.',
-  },
-  {
-    category: 'respiratory' as CategoryKey,
-    title: 'No server of mine',
-    body: 'No relay, no database, no cloud. There is nothing in the middle for you to trust.',
-  },
-  {
-    category: 'sleep' as CategoryKey,
-    title: 'Nothing put in iCloud',
-    body: 'Hozz never stores your Health data there. Where a copy lands is your call, not a default.',
-  },
-  {
-    category: 'mind' as CategoryKey,
-    title: 'Credentials stay put',
-    body: 'Anything you use to reach your own server lives in the Keychain on that device, unsynced.',
-  },
-];
-
+/** Three steps, in the order you actually do them. Kept to one line each. */
 export const STEPS = [
   {
     category: 'heart' as CategoryKey,
-    title: 'You decide what it can read',
-    body:
-      'iOS asks, not Hozz. Tick the data you want to take with you and leave the rest closed. ' +
-      'Change your mind whenever you like.',
+    title: 'Add a destination',
+    body: 'Your Mac, a folder, Home Assistant, a URL, or MQTT. Test it before you trust it.',
   },
   {
     category: 'body' as CategoryKey,
-    title: 'It keeps up quietly',
-    body:
-      'Hozz reads each kind of data from where it last stopped, so nothing arrives twice and nothing ' +
-      'gets skipped. Close it mid-export and it picks the thread back up.',
+    title: 'Pick types and a schedule',
+    body: 'Per destination: which Health types, and how often — on arrival, hourly, daily or manual.',
   },
   {
     category: 'mobility' as CategoryKey,
-    title: 'It writes where you say',
-    body:
-      'A file you save, a server you run, a computer on your desk. Nothing leaves until you have set ' +
-      'up a destination and confirmed it.',
-  },
-];
-
-export const DESTINATIONS = [
-  {
-    category: 'body' as CategoryKey,
-    icon: 'ph:file-arrow-down-duotone',
-    title: 'A file you keep',
-    body: 'Written in parts with a manifest, so an export that was interrupted can never look finished.',
-  },
-  {
-    category: 'respiratory' as CategoryKey,
-    icon: 'ph:hard-drives-duotone',
-    title: 'A server you run',
-    body: 'TLS first, with credentials scoped to one destination and never handed to a redirect off-host.',
-  },
-  {
-    category: 'nutrition' as CategoryKey,
-    icon: 'ph:table-duotone',
-    title: 'CSV and JSON',
-    body: 'Labelled as lossy projections, because that is what they are. The full record stays whole.',
-  },
-  {
-    category: 'mind' as CategoryKey,
-    icon: 'ph:desktop-duotone',
-    title: 'Your own Mac',
-    body: 'A companion app receives straight from your phone over your own network, and finds it without an address to type.',
-  },
-  {
-    category: 'heart' as CategoryKey,
-    icon: 'ph:sparkle-duotone',
-    title: 'An AI you choose',
-    body: 'Your Mac can answer questions about your own data through the Model Context Protocol, reading locally.',
+    title: 'Walk away',
+    body: 'New records go on their own. Each destination keeps its own place in the queue.',
   },
 ];
 
 /**
- * The three states Apple's API actually lets an app tell apart. The middle one
- * is the entire reason the honesty section exists.
+ * The five real destinations, each anchored by a fact you could check: a
+ * Bonjour service type, a port, a protocol. No invented ones.
  */
-export const COVERAGE_STATES = [
+export const DESTINATIONS = [
   {
-    state: 'allowed',
-    tone: 'good',
-    body: 'You granted it, and every object HealthKit returned is accounted for.',
+    category: 'mind' as CategoryKey,
+    icon: 'mac',
+    title: 'This Mac',
+    body: 'The companion app receives straight from your phone, over your own network.',
+    fact: '_hozz._tcp · :54330',
   },
   {
-    state: 'denied or empty',
-    tone: 'unknown',
-    body: 'Apple will not say which of the two it is. Hozz will not guess, so it reports both.',
+    category: 'body' as CategoryKey,
+    icon: 'folder',
+    title: 'Folder',
+    body: 'iCloud Drive, Dropbox, OneDrive, Google Drive, SMB, or on the device.',
+    fact: 'Files picker',
   },
   {
-    state: 'not supported yet',
-    tone: 'flat',
-    body: 'Hozz cannot read it correctly yet, so it says so rather than quietly skipping it.',
+    category: 'nutrition' as CategoryKey,
+    icon: 'house',
+    title: 'Home Assistant',
+    body: 'Metrics land on your own dashboard as a webhook or REST call.',
+    fact: 'Metrics JSON',
+  },
+  {
+    category: 'respiratory' as CategoryKey,
+    icon: 'globe',
+    title: 'Web address',
+    body: 'Your endpoint, your format. Hozz posts and retries safely.',
+    fact: 'POST · NDJSON / JSON / CSV',
+  },
+  {
+    category: 'heart' as CategoryKey,
+    icon: 'broadcast',
+    title: 'MQTT',
+    body: 'Published to your own broker for anything else you run.',
+    fact: 'mqtt:// · mqtts:// · QoS 0',
   },
 ];
 
-export const MILESTONES = [
-  { id: 'M0', name: 'Contract', state: 'done', body: 'Every HealthKit family classified; privacy and threat models written down.' },
-  { id: 'M1', name: 'Foundation', state: 'done', body: 'The Swift 6 targets build, and fault tests prove a retry cannot skip past data.' },
-  { id: 'M2', name: 'Catalogue', state: 'done', body: 'The full type list, with the awkward authorization flows kept separate.' },
-  { id: 'M3', name: 'Canonical model', state: 'done', body: 'Byte-identical output whatever your locale or time zone.' },
-  { id: 'M4', name: 'Acquisition', state: 'done', body: 'Millions of changes survive cancellation and injected crashes.' },
-  { id: 'M5', name: 'Files', state: 'done', body: 'Archives that verify every part and disclose every limitation.' },
-  { id: 'M6', name: 'Background', state: 'now', body: 'Automatic sync ships and survives lock, reboot and lost network. The long endurance run on real devices is still under way.' },
-  { id: 'M7', name: 'Delivery', state: 'done', body: 'Idempotent batches reconciled against an open-source reference receiver, plus a Mac app that receives them directly.' },
-  { id: 'M8', name: 'Multi-device', state: 'next', body: 'One writer at a time, with an explicit handover between your devices.' },
-  { id: 'M9', name: 'Release', state: 'next', body: 'Accessibility, localisation, and a multi-year endurance run.' },
+/** Genuinely tabular, so the page renders it as a table. */
+export const FORMATS = [
+  { name: 'NDJSON', use: 'The default. One record per line, streamable.', note: 'Lossless for encoded fields' },
+  { name: 'JSON', use: 'One document, whole records.', note: 'Whole records' },
+  { name: 'CSV', use: 'Spreadsheets and quick charts.', note: 'Lossy — a grid cannot hold metadata or nested workout detail' },
+  { name: 'Metrics JSON', use: 'Dashboards and Home Assistant.', note: 'Values over time' },
+];
+
+/** Why an interruption can repeat work but cannot skip records. */
+export const DURABILITY = [
+  {
+    title: 'Anchors, not date windows',
+    body: 'Each type has its own opaque anchor, advanced only once records are durably staged.',
+    fact: 'HKAnchoredObjectQuery',
+  },
+  {
+    title: 'Resumable',
+    body: 'Quit it, reboot, background it. A manual export carries on from its last checkpoint.',
+    fact: 'checkpointed',
+  },
+  {
+    title: 'Retries are safe',
+    body: 'Content-derived ids mean the same record twice is still one record.',
+    fact: 'Idempotency-Key',
+  },
+];
+
+/**
+ * The states Apple's API actually lets an app report. The second one is the
+ * entire reason the honesty section exists.
+ */
+export const COVERAGE_STATES = [
+  { state: 'allowed', tone: 'good', body: 'Granted, read, and delivered.' },
+  { state: 'denied or empty', tone: 'unknown', body: 'Apple will not say which. Hozz will not guess.' },
+  { state: 'unavailable', tone: 'flat', body: 'Not readable right now — a locked phone, for one.' },
+  { state: 'unsupported', tone: 'flat', body: 'Not handled correctly yet, so it says so.' },
+  { state: 'failed', tone: 'bad', body: 'It tried and it did not work. Named, not buried.' },
+];
+
+/** The four read-only tools the Mac app's MCP server exposes. */
+export const MCP_TOOLS = [
+  'list_health_types',
+  'summarise_health_data',
+  'aggregate_health_data',
+  'list_health_samples',
+];
+
+/** Written as refusals, because each one is a thing the app will not do. */
+export const PROMISES = [
+  { category: 'heart' as CategoryKey, title: 'No subscription', body: 'Nothing held back for a Pro tier.' },
+  { category: 'activity' as CategoryKey, title: 'No account', body: 'Nothing to sign up to.' },
+  { category: 'mobility' as CategoryKey, title: 'No analytics', body: 'No telemetry, no ads, no crash payloads.' },
+  { category: 'respiratory' as CategoryKey, title: 'No server of mine', body: 'No relay in the middle.' },
+  { category: 'sleep' as CategoryKey, title: 'No default destination', body: 'Nothing leaves until you add one.' },
+  { category: 'mind' as CategoryKey, title: 'No synced credentials', body: 'Your keys stay in that device’s Keychain.' },
+];
+
+/** Early alpha: it works, and coverage is partial. Both halves are the truth. */
+export const WORKING = [
+  'Automatic export to five destinations',
+  'Manual export, resumable after a crash',
+  'NDJSON, JSON, CSV and Metrics JSON',
+  'Deletions carried as tombstones',
+  'Mac app: receives, stores, charts',
+  'Read-only MCP server for assistants',
+  'Shortcuts and a home-screen widget',
+  '178 XCTest tests',
+];
+
+export const NOT_YET = [
+  'Every Health type — coverage is partial',
+  'Handover between two devices',
+  'Accessibility and localisation pass',
+  'App Store release',
+];
+
+/** Question-shaped, so the answers can be marked up as an FAQPage. */
+export const FAQ = [
+  {
+    q: 'Is Hozz free?',
+    a: 'Yes. Free and open source under GPL-3.0, with no subscription, no account and no paid tier planned.',
+  },
+  {
+    q: 'Where does my health data go?',
+    a: 'Only where you send it. There is no default destination and no server of mine — nothing leaves your phone until you add a destination and confirm it.',
+  },
+  {
+    q: 'Does it export in the background?',
+    a: 'Yes. iOS decides when background work runs, so most types land near hourly, and Health cannot be read while your phone is locked.',
+  },
+  {
+    q: 'Can I ask an AI about my data?',
+    a: 'On your Mac, yes. Hozz ships a read-only MCP server that can list and summarise what you have received. It cannot change or delete anything — but a cloud assistant may upload whatever it reads, which is the assistant’s behaviour, not Hozz’s.',
+  },
 ];
 
 export const SIBLINGS = [
@@ -207,8 +236,8 @@ export const SIBLINGS = [
 ];
 
 export const NAV_LINKS = [
-  { href: '#promise', label: 'The promise' },
-  { href: '#how', label: 'How it works' },
+  { href: '#export', label: 'How to export' },
+  { href: '#destinations', label: 'Destinations' },
   { href: '#honest', label: 'Honesty' },
   { href: '#status', label: 'Status' },
 ];

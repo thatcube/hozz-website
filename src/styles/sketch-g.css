@@ -11,6 +11,11 @@
  * biggest coloured element in each row. Stencil labels frame it like markings
  * stencilled on a crate addressed to somewhere you keep. Erode — an inky,
  * organic serif — carries the human statements against the machine addresses.
+ *
+ * Motion is one idea used twice: a dot leaving a source and travelling a dotted
+ * line to an address. In the hero it fans outward to five endpoints; in the
+ * ledger it drops down the bus rail and lands on each node in turn. Nothing
+ * travels to slot 00, because nothing is sent there.
  */
 
 @font-face {
@@ -76,6 +81,7 @@
   --faint: #7b828c;
   --rule: #c6cbd1;
   --rule-soft: #d3d8dd;
+  --rule-strong: #adb4bd;
 
   /* One signature hue: "yours / local", a deep signal blue drawn from the
      Health "other" blue and taken down until it reads as text on the slate. */
@@ -88,10 +94,13 @@
   background: var(--paper);
   color: var(--ink);
   font-family: var(--gsans);
-  /* A faint engineering grid — texture, never decoration. */
+  /* A faint engineering grid — texture, never decoration — under a soft white
+     fade that stops the slate starting as a hard block at the masthead. */
   background-image:
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0) 460px),
     radial-gradient(circle at 1px 1px, rgba(21, 23, 28, 0.05) 1px, transparent 0);
-  background-size: 26px 26px;
+  background-size: 100% 100%, 26px 26px;
+  background-repeat: no-repeat, repeat;
   min-height: 100vh;
   overflow-x: hidden;
 }
@@ -143,33 +152,77 @@
 
 /* ── Hero ─────────────────────────────────────────────────────────────────── */
 .hero {
-  padding-block: clamp(3rem, 8vw, 6.5rem) clamp(2.5rem, 6vw, 4.5rem);
+  padding-block: clamp(2.6rem, 7vw, 5.5rem) clamp(2.5rem, 6vw, 4.5rem);
 }
 
 .hero-grid {
   display: grid;
-  gap: clamp(2rem, 5vw, 3rem);
+  gap: clamp(2.2rem, 5vw, 3rem);
   grid-template-columns: 1fr;
 }
 
 .hero-lead {
-  max-width: 40ch;
+  max-width: 44rem;
 }
 
-@media (min-width: 860px) {
+@media (min-width: 880px) {
   .hero-grid {
     grid-template-columns: minmax(0, 1fr) auto;
-    align-items: end;
+    align-items: start;
   }
 }
 
-/* A compact manifest of where it can go — previews the ledger and gives the
-   hero a right edge instead of a void. */
-.hero-index {
-  align-self: end;
+/* ── Pill actions ─────────────────────────────────────────────────────────── */
+.cta {
+  margin-top: clamp(1.6rem, 3.5vw, 2.2rem);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 0.7rem;
 }
 
-.hero-index .idx-head {
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.62rem 1.15rem;
+  border-radius: 999px;
+  border: 1px solid var(--rule-strong);
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--gsans);
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: -0.006em;
+  text-decoration: none;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease;
+}
+
+.pill:hover {
+  border-color: var(--ink);
+  background: color-mix(in oklab, var(--ink) 6%, transparent);
+}
+
+.pill-solid {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+.pill-solid:hover {
+  background: color-mix(in oklab, var(--ink) 86%, var(--own));
+  border-color: color-mix(in oklab, var(--ink) 86%, var(--own));
+  color: var(--paper);
+}
+
+/* ── Hero fan: one source, five owned endpoints ───────────────────────────── */
+.fan {
+  align-self: start;
+}
+
+.fan-head {
   font-family: var(--stencil);
   font-weight: 500;
   font-size: 0.72rem;
@@ -177,32 +230,103 @@
   color: var(--muted);
   padding-bottom: 0.7rem;
   border-bottom: 1px solid var(--rule);
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.75rem;
 }
 
-.hero-index li {
+.fan-body {
   display: grid;
-  grid-template-columns: 1.8rem 0.7rem 1fr;
+  grid-template-columns: 58px minmax(0, 1fr);
+  align-items: start;
+}
+
+.fan-svg {
+  width: 58px;
+  height: 206px;
+  flex: none;
+}
+
+.fan-svg .trunk,
+.fan-svg .spur {
+  stroke: var(--rule-strong);
+  stroke-width: 1.5;
+  stroke-dasharray: 0.01 4.5;
+  stroke-linecap: round;
+}
+
+.fan-svg .src-ring {
+  stroke: var(--own);
+  stroke-width: 1;
+  fill: none;
+}
+
+.fan-svg .src-core {
+  fill: var(--own);
+}
+
+.fan-svg .end {
+  fill: var(--paper);
+  stroke-width: 1.4;
+}
+
+.fan-svg .e1 { stroke: var(--h-other); }
+.fan-svg .e2 { stroke: var(--h-nutrition); }
+.fan-svg .e3 { stroke: var(--h-mind); }
+.fan-svg .e4 { stroke: var(--h-mobility); }
+.fan-svg .e5 { stroke: var(--h-symptoms); }
+
+.fan-svg .pip {
+  offset-rotate: 0deg;
+  opacity: 0;
+  animation: g-pip 4.4s linear infinite;
+}
+
+.fan-svg .p1 { fill: var(--h-other); }
+.fan-svg .p2 { fill: var(--h-nutrition); }
+.fan-svg .p3 { fill: var(--h-mind); }
+.fan-svg .p4 { fill: var(--h-mobility); }
+.fan-svg .p5 { fill: var(--h-symptoms); }
+
+@keyframes g-pip {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  36% {
+    offset-distance: 100%;
+    opacity: 1;
+  }
+  44% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+
+.fan-list {
+  padding-top: 10px;
+  padding-left: 0.85rem;
+}
+
+.fan-list li {
+  height: 40px;
+  display: flex;
   align-items: center;
   gap: 0.7rem;
-  padding-block: 0.5rem;
-  border-bottom: 1px solid var(--rule-soft);
 }
 
-.hero-index .n {
+.fan-list .n {
   font-family: var(--mono);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: var(--muted);
 }
 
-.hero-index .dot {
-  inline-size: 0.55rem;
-  block-size: 0.55rem;
-  border-radius: 999px;
-  background: var(--hue);
-}
-
-.hero-index .nm {
+.fan-list .nm {
   font-size: 0.98rem;
   font-weight: 500;
   color: var(--ink);
@@ -248,17 +372,19 @@
 }
 
 /* ── Ledger heading ───────────────────────────────────────────────────────── */
+/* Aligned to the row grid, so the label sits over the indices and the sentence
+   sits over the names it describes. */
 .ledger-head {
-  display: flex;
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr);
+  gap: 0.5rem clamp(1rem, 3vw, 2.25rem);
   align-items: baseline;
-  justify-content: space-between;
-  gap: 1rem 2rem;
-  flex-wrap: wrap;
   padding-top: clamp(1.4rem, 3vw, 2rem);
   border-top: 2px solid var(--ink);
 }
 
 .ledger-head h2 {
+  grid-column: 1 / -1;
   font-family: var(--stencil);
   font-weight: 500;
   font-size: 0.82rem;
@@ -267,8 +393,9 @@
 }
 
 .ledger-head p {
-  max-width: 52ch;
-  font-size: 0.95rem;
+  grid-column: 2;
+  max-width: 70ch;
+  font-size: 1rem;
   line-height: 1.5;
   color: var(--muted);
 }
@@ -297,13 +424,16 @@
   border-top: none;
 }
 
-/* Left gutter: stencil index + a node on the shared vertical bus, so five rows
-   read as one source tapping five owned endpoints. */
+/* Left gutter: a stencil index, then the shared vertical bus with this row's
+   node on it — so five rows read as one source tapping five owned endpoints.
+   Index and rail never overlap, so the bus runs unbroken the whole way down and
+   a dot can travel it. */
 .gutter {
   grid-row: 1 / -1;
   position: relative;
   display: flex;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: space-between;
 }
 
 .gutter::before {
@@ -311,38 +441,94 @@
   position: absolute;
   top: -1px;
   bottom: calc(-1 * clamp(1.6rem, 3.5vw, 2.4rem) - 1px);
-  left: 50%;
+  right: calc(0.4rem - 1px);
   width: 2px;
-  translate: -50% 0;
-  background: var(--rule-soft);
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--rule-strong) 0 2px,
+    transparent 2px 7px
+  );
 }
 
+/* The bus terminates at the last destination — it does not trail off. */
 .row:last-child .gutter::before {
-  bottom: 50%;
+  bottom: calc(100% - 1.6rem);
+}
+
+/* Each destination is visibly tapped off the bus: a short dotted spur from the
+   node into the row it feeds. */
+.gutter::after {
+  content: '';
+  position: absolute;
+  top: calc(0.95rem - 1px);
+  left: calc(100% + 0.15rem);
+  right: calc(-1 * clamp(1rem, 3vw, 2.25rem));
+  height: 2px;
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--rule-strong) 0 2px,
+    transparent 2px 7px
+  );
 }
 
 .idx {
   font-family: var(--stencil);
   font-weight: 500;
   font-size: 1.05rem;
+  line-height: 1;
   letter-spacing: 0.04em;
   color: var(--muted);
-  background: var(--paper);
-  padding-block: 0.1rem 0.4rem;
-  z-index: 1;
+  margin-top: 0.32rem;
 }
 
 .node {
   position: absolute;
-  top: 2.4rem;
-  left: 50%;
-  translate: -50% 0;
+  top: 0.55rem;
+  right: 0;
   inline-size: 0.8rem;
   block-size: 0.8rem;
   border-radius: 999px;
   background: var(--hue);
   box-shadow: 0 0 0 4px var(--paper), 0 0 0 6px color-mix(in oklab, var(--hue) 26%, transparent);
   z-index: 2;
+}
+
+/* The delivery. Staggered by row, so the five read as one source working
+   through its list. Slot 00 has no drop: nothing is sent to a non-destination. */
+.drop {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.2rem;
+  inline-size: 0.4rem;
+  block-size: 0.4rem;
+  border-radius: 999px;
+  background: var(--hue);
+  opacity: 0;
+  z-index: 1;
+  animation: g-drop 5.5s linear infinite;
+  animation-delay: var(--d, 0s);
+}
+
+@keyframes g-drop {
+  0% {
+    top: -2.6rem;
+    opacity: 0;
+  }
+  7% {
+    opacity: 1;
+  }
+  26% {
+    top: 0.75rem;
+    opacity: 1;
+  }
+  33% {
+    top: 0.75rem;
+    opacity: 0;
+  }
+  100% {
+    top: 0.75rem;
+    opacity: 0;
+  }
 }
 
 .body {
@@ -355,7 +541,7 @@
    space the hero deliberately leaves. */
 @media (min-width: 780px) {
   .row:not(.empty) .body {
-    grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.9fr);
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.85fr);
     column-gap: clamp(1.5rem, 4vw, 3rem);
     grid-template-areas:
       'name transport'
@@ -393,8 +579,8 @@
   margin-top: 0.7rem;
   font-family: var(--mono);
   font-weight: 500;
-  font-size: clamp(1.05rem, 0.82rem + 1.35vw, 1.85rem);
-  line-height: 1.2;
+  font-size: clamp(1.02rem, 0.8rem + 1.1vw, 1.6rem);
+  line-height: 1.22;
   letter-spacing: -0.02em;
   color: var(--ink);
   word-break: break-word;
@@ -407,13 +593,17 @@
 
 .addr .tag {
   display: inline-block;
-  margin-left: 0.5rem;
+  margin-left: 0.55rem;
+  padding: 0.16em 0.6em 0.2em;
+  border: 1px solid var(--rule-strong);
+  border-radius: 999px;
   font-family: var(--stencil);
   font-weight: 500;
-  font-size: 0.6rem;
+  font-size: 0.58rem;
   letter-spacing: 0.16em;
   color: var(--muted);
-  vertical-align: 0.32em;
+  vertical-align: 0.3em;
+  white-space: nowrap;
 }
 
 .transport {
@@ -458,14 +648,162 @@
 
 .slot {
   margin-top: 0.7rem;
+  justify-self: start;
   font-family: var(--mono);
-  font-size: clamp(1rem, 0.85rem + 0.8vw, 1.5rem);
+  font-size: clamp(0.95rem, 0.85rem + 0.6vw, 1.28rem);
   letter-spacing: -0.01em;
   color: var(--muted);
-  border: 1px dashed var(--rule);
-  border-radius: 4px;
-  padding: 0.55rem 0.85rem;
+  border: 1px dashed var(--rule-strong);
+  border-radius: 14px;
+  padding: 0.6rem 1rem;
   display: inline-block;
+}
+
+/* ── How: the question a search engine gets asked ─────────────────────────── */
+.how {
+  margin-top: clamp(3rem, 7vw, 5rem);
+  padding-top: clamp(1.6rem, 3vw, 2.2rem);
+  border-top: 2px solid var(--ink);
+}
+
+.how-grid {
+  display: grid;
+  gap: clamp(2rem, 5vw, 3.5rem);
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+
+@media (min-width: 880px) {
+  .how-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.82fr);
+  }
+}
+
+.how h2 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.4rem);
+  line-height: 1.1;
+  letter-spacing: -0.014em;
+  max-width: 20ch;
+}
+
+.how h2 em {
+  font-style: italic;
+  color: var(--own);
+}
+
+.answer {
+  margin-top: clamp(1rem, 2.5vw, 1.4rem);
+  max-width: 52ch;
+  font-size: clamp(1rem, 0.96rem + 0.25vw, 1.12rem);
+  line-height: 1.5;
+  letter-spacing: -0.006em;
+  color: color-mix(in oklab, var(--ink) 80%, var(--paper));
+}
+
+.steps {
+  margin-top: clamp(1.4rem, 3vw, 1.9rem);
+  counter-reset: step;
+  display: grid;
+  gap: 0.55rem;
+  max-width: 54ch;
+}
+
+.steps li {
+  counter-increment: step;
+  display: grid;
+  grid-template-columns: 1.9rem 1fr;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding-block: 0.5rem;
+  border-bottom: 1px solid var(--rule-soft);
+  font-size: 1rem;
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+.steps li::before {
+  content: counter(step, decimal-leading-zero);
+  font-family: var(--stencil);
+  font-weight: 500;
+  font-size: 0.86rem;
+  letter-spacing: 0.06em;
+  color: var(--own);
+}
+
+.after {
+  margin-top: 1.1rem;
+  max-width: 54ch;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+/* ── Formats table ────────────────────────────────────────────────────────── */
+.fmt {
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  background: color-mix(in oklab, #fff 48%, var(--paper));
+  padding: clamp(1.15rem, 3vw, 1.6rem);
+}
+
+.fmt h3 {
+  font-family: var(--stencil);
+  font-weight: 500;
+  font-size: 0.74rem;
+  letter-spacing: 0.16em;
+  color: var(--own);
+}
+
+.formats {
+  margin-top: 1rem;
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.formats th,
+.formats td {
+  padding-block: 0.65rem;
+  vertical-align: baseline;
+  border-bottom: 1px solid var(--rule-soft);
+}
+
+.formats thead th {
+  font-family: var(--stencil);
+  font-weight: 500;
+  font-size: 0.66rem;
+  letter-spacing: 0.16em;
+  color: var(--muted);
+  padding-top: 0;
+  border-bottom-color: var(--rule);
+}
+
+.formats tbody th {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--ink);
+  padding-right: 1rem;
+  white-space: nowrap;
+}
+
+.formats td {
+  font-size: 0.94rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.formats td b {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.formats tbody tr:last-child th,
+.formats tbody tr:last-child td {
+  border-bottom: none;
+  padding-bottom: 0;
 }
 
 /* ── Independence strip ───────────────────────────────────────────────────── */
@@ -523,6 +861,40 @@
   border-radius: 3px;
 }
 
+/* ── Close ────────────────────────────────────────────────────────────────── */
+.close {
+  margin-top: clamp(3rem, 7vw, 5rem);
+  padding-top: clamp(1.6rem, 3vw, 2.2rem);
+  border-top: 2px solid var(--ink);
+}
+
+.close h2 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(1.85rem, 1.2rem + 2.4vw, 3.2rem);
+  line-height: 1.05;
+  letter-spacing: -0.018em;
+  max-width: 18ch;
+}
+
+.close h2 em {
+  font-style: italic;
+  color: var(--own);
+}
+
+.close > p {
+  margin-top: clamp(0.9rem, 2vw, 1.2rem);
+  font-size: clamp(1rem, 0.96rem + 0.3vw, 1.15rem);
+  color: color-mix(in oklab, var(--ink) 80%, var(--paper));
+}
+
+.close .note {
+  margin-top: 1.1rem;
+  font-size: 0.9rem;
+  letter-spacing: -0.006em;
+  color: var(--muted);
+}
+
 /* ── Footer ───────────────────────────────────────────────────────────────── */
 .foot {
   margin-top: clamp(3rem, 7vw, 5rem);
@@ -537,10 +909,10 @@
 }
 
 .foot a {
-  font-family: var(--mono);
   color: var(--ink);
   text-decoration: none;
-  border-bottom: 1px solid var(--faint);
+  border-bottom: 1px solid var(--rule-strong);
+  transition: border-color 0.18s ease;
 }
 
 .foot a:hover {
@@ -548,14 +920,48 @@
 }
 
 @media (max-width: 460px) {
-  .row {
+  .row,
+  .ledger-head {
     grid-template-columns: 2.6rem 1fr;
   }
 }
 
+/* ── Quiet reveals ────────────────────────────────────────────────────────── */
+.g-js .g [data-r] {
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity 0.3s ease-out,
+    transform 0.3s ease-out;
+}
+
+.g-js .g [data-r].is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── Motion off ───────────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-  * {
+  *,
+  *::before,
+  *::after {
     animation: none !important;
     transition: none !important;
+  }
+
+  /* Keep the information, stop the movement: the travelling dots park on the
+     endpoints they were delivering to, and nothing is left hidden. */
+  .g-js .g [data-r] {
+    opacity: 1;
+    transform: none;
+  }
+
+  .fan-svg .pip {
+    offset-distance: 100%;
+    opacity: 1;
+  }
+
+  .drop {
+    display: none;
   }
 }

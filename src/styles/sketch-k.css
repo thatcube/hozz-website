@@ -4,7 +4,8 @@
  * The page argues one thing: three containers, the same facts, and one of them
  * cannot hold all of them. The argument is made structurally — the CSV column
  * is genuinely shorter than the other two, because it carries less. Height is
- * the only chart on the page.
+ * the only chart on the page, and on scroll the three cards wipe open at one
+ * constant speed, so the short one visibly finishes first.
  *
  * Palette is deliberately not paper-white and not cream: a cool slate stock
  * with near-white cut cards on top. Health hues appear once, as data, inside
@@ -62,6 +63,26 @@
 .k-inner {
   max-width: 1180px;
   margin: 0 auto;
+}
+
+/* --------------------------------------------------------- scroll reveals */
+
+.k-js .k [data-reveal] {
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+  transition-delay: calc(var(--k-i, 0) * 45ms);
+}
+
+.k-js .k [data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+}
+
+.k-js .k [data-reveal-late] {
+  transition-delay: 0.45s;
 }
 
 /* ---------------------------------------------------------------- top strip */
@@ -150,7 +171,7 @@
 }
 
 .k-lede {
-  max-width: 38ch;
+  max-width: 40ch;
   font-size: clamp(1.02rem, 1.6vw, 1.2rem);
   line-height: 1.5;
   color: var(--ink-2);
@@ -161,11 +182,72 @@
   font-weight: 600;
 }
 
+/* pills -------------------------------------------------------------------- */
+
+.k-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: clamp(1.1rem, 2.4vw, 1.5rem);
+}
+
+.k-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+  padding: 0.72rem 1.2rem;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  background: var(--ink);
+  color: #fff;
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  box-shadow: 0 12px 26px -18px rgba(16, 19, 24, 0.95);
+  transition:
+    background 0.18s ease,
+    transform 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.k-btn:hover {
+  background: #000;
+  transform: translateY(-1px);
+}
+
+.k-btn span {
+  font-size: 0.9em;
+  opacity: 0.75;
+}
+
+.k-btn--ghost {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--rule-strong);
+  box-shadow: none;
+}
+
+.k-btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.55);
+  border-color: var(--ink);
+}
+
+.k-cta-note {
+  margin-top: 0.75rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
 /* the artefact ------------------------------------------------------------ */
 
 .k-artefact {
+  margin: 0;
   background: var(--card);
-  border-radius: 14px;
+  border-radius: 16px;
   padding: clamp(1rem, 2.2vw, 1.35rem);
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.7) inset,
@@ -229,6 +311,219 @@
   color: var(--ink-3);
 }
 
+/* ------------------------------------------------------- where it goes */
+
+.k-where {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1.5rem, 3.5vw, 2.75rem);
+  padding-top: clamp(1.75rem, 3.5vw, 2.75rem);
+  padding-bottom: clamp(2rem, 4.5vw, 3.25rem);
+  border-top: 1px solid var(--rule-strong);
+}
+
+@media (min-width: 52rem) {
+  .k-where {
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    align-items: start;
+  }
+}
+
+.k-where .k-sheet-note {
+  margin-top: 0.85rem;
+  max-width: 36ch;
+}
+
+.k-where .k-sheet-note code {
+  font-family: var(--mono);
+  font-size: 0.88em;
+  color: var(--ink);
+}
+
+/* the hub: a hairline batch of records, stroke only. It is the top node of the
+   wire, so the whole thing reads as one diagram: phone → wire → destinations. */
+.k-hub {
+  margin: 0;
+  color: var(--ink-2);
+}
+
+.k-hub-svg rect {
+  fill: var(--card);
+  stroke: var(--rule-strong);
+}
+
+.k-hub-svg {
+  width: min(100%, 15rem);
+  height: auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.1;
+  stroke-linecap: round;
+}
+
+.k-hub-svg circle {
+  fill: currentColor;
+  stroke: none;
+}
+
+.k-hub-rows path {
+  stroke-dasharray: 1 4.5;
+  animation: k-dots 6s linear infinite;
+}
+
+@keyframes k-dots {
+  to {
+    stroke-dashoffset: -11;
+  }
+}
+
+.k-hub figcaption {
+  margin-top: 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* the spine: destinations threaded on one dotted wire */
+.k-dest-wrap {
+  min-width: 0;
+}
+
+.k-dest-run {
+  position: relative;
+  min-width: 0;
+}
+
+.k-hub-wire,
+.k-dest::before {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(16, 19, 24, 0.45) 0 2px,
+    transparent 2px 7px
+  );
+}
+
+.k-hub-wire {
+  display: block;
+  width: 1px;
+  height: 2.1rem;
+  margin-left: 20px;
+}
+
+.k-dest {
+  position: relative;
+}
+
+.k-dest::before {
+  content: '';
+  position: absolute;
+  left: 20px;
+  top: 0;
+  bottom: 1.85rem;
+  width: 1px;
+}
+
+.k-dest li {
+  position: relative;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: 0.9rem;
+  align-items: center;
+  padding: 0.55rem 0;
+}
+
+.k-dest-icon {
+  grid-row: 1 / 3;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  border: 1px solid var(--rule-strong);
+  background: var(--card);
+  color: var(--ink-2);
+  position: relative;
+  z-index: 1;
+}
+
+.k-dest-icon svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.k-dest b {
+  grid-column: 2;
+  font-size: 0.98rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.k-dest i {
+  grid-column: 2;
+  font-style: normal;
+  display: block;
+  margin-top: 0.1rem;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+
+/* small dots emitted by the phone, travelling down the wire */
+.k-flow {
+  position: absolute;
+  left: 20px;
+  top: 0;
+  height: calc(100% - 1.85rem);
+  width: 0;
+  pointer-events: none;
+}
+
+.k-flow::after {
+  content: '';
+  position: absolute;
+  left: -2.5px;
+  top: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--ink);
+  animation: k-travel 4.2s linear infinite;
+}
+
+.k-flow--b::after {
+  animation-delay: 1.4s;
+}
+
+.k-flow--c::after {
+  animation-delay: 2.8s;
+}
+
+@keyframes k-travel {
+  0% {
+    top: 0%;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+
 /* --------------------------------------------------------------- the sheet */
 
 .k-sheet-head {
@@ -283,7 +578,7 @@
 
 .k-col {
   background: var(--card);
-  border-radius: 14px;
+  border-radius: 16px;
   padding: clamp(0.9rem, 1.6vw, 1.15rem);
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.7) inset,
@@ -325,7 +620,13 @@
   font-size: 0.84rem;
   line-height: 1.5;
   color: var(--ink-2);
-  min-height: 4.5em;
+  min-height: 3em;
+}
+
+@media (min-width: 46rem) {
+  .k-col-sub {
+    min-height: 4.5em;
+  }
 }
 
 .k-badge {
@@ -335,8 +636,8 @@
   font-size: 0.63rem;
   letter-spacing: 0.09em;
   text-transform: uppercase;
-  padding: 0.24rem 0.45rem;
-  border-radius: 5px;
+  padding: 0.26rem 0.55rem;
+  border-radius: 9999px;
   background: var(--ink);
   color: #fff;
 }
@@ -414,15 +715,12 @@
 
 .k-fields li.k-gone i {
   font-size: 0.6rem;
+  color: var(--cut);
 }
 
 .k-fields li.k-gone b {
   text-decoration: line-through;
   text-decoration-color: rgba(163, 34, 50, 0.6);
-}
-
-.k-fields li.k-gone i {
-  color: var(--cut);
 }
 
 @keyframes k-drift {
@@ -453,7 +751,7 @@
 .k-col--cut {
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.7) inset;
   filter: drop-shadow(0 14px 20px rgba(16, 19, 24, 0.22));
-  border-radius: 14px 14px 0 0;
+  border-radius: 16px 16px 0 0;
   padding-bottom: 1.05rem;
   clip-path: polygon(
     0% 0%,
@@ -474,6 +772,153 @@
     7.1429% 100%,
     0.0000% calc(100% - 11px)
   );
+}
+
+/* On a phone the three cards stack, so the height comparison would be lost.
+   This restates it in one glance, in the same language: three bars, one of them
+   short and sawtooth-cut, against a dotted line marking "all nine". */
+.k-gauge {
+  display: none;
+}
+
+@media (max-width: 45.999rem) {
+  .k-gauge {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.65rem;
+    position: relative;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.k-gauge-full {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background-image: repeating-linear-gradient(
+    to right,
+    rgba(16, 19, 24, 0.45) 0 3px,
+    transparent 3px 8px
+  );
+}
+
+.k-gauge-bar {
+  position: relative;
+  display: grid;
+  grid-template-rows: 118px auto auto;
+  align-items: end;
+  gap: 0.3rem;
+}
+
+.k-gauge-bar i {
+  --h: 118px;
+  display: block;
+  align-self: end;
+  width: 100%;
+  height: var(--h);
+  background: var(--card);
+  border: 1px solid var(--rule-strong);
+  border-radius: 14px;
+  box-shadow: 0 10px 24px -18px rgba(16, 19, 24, 0.75);
+}
+
+.k-gauge-bar b {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 0.98rem;
+  line-height: 1.1;
+  text-transform: lowercase;
+  letter-spacing: -0.02em;
+}
+
+.k-gauge-bar u {
+  text-decoration: none;
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+}
+
+/* the shortfall, drawn as the hole it leaves */
+.k-gauge-bar--cut::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 40px;
+  border-radius: 14px;
+  border: 1px dashed rgba(163, 34, 50, 0.45);
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(163, 34, 50, 0.16) 0 1px,
+    transparent 1px 6px
+  );
+}
+
+.k-gauge-bar--cut i {
+  border-radius: 14px 14px 0 0;
+  border-bottom: 0;
+  clip-path: polygon(
+    0% 0%,
+    100% 0%,
+    100% calc(100% - 8px),
+    87.5% 100%,
+    75% calc(100% - 8px),
+    62.5% 100%,
+    50% calc(100% - 8px),
+    37.5% 100%,
+    25% calc(100% - 8px),
+    12.5% 100%,
+    0% calc(100% - 8px)
+  );
+}
+
+.k-gauge-bar--cut u {
+  color: var(--cut);
+}
+
+/* Height is animated deliberately, not transform: scaleY() would distort the
+   14px corners and the sawtooth teeth, which are the whole point. The bars sit
+   inside a fixed 118px track, so nothing outside them reflows — three elements,
+   one 0.4–0.6s transition, no layout thrash. */
+.k-js .k-cols.is-armed .k-gauge i {
+  height: 0;
+  transition: height 0.62s linear;
+}
+
+.k-js .k-cols.is-armed .k-gauge .k-gauge-bar--cut i {
+  transition-duration: 0.41s;
+}
+
+.k-js .k-cols.is-armed .k-gauge.is-in i {
+  height: var(--h);
+}
+
+/* The reveal: all three wipe open at one constant speed, so the short card
+   finishes first and the shortfall is felt as time, not just measured. */
+.k-js .k-cols.is-armed .k-col-wrap {
+  clip-path: inset(0 0 100% 0);
+}
+
+.k-js .k-cols.is-armed .k-col-wrap.is-in {
+  animation: k-wipe var(--k-draw, 0.95s) linear forwards;
+}
+
+.k-js .k-cols.is-armed .k-col-wrap.is-done {
+  clip-path: none;
+  animation: none;
+}
+
+@keyframes k-wipe {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
 }
 
 /* the caption that admits the chart is the layout ------------------------- */
@@ -528,6 +973,78 @@
   overflow-wrap: anywhere;
 }
 
+/* ---------------------------------------------------------------- how-to */
+
+.k-how {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+  margin-top: clamp(2rem, 4.5vw, 3.25rem);
+  padding-top: clamp(1.5rem, 3vw, 2.25rem);
+  border-top: 1px solid var(--rule-strong);
+}
+
+@media (min-width: 52rem) {
+  .k-how {
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    align-items: start;
+  }
+}
+
+.k-how .k-sheet-note {
+  margin-top: 0.85rem;
+  max-width: 24ch;
+}
+
+.k-steps {
+  counter-reset: k-step;
+  min-width: 0;
+}
+
+.k-steps li {
+  counter-increment: k-step;
+  display: grid;
+  grid-template-columns: 1.65rem minmax(0, 1fr);
+  gap: 0.9rem;
+  align-items: start;
+  padding: 0.8rem 0;
+  border-top: 1px solid var(--rule);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+
+.k-steps li:last-child {
+  border-bottom: 1px solid var(--rule);
+}
+
+.k-steps li::before {
+  content: counter(k-step);
+  width: 1.65rem;
+  height: 1.65rem;
+  display: grid;
+  place-items: center;
+  border-radius: 9999px;
+  border: 1px solid var(--rule-strong);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--ink);
+  background: var(--card);
+}
+
+.k-how-foot {
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--ink-3);
+  max-width: 62ch;
+}
+
+@media (min-width: 52rem) {
+  .k-how-foot {
+    grid-column: 2;
+  }
+}
+
 /* ------------------------------------------------------------------- notes */
 
 .k-notes {
@@ -539,9 +1056,17 @@
   border-top: 1px solid var(--rule-strong);
 }
 
+.k-notes-title {
+  margin-bottom: clamp(0.5rem, 1.5vw, 1rem);
+}
+
 @media (min-width: 46rem) {
   .k-notes {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .k-notes-title {
+    grid-column: 1 / -1;
   }
 }
 
@@ -569,7 +1094,7 @@
 .k-tomb {
   margin-top: 0.75rem;
   padding: 0.6rem 0.7rem;
-  border-radius: 9px;
+  border-radius: 14px;
   background: var(--card);
   font-family: var(--mono);
   font-size: 0.68rem;
@@ -592,7 +1117,7 @@
 .k-spool {
   margin-top: 0.85rem;
   padding: 0.65rem 0.75rem;
-  border-radius: 9px;
+  border-radius: 14px;
   background: var(--card);
   box-shadow: 0 10px 26px -20px rgba(16, 19, 24, 0.6);
   font-family: var(--mono);
@@ -637,6 +1162,35 @@
   50% {
     opacity: 0;
   }
+}
+
+/* ------------------------------------------------------------------- close */
+
+.k-close {
+  margin-top: clamp(2rem, 4.5vw, 3.25rem);
+  padding: clamp(1.6rem, 4vw, 2.75rem);
+  border-radius: 16px;
+  background: var(--card);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.7) inset,
+    0 18px 40px -26px rgba(16, 19, 24, 0.6);
+}
+
+.k-close-h {
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  line-height: 0.95;
+}
+
+.k-close-h em {
+  color: var(--cut);
+}
+
+.k-close-p {
+  margin-top: 0.9rem;
+  font-size: clamp(0.98rem, 1.5vw, 1.1rem);
+  line-height: 1.5;
+  color: var(--ink-2);
+  max-width: 42ch;
 }
 
 /* -------------------------------------------------------------------- foot */
@@ -695,12 +1249,54 @@
   text-decoration-color: currentColor;
 }
 
+/* ------------------------------------------------------- reduced motion */
+
 @media (prefers-reduced-motion: reduce) {
-  .k-fields li.k-gone {
+  .k-fields li.k-gone,
+  .k-hub-rows path,
+  .k-spool span:last-child::after,
+  .k-flow::after {
     animation: none;
   }
 
-  .k-spool span:last-child::after {
+  /* the dot stays on the wire — it is information, not decoration */
+  .k-flow::after {
+    top: 26%;
+    opacity: 1;
+  }
+
+  .k-flow--b::after {
+    top: 54%;
+  }
+
+  .k-flow--c::after {
+    top: 82%;
+  }
+
+  .k-btn {
+    transition: none;
+  }
+
+  .k-btn:hover {
+    transform: none;
+  }
+
+  .k-js .k [data-reveal],
+  .k-js .k [data-reveal].is-in {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .k-js .k-cols.is-armed .k-col-wrap,
+  .k-js .k-cols.is-armed .k-col-wrap.is-in {
+    clip-path: none;
     animation: none;
+  }
+
+  .k-js .k-cols.is-armed .k-gauge i,
+  .k-js .k-cols.is-armed .k-gauge.is-in i {
+    height: var(--h);
+    transition: none;
   }
 }

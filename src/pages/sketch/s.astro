@@ -1,0 +1,183 @@
+---
+import SketchLayout from '../../layouts/SketchLayout.astro';
+import { GITHUB_URL } from '../../data/site';
+import '../../styles/sketch-s.css';
+
+const identifiers = [
+  { name: 'heartRateVariabilitySDNN', value: '48 ms', hue: 'var(--h-heart)' },
+  { name: 'stepCount', value: '8,241', hue: 'var(--h-activity)' },
+  { name: 'sleepAnalysis', value: '7h 12m', hue: 'var(--h-sleep)' },
+  { name: 'oxygenSaturation', value: '97%', hue: 'var(--h-respiratory)' },
+];
+
+const destinations = [
+  {
+    label: 'File',
+    title: 'A file you keep',
+    body: 'Complete parts plus a manifest, so an interrupted export never passes for a finished one.',
+  },
+  {
+    label: 'Server',
+    title: 'A server you run',
+    body: 'TLS first. Credentials stay in the Keychain on that device and never follow an off-host redirect.',
+  },
+  {
+    label: 'Mac',
+    title: 'Your own Mac',
+    body: 'Receive directly over your network, then query the local copy through the Model Context Protocol.',
+  },
+];
+---
+
+<SketchLayout title="Sketch S — Carbon Copy · Hozz" letter="S" name="Carbon Copy">
+  <main>
+    <section class="hero" aria-labelledby="hero-title">
+      <nav class="masthead" aria-label="Page">
+        <a class="wordmark" href="#top" aria-label="Hozz, back to top">Hozz</a>
+        <span class="availability">Early alpha · free &amp; open source</span>
+      </nav>
+
+      <div class="hero-grid" id="top">
+        <div class="hero-copy">
+          <p class="eyebrow">Apple Health, copied without a middleman</p>
+          <h1 id="hero-title">Keep a carbon copy of <span>your health.</span></h1>
+          <p class="lede">
+            Hozz keeps an inspectable copy of the Apple Health data you choose,
+            in a file you keep or a system you run. No account. No subscription.
+            No server of ours.
+          </p>
+          <a class="primary-link" href="#handoff">
+            See the handoff
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"></path></svg>
+          </a>
+        </div>
+
+        <div class="carbon-stage" aria-label="A live copy of four Apple Health data types">
+          <span class="sheet-label source-label">Health / source</span>
+          <span class="sheet-label copy-label">Your copy / current</span>
+          <div class="source-sheet" aria-hidden="true">
+            <div class="registration"><i></i><i></i><i></i><i></i></div>
+            {
+              identifiers.map((item) => (
+                <div class="record" style={`--record-hue: ${item.hue}`}>
+                  <span>{item.name}</span><b>{item.value}</b>
+                </div>
+              ))
+            }
+          </div>
+          <div class="copy-sheet">
+            <div class="registration" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+            {
+              identifiers.map((item) => (
+                <div class="record" style={`--record-hue: ${item.hue}`}>
+                  <span>{item.name}</span><b>{item.value}</b>
+                </div>
+              ))
+            }
+            <div class="copy-foot">
+              <span>4 types accounted for</span>
+              <span>Nothing sent elsewhere</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="thesis" aria-labelledby="thesis-title">
+      <p class="section-label">What it does</p>
+      <div class="thesis-copy">
+        <h2 id="thesis-title">Not a new dashboard. <em>A copy you can leave with.</em></h2>
+        <p>
+          Health data is most useful when it can reach your own tools. Hozz reads
+          incrementally, preserves the full record, and writes only to places you
+          have chosen and confirmed.
+        </p>
+      </div>
+      <ul class="refusals" aria-label="Hozz privacy promises">
+        <li><span>01</span><b>No account</b><small>Nothing to sign up for</small></li>
+        <li><span>02</span><b>No analytics</b><small>Nothing watching you</small></li>
+        <li><span>03</span><b>No cloud of ours</b><small>Nothing in the middle</small></li>
+      </ul>
+    </section>
+
+    <section class="handoff" id="handoff" aria-labelledby="handoff-title">
+      <div class="handoff-head">
+        <p class="section-label">How it works</p>
+        <h2 id="handoff-title">Three decisions. All yours.</h2>
+      </div>
+      <ol class="handoff-track">
+        <li>
+          <span class="step-number">1</span>
+          <div>
+            <h3>Choose what it reads</h3>
+            <p>iOS asks for each Health permission. Leave anything you do not want closed.</p>
+          </div>
+        </li>
+        <li>
+          <span class="step-number">2</span>
+          <div>
+            <h3>Let it keep up</h3>
+            <p>Each kind resumes from its last confirmed point, without duplicates or skipped changes.</p>
+          </div>
+        </li>
+        <li>
+          <span class="step-number">3</span>
+          <div>
+            <h3>Pick where it lands</h3>
+            <p>Nothing leaves until you configure a destination and confirm it.</p>
+          </div>
+        </li>
+        <span class="travel-line" aria-hidden="true"><i></i></span>
+      </ol>
+    </section>
+
+    <section class="destinations" aria-labelledby="destinations-title">
+      <div class="destinations-intro">
+        <p class="section-label">Where it sends</p>
+        <h2 id="destinations-title">From your pocket to somewhere you own.</h2>
+        <p>Use the full record as-is, or choose CSV and JSON when a simpler projection is enough.</p>
+      </div>
+      <div class="destination-list">
+        {
+          destinations.map((destination) => (
+            <article>
+              <span>{destination.label}</span>
+              <h3>{destination.title}</h3>
+              <p>{destination.body}</p>
+              <i aria-hidden="true">↗</i>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="honesty" aria-labelledby="honesty-title">
+      <div class="honesty-mark" aria-hidden="true">
+        <span>?</span>
+      </div>
+      <div>
+        <p class="section-label">The honest footnote</p>
+        <h2 id="honesty-title">Denied and empty look identical from inside HealthKit.</h2>
+        <p>
+          Apple does not reveal which one happened. Hozz reports “denied or empty”
+          instead of guessing, and marks anything it cannot yet read correctly.
+        </p>
+      </div>
+    </section>
+
+    <footer class="close">
+      <div>
+        <p class="section-label">Take your copy</p>
+        <h2>Your history should have an exit.</h2>
+      </div>
+      <div class="close-action">
+        <p>Hozz is being built in the open. The current work is automatic background sync and real-device endurance testing.</p>
+        <a href={GITHUB_URL} rel="noopener">
+          Follow the build on GitHub
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"></path></svg>
+        </a>
+      </div>
+      <p class="fine-print">Free forever · GPL-3.0 · iPhone &amp; Mac</p>
+    </footer>
+  </main>
+</SketchLayout>

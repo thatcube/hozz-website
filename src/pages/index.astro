@@ -3,91 +3,151 @@ import Layout from '../layouts/Layout.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import HealthStream from '../components/HealthStream.astro';
-import { Icon } from 'astro-icon/components';
 import {
   CATEGORIES,
   COVERAGE_STATES,
   DESTINATIONS,
   DONATE_URL,
+  DURABILITY,
+  FAQ,
+  FORMATS,
   GITHUB_URL,
-  MILESTONES,
+  MCP_TOOLS,
+  NOT_YET,
   PROMISES,
+  SITE,
   STEPS,
+  WORKING,
 } from '../data/site';
 
 const hue = Object.fromEntries(CATEGORIES.map((c) => [c.key, c.hue]));
+
+/* Stroke-only line art, drawn here rather than pulled from an icon set, so the
+   whole page shares one hairline weight. Decorative: the label is next to it. */
+const ICONS: Record<string, string> = {
+  mac: '<rect x="2.6" y="4.4" width="18.8" height="12.6" rx="2.2"/><path d="M8 20.6h8M11 17v3.6M13 17v3.6"/>',
+  folder:
+    '<path d="M2.6 7a2 2 0 0 1 2-2h4.1l2 2.6h6.7a2 2 0 0 1 2 2v8.8a2 2 0 0 1-2 2H4.6a2 2 0 0 1-2-2z"/>',
+  house: '<path d="M3.4 10.3 12 3.6l8.6 6.7v8.4a1.6 1.6 0 0 1-1.6 1.6H5a1.6 1.6 0 0 1-1.6-1.6z"/><path d="M9.4 20.3v-5.8h5.2v5.8"/>',
+  globe:
+    '<circle cx="12" cy="12" r="8.6"/><path d="M3.4 12h17.2"/><path d="M12 3.4c2.5 2.4 3.9 5.4 3.9 8.6s-1.4 6.2-3.9 8.6c-2.5-2.4-3.9-5.4-3.9-8.6S9.5 5.8 12 3.4z"/>',
+  broadcast:
+    '<circle cx="12" cy="12" r="2.1"/><path d="M7.9 7.9a5.8 5.8 0 0 0 0 8.2M16.1 16.1a5.8 5.8 0 0 0 0-8.2M5 5a9.9 9.9 0 0 0 0 14M19 19a9.9 9.9 0 0 0 0-14"/>',
+  phone: '<rect x="6.4" y="2.6" width="11.2" height="18.8" rx="2.6"/><path d="M10.4 5.4h3.2"/>',
+};
+
+/* Five wires, fanning from one phone to five destinations. The viewBox is
+   stretched to fit whatever box the grid gives it; non-scaling strokes keep the
+   hairline and the travelling dots perfectly round anyway. */
+const WIRES = [10, 30, 50, 70, 90].map((y, i) => ({
+  d: `M0 50 C 38 50, 56 ${y}, 100 ${y}`,
+  dur: [4.4, 5.2, 3.8, 4.9, 4.2][i],
+  delay: [0, -1.4, -2.6, -0.7, -3.3][i],
+}));
+
+const title = 'Hozz — export your Apple Health data to a file you own';
+const description =
+  'Free, open-source iPhone and Mac app that exports your Apple Health data automatically — to your Mac, a folder, Home Assistant, your own URL or MQTT. No account, no analytics, no server in the middle.';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'SoftwareApplication',
+      name: 'Hozz',
+      applicationCategory: 'HealthApplication',
+      operatingSystem: 'iOS, macOS',
+      url: SITE,
+      codeRepository: GITHUB_URL,
+      license: 'https://www.gnu.org/licenses/gpl-3.0.html',
+      isAccessibleForFree: true,
+      softwareVersion: 'early alpha',
+      author: { '@type': 'Person', name: 'Brandon Moore' },
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      description,
+    },
+    {
+      '@type': 'HowTo',
+      name: 'How to export your Apple Health data with Hozz',
+      estimatedCost: { '@type': 'MonetaryAmount', currency: 'USD', value: '0' },
+      step: STEPS.map((s, i) => ({
+        '@type': 'HowToStep',
+        position: i + 1,
+        name: s.title,
+        text: s.body,
+      })),
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: FAQ.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  ],
+};
 ---
 
-<Layout>
+<Layout title={title} description={description}>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  </Fragment>
+
+  <script is:inline>
+    /* Marks the document as scripted before first paint, so the reveal styles
+       only ever hide content in a browser that will bring it back. */
+    document.documentElement.classList.add('js');
+  </script>
+
   <SiteHeader />
 
   <main id="main">
     <!-- ───────────────────────── Hero ───────────────────────── -->
     <section class="hero" style={`--tint: ${hue.mobility}`}>
       <div class="wrap">
-        <p class="eyebrow">In development · building in the open</p>
-        <h1>Take your health data somewhere <em class="em">you own</em>.</h1>
+        <p class="eyebrow">Early alpha · it works</p>
+        <h1>Your Apple Health data, in a file <em class="em">you own</em>.</h1>
         <p class="lead">
-          Hozz is a free, open-source app for iPhone and iPad that copies what Apple
-          Health knows about you into a file you keep, or onto a server you run.
-          No subscription, no account, and nothing of yours passing through
-          anything of mine.
+          Hozz exports it automatically — to your Mac, a folder, or a server you
+          run. Free, open source, no account.
         </p>
         <div class="cta">
           <a class="btn btn--primary" href={GITHUB_URL} rel="noopener">
-            Read the source
+            Get it from GitHub
             <span class="arrow" aria-hidden="true">→</span>
           </a>
-          <a class="btn btn--ghost" href="#how">How it works</a>
+          <a class="btn btn--ghost" href="#export">How it works</a>
         </div>
-        <p class="fine">iPhone and iPad · GPL-3.0 · free forever</p>
+        <p class="fine">iPhone + Mac · GPL-3.0 · free forever</p>
       </div>
 
       <div class="stream-block">
         <HealthStream />
         <div class="wrap">
           <p class="stream-note">
-            Real HealthKit identifiers. Hozz reads what you allow, and writes it
-            where you point it.
+            Real HealthKit identifiers. Readings are examples.
           </p>
         </div>
       </div>
     </section>
 
-    <!-- ─────────────────────── The promise ─────────────────────── -->
-    <section class="section section--wash" id="promise" style={`--tint: ${hue.heart}`}>
+    <!-- ─────────────────────── How to export ───────────────────────
+         The question people actually type into a search box, answered in
+         plain words before anything is sold to them. -->
+    <section class="section section--wash" id="export" style={`--tint: ${hue.heart}`}>
       <div class="wrap">
-        <div class="section-head">
-          <p class="eyebrow">The promise</p>
-          <h2>Six things Hozz will <em class="em">never</em> do.</h2>
+        <div class="section-head section-head--wide reveal">
+          <p class="eyebrow">How to export</p>
+          <h2>How do I export <em class="em">my</em> Apple Health data?</h2>
           <p class="lead">
-            Most health apps ask you to trust a company. Hozz is built so there is
-            nothing to trust in the first place.
+            Apple’s own export gives you one enormous zip file, by hand, once.
+            Hozz gives you a copy that keeps itself up to date, in a place you
+            already own. Set it up once:
           </p>
         </div>
 
-        <ul class="grid grid--2 grid--3-lg">
-          {
-            PROMISES.map((p) => (
-              <li class="card promise" style={`--hue: ${hue[p.category]}`}>
-                <h3>{p.title}</h3>
-                <p>{p.body}</p>
-              </li>
-            ))
-          }
-        </ul>
-      </div>
-    </section>
-
-    <!-- ─────────────────────── How it works ─────────────────────── -->
-    <section class="section" id="how" style={`--tint: ${hue.body}`}>
-      <div class="wrap">
-        <div class="section-head">
-          <p class="eyebrow">How it works</p>
-          <h2>It only does <em class="em">three</em> things.</h2>
-        </div>
-
-        <ol class="steps">
+        <ol class="steps reveal">
           {
             STEPS.map((s, i) => (
               <li class="step" style={`--hue: ${hue[s.category]}`}>
@@ -98,30 +158,142 @@ const hue = Object.fromEntries(CATEGORIES.map((c) => [c.key, c.hue]));
             ))
           }
         </ol>
+
+        <figure class="pipe reveal">
+          <div class="pipe-grid">
+            <div class="pipe-from">
+              <span class="pipe-node">
+                <svg viewBox="0 0 24 24" class="line-icon" aria-hidden="true" set:html={ICONS.phone} />
+                <span>iPhone</span>
+              </span>
+              <span class="pipe-hint">new records</span>
+            </div>
+
+            <div class="pipe-mid" aria-hidden="true">
+              <svg class="pipe-wires" viewBox="0 0 100 100" preserveAspectRatio="none">
+                {
+                  WIRES.map((w) => (
+                    <g>
+                      <path class="wire" d={w.d} />
+                      <path class="flow" d={w.d} style={`--dur: ${w.dur}s; --delay: ${w.delay}s`} />
+                    </g>
+                  ))
+                }
+              </svg>
+            </div>
+
+            <ul class="pipe-to">
+              {
+                DESTINATIONS.map((d) => (
+                  <li style={`--hue: ${hue[d.category]}`}>
+                    <span class="pipe-dot" aria-hidden="true" />
+                    {d.title}
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+          <figcaption>
+            One phone, five places you already own. Nothing leaves until you add
+            a destination and confirm it.
+          </figcaption>
+        </figure>
       </div>
     </section>
 
     <!-- ─────────────────────── Destinations ─────────────────────── -->
-    <section class="section section--wash" style={`--tint: ${hue.respiratory}`}>
+    <section class="section" id="destinations" style={`--tint: ${hue.respiratory}`}>
       <div class="wrap">
-        <div class="section-head section-head--wide">
+        <div class="section-head reveal">
           <p class="eyebrow">Destinations</p>
           <h2>Somewhere you <em class="em">already</em> own.</h2>
-          <p class="lead">
-            A destination is a place you set up and confirm. There is no default
-            one, because a default destination would be somewhere I chose.
-          </p>
+          <p class="lead">There is no default. A default would be somewhere I chose.</p>
         </div>
 
-        <ul class="grid grid--3">
+        <ul class="grid grid--2 grid--3-lg reveal">
           {
             DESTINATIONS.map((d) => (
               <li class="card dest" style={`--hue: ${hue[d.category]}`}>
                 <span class="dest-icon">
-                  <Icon name={d.icon} width={24} height={24} />
+                  <svg viewBox="0 0 24 24" class="line-icon" aria-hidden="true" set:html={ICONS[d.icon]} />
                 </span>
                 <h3>{d.title}</h3>
                 <p>{d.body}</p>
+                <p class="dest-fact">{d.fact}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <!-- ─────────────────────── Formats ─────────────────────── -->
+    <section class="section section--wash" style={`--tint: ${hue.nutrition}`}>
+      <div class="wrap">
+        <div class="section-head reveal">
+          <p class="eyebrow">Formats</p>
+          <h2>Files you can still read in <em class="em">ten</em> years.</h2>
+          <p class="lead">Plain text. No proprietary container. Take your pick per destination.</p>
+        </div>
+
+        <div class="table-wrap reveal">
+          <table class="fmt">
+            <caption class="sr-only">Export formats Hozz can write, and what each is suited to</caption>
+            <thead>
+              <tr>
+                <th scope="col">Format</th>
+                <th scope="col">Good for</th>
+                <th scope="col">Fidelity</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                FORMATS.map((f) => (
+                  <tr>
+                    <th scope="row">{f.name}</th>
+                    <td>{f.use}</td>
+                    <td class="fmt-note">{f.note}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <p class="aside reveal">
+          Deletions travel as tombstones rather than vanishing quietly, and
+          encoding is deterministic — the same records produce the same bytes in
+          any locale or time zone.
+        </p>
+      </div>
+    </section>
+
+    <!-- ─────────────────────── Durability ─────────────────────── -->
+    <section class="section" style={`--tint: ${hue.body}`}>
+      <div class="wrap">
+        <div class="section-head reveal">
+          <p class="eyebrow">Durability</p>
+          <h2>An interruption can repeat work. It cannot <em class="em">skip</em>.</h2>
+        </div>
+
+        <div class="anchor reveal" aria-hidden="true">
+          <div class="anchor-done"></div>
+          <div class="anchor-mark"></div>
+          <div class="anchor-todo"></div>
+        </div>
+        <p class="anchor-key reveal">
+          <span class="k k--done">durably staged</span>
+          <span class="k k--mark">anchor</span>
+          <span class="k k--todo">not read yet</span>
+        </p>
+
+        <ul class="grid grid--3 reveal">
+          {
+            DURABILITY.map((d) => (
+              <li class="card dura">
+                <h3>{d.title}</h3>
+                <p>{d.body}</p>
+                <p class="dest-fact">{d.fact}</p>
               </li>
             ))
           }
@@ -131,26 +303,21 @@ const hue = Object.fromEntries(CATEGORIES.map((c) => [c.key, c.hue]));
 
     <!-- ───────────────────────── Honesty ─────────────────────────
          The section the whole site is really for. Every other export tool
-         claims completeness it cannot demonstrate; this one explains why that
-         claim is impossible and what Hozz says instead. -->
+         claims a completeness it cannot demonstrate. -->
     <section class="section section--ink" id="honest" style={`--tint: ${hue.sleep}`}>
       <div class="wrap">
         <div class="honest">
-          <div class="section-head section-head--wide">
+          <div class="section-head section-head--wide reveal">
             <p class="eyebrow">Honesty</p>
-            <h2>Hozz will never tell you it got <em class="em">everything</em>.</h2>
+            <h2>Hozz will never claim it got <em class="em">everything</em>.</h2>
             <p class="lead">
-              Apple will not let an app tell the difference between a data type you
-              denied and one you simply have none of. From the inside, the two look
-              identical. Plenty of export tools quietly call that “complete”.
+              Apple won’t let an app tell “you denied this” from “you have none of
+              this”. From the inside they look identical.
             </p>
-            <p class="lead">
-              Hozz reports what it asked for, what came back, and what it cannot
-              prove — in those words.
-            </p>
+            <p class="lead">So Hozz names the state instead of showing a green tick.</p>
           </div>
 
-          <ul class="states">
+          <ul class="states reveal">
             {
               COVERAGE_STATES.map((s) => (
                 <li class={`state state--${s.tone}`}>
@@ -164,26 +331,54 @@ const hue = Object.fromEntries(CATEGORIES.map((c) => [c.key, c.hue]));
       </div>
     </section>
 
-    <!-- ─────────────────────── Coverage ─────────────────────── -->
-    <section class="section" style={`--tint: ${hue.nutrition}`}>
+    <!-- ─────────────────────── Mac and MCP ─────────────────────── -->
+    <section class="section section--wash" style={`--tint: ${hue.mind}`}>
       <div class="wrap">
-        <div class="section-head section-head--wide">
-          <p class="eyebrow">Coverage</p>
-          <h2>Not a curated <em class="em">dozen</em>.</h2>
-          <p class="lead">
-            The target is every category Apple exposes to an app, with the
-            relationships between records left intact — a workout and its route, a
-            correlation and its parts, a series and its measurements. Categories
-            arrive as the milestones below land.
-          </p>
+        <div class="mac">
+          <div class="section-head reveal">
+            <p class="eyebrow">On your Mac</p>
+            <h2>Then <em class="em">ask</em> it something.</h2>
+            <p class="lead">
+              The Mac app receives batches, keeps them in SQLite and charts them by
+              hour, day, week or month. A read-only MCP server lets an assistant
+              read the same data.
+            </p>
+            <p class="aside">
+              It cannot change or delete anything. A cloud assistant may upload
+              whatever it reads — that’s the assistant’s behaviour, not Hozz’s.
+            </p>
+          </div>
+
+          <div class="mcp reveal">
+            <p class="mcp-head">
+              <span class="mcp-dot" aria-hidden="true"></span>
+              hozz-mcp
+            </p>
+            <ul class="mcp-tools">
+              {MCP_TOOLS.map((t) => <li>{t}</li>)}
+            </ul>
+            <p class="mcp-foot">JSON-RPC 2.0 over stdio · protocol 2024-11-05 · read-only</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────────────── The promise ─────────────────────── -->
+    <section class="section" id="promise" style={`--tint: ${hue.cycle}`}>
+      <div class="wrap">
+        <div class="section-head reveal">
+          <p class="eyebrow">The promise</p>
+          <h2>Nothing here to <em class="em">trust</em>.</h2>
+          <p class="lead">Six things Hozz will never do, by design rather than by policy.</p>
         </div>
 
-        <ul class="cats">
+        <ul class="nevers reveal">
           {
-            CATEGORIES.map((c) => (
-              <li class="cat" style={`--hue: ${c.hue}`}>
-                <span class="cat-name">{c.label}</span>
-                <span class="cat-note">{c.note}</span>
+            PROMISES.map((p) => (
+              <li style={`--hue: ${hue[p.category]}`}>
+                <span class="never-rule" aria-hidden="true"></span>
+                <h3>{p.title}</h3>
+                <p>{p.body}</p>
               </li>
             ))
           }
@@ -194,46 +389,59 @@ const hue = Object.fromEntries(CATEGORIES.map((c) => [c.key, c.hue]));
     <!-- ─────────────────────── Status ─────────────────────── -->
     <section class="section section--wash" id="status" style={`--tint: ${hue.activity}`}>
       <div class="wrap">
-        <div class="section-head section-head--wide">
+        <div class="section-head reveal">
           <p class="eyebrow">Status</p>
-          <h2>Where it <em class="em">actually</em> is.</h2>
-          <p class="lead">
-            Hozz is pre-alpha. There is no TestFlight and no build to install. The
-            repository holds the reviewed architecture and the first acquisition
-            test harness. Each milestone below ships only when its gate passes.
-          </p>
+          <h2>Early alpha. Genuinely <em class="em">working</em>.</h2>
+          <p class="lead">Built in the open by one developer. Here is exactly where it is.</p>
         </div>
 
-        <ol class="miles">
+        <div class="ledger reveal">
+          <div class="ledger-col">
+            <h3>Working today</h3>
+            <ul class="ticks">
+              {WORKING.map((w) => <li>{w}</li>)}
+            </ul>
+          </div>
+          <div class="ledger-col ledger-col--next">
+            <h3>Not yet</h3>
+            <ul class="ticks ticks--open">
+              {NOT_YET.map((n) => <li>{n}</li>)}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────────────── Questions ─────────────────────── -->
+    <section class="section" id="faq" style={`--tint: ${hue.hearing}`}>
+      <div class="wrap">
+        <div class="section-head reveal">
+          <p class="eyebrow">Questions</p>
+          <h2>The short <em class="em">answers</em>.</h2>
+        </div>
+
+        <div class="faq reveal">
           {
-            MILESTONES.map((m) => (
-              <li class={`mile mile--${m.state}`}>
-                <span class="mile-id">{m.id}</span>
-                <span class="mile-name">{m.name}</span>
-                <span class="mile-body">{m.body}</span>
-                <span class="mile-state">
-                  {m.state === 'done' ? 'done' : m.state === 'now' ? 'in progress' : 'planned'}
-                </span>
-              </li>
+            FAQ.map((f) => (
+              <div class="qa">
+                <h3>{f.q}</h3>
+                <p>{f.a}</p>
+              </div>
             ))
           }
-        </ol>
+        </div>
       </div>
     </section>
 
     <!-- ─────────────────────── Closer ─────────────────────── -->
-    <section class="section closer" style={`--tint: ${hue.mind}`}>
-      <div class="wrap wrap--narrow">
+    <section class="section closer" style={`--tint: ${hue.mobility}`}>
+      <div class="wrap wrap--narrow reveal">
         <p class="eyebrow">Free forever</p>
-        <h2>There is no paid version <em class="em">coming</em>.</h2>
-        <p class="lead">
-          Hozz has nothing to upsell, so watching the repository is the only way to
-          follow it for now. If you want to help it along, sponsorship is optional
-          and goes to this and the other free apps.
-        </p>
+        <h2>Take your history <em class="em">back</em>.</h2>
+        <p class="lead">No paid version is coming. Read the code, or help it along.</p>
         <div class="cta">
           <a class="btn btn--primary" href={GITHUB_URL} rel="noopener">
-            Watch the repository
+            Get it from GitHub
             <span class="arrow" aria-hidden="true">→</span>
           </a>
           <a class="btn btn--ghost" href={DONATE_URL} rel="noopener">Sponsor the work</a>
@@ -243,36 +451,82 @@ const hue = Object.fromEntries(CATEGORIES.map((c) => [c.key, c.hue]));
   </main>
 
   <SiteFooter />
+
+  <script>
+    /* Quiet reveals. One observer, no dependency, and each block is unobserved
+       the moment it has been shown so nothing keeps running behind the page. */
+    const blocks = document.querySelectorAll<HTMLElement>('.reveal');
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (still || !('IntersectionObserver' in window)) {
+      blocks.forEach((b) => b.classList.add('is-in'));
+    } else {
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add('is-in');
+            io.unobserve(entry.target);
+          });
+        },
+        { rootMargin: '0px 0px -8% 0px', threshold: 0.06 },
+      );
+      blocks.forEach((b) => io.observe(b));
+    }
+  </script>
 </Layout>
 
 <style>
   /* ── Hero ─────────────────────────────────────────────────────────────── */
   .hero {
-    padding-block: clamp(3.5rem, 8vw, 7rem) clamp(3rem, 6vw, 5rem);
+    padding-block: clamp(3.5rem, 8vw, 6.5rem) clamp(3rem, 6vw, 5rem);
     display: grid;
-    gap: clamp(3rem, 6vw, 5rem);
+    gap: clamp(2.75rem, 6vw, 4.5rem);
     overflow: clip;
+    position: relative;
+  }
+
+  /* A hairline hatch behind the top of the page — texture, not decoration, and
+     it fades out before it can compete with the type. */
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    block-size: 60%;
+    background: repeating-linear-gradient(
+      90deg,
+      color-mix(in oklab, var(--tint) 12%, transparent) 0 1px,
+      transparent 1px 22px
+    );
+    -webkit-mask-image: linear-gradient(#000, transparent 78%);
+    mask-image: linear-gradient(#000, transparent 78%);
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .hero > * {
+    position: relative;
   }
 
   .hero h1 {
     font-size: var(--fs-hero);
-    max-width: 16ch;
-    margin-block: 1.1rem 1.4rem;
+    max-width: 15ch;
+    margin-block: 1.1rem 1.3rem;
   }
 
   .hero .lead {
-    max-width: 52ch;
+    max-width: 44ch;
   }
 
   .cta {
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
-    margin-top: 2rem;
+    margin-top: 1.9rem;
   }
 
   .fine {
-    margin-top: 1.25rem;
+    margin-top: 1.15rem;
     font-family: var(--font-mono);
     font-size: var(--fs-mono);
     letter-spacing: 0.06em;
@@ -281,52 +535,29 @@ const hue = Object.fromEntries(CATEGORIES.map((c) => [c.key, c.hue]));
 
   .stream-block {
     display: grid;
-    gap: 1.1rem;
+    gap: 1rem;
   }
 
   .stream-note {
     font-family: var(--font-mono);
     font-size: var(--fs-mono);
-    line-height: 1.7;
     letter-spacing: 0.04em;
     color: var(--ink-3);
-    max-width: 62ch;
-  }
-
-  /* ── Promise ──────────────────────────────────────────────────────────── */
-  /* Each card wears its category as a short rule rather than a whole tinted
-     panel: enough to carry the spectrum, quiet enough to stay airy. */
-  .promise {
-    position: relative;
-    padding-top: calc(clamp(1.5rem, 2.6vw, 2rem) + 0.5rem);
-  }
-
-  .promise::before {
-    content: '';
-    position: absolute;
-    top: clamp(1.5rem, 2.6vw, 2rem);
-    left: clamp(1.5rem, 2.6vw, 2rem);
-    inline-size: 28px;
-    block-size: 3px;
-    border-radius: 2px;
-    background: var(--hue);
   }
 
   /* ── Steps ────────────────────────────────────────────────────────────── */
-  /* A real sequence, so it is numbered and stacked as rows rather than dealt
-     out as three equal cards — cards would say these happen in parallel. */
   .steps {
     display: grid;
-    gap: clamp(1.5rem, 3vw, 2.25rem);
+    gap: clamp(1.25rem, 2.5vw, 1.75rem);
   }
 
   .step {
     display: grid;
     grid-template-columns: 2.5rem 1fr;
-    gap: 0.5rem 1.25rem;
+    gap: 0.35rem 1.25rem;
     align-items: baseline;
-    padding-bottom: clamp(1.5rem, 3vw, 2.25rem);
-    border-bottom: 1px solid var(--rule-soft);
+    padding-bottom: clamp(1.25rem, 2.5vw, 1.75rem);
+    border-bottom: 1px dashed var(--rule);
   }
 
   .step:last-child {
@@ -339,7 +570,7 @@ const hue = Object.fromEntries(CATEGORIES.map((c) => [c.key, c.hue]));
     font-size: var(--fs-mono);
     font-weight: 500;
     letter-spacing: 0.1em;
-    color: var(--hue);
+    color: color-mix(in oklab, var(--hue) 64%, var(--ink));
   }
 
   .step h3 {
@@ -349,13 +580,14 @@ const hue = Object.fromEntries(CATEGORIES.map((c) => [c.key, c.hue]));
   .step p {
     grid-column: 2;
     color: var(--ink-2);
-    max-width: 62ch;
+    font-size: var(--fs-small);
+    max-width: 58ch;
   }
 
   @media (min-width: 900px) {
     .step {
-      grid-template-columns: 3.5rem minmax(12rem, 16rem) 1fr;
-      gap: 2rem;
+      grid-template-columns: 3rem minmax(12rem, 16rem) 1fr;
+      gap: 1.5rem;
     }
 
     .step p {
@@ -363,16 +595,423 @@ const hue = Object.fromEntries(CATEGORIES.map((c) => [c.key, c.hue]));
     }
   }
 
+  /* ── The pipeline ─────────────────────────────────────────────────────────
+     One phone, five wires, dots travelling outward along them. The wires are a
+     stretched viewBox with non-scaling strokes, so the hairline stays a hairline
+     and the dots stay round whatever shape the grid gives it. */
+  .pipe {
+    margin: clamp(2.5rem, 5vw, 3.5rem) 0 0;
+    max-width: 860px;
+  }
+
+  .pipe-grid {
+    display: grid;
+    gap: 1.25rem;
+    align-items: center;
+  }
+
+  .pipe-node {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 1.1rem 0.6rem 0.85rem;
+    border: 1px solid var(--rule);
+    border-radius: var(--r-pill);
+    background: var(--card);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono);
+    letter-spacing: 0.04em;
+    color: var(--ink);
+  }
+
+  .pipe-node .line-icon {
+    inline-size: 18px;
+    block-size: 18px;
+    color: var(--tint);
+  }
+
+  .pipe-hint {
+    display: block;
+    margin-top: 0.55rem;
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono);
+    color: var(--ink-3);
+  }
+
+  .pipe-mid {
+    display: none;
+  }
+
+  /* Dash lengths are read in screen pixels because the strokes are
+     non-scaling, which is what keeps every dot the same size and perfectly
+     round however far the viewBox is stretched. */
+  .pipe-wires {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    overflow: visible;
+  }
+
+  .wire,
+  .flow {
+    fill: none;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .wire {
+    stroke: color-mix(in oklab, var(--ink-3) 42%, transparent);
+    stroke-width: 1;
+    stroke-dasharray: 1 5;
+  }
+
+  .flow {
+    stroke: var(--tint);
+    stroke-width: 3.6;
+    stroke-linecap: round;
+    stroke-dasharray: 0.5 128;
+    animation: flow var(--dur) linear infinite;
+    animation-delay: var(--delay);
+  }
+
+  @keyframes flow {
+    from {
+      stroke-dashoffset: 0;
+    }
+    to {
+      stroke-dashoffset: -128.5;
+    }
+  }
+
+  .pipe-to {
+    display: grid;
+    gap: 0.5rem;
+    position: relative;
+  }
+
+  .pipe-to li {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.55rem 1rem;
+    border: 1px solid var(--rule-soft);
+    border-radius: var(--r-sm);
+    background: var(--card);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono);
+    letter-spacing: 0.04em;
+    color: var(--ink-2);
+  }
+
+  .pipe-dot {
+    inline-size: 6px;
+    block-size: 6px;
+    border-radius: 50%;
+    background: var(--hue);
+    flex: none;
+  }
+
+  /* Below the fan's useful width the wires would be unreadable, so the mobile
+     version is a single dotted rail with one dot walking down it. */
+  .pipe-to::before {
+    content: '';
+    position: absolute;
+    inset-block: 0.6rem;
+    inset-inline-start: -0.9rem;
+    inline-size: 1px;
+    background: repeating-linear-gradient(var(--rule) 0 2px, transparent 2px 6px);
+  }
+
+  .pipe-to::after {
+    content: '';
+    position: absolute;
+    inset-inline-start: -1.15rem;
+    top: 0.6rem;
+    inline-size: 5px;
+    block-size: 5px;
+    border-radius: 50%;
+    background: var(--tint);
+    animation: rail 4.6s linear infinite;
+  }
+
+  @keyframes rail {
+    from {
+      top: 0.6rem;
+    }
+    to {
+      top: calc(100% - 1rem);
+    }
+  }
+
+  .pipe figcaption {
+    margin-top: 1.4rem;
+    color: var(--ink-2);
+    font-size: var(--fs-small);
+    max-width: 54ch;
+  }
+
+  @media (min-width: 760px) {
+    .pipe-grid {
+      grid-template-columns: auto minmax(110px, 1fr) minmax(190px, 280px);
+      gap: 0.5rem;
+    }
+
+    .pipe-mid {
+      display: block;
+      position: relative;
+      align-self: stretch;
+    }
+
+    .pipe-to::before,
+    .pipe-to::after {
+      display: none;
+    }
+  }
+
+  @media (max-width: 759.98px) {
+    .pipe-to {
+      margin-inline-start: 1.6rem;
+    }
+  }
+
   /* ── Destinations ─────────────────────────────────────────────────────── */
   .dest-icon {
     display: grid;
     place-items: center;
-    inline-size: 46px;
-    block-size: 46px;
+    inline-size: 42px;
+    block-size: 42px;
     border-radius: 14px;
-    background: color-mix(in oklab, var(--hue) 12%, transparent);
-    color: var(--hue);
-    margin-bottom: 1.1rem;
+    border: 1px solid color-mix(in oklab, var(--hue) 26%, transparent);
+    background: color-mix(in oklab, var(--hue) 8%, transparent);
+    color: color-mix(in oklab, var(--hue) 72%, var(--ink));
+    margin-bottom: 1rem;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .dest:hover .dest-icon {
+    background: color-mix(in oklab, var(--hue) 15%, transparent);
+    border-color: color-mix(in oklab, var(--hue) 45%, transparent);
+  }
+
+  .line-icon {
+    inline-size: 22px;
+    block-size: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .dest-fact {
+    margin-top: 0.85rem;
+    padding-top: 0.7rem;
+    border-top: 1px dashed var(--rule);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono);
+    letter-spacing: 0.04em;
+    color: var(--ink-3);
+  }
+
+  /* Five cards into a three-column grid leaves a hole, so the first one runs
+     wide — which is also the one most people will use. */
+  @media (min-width: 980px) {
+    .dest:first-child {
+      grid-column: span 2;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0 1.5rem;
+      align-content: center;
+    }
+
+    .dest:first-child .dest-icon {
+      grid-row: span 3;
+      margin-bottom: 0;
+      inline-size: 54px;
+      block-size: 54px;
+    }
+
+    .dest:first-child p {
+      max-width: 46ch;
+    }
+
+    .dest:first-child .dest-fact {
+      justify-self: start;
+      min-inline-size: 16rem;
+    }
+  }
+
+  /* ── Formats ──────────────────────────────────────────────────────────── */
+  .table-wrap {
+    border: 1px solid var(--rule);
+    border-radius: var(--r-md);
+    background: var(--card);
+    overflow: hidden;
+  }
+
+  .fmt {
+    inline-size: 100%;
+    border-collapse: collapse;
+    text-align: start;
+  }
+
+  .fmt th,
+  .fmt td {
+    text-align: start;
+    padding: 0.9rem 1.1rem;
+    border-bottom: 1px solid var(--rule-soft);
+    vertical-align: baseline;
+  }
+
+  .fmt thead th {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono);
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    background: color-mix(in oklab, var(--tint) 5%, var(--card));
+  }
+
+  .fmt tbody th {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  .fmt td {
+    font-size: var(--fs-small);
+    color: var(--ink-2);
+  }
+
+  .fmt tbody tr:last-child th,
+  .fmt tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .fmt-note {
+    color: var(--ink-3);
+  }
+
+  /* Below tablet a three-column grid is unreadable, so each row becomes a small
+     stacked block. The markup stays a real table; only the display changes. */
+  @media (max-width: 680px) {
+    .fmt thead {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+
+    .fmt tbody tr {
+      display: block;
+      padding: 1rem 1.1rem;
+      border-bottom: 1px solid var(--rule-soft);
+    }
+
+    .fmt tbody tr:last-child {
+      border-bottom: 0;
+    }
+
+    .fmt tbody th,
+    .fmt tbody td {
+      display: block;
+      padding: 0;
+      border: 0;
+    }
+
+    .fmt tbody th {
+      margin-bottom: 0.3rem;
+    }
+
+    .fmt-note::before {
+      content: 'fidelity · ';
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .fmt-note {
+      margin-top: 0.45rem;
+    }
+  }
+
+  .aside {
+    margin-top: 1.4rem;
+    color: var(--ink-2);
+    font-size: var(--fs-small);
+    max-width: 62ch;
+  }
+
+  /* ── Durability ───────────────────────────────────────────────────────── */
+  /* Records as tick marks, with the anchor sitting where the last durable one
+     is. Everything left of it is safe; everything right of it has not been read
+     yet. Ticks are gradients, so they never distort. */
+  .anchor {
+    display: grid;
+    grid-template-columns: 62fr auto 38fr;
+    align-items: center;
+    block-size: 46px;
+    margin-bottom: 0.7rem;
+  }
+
+  .anchor-done,
+  .anchor-todo {
+    block-size: 100%;
+  }
+
+  .anchor-done {
+    background: repeating-linear-gradient(
+      90deg,
+      color-mix(in oklab, var(--tint) 62%, transparent) 0 1.5px,
+      transparent 1.5px 11px
+    );
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%);
+    mask-image: linear-gradient(90deg, transparent, #000 12%);
+  }
+
+  .anchor-todo {
+    background: repeating-linear-gradient(90deg, var(--rule) 0 1.5px, transparent 1.5px 11px);
+    -webkit-mask-image: linear-gradient(90deg, #000 70%, transparent);
+    mask-image: linear-gradient(90deg, #000 70%, transparent);
+  }
+
+  .anchor-mark {
+    inline-size: 3px;
+    block-size: 100%;
+    border-radius: 2px;
+    background: var(--tint);
+    margin-inline: 0.5rem;
+  }
+
+  .anchor-key {
+    display: grid;
+    grid-template-columns: 62fr auto 38fr;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono);
+    letter-spacing: 0.04em;
+    color: var(--ink-3);
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .k--mark {
+    color: color-mix(in oklab, var(--tint) 66%, var(--ink));
+    margin-inline: 0.5rem;
+    white-space: nowrap;
+  }
+
+  .k--todo {
+    text-align: end;
+  }
+
+  .dura h3 {
+    font-size: 1.08rem;
   }
 
   /* ── Honesty ──────────────────────────────────────────────────────────── */
@@ -383,7 +1022,7 @@ const hue = Object.fromEntries(CATEGORIES.map((c) => [c.key, c.hue]));
 
   .honest .section-head {
     margin-bottom: 0;
-    gap: 1rem;
+    gap: 0.9rem;
   }
 
   .states {
@@ -397,7 +1036,7 @@ const hue = Object.fromEntries(CATEGORIES.map((c) => [c.key, c.hue]));
 
   .state {
     background: color-mix(in oklab, var(--paper) 4%, var(--ink));
-    padding: 1.15rem 1.35rem;
+    padding: 0.95rem 1.35rem;
   }
 
   .state code {
@@ -407,7 +1046,7 @@ const hue = Object.fromEntries(CATEGORIES.map((c) => [c.key, c.hue]));
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.35rem;
   }
 
   .state code::before {
@@ -416,6 +1055,7 @@ const hue = Object.fromEntries(CATEGORIES.map((c) => [c.key, c.hue]));
     block-size: 7px;
     border-radius: 50%;
     background: currentColor;
+    flex: none;
   }
 
   .state--good code {
@@ -430,134 +1070,230 @@ const hue = Object.fromEntries(CATEGORIES.map((c) => [c.key, c.hue]));
     color: #9aa6a0;
   }
 
+  .state--bad code {
+    color: #f09a8e;
+  }
+
   .state p {
-    color: color-mix(in oklab, var(--paper) 66%, transparent);
+    color: color-mix(in oklab, var(--paper) 68%, transparent);
     font-size: var(--fs-small);
-    line-height: 1.55;
+    line-height: 1.5;
   }
 
   @media (min-width: 940px) {
     .honest {
-      grid-template-columns: 1.1fr 0.9fr;
+      grid-template-columns: 1.05fr 0.95fr;
       align-items: start;
     }
   }
 
-  /* ── Coverage ─────────────────────────────────────────────────────────── */
-  /* Ten rows, each keyed by its own hue, so the list itself is the palette
-     legend for the rest of the page. */
-  .cats {
+  /* ── Mac and MCP ──────────────────────────────────────────────────────── */
+  .mac {
     display: grid;
-    gap: 0;
+    gap: clamp(2rem, 4vw, 3.5rem);
+    align-items: start;
+  }
+
+  .mac .section-head {
+    margin-bottom: 0;
+  }
+
+  .mcp {
+    border: 1px solid var(--rule);
+    border-radius: var(--r-md);
+    background: var(--card);
+    overflow: hidden;
+  }
+
+  .mcp-head,
+  .mcp-foot {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono);
+    letter-spacing: 0.05em;
+    padding: 0.75rem 1.1rem;
+  }
+
+  .mcp-head {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    color: var(--ink);
+    border-bottom: 1px solid var(--rule-soft);
+    background: color-mix(in oklab, var(--tint) 6%, var(--card));
+  }
+
+  .mcp-dot {
+    inline-size: 7px;
+    block-size: 7px;
+    border-radius: 50%;
+    background: var(--tint);
+  }
+
+  .mcp-tools {
+    padding: 0.4rem 0;
+  }
+
+  .mcp-tools li {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.5rem 1.1rem;
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono);
+    color: var(--ink-2);
+  }
+
+  .mcp-tools li::before {
+    content: '';
+    inline-size: 14px;
+    block-size: 1px;
+    background: repeating-linear-gradient(90deg, var(--ink-3) 0 1px, transparent 1px 3px);
+    flex: none;
+  }
+
+  .mcp-foot {
+    color: var(--ink-3);
     border-top: 1px solid var(--rule-soft);
   }
 
-  .cat {
-    display: grid;
-    gap: 0.15rem 1.5rem;
-    padding: 1rem 0 1rem 1.4rem;
-    border-bottom: 1px solid var(--rule-soft);
-    position: relative;
-  }
-
-  .cat::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 1.45rem;
-    inline-size: 8px;
-    block-size: 8px;
-    border-radius: 50%;
-    background: var(--hue);
-  }
-
-  .cat-name {
-    font-family: var(--font-display);
-    font-size: 1.15rem;
-    font-weight: 500;
-  }
-
-  .cat-note {
-    color: var(--ink-2);
-    font-size: var(--fs-small);
-  }
-
-  @media (min-width: 720px) {
-    .cat {
-      grid-template-columns: 11rem 1fr;
-      align-items: baseline;
+  @media (min-width: 900px) {
+    .mac {
+      grid-template-columns: 1.1fr 0.9fr;
     }
   }
 
-  /* ── Milestones ───────────────────────────────────────────────────────── */
-  .miles {
+  /* ── The promise ──────────────────────────────────────────────────────── */
+  .nevers {
     display: grid;
-    border-top: 1px solid var(--rule);
+    gap: clamp(1.5rem, 3vw, 2.25rem);
   }
 
-  .mile {
+  .nevers li {
     display: grid;
-    grid-template-columns: auto 1fr auto;
-    gap: 0.2rem 1rem;
-    padding: 1rem 0;
-    border-bottom: 1px solid var(--rule);
-    align-items: baseline;
+    gap: 0.4rem;
   }
 
-  .mile-id {
-    font-family: var(--font-mono);
-    font-size: var(--fs-mono);
-    color: var(--ink-3);
-    letter-spacing: 0.08em;
+  .never-rule {
+    inline-size: 26px;
+    block-size: 2px;
+    border-radius: 2px;
+    background: var(--hue);
+    margin-bottom: 0.35rem;
   }
 
-  .mile-name {
-    font-family: var(--font-display);
+  .nevers h3 {
     font-size: 1.1rem;
-    font-weight: 500;
   }
 
-  .mile-body {
-    grid-column: 2 / -1;
+  .nevers p {
     color: var(--ink-2);
     font-size: var(--fs-small);
   }
 
-  .mile-state {
+  @media (min-width: 640px) {
+    .nevers {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 940px) {
+    .nevers {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  /* ── Status ───────────────────────────────────────────────────────────── */
+  .ledger {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3rem);
+  }
+
+  .ledger h3 {
     font-family: var(--font-mono);
     font-size: var(--fs-mono);
-    letter-spacing: 0.08em;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
     color: var(--ink-3);
-    grid-row: 1;
-    grid-column: 3;
-    justify-self: end;
+    margin-bottom: 1.1rem;
   }
 
-  .mile--done .mile-state {
-    color: var(--leaf);
+  .ticks {
+    display: grid;
+    gap: 0.6rem;
   }
 
-  .mile--now .mile-state {
-    color: var(--tint);
+  .ticks li {
+    display: grid;
+    grid-template-columns: 1.35rem 1fr;
+    align-items: baseline;
+    font-size: var(--fs-small);
+    color: var(--ink);
   }
 
-  .mile--next .mile-name,
-  .mile--next .mile-id {
-    opacity: 0.72;
+  .ticks li::before {
+    content: '';
+    inline-size: 9px;
+    block-size: 5px;
+    border-inline-start: 1.6px solid var(--tint);
+    border-block-end: 1.6px solid var(--tint);
+    rotate: -45deg;
+    translate: 0 -2px;
+  }
+
+  .ticks--open li {
+    color: var(--ink-2);
+  }
+
+  .ticks--open li::before {
+    inline-size: 8px;
+    block-size: 8px;
+    border: 1px dashed var(--ink-3);
+    border-radius: 50%;
+    rotate: none;
+    translate: 0 0;
+  }
+
+  @media (min-width: 760px) {
+    .ledger {
+      grid-template-columns: 1.25fr 1fr;
+    }
+
+    .ledger-col--next {
+      padding-inline-start: clamp(1.5rem, 3vw, 2.5rem);
+      border-inline-start: 1px dashed var(--rule);
+    }
+  }
+
+  /* ── Questions ────────────────────────────────────────────────────────── */
+  .faq {
+    display: grid;
+    gap: 0;
+    border-top: 1px dashed var(--rule);
+  }
+
+  .qa {
+    padding-block: 1.4rem;
+    border-bottom: 1px dashed var(--rule);
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .qa h3 {
+    font-size: var(--fs-h3);
+  }
+
+  .qa p {
+    color: var(--ink-2);
+    font-size: var(--fs-small);
+    max-width: 68ch;
   }
 
   @media (min-width: 820px) {
-    .mile {
-      grid-template-columns: 3rem 11rem 1fr 7rem;
-    }
-
-    .mile-body {
-      grid-column: 3;
-      grid-row: 1;
-    }
-
-    .mile-state {
-      grid-column: 4;
+    .qa {
+      grid-template-columns: minmax(14rem, 20rem) 1fr;
+      gap: 1.5rem;
+      align-items: baseline;
     }
   }
 
@@ -568,7 +1304,7 @@ const hue = Object.fromEntries(CATEGORIES.map((c) => [c.key, c.hue]));
 
   .closer h2 {
     font-size: var(--fs-h2);
-    margin-block: 1rem 1.25rem;
+    margin-block: 0.9rem 1rem;
   }
 
   .closer .lead {
@@ -577,5 +1313,14 @@ const hue = Object.fromEntries(CATEGORIES.map((c) => [c.key, c.hue]));
 
   .closer .cta {
     justify-content: center;
+  }
+
+  /* Every travelling dot rests where it started; the paths themselves are the
+     information, so they stay. */
+  @media (prefers-reduced-motion: reduce) {
+    .flow,
+    .pipe-to::after {
+      animation: none;
+    }
   }
 </style>
