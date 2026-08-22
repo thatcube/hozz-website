@@ -20,6 +20,7 @@
   <nav>
     <a href="#features">Features</a>
     <a href="#how">How it works</a>
+    <a href="#mac">Mac</a>
     <a href="docs/">Docs</a>
     <a href="viewer/">Viewer</a>
     <a href="#compare">Compare</a>
@@ -170,18 +171,19 @@
       <li>Home Screen widget</li>
       <li>Shortcuts and Siri</li>
       <li>Open-source receiver</li>
+      <li>Home Assistant and MQTT</li>
+      <li>Mac app that receives on your computer</li>
+      <li>Ask an AI about your data, locally</li>
     </ul></article>
     <article class="next"><h3>Next</h3><ul>
-      <li>Companion app for your computer</li>
-      <li>Dashboards and trends</li>
-      <li>Local AI questions about your data</li>
-      <li>Home Assistant and MQTT</li>
+      <li>Dashboards and trends on your phone</li>
+      <li>Apple Watch app</li>
+      <li>Workout routes and ECG</li>
     </ul></article>
     <article class="later"><h3>Later</h3><ul>
       <li>Food and medication logging</li>
       <li>Barcode scanning</li>
-      <li>Workout routes and ECG</li>
-      <li>Apple Watch app</li>
+      <li>Trends that explain themselves</li>
     </ul></article>
   </div>
 </section>
@@ -200,6 +202,62 @@ python3 hozz_receiver.py watch ~/Dropbox/Health
 python3 hozz_receiver.py serve --port 8765 --token secret</code></pre>
   <p style="text-align:center;margin-top:1.5rem">
     <a class="button" href="https://github.com/thatcube/hozz/tree/main/receiver">See the receiver</a>
+  </p>
+</section>
+
+<section id="mac">
+  <h2>And a Mac app to catch it</h2>
+  <p class="lede narrow">
+    Your phone sends straight to your computer over your own network. No server
+    in the middle, no account, nothing to sign up for. Your Mac announces
+    itself, so there's no IP address to type — and none to re-type when your
+    router changes it.
+  </p>
+  <div class="grid">
+    <article>
+      <h3>It just finds it</h3>
+      <p>
+        Open Hozz on your Mac and it appears on your phone. Copy one token and
+        you're done.
+      </p>
+    </article>
+    <article>
+      <h3>A real database</h3>
+      <p>
+        Years of history you can chart, filter and export to CSV — not a folder
+        of files you have to write a script for.
+      </p>
+    </article>
+    <article>
+      <h3>Locked to your network</h3>
+      <p>
+        The receiver needs a token. Anything else on your Wi-Fi gets turned
+        away, and nothing is ever sent outward.
+      </p>
+    </article>
+  </div>
+</section>
+
+<section id="assistant" class="alt">
+  <h2>Ask your own data a question</h2>
+  <p class="lede narrow">
+    Hozz can hand your health data to an AI assistant that supports the Model
+    Context Protocol — running on your Mac, reading from your Mac. Ask how your
+    resting heart rate has moved this year, or what changed after you started
+    sleeping earlier.
+  </p>
+  <pre style="max-width:60ch;margin:0 auto;text-align:left"><code>You:  How did my resting heart rate trend this year?
+
+Hozz: RestingHeartRate by month (count/min)
+      2026-01  avg 58   min 54  max 63
+      2026-02  avg 57   min 53  max 61
+      ...</code></pre>
+  <p class="narrow" style="margin-top:1.5rem">
+    It can only read — nothing an assistant does can change or delete your
+    records. And Hozz is straight with you about the trade: whatever the
+    assistant reads goes wherever that assistant sends it. If it runs in the
+    cloud, your health data goes to the cloud. That's worth knowing before you
+    connect one.
   </p>
 </section>
 
