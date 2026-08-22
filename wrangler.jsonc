@@ -1,0 +1,27 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "hozz-website",
+  "account_id": "471672cb7947a45f5e43023a1f02d2f5",
+  "compatibility_date": "2026-08-21",
+  "observability": { "enabled": true },
+
+  // Workers Static Assets rather than Pages: Pages has been maintenance-only
+  // since early 2025 and Cloudflare points new projects at Workers. There is no
+  // "main" here on purpose — nothing on this site needs to run server-side, so
+  // it is an assets-only Worker and every request is served straight from the
+  // edge without ever starting an isolate.
+  "assets": {
+    "directory": "./dist",
+    // Astro emits directory-style routes (/privacy/index.html), and the 404 is
+    // a real page rather than a bare status, so both are handled here instead
+    // of by a redirect list.
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page",
+  },
+
+  // The custom domain goes here once brandomoore.com lives in this account — a
+  // Worker cannot claim a hostname in a zone owned by a different account, so
+  // adding it before the zone move just fails the deploy. Until then the site
+  // answers on workers.dev.
+  // "routes": [{ "pattern": "hozz.brandomoore.com", "custom_domain": true }]
+}

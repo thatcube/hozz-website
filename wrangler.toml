@@ -1,7 +1,0 @@
-# Cloudflare Pages configuration.
-# Astro builds the static site with `npm run build` into dist/. There are no
-# Functions here on purpose: Hozz has no backend, and neither does its website.
-
-name = "hozz-website"
-compatibility_date = "2026-08-21"
-pages_build_output_dir = "dist"

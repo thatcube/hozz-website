@@ -9,9 +9,12 @@ Live at **[hozz.brandomoore.com](https://hozz.brandomoore.com)**.
 ## Stack
 
 Astro, no client framework, no analytics, no third-party requests. Deployed as
-static files on Cloudflare Pages. The site makes exactly zero network calls that
-Hozz's own privacy page would have to apologise for — typefaces included, which
-is why they are self-hosted rather than pulled from a font CDN.
+an assets-only Cloudflare Worker — there is no `main`, so nothing runs
+server-side and every request is served from the edge without starting an
+isolate. Workers Static Assets rather than Pages, which has been maintenance-only
+since early 2025. The site makes exactly zero network calls that Hozz's own
+privacy page would have to apologise for — typefaces included, which is why they
+are self-hosted rather than pulled from a font CDN.
 
 ```bash
 npm install
@@ -51,12 +54,15 @@ node tools/build-images.mjs
 
 ## Deploying
 
-Pushing to `main` triggers the Cloudflare Pages build. To deploy by hand:
-
 ```bash
 npm run build
-npx wrangler pages deploy dist --project-name hozz-website
+npx wrangler deploy
 ```
+
+`hozz.brandomoore.com` is commented out in `wrangler.jsonc` until the
+`brandomoore.com` zone moves into the same Cloudflare account as this Worker — a
+Worker cannot claim a hostname in a zone another account owns. Until then the
+site answers on its `workers.dev` URL.
 
 ## Licence
 
