@@ -4,4 +4,8 @@
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
-  X-Frame-Options: DENY
+  # SAMEORIGIN rather than DENY: the clickjacking this defends against is a
+  # third-party site framing ours, which this still blocks outright. Allowing
+  # our own origin is what lets /directions/ show the variations side by side.
+  X-Frame-Options: SAMEORIGIN
+  Content-Security-Policy: frame-ancestors 'self'
