@@ -1,0 +1,34 @@
+---
+/**
+ * 06 · Carrier — two Z periods carried by one unbroken signal.
+ */
+import { APP_BY_KEY, type AppKey } from '../../data/brand';
+
+interface Props {
+  app: AppKey;
+  size?: number;
+}
+
+const { app, size = 96 } = Astro.props;
+const a = APP_BY_KEY[app];
+const id = `g-d06-${app}`;
+---
+
+<svg width={size} height={size} viewBox="0 0 64 64" role="img" aria-label={`${a.name} mark`} style="display:block">
+  <defs>
+    <linearGradient id={id} x1="16.5" y1="19" x2="47.5" y2="32.5" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color={a.deep} />
+      <stop offset="0.52" stop-color={a.hue} />
+      <stop offset="1" stop-color={a.light} />
+    </linearGradient>
+  </defs>
+
+  <path
+    d="M16.5 19H27.5L16.5 32.5H27.5L36.5 19H47.5L36.5 32.5H47.5"
+    fill="none"
+    stroke={`url(#${id})`}
+    stroke-width="4.5"
+    stroke-linecap="butt"
+    stroke-linejoin="round"
+  />
+</svg>
