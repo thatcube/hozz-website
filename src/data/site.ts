@@ -122,7 +122,14 @@ export const DESTINATIONS = [
     icon: 'globe',
     title: 'Web address',
     body: 'Your endpoint, your format. Hozz posts and retries safely.',
-    fact: 'POST · NDJSON / JSON / CSV',
+    fact: 'POST · NDJSON / JSON / CSV / Metrics / line protocol',
+  },
+  {
+    category: 'sleep' as CategoryKey,
+    icon: 'globe',
+    title: 'InfluxDB',
+    body: 'Line protocol written straight in, so Grafana needs no translator.',
+    fact: '/api/v2/write · 1.8 /write',
   },
   {
     category: 'heart' as CategoryKey,
@@ -136,9 +143,12 @@ export const DESTINATIONS = [
 /** Genuinely tabular, so the page renders it as a table. */
 export const FORMATS = [
   { name: 'NDJSON', use: 'The default. One record per line, streamable.', note: 'Lossless for encoded fields' },
-  { name: 'JSON', use: 'One document, whole records.', note: 'Whole records' },
+  { name: 'SQLite', use: 'Query it in Datasette, DuckDB, pandas or Grafana.', note: 'Lossless — every row keeps its original record in raw' },
+  { name: 'JSON', use: 'One document, whole records.', note: 'Lossless' },
   { name: 'CSV', use: 'Spreadsheets and quick charts.', note: 'Lossy — a grid cannot hold metadata or nested workout detail' },
-  { name: 'Metrics JSON', use: 'Dashboards and Home Assistant.', note: 'Values over time' },
+  { name: 'Markdown', use: 'One note a day, for Obsidian and journals.', note: 'Lossy — a day’s totals, never the records behind them' },
+  { name: 'GPX', use: 'One track per workout with GPS, for maps.', note: 'A filter, not a projection — routes only' },
+  { name: 'Metrics JSON', use: 'Dashboards, Home Assistant and MQTT.', note: 'Values over time' },
 ];
 
 /** Why an interruption can repeat work but cannot skip records. */
@@ -158,6 +168,11 @@ export const DURABILITY = [
     body: 'Content-derived ids mean the same record twice is still one record.',
     fact: 'Idempotency-Key',
   },
+  {
+    title: 'Nothing is quietly dropped',
+    body: 'A record this version cannot parse is quarantined, then added once a newer one can read it.',
+    fact: 'quarantine · promotion',
+  },
 ];
 
 /**
@@ -172,12 +187,22 @@ export const COVERAGE_STATES = [
   { state: 'failed', tone: 'bad', body: 'It tried and it did not work. Named, not buried.' },
 ];
 
-/** The four read-only tools the Mac app's MCP server exposes. */
+/**
+ * What the Mac app's read-only MCP server covers. The exact tool list lives in
+ * the repository's docs/mcp.md and moves, so this describes the ground it
+ * covers rather than pinning a count that will go stale.
+ */
 export const MCP_TOOLS = [
-  'list_health_types',
-  'summarise_health_data',
-  'aggregate_health_data',
-  'list_health_samples',
+  'types and overview',
+  'aggregate buckets',
+  'individual samples',
+  'ECG waveforms',
+  'audiograms',
+  'mood entries',
+  'medication adherence',
+  'workouts',
+  'trends and comparisons',
+  'anomaly checks',
 ];
 
 /** Written as refusals, because each one is a thing the app will not do. */
@@ -192,18 +217,21 @@ export const PROMISES = [
 
 /** Early alpha: it works, and coverage is partial. Both halves are the truth. */
 export const WORKING = [
-  'Automatic export to five destinations',
+  'Automatic export to six kinds of destination',
   'Manual export, resumable after a crash',
-  'NDJSON, JSON, CSV and Metrics JSON',
+  'NDJSON, SQLite, JSON, CSV, Markdown and GPX',
+  'ECG waveforms, audiograms, routes and moods',
   'Deletions carried as tombstones',
   'Mac app: receives, stores, charts',
   'Read-only MCP server for assistants',
   'Shortcuts and a home-screen widget',
-  '178 XCTest tests',
+  '475 XCTest tests',
 ];
 
 export const NOT_YET = [
   'Every Health type — coverage is partial',
+  'Clinical records — compiled out of the default build',
+  'Writing anything back into Apple Health, ever',
   'Handover between two devices',
   'Accessibility and localisation pass',
   'App Store release',
@@ -225,7 +253,15 @@ export const FAQ = [
   },
   {
     q: 'Can I ask an AI about my data?',
-    a: 'On your Mac, yes. Hozz ships a read-only MCP server that can list and summarise what you have received. It cannot change or delete anything — but a cloud assistant may upload whatever it reads, which is the assistant’s behaviour, not Hozz’s.',
+    a: 'On your Mac, yes. Hozz ships a read-only MCP server that reads the database your phone keeps current, so a question costs a lookup rather than re-parsing a stale XML export. It cannot change or delete anything — but a cloud assistant may upload whatever it reads, which is the assistant’s behaviour, not Hozz’s.',
+  },
+  {
+    q: 'Can Hozz put data back into Apple Health?',
+    a: 'No, and it never will. Health stamps every sample with the app that wrote it, so a reading your Watch took in 2019 would come back indistinguishable from one Hozz invented — which destroys the provenance an archive exists to protect. HealthKit also has no way to say “store this unless it is already there”, so importing twice would silently double everything.',
+  },
+  {
+    q: 'Why is there no progress percentage?',
+    a: 'Because it would be invented. Health will not say how many records a type holds without reading all of them, so Hozz reports how many types are complete and how far back they reach, and never shows a fraction it cannot know.',
   },
 ];
 
