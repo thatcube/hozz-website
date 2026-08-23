@@ -2,8 +2,9 @@
 /**
  * p05 · Switchback scrubber
  *
- * A single progress rail swelling into one circular thumb. The pair is punched
- * through the filled portion of the track as one shared interval.
+ * The filled route enters from the left, bends through two complete Zs, and
+ * exits into the circular playhead. That continuation is the scrubber's working
+ * progress line, not a mark laid over it.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -14,15 +15,20 @@ interface Props {
 }
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.plozz;
-const uid = `p05-${Math.random().toString(36).slice(2, 9)}`;
 const Z = {
-  y: 18,
+  y: 17,
   w: 9,
-  h: 12,
-  bar: 3,
-  diag: 5.4,
+  h: 14,
+  bar: 3.2,
+  diag: 5.5,
   cap: 'angled' as const,
 };
+const zLeft = 8;
+const zRight = 20.5;
+const progress =
+  `${zPath({ ...Z, x: zLeft })}${zPath({ ...Z, x: zRight })}` +
+  `M4 17H${zLeft + 1}V20.2H4Z` +
+  `M${zRight + Z.w - 1} 27.8H40V31H${zRight + Z.w - 1}Z`;
 ---
 
 <svg
@@ -34,17 +40,7 @@ const Z = {
   role="img"
   aria-label={`${app.name} scrubber mark`}
 >
-  <defs>
-    <mask id={uid}>
-      <rect width="48" height="48" fill="#fff" />
-      <path d={zPath({ ...Z, x: 8 })} fill="#000" />
-      <path d={zPath({ ...Z, x: 19.5 })} fill="#000" />
-    </mask>
-  </defs>
-
-  <g mask={`url(#${uid})`}>
-    <rect x="4" y="15" width="35" height="18" rx="9" fill={app.hue} />
-  </g>
-  <circle cx="38" cy="24" r="9.5" fill={ground === 'dark' ? app.light : app.deep} />
-  <circle cx="38" cy="24" r="5" fill={app.hue} />
+  <rect x="4" y="12" width="40" height="24" rx="12" fill={app.hue} />
+  <path d={progress} fill={app.deep} />
+  <circle cx="40" cy="29.4" r="4" fill={app.deep} />
 </svg>

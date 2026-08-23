@@ -1,9 +1,9 @@
 ---
 /**
- * m05 · Fork tines
+ * m05 · Resonant bell
  *
- * The two Zs are the two vibrating tines of one tuning fork. Both grow from the
- * same curved yoke and stem, so the pair is one object rather than two cells.
+ * A single struck bell carries the pair as clean openings through its vibrating
+ * body. The letters use the ground itself, exactly as the reference panel does.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -14,12 +14,13 @@ interface Props {
 }
 const { size = 96 } = Astro.props as Props;
 const app = APP_BY_KEY.mozz;
+const uid = `m05-${Math.random().toString(36).slice(2, 9)}`;
 const Z = {
-  y: 6.5,
-  w: 14.5,
-  h: 19,
-  bar: 3.4,
-  diag: 6.2,
+  y: 13.5,
+  w: 12.5,
+  h: 14.5,
+  bar: 2.8,
+  diag: 5.2,
   cap: 'angled' as const,
 };
 ---
@@ -31,17 +32,25 @@ const Z = {
   fill="none"
   xmlns="http://www.w3.org/2000/svg"
   role="img"
-  aria-label={`${app.name} tuning fork mark`}
+  aria-label={`${app.name} struck bell mark`}
 >
-  <path
-    d="M10 23V28C10 34.5 15.5 38 22 38H26C32.5 38 38 34.5 38 28V23M24 38V44"
-    stroke={app.hue}
-    stroke-width="5"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-  />
-  <path
-    d={zPath({ ...Z, x: 6.5 }) + zPath({ ...Z, x: 27 })}
-    fill={app.hue}
-  />
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: 10.5 })} fill="#000" />
+      <path d={zPath({ ...Z, x: 25 })} fill="#000" />
+    </mask>
+  </defs>
+
+  <g mask={`url(#${uid})`}>
+    <path
+      d="M24 4C14 4 9 11 9 21V30L5 37H43L39 30V21C39 11 34 4 24 4Z"
+      fill={app.hue}
+    />
+    <path
+      d="M5 37H43L39.5 31.5H8.5L5 37ZM23 27.5H25V39H23V27.5Z"
+      fill={app.deep}
+    />
+  </g>
+  <circle cx="24" cy="40" r="3" fill={app.deep} />
 </svg>

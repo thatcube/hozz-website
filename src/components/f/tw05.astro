@@ -18,6 +18,7 @@ const Z = {
   diag: 6.8,
   cap: 'angled' as const,
 };
+const frame = ground === 'dark' ? app.light : app.deep;
 ---
 
 <svg
@@ -39,5 +40,11 @@ const Z = {
   </defs>
 
   <path d={LIGHTBOX} fill={app.hue} mask={`url(#${uid})`} />
-  <circle cx="8" cy="8" r="3" fill={ground === 'dark' ? app.light : app.deep} />
+  <path
+    d={LIGHTBOX}
+    fill="none"
+    stroke={frame}
+    stroke-width="2.4"
+    stroke-linejoin="round"
+  />
 </svg>

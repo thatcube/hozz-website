@@ -2,8 +2,8 @@
 /**
  * h12 · Record Stamp
  *
- * A compact hand stamp whose paired rubber dies are the ZZ. The letters are
- * the working face of the tool, joined by one mount rather than set in boxes.
+ * A compact hand stamp whose two clean rubber dies are the ZZ. The four-unit
+ * handle stem lands exactly in their four-unit gap and fixes the letterspacing.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -28,7 +28,7 @@ const Z = { y: 21, w: 13.5, h: 18, bar: 3.4, diag: 7.2, cap: 'angled' as const }
   aria-label={`${app.name} record-stamp mark`}
 >
   <path
-    d="M18 5H30Q33 5 33 8V11Q33 15 29 18H19Q15 15 15 11V8Q15 5 18 5Z"
+    d="M17 5H31Q33 5 33 8V11Q33 15 29 15H26V21H22V15H19Q15 15 15 11V8Q15 5 17 5Z"
     fill={app.hue}
   />
   <path d="M10 17H38Q40 17 40 19V23H8V19Q8 17 10 17Z" fill={app.hue} />

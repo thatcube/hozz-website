@@ -5,8 +5,8 @@ export default {
   object: 'Crowd facing one screen',
   move: 'aperture',
   reading: 'letters',
-  sentence: 'The ZZ is the shared opening through the gathered audience.',
+  sentence: 'The ZZ is the opening through the audience’s joined shoulder field.',
   idea:
-    'Four head bumps merge into one crowd facing a single live screen, avoiding the generic three-person contacts glyph. The ZZ is knocked cleanly through their shared mass, keeping both the audience object and the doubled letter immediate.',
+    'The letters exist only in the continuous shoulder field made when four viewers gather together beneath one screen. Separate them into individual people and that field disappears, taking the knockout ZZ with it.',
   palette: ['#8f52f6', '#3d1d75', '#c9a9fb'],
 };

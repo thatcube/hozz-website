@@ -1,18 +1,17 @@
 ---
 /**
- * tw02 · Crease — the bubble folded across itself.
+ * tw02 · Crease — the bubble's bottom edge turned up.
  *
- * One sheet, creased once. Everything below the crease is the back of the
- * sheet, and it runs on past the silhouette to become the tail — so the tail is
- * not a stub applied to a corner, it is the folded part of the bubble arriving
- * somewhere. The crease is bowed, which means the same single feature does
- * three jobs at once: it is the fold, it is the tail's root, and it is the
- * mouth. Nothing was added to the shipped bubble to get a face; one edge was
- * bent.
+ * One sheet, creased once near the bottom, so the last few units of it are the
+ * back of the sheet rather than the front. That single bend does three jobs:
+ * it is the fold, it is the mouth — the crease is bowed, so it grins — and it
+ * is where the tail comes from, which means the tail is the folded part of the
+ * bubble arriving somewhere rather than a stub applied to a corner.
  *
  * The letters are cut through the front of the sheet only. The fold is in front
- * of them, so their lower bars tuck behind it — which is where the depth comes
- * from. There is no gradient anywhere in this mark.
+ * of them, so the outer ends of their lower bars tuck behind it. That is where
+ * the depth comes from: a bend, not a highlight. Nothing here was added to the
+ * shipped bubble — one edge was turned.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -28,22 +27,23 @@ const uid = `tw02-${Math.random().toString(36).slice(2, 9)}`;
 const maskId = `${uid}-m`;
 const clipId = `${uid}-c`;
 
-// Body 40 × 28.
+/** Body 40 × 28. */
 const BODY =
   'M15 5H33A11 11 0 0 1 44 16V22A11 11 0 0 1 33 33H15A11 11 0 0 1 4 22V16A11 11 0 0 1 15 5Z';
 
 /**
- * The crease. A quadratic from edge to edge, 21.5 at the sides and 24.2 at the
- * centre — a 2.7-unit bow, which is a mouth and not a horizon.
+ * The crease: 24.4 at the sides, 28.4 at the centre. A 4-unit bow, which is a
+ * mouth; the flat version of this line was a horizon and read as nothing.
  */
-const FOLD = 'M0 21.5Q24 26.9 48 21.5V48H0Z';
+const FOLD = 'M0 24.4Q24 28.4 48 24.4V48H0Z';
 
 /** The fold arriving. Straight edges, because folded paper has straight edges. */
-const TAIL = 'M11.6 27L6.2 42.6L21.4 28.4Z';
+const TAIL = 'M11.4 28.6L6 42.8L21 30.4Z';
 
-const Z = { y: 10.2, w: 10.6, h: 14.4, bar: 3.1, diag: 5.3, cap: 'angled' as const };
+const Z = { y: 12.2, w: 10.6, h: 14.4, bar: 3.1, diag: 5.3, cap: 'angled' as const };
 const zLeft = 12.8;
-const zRight = 25.8; // the pair spans 12.8–36.4 and the crease crosses it at 23.6
+const zRight = 25.8; // the pair spans 12.8–36.4; the crease crosses it at 25.9
+const foldFill = ground === 'dark' ? app.light : app.deep;
 ---
 
 <svg
@@ -71,9 +71,9 @@ const zRight = 25.8; // the pair spans 12.8–36.4 and the crease crosses it at 
     <path d={BODY} fill={app.hue} />
   </g>
 
-  {/* The back of the sheet: in front of the letters, and continuing as the tail. */}
-  <path d={TAIL} fill={ground === 'dark' ? app.light : app.deep} />
+  {/* The back of the sheet: in front of the letters, and running on as the tail. */}
+  <path d={TAIL} fill={foldFill} />
   <g clip-path={`url(#${clipId})`}>
-    <path d={FOLD} fill={ground === 'dark' ? app.light : app.deep} />
+    <path d={FOLD} fill={foldFill} />
   </g>
 </svg>

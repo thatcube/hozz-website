@@ -1,12 +1,12 @@
 export default {
   n: 'h10',
-  name: 'Punched Tab',
+  name: 'Index Punch',
   app: 'hozz',
   object: 'Single tabbed record card',
-  move: 'silhouette',
+  move: 'aperture',
   reading: 'letters',
-  sentence: 'The ZZ is the punched filing edge of the record card.',
+  sentence: 'The ZZ is the indexing punch, spaced by the filing tab.',
   idea:
-    'A single tabbed card carries one paired punch that opens through its filing edge. The apertures are part of the card’s outer profile, with no printed detail or separate lettering layer.',
+    'The six-unit filing tab is exactly the six-unit gap between the two Zs, so the card fixes their letterspacing and the pair cannot move without the tab going wrong. The letters are full apertures with no printed detail.',
   palette: ['#12b39a', '#82e5d3'],
 };

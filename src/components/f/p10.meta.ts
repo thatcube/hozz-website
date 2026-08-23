@@ -7,6 +7,6 @@ export default {
   reading: 'letters',
   sentence: 'The ZZ is the die-cut index of the front poster card.',
   idea:
-    'Three broad portrait cards fan as a compact view of a personal movie collection. A clean paired aperture in the front card reveals the lighter card behind, keeping the object and letters immediately legible.',
+    'Three broad portrait cards fan as a compact view of a personal movie collection. The lighter card’s side edges use the same angle as both Z diagonals, so changing the fan would require redrawing the letters.',
   palette: ['#00a4dc', '#00506d', '#7fd6f5'],
 };

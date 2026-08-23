@@ -1,17 +1,17 @@
 ---
 /**
- * p01 · Bleed — a screen turned away, and a picture too big for it.
+ * p01 · Fold — a screen creased down the middle, and a picture creased with it.
  *
- * The object is a slab of glass with no frame at all, turned a few degrees so
- * you catch its near edge and the shadow it throws. Everything on it — panel,
- * edge, letters — sits in one skew, so the letters are in the plane of the
- * screen rather than pasted to the front of it.
+ * The object is a concave panel: two facets meeting at a fold that sits further
+ * away than the ends, so the outer edges are the tall ones and the silhouette
+ * pinches at the waist. No bezel, no foot, no stand — a sheet with a bend in it.
  *
- * The picture is the ZZ, drawn at 24 units a letter when only 40 are available.
- * Two of them cannot fit, so the glass cuts them: the bars stop at the edge,
- * not at a terminal. Take the screen away and the letters have no ends of their
- * own. That is the whole of it — a frameless screen is the one kind that can
- * crop an image, because there is no border to stop it first.
+ * There is one Z on each facet and each lies in that facet's plane, so they
+ * lean in opposite directions. The picture continues across the fold, which
+ * means the two letters actually overlap in the middle — the lit crease passes
+ * in front of them and is the only reason they read as two. Flatten the screen
+ * and the opposite leans are nonsense; take the letters away and the fold has
+ * nothing to break.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -23,20 +23,23 @@ interface Props {
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.plozz;
 
-// Rendered eight times on one page; a shared clip id crops the wrong mark.
+// Rendered eight times on one page; a shared clip id clips the wrong mark.
 const uid = `p01-${Math.random().toString(36).slice(2, 9)}`;
 
-// 40 : 23 — a panel, turned six degrees about its vertical axis.
-const P = { x: 4, y: 10, w: 40, h: 23, r: 2 };
-const TURN = 'translate(24 21.5) skewY(-6) translate(-24 -21.5)';
+// Ends 23.6 tall, fold 20 — a sixteen-nine sheet with a bend in it.
+const SHELL =
+  'M4 11.6Q4 10.2 5.4 10.33L24 12V32L5.4 33.67Q4 33.8 4 32.4Z' +
+  'M44 11.6Q44 10.2 42.6 10.33L24 12V32L42.6 33.67Q44 33.8 44 32.4Z';
+const RIGHT_FACET = 'M24 12L44 10.2V33.8L24 32Z';
 
-// diag 9.5 against bar 4.8: the diagonal is twice the mass of the bars. No text
-// face is cut that way, which is exactly the point.
-const Z = { y: 11.5, w: 24, h: 20, bar: 4.8, diag: 9.5, cap: 'flat' as const };
-// 24 + 24 + a unit of gap is 49 across a 40-unit screen. 4.5 of each letter is
-// off the glass; the pair still centres on 24.
-const zLeft = -0.5;
-const zRight = 24.5;
+// diag 6.6 against bar 3.2 — the diagonal is more than double the bars, and
+// 5.8 of run against 9 of drop keeps it steep enough to read small.
+const Z = { y: 13.4, w: 14, h: 16.2, bar: 3.4, diag: 7.2, cap: 'angled' as const };
+
+// The facets slope 1.8 units over 20, which is 5.1 degrees. Each letter takes
+// its own facet's slope, about its own centre.
+const leanL = 'translate(17.4 21.5) skewY(5.1) translate(-17.4 -21.5)';
+const leanR = 'translate(30.6 21.5) skewY(-5.1) translate(-30.6 -21.5)';
 ---
 
 <svg
@@ -50,30 +53,30 @@ const zRight = 24.5;
 >
   <defs>
     <clipPath id={uid}>
-      <rect x={P.x} y={P.y} width={P.w} height={P.h} rx={P.r} transform={TURN} />
+      <path d={SHELL} />
     </clipPath>
   </defs>
 
-  <g transform={TURN}>
-    {/* The wall it hangs off. */}
-    <rect
-      x={P.x + 2.6}
-      y={P.y + 3.4}
-      width={P.w}
-      height={P.h}
-      rx={P.r}
-      fill={app.deep}
-      opacity={ground === 'dark' ? 0.45 : 0.26}
-    />
-    {/* The near edge, which is all the thickness a screen like this has. */}
-    <rect x="1.6" y="10.8" width="2.4" height="21.4" rx="0.9" fill={app.deep} />
-  </g>
+  {/* Hung, so the only thing under it is its own shadow. */}
+  <rect
+    x="16"
+    y="35.6"
+    width="16"
+    height="1.2"
+    rx="0.6"
+    fill={app.deep}
+    opacity={ground === 'dark' ? 0.5 : 0.3}
+  />
 
   <g clip-path={`url(#${uid})`}>
-    <g transform={TURN}>
-      <rect x={P.x} y={P.y} width={P.w} height={P.h} rx={P.r} fill={app.hue} />
-      <path d={zPath({ ...Z, x: zLeft })} fill={app.deep} />
-      <path d={zPath({ ...Z, x: zRight })} fill={app.deep} />
-    </g>
+    <path d={SHELL} fill={app.hue} />
+    {/* The far facet turns away from the light. Depth, from the geometry. */}
+    <path d={RIGHT_FACET} fill={app.deep} opacity="0.22" />
+
+    <path d={zPath({ ...Z, x: 10.4 })} fill={app.deep} transform={leanL} />
+    <path d={zPath({ ...Z, x: 23.6 })} fill={app.deep} transform={leanR} />
+
+    {/* The crease, in front of both. The letters overlap behind it. */}
+    <rect x="23.1" y="12" width="1.8" height="20" fill={app.light} />
   </g>
 </svg>

@@ -1,12 +1,12 @@
 export default {
   n: 'tw09',
-  name: 'Wall',
+  name: 'Sticker',
   app: 'twozz',
-  object: 'Chat column mid-spam',
-  move: 'weave',
+  object: 'Die-cut emote sticker, peeling',
+  move: 'aperture',
   reading: 'eyes',
-  sentence: 'The ZZ is the kink two lines of the chat column take as they become a face.',
+  sentence: 'The ZZ is the die-cut of the sticker, its backing showing through.',
   idea:
-    'A stack of message lines, several of them broken into equal chunks because that is what the same emote pasted forty times looks like from a distance. Two of those lines kink — top bar, gutter jump, bottom bar — a third bows into a lopsided grin, and every one of them picks the row back up at the same height on either side of the face.',
-  palette: ['#8f52f6', '#3d1d75'],
+    'Emotes are traded and installed like stickers, so this one is physical: printed face on a pale backing, cut to the outline with the loose keyline a die leaves, lifted at one corner. The eyes and the open grin are punched through the printed layer only, so what fills them is the same board that shows all the way round the edge — and the peel is what proves there are two layers to punch through.',
+  palette: ['#8f52f6', '#c9a9fb', '#3d1d75'],
 };

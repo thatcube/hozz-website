@@ -1,12 +1,12 @@
 export default {
   n: 'h04',
-  name: 'Transfer Tape',
+  name: 'Transfer Band',
   app: 'hozz',
-  object: 'Doubled folded transfer tape',
-  move: 'silhouette',
+  object: 'Single folded transfer band',
+  move: 'aperture',
   reading: 'letters',
-  sentence: 'The ZZ is the doubled fold of the transfer tape.',
+  sentence: 'The ZZ is the transfer path cut through the band at its fold level.',
   idea:
-    'Two identical lengths of broad transfer tape make the copy and the suffix the same visible event. Their heavy level-changing folds move from an upper source to a lower owned destination without any container or arrow.',
+    'The band’s inward folds define the exact level crossed by both Z diagonals, so moving or scaling the pair breaks the geometry. The knockout path makes Hozz’s readable copy literal without using a document, stacked pages, or an export arrow.',
   palette: ['#12b39a', '#08574b', '#82e5d3'],
 };

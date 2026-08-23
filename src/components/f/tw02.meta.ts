@@ -2,7 +2,7 @@ export default {
   n: 'tw02',
   name: 'Crease',
   app: 'twozz',
-  object: 'Bubble creased once, across',
+  object: 'Bubble with its bottom edge turned up',
   move: 'occlusion',
   reading: 'eyes',
   sentence: 'The ZZ is the pair of cuts sinking behind the bubble\u2019s crease.',

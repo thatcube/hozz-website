@@ -1,10 +1,11 @@
 ---
 /**
- * h06 · Handoff Gate
+ * h06 · Transfer Gate
  *
- * One gate leaf, one shared field. Its long rails and two broad braces form
- * the pair; there are no separate panels for the Zs to sit inside.
+ * A single gate leaf between two posts. The ZZ is one clean openwork pair in
+ * the shared leaf, not two letters divided into separate panels.
  */
+import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
 
 interface Props {
@@ -13,6 +14,9 @@ interface Props {
 }
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.hozz;
+const uid = `h06-${Math.random().toString(36).slice(2, 9)}`;
+
+const Z = { y: 15, w: 12, h: 17, bar: 3.2, diag: 6.2, cap: 'angled' as const };
 ---
 
 <svg
@@ -25,10 +29,18 @@ const app = APP_BY_KEY.hozz;
   aria-label={`${app.name} mark`}
   data-ground={ground}
 >
-  <path d="M4 7H8V41H4Z" fill={app.deep} />
-  <path
-    d="M8 12H24V16H8ZM8 32H24V36H8ZM18 16H24L16 32H10ZM27 12H44V16H27ZM27 32H44V36H27ZM36 16H42L34 32H28ZM40 12H44V36H40Z"
-    fill={app.hue}
-  />
-  <path d="M4 7H8V10H4ZM8 12H44V14H8Z" fill={app.light} />
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: 10 })} fill="#000" />
+      <path d={zPath({ ...Z, x: 25 })} fill="#000" />
+    </mask>
+  </defs>
+
+  <path d="M4 7H8V41H4ZM40 7H44V41H40Z" fill={app.deep} />
+  <g mask={`url(#${uid})`}>
+    <rect x="8" y="12" width="31" height="24" fill={app.hue} />
+    <rect x="8" y="12" width="31" height="2.2" fill={app.light} />
+    <rect x="8" y="33" width="31" height="3" fill={app.deep} opacity="0.42" />
+  </g>
 </svg>

@@ -15,7 +15,7 @@ interface Props {
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.mozz;
 const uid = `m12-${Math.random().toString(36).slice(2, 9)}`;
-const Z = { y: 15, w: 11, h: 14, bar: 3.2, diag: 5.8, cap: 'angled' as const };
+const Z = { y: 15, w: 10.5, h: 14, bar: 3.2, diag: 5.8, cap: 'angled' as const };
 ---
 
 <svg
@@ -30,8 +30,10 @@ const Z = { y: 15, w: 11, h: 14, bar: 3.2, diag: 5.8, cap: 'angled' as const };
   <defs>
     <mask id={uid}>
       <rect width="48" height="48" fill="#fff" />
-      <path d={zPath({ ...Z, x: 16 })} fill="#000" />
-      <path d={zPath({ ...Z, x: 29 })} fill="#000" />
+      <path d={zPath({ ...Z, x: 15 })} fill="#000" />
+      <path d={zPath({ ...Z, x: 29.5 })} fill="#000" />
+      <circle cx="27.5" cy="19.5" r="1.35" fill="#000" />
+      <circle cx="27.5" cy="26.5" r="1.35" fill="#000" />
     </mask>
   </defs>
 

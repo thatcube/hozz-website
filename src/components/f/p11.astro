@@ -2,8 +2,8 @@
 /**
  * p11 · Box Set
  *
- * Three case tops stay individually visible, but join into one box-set field
- * before the ZZ begins. The knockout therefore remains whole at every stroke.
+ * The cases end exactly where the shelf begins, and the Z bottom bars end on
+ * that same line. The shelf therefore fixes the letters' baseline.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -15,7 +15,7 @@ interface Props {
 const { size = 96 } = Astro.props as Props;
 const app = APP_BY_KEY.plozz;
 const uid = `p11-${Math.random().toString(36).slice(2, 9)}`;
-const Z = { y: 16, w: 14, h: 16, bar: 3.2, diag: 6.2, cap: 'angled' as const };
+const Z = { y: 16, w: 14, h: 18, bar: 3.2, diag: 6.2, cap: 'angled' as const };
 ---
 
 <svg
@@ -35,10 +35,6 @@ const Z = { y: 16, w: 14, h: 16, bar: 3.2, diag: 6.2, cap: 'angled' as const };
     </mask>
   </defs>
 
-  <path
-    d="M5 13H16V38H5ZM17 9H29V38H17ZM30 14H43V38H30ZM5 15H43V38H5Z"
-    fill={app.hue}
-    mask={`url(#${uid})`}
-  />
-  <path d="M3.5 37H44.5V42H3.5Z" fill={app.deep} />
+  <path d="M5 34V13H16V9H29V14H43V34Z" fill={app.hue} mask={`url(#${uid})`} />
+  <path d="M3.5 34H44.5V41H3.5Z" fill={app.deep} />
 </svg>

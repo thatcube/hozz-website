@@ -2,9 +2,10 @@
 /**
  * tw10 · Chat column
  *
- * A single scrolling column has a stepped, ragged message edge and two ordinary
- * line slots. ZZ is knocked cleanly through that same column as the central
- * pair of messages, with no independent letter fill.
+ * A single scrolling column has a stepped, ragged message edge. Its four line
+ * rows are equally spaced: rows one and four are ordinary slots, while rows two
+ * and three are the bars of the knockout ZZ. Move or resize the letters and the
+ * transcript rhythm breaks.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -17,7 +18,7 @@ const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.twozz;
 const uid = `tw10-${Math.random().toString(36).slice(2, 9)}`;
 
-const Z = { y: 15, w: 14, h: 18, bar: 4.5, diag: 7.5, cap: 'angled' as const };
+const Z = { y: 16.5, w: 14, h: 15, bar: 4, diag: 7.2, cap: 'angled' as const };
 ---
 
 <svg
@@ -32,10 +33,10 @@ const Z = { y: 15, w: 14, h: 18, bar: 4.5, diag: 7.5, cap: 'angled' as const };
   <defs>
     <mask id={uid}>
       <rect width="48" height="48" fill="#fff" />
-      <rect x="9" y="7" width="23" height="4" rx="2" fill="#000" />
+      <rect x="9" y="6.5" width="23" height="4" rx="2" fill="#000" />
       <path d={zPath({ ...Z, x: 7.5 })} fill="#000" />
       <path d={zPath({ ...Z, x: 26.5 })} fill="#000" />
-      <rect x="9" y="37" width="20" height="4" rx="2" fill="#000" />
+      <rect x="9" y="37.5" width="20" height="4" rx="2" fill="#000" />
     </mask>
   </defs>
 

@@ -1,9 +1,9 @@
 ---
 /**
- * p12 · Collection Folder
+ * p12 · Creased Folder
  *
- * A classic tabbed folder and one front flap. The ZZ is cut through the flap,
- * where the lighter contents behind provide full tonal separation.
+ * A simple tabbed folder with the ZZ pressed into its front flap. The heavy
+ * diagonals are the depressed fold planes; the thin bars are their returns.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -14,8 +14,7 @@ interface Props {
 }
 const { size = 96 } = Astro.props as Props;
 const app = APP_BY_KEY.plozz;
-const uid = `p12-${Math.random().toString(36).slice(2, 9)}`;
-const Z = { y: 21, w: 14, h: 14, bar: 3, diag: 6.2, cap: 'angled' as const };
+const Z = { y: 21, w: 13, h: 14, bar: 2.7, diag: 6.4, cap: 'angled' as const };
 ---
 
 <svg
@@ -25,17 +24,13 @@ const Z = { y: 21, w: 14, h: 14, bar: 3, diag: 6.2, cap: 'angled' as const };
   fill="none"
   xmlns="http://www.w3.org/2000/svg"
   role="img"
-  aria-label={`${app.name} collection-folder mark`}
+  aria-label={`${app.name} creased-folder mark`}
 >
-  <defs>
-    <mask id={uid}>
-      <rect width="48" height="48" fill="#fff" />
-      <path d={zPath({ ...Z, x: 8 })} fill="#000" />
-      <path d={zPath({ ...Z, x: 26 })} fill="#000" />
-    </mask>
-  </defs>
-
   <path d="M5 10H18L22 14H43V41H5Z" fill={app.deep} />
-  <path d="M8 15H40V39H8Z" fill={app.light} />
-  <path d="M5 18H43V41H5Z" fill={app.hue} mask={`url(#${uid})`} />
+  <path d="M5 18H43V41H5Z" fill={app.hue} />
+  <path
+    d={`${zPath({ ...Z, x: 8 })}${zPath({ ...Z, x: 27 })}`}
+    fill={app.deep}
+    opacity="0.72"
+  />
 </svg>

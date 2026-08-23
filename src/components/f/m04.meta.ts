@@ -5,8 +5,8 @@ export default {
   object: 'Single flared speaker horn',
   move: 'aperture',
   reading: 'letters',
-  sentence: 'The ZZ is the folded acoustic channel of the speaker horn.',
+  sentence: 'The ZZ is the folded acoustic channel between the horn’s throat and mouth.',
   idea:
-    'A single flared horn carries one open acoustic path through its body. The doubled channel is the suffix, while the lower facet gives the speaker one decisive depth step.',
+    'The throat clips the first Z’s open bars and the flared mouth clips the second Z’s, so the horn fixes the pair’s full span. One lower facet is the only depth step.',
   palette: ['#e0243f', '#6d0f1e'],
 };

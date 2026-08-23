@@ -1,10 +1,11 @@
 ---
 /**
- * h04 · Transfer Tape
+ * h04 · Transfer Sheet
  *
- * The object is the pair: two equal lengths of broad tape folded through the
- * same level change. Each plane changes shade at the physical fold.
+ * A single folded band with a clean ZZ path cut through it. The clipped
+ * knockout keeps both letters joined and lets the ground provide full contrast.
  */
+import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
 
 interface Props {
@@ -13,6 +14,10 @@ interface Props {
 }
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.hozz;
+const uid = `h04-${Math.random().toString(36).slice(2, 9)}`;
+
+const Z = { y: 14, w: 13, h: 20, bar: 3.7, diag: 7, cap: 'angled' as const };
+const band = 'M4 10H44L40 24L44 38H4L8 24Z';
 ---
 
 <svg
@@ -25,7 +30,17 @@ const app = APP_BY_KEY.hozz;
   aria-label={`${app.name} mark`}
   data-ground={ground}
 >
-  <path d="M5 10H22L21 14H5ZM27 10H44L43 14H27Z" fill={app.light} />
-  <path d="M15 14H21L12 32H6ZM37 14H43L34 32H28Z" fill={app.hue} />
-  <path d="M6 32H22L21 36H6ZM28 32H44L43 36H28Z" fill={app.deep} />
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: 8.5 })} fill="#000" />
+      <path d={zPath({ ...Z, x: 26.5 })} fill="#000" />
+    </mask>
+  </defs>
+
+  <g mask={`url(#${uid})`}>
+    <path d={band} fill={app.hue} />
+    <path d="M4 35.5H43.3L44 38H4Z" fill={app.deep} opacity="0.48" />
+    <path d="M4 10H44L43.2 12.4H4.8Z" fill={app.light} />
+  </g>
 </svg>

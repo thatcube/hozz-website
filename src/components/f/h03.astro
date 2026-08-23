@@ -28,20 +28,23 @@ const uid = `h03-${Math.random().toString(36).slice(2, 9)}`;
 // Dome on top, barrel below, flat base: a pressure vessel, not a box.
 const SHELL =
   'M8 20.5A16 10 0 0 1 40 20.5V39.5A3.2 3.2 0 0 1 36.8 42.7H11.2A3.2 3.2 0 0 1 8 39.5Z';
-const IN = { x: 9.5, y: 16, w: 29, h: 25.4, r: 2.4 };
-
-// The ruling. One run for every line, so the scale reads as one system.
-const RULE = { x: 10.6, w: 26.8, t: 1.3 };
+// Everything inside is clipped to the shell itself, so each graduation is
+// exactly as long as the vessel is wide at that height — which is what makes
+// the top one shorten into the dome, and what makes the ruling run past the
+// letters to both walls.
+const RULE = { x: 8, w: 32, t: 1 };
 const TOP = 21.5;
 const FILL = 34;
 
-// bar 3 against diag 5.2: the graduation thickens, and the fold is heavier
-// still. Flat caps, because every other line on the scale ends flat too.
-const Z = { y: TOP, w: 10.8, h: FILL - TOP, bar: 3, diag: 5.2, cap: 'flat' as const };
-const zL = 11.6;
-const zR = 25.6;
+// bar 3.4 against diag 5.4, over a 1-unit line: the graduation thickens more
+// than three times over, and then the fold is heavier still.
+// Flat caps, because every other line on the scale ends flat too.
+const Z = { y: TOP, w: 10.6, h: FILL - TOP, bar: 3.4, diag: 5.4, cap: 'flat' as const };
+const zL = 12;
+const zR = 25.4;
 
-const sub = ground === 'dark' ? 0.4 : 0.52;
+// The plain ruling sits back a step so the two that misbehave carry the mark.
+const rule = ground === 'dark' ? 0.9 : 0.76;
 ---
 
 <svg
@@ -55,38 +58,26 @@ const sub = ground === 'dark' ? 0.4 : 0.52;
 >
   <defs>
     <clipPath id={`${uid}-c`}>
-      <rect x={IN.x} y={IN.y} width={IN.w} height={IN.h} rx={IN.r} />
+      <path d={SHELL} />
     </clipPath>
   </defs>
 
-  {/* Filler on the crown, then the shell. */}
-  <rect x="21.2" y="5.2" width="5.6" height="6" rx="1.4" fill={app.hue} />
+  {/* Filler port on the crown, then the shell. */}
+  <rect x="20.4" y="4.6" width="7.2" height="1.9" rx="0.9" fill={app.hue} />
+  <rect x="22.2" y="6.5" width="3.6" height="5" fill={app.hue} />
   <path d={SHELL} fill={app.hue} />
 
   <g clip-path={`url(#${uid}-c)`}>
-    {/* Three graduations. The letters grow out of the first and cross the second. */}
-    <rect x={RULE.x} y={TOP} width={RULE.w} height={RULE.t} fill={app.deep} />
-    <rect x={RULE.x} y="27.6" width={RULE.w} height={RULE.t} fill={app.deep} />
+    {/* The scale. The letters grow out of the second line and cross the third. */}
+    <rect x={RULE.x} y="15.4" width={RULE.w} height={RULE.t} fill={app.deep} opacity={rule} />
+    <rect x={RULE.x} y={TOP} width={RULE.w} height={RULE.t} fill={app.deep} opacity={rule} />
+    <rect x={RULE.x} y="27.6" width={RULE.w} height={RULE.t} fill={app.deep} opacity={rule} />
 
     <path d={zPath({ ...Z, x: zL })} fill={app.deep} />
     <path d={zPath({ ...Z, x: zR })} fill={app.deep} />
 
     {/* The level itself, and the contents below it. */}
-    <rect x={IN.x} y={FILL} width={IN.w} height="1.4" fill={app.light} />
-    <rect
-      x={IN.x}
-      y={FILL + 1.4}
-      width={IN.w}
-      height={IN.y + IN.h - FILL - 1.4}
-      fill={app.deep}
-    />
-    <rect
-      x={RULE.x}
-      y="38.4"
-      width={RULE.w}
-      height="1.1"
-      fill={app.light}
-      opacity={sub}
-    />
+    <rect x={RULE.x} y={FILL} width={RULE.w} height="1.6" fill={app.light} />
+    <rect x={RULE.x} y={FILL + 1.6} width={RULE.w} height="9" fill={app.deep} />
   </g>
 </svg>

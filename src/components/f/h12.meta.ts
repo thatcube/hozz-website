@@ -5,8 +5,8 @@ export default {
   object: 'Compact hand record stamp',
   move: 'substitution',
   reading: 'letters',
-  sentence: 'The ZZ is the rubber face of the record stamp.',
+  sentence: 'The ZZ is the rubber face, spaced by the stamp’s handle stem.',
   idea:
-    'A hand stamp makes a durable written impression with almost no machinery. The paired rubber dies are the tool’s working face, joined by one mount instead of parked inside separate compartments.',
+    'The four-unit handle stem is exactly the four-unit gap between the two rubber dies, so the stamp fixes their spacing and the pair cannot slide without the handle going wrong. The dies remain one clean, high-contrast working face.',
   palette: ['#12b39a', '#08574b', '#82e5d3'],
 };

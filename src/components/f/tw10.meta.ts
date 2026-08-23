@@ -5,8 +5,8 @@ export default {
   object: 'Ragged scrolling chat column',
   move: 'aperture',
   reading: 'letters',
-  sentence: 'The ZZ is the central pair of messages cut through the chat column.',
+  sentence: 'The ZZ is the middle two rows cut through the scrolling transcript.',
   idea:
-    'A stepped outer edge and two ordinary slots reduce a scrolling live-chat column to one silhouette. The central messages are a clean knockout, preserving immediate ZZ legibility while making the letters disappear with the transcript.',
+    'The four chat rows share one measured rhythm: the ordinary first and fourth slots establish the spacing, and the Z bars occupy rows two and three. Move or resize the pair and that transcript rhythm breaks, so the chat column sets the letters’ vertical geometry.',
   palette: ['#8f52f6', '#3d1d75', '#c9a9fb'],
 };

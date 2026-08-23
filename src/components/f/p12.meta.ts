@@ -1,12 +1,12 @@
 export default {
   n: 'p12',
-  name: 'Collection Folder',
+  name: 'Creased Folder',
   app: 'plozz',
-  object: 'Tabbed folder with contents',
-  move: 'aperture',
+  object: 'Tabbed folder, folded front',
+  move: 'relief',
   reading: 'letters',
-  sentence: 'The ZZ is the index cut through the folder flap.',
+  sentence: 'The ZZ is the crease pressed into the folder flap.',
   idea:
-    'A conventional tabbed folder stands for media kept in the viewer’s own library. The front flap carries one clean paired cut, with the lighter contents behind supplying immediate contrast.',
-  palette: ['#00a4dc', '#00506d', '#7fd6f5'],
+    'The heavy diagonal of each drawn Z is the depressed fold plane, while its thinner bars are the crease returns. The folder’s material explains the stroke contrast instead of using a second aperture.',
+  palette: ['#00a4dc', '#00506d'],
 };

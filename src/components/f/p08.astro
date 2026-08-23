@@ -74,8 +74,8 @@ function zInBeam(u0: number, u1: number, v: number, barV: number, diagU: number)
   return p.map(([u, vv], i) => `${i === 0 ? 'M' : 'L'}${at(u, vv)}`).join('') + 'Z';
 }
 
-const zNear = zInBeam(13.2, 22, 0.72, 0.4, 4.7);
-const zFar = zInBeam(22.9, 31.7, 0.52, 0.29, 4.7);
+const zNear = zInBeam(14.4, 22.4, 0.76, 0.4, 4.3);
+const zFar = zInBeam(24, 32, 0.52, 0.29, 4.3);
 
 // The machine is drawn level and then tilted with the throw, nose up on its
 // front foot, which is how a projector actually ends up pointing at a wall.

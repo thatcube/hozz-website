@@ -1,16 +1,17 @@
 ---
 /**
- * h01 · Manifold — one inlet, two tanks, and the ZZ is what settles in them.
+ * h01 · Manifold — one feed in, two tanks, and the ZZ is what settles in them.
  *
- * A header pipe takes one feed in at the top and splits it into two standing
- * tanks. Inside each tank the contents are not a plain block: the surface runs
- * across, folds down and returns along the floor, so the Z *is* what is being
- * kept. Both bars are cut off flat by the tank walls (`cap: 'open'`, then
- * clipped to the tank), which is why the letter cannot be lifted out — its
- * terminals belong to the vessel and stop existing without it.
+ * A single port at the top runs into a header pipe, which drops through two
+ * short down-pipes into two standing tanks. Inside each tank the contents are
+ * not a plain block: the surface runs across, folds down, and returns along the
+ * floor, so the Z *is* what is being kept. Both of its bars are cut off flat by
+ * the tank walls — `cap: 'open'`, then clipped to the tank interior — which is
+ * why the letter cannot be lifted out. Its terminals belong to the vessel.
  *
- * Two tanks standing at the same level is the whole Hozz argument in one
- * picture: one export, more than one destination, and both of them yours.
+ * One feed arriving at two tanks standing at the same level is the whole Hozz
+ * argument in a picture: one export, more than one destination, both of them
+ * yours, and you can see how much is in each.
  *
  * Reading: letters. The pair sits low under a tall headspace, inside two
  * separate containers, so it reads as contents rather than as a face.
@@ -28,18 +29,18 @@ const app = APP_BY_KEY.hozz;
 // Rendered eight times on one board; a shared clip id would clip the wrong one.
 const uid = `h01-${Math.random().toString(36).slice(2, 9)}`;
 
-const TANK = { y: 11.2, w: 14.8, h: 31.2, r: 3.2 };
+const TANK = { y: 15.4, w: 14.8, h: 27.6, r: 3.2 };
 const tL = 7.6;
 const tR = 25.6;
 
-// Walls 1.3, floor at 41.1. The interiors are what the letters are clipped to.
-const IN = { y: 12.5, w: 12.2, bottom: 41.1 };
+// Walls 1.3, floor at 41.7. The interiors are what the letters are clipped to.
+const IN = { y: 16.7, w: 12.2, bottom: 41.7 };
 const inL = 8.9;
 const inR = 26.9;
 
-// Fill at 26.2, floor at 41.1. diag 5.2 against bar 3.2 — the fold is heavier
+// Fill at 27.6, floor at 41.7. diag 5.2 against bar 3.2 — the fold is heavier
 // than the surface, which is the cheapest way to stop looking like type.
-const FILL = 26.2;
+const FILL = 27.6;
 const Z = {
   y: FILL,
   w: IN.w,
@@ -68,10 +69,12 @@ const weld = ground === 'dark' ? 0.8 : 0.6;
     </clipPath>
   </defs>
 
-  {/* One feed in through a flanged port, then the header that splits it. */}
-  <rect x="20.6" y="3.6" width="6.8" height="1.8" rx="0.9" fill={app.hue} />
-  <rect x="22.4" y="5.4" width="3.2" height="2.4" fill={app.hue} />
-  <rect x="6.2" y="6.8" width="35.6" height="4.4" rx="1.6" fill={app.hue} />
+  {/* One flanged port in, the header that carries it, two drops out. */}
+  <rect x="20.6" y="4.2" width="6.8" height="1.8" rx="0.9" fill={app.hue} />
+  <rect x="22.6" y="6" width="2.8" height="3" fill={app.hue} />
+  <rect x="6" y="8.6" width="36" height="4.2" rx="2.1" fill={app.hue} />
+  <rect x="13.2" y="12.6" width="3.6" height="3.4" fill={app.hue} />
+  <rect x="31.2" y="12.6" width="3.6" height="3.4" fill={app.hue} />
 
   <rect
     x={tL}
@@ -98,7 +101,7 @@ const weld = ground === 'dark' ? 0.8 : 0.6;
     <rect x={inR} y={FILL} width={IN.w} height="1.1" fill={app.light} />
   </g>
 
-  {/* Where each tank is welded to the header. */}
-  <rect x={tL} y="10.9" width={TANK.w} height="1" fill={app.deep} opacity={weld} />
-  <rect x={tR} y="10.9" width={TANK.w} height="1" fill={app.deep} opacity={weld} />
+  {/* The seam where each tank is closed. */}
+  <rect x={tL} y="16" width={TANK.w} height="1" fill={app.deep} opacity={weld} />
+  <rect x={tR} y="16" width={TANK.w} height="1" fill={app.deep} opacity={weld} />
 </svg>

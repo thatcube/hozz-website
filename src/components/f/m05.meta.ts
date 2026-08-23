@@ -1,12 +1,12 @@
 export default {
   n: 'm05',
-  name: 'Fork tines',
+  name: 'Resonant bell',
   app: 'mozz',
-  object: 'Single vibrating tuning fork',
-  move: 'substitution',
+  object: 'Single struck metal bell',
+  move: 'aperture',
   reading: 'letters',
-  sentence: 'The ZZ is the vibrating pair of tines of the tuning fork.',
+  sentence: 'The ZZ is the resonant opening split by the bell’s clapper.',
   idea:
-    'Two drawn tines grow from one curved yoke and one stem, making a single tuning fork without a surrounding frame. The letter pair is the sound-producing structure itself.',
-  palette: ['#e0243f'],
+    'The clapper stem occupies the gap between the two knockout Zs, so the bell fixes their spacing around its centreline. One darker lip is the only shading step.',
+  palette: ['#e0243f', '#6d0f1e'],
 };

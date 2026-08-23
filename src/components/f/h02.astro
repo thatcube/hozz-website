@@ -25,9 +25,11 @@ const app = APP_BY_KEY.hozz;
 
 const uid = `h02-${Math.random().toString(36).slice(2, 9)}`;
 
-const BODY = { x: 7, y: 11.4, w: 34, h: 31.6, r: 4.2 };
+// Straight neck, shoulders flaring to full width by 18, then straight sides.
+const SHELL =
+  'M9.6 11.4H38.4C40.1 13.4 41 15.7 41 18V39.3A4.2 4.2 0 0 1 36.8 43.5H11.2A4.2 4.2 0 0 1 7 39.3V18C7 15.7 7.9 13.4 9.6 11.4Z';
 // Interior: 1.5 of glass all round.
-const IN = { x: 8.5, y: 13, w: 31, h: 28.5, r: 3.2 };
+const IN = { x: 8.5, y: 13, w: 31, h: 29, r: 3.2 };
 
 // Surface at the walls, and the control point that pulls the middle down.
 const SURF = 28.4;
@@ -68,20 +70,13 @@ const ring = ground === 'dark' ? 0.92 : 1;
     {/* Lid plate seated on the rim, then the jar. */}
     <rect x="12.5" y="4.5" width="23" height="3.5" rx="1.4" fill={app.hue} />
     <rect x="10" y="8" width="28" height="2.6" rx="1" fill={app.hue} />
-    <rect
-      x={BODY.x}
-      y={BODY.y}
-      width={BODY.w}
-      height={BODY.h}
-      rx={BODY.r}
-      fill={app.hue}
-    />
+    <path d={SHELL} fill={app.hue} />
   </g>
 
   {/* What is kept, and the meniscus riding up the glass at both walls. */}
   <g clip-path={`url(#${uid}-c)`}>
     <path
-      d={`M${IN.x} ${SURF}Q24 ${DIP} ${IN.x + IN.w} ${SURF}V41.6H${IN.x}Z`}
+      d={`M${IN.x} ${SURF}Q24 ${DIP} ${IN.x + IN.w} ${SURF}V42H${IN.x}Z`}
       fill={app.deep}
     />
     <path
@@ -94,9 +89,9 @@ const ring = ground === 'dark' ? 0.92 : 1;
 
   {/* Gasket last: proud of the jar on both sides, and it caps the letters. */}
   <rect
-    x="6.5"
+    x="8"
     y="10.4"
-    width="35"
+    width="32"
     height="2"
     rx="1"
     fill={app.light}

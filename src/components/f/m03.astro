@@ -1,0 +1,88 @@
+---
+/**
+ * m03 · Stack — three records dropped on top of one another.
+ *
+ * The stagger is the object: each disc sits up and to the right of the one
+ * beneath it, so the pile shows a dark crescent, then a lit one, then the face
+ * of the record on top. The suffix is slotted straight through the pile — one
+ * cut, all three discs — so the letters carry the stack's tonal steps across
+ * their own bars, and where the pile runs out, so do they. The top-left bar is
+ * taken by the middle disc's rim and the bottom-right by the front disc's,
+ * which is the stagger showing up inside the letters.
+ *
+ * Nothing here is drawn on anything. Take the discs away and the slots have
+ * nothing to be cut in.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.mozz;
+
+const uid = `m03-${Math.random().toString(36).slice(2, 9)}`;
+
+const R = 13.6;
+/** Back to front, each one up and right of the last. */
+const DISCS = [
+  { cx: 18.8, cy: 29.6, fill: app.deep },
+  { cx: 24, cy: 24, fill: app.light },
+  { cx: 29.2, cy: 18.4, fill: app.hue },
+];
+
+const Z = {
+  y: 17.1,
+  w: 12.75,
+  h: 13.8,
+  bar: 2.8,
+  diag: 4.9,
+  cap: 'flat' as const,
+};
+const zLeft = 9.45; // runs past the pile at the top left — the rim takes it
+const zRight = 25.8; // and past it at the bottom right
+
+// On a dark ground the pile's own edges do most of the separating, so the
+// seams between discs can be quieter.
+const SEAM = ground === 'dark' ? 0.55 : 0.75;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    <mask id={uid} maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48">
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
+      <path d={zPath({ ...Z, x: zRight })} fill="#000" />
+    </mask>
+  </defs>
+
+  <g mask={`url(#${uid})`}>
+    {
+      DISCS.map((d, i) => (
+        <>
+          <circle cx={d.cx} cy={d.cy} r={R} fill={d.fill} />
+          {i > 0 && (
+            <circle
+              cx={d.cx}
+              cy={d.cy}
+              r={R - SEAM / 2}
+              fill="none"
+              stroke={app.deep}
+              stroke-width={SEAM}
+            />
+          )}
+        </>
+      ))
+    }
+  </g>
+</svg>

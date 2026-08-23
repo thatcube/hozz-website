@@ -1,12 +1,12 @@
 export default {
   n: 'h11',
-  name: 'Bound Edges',
+  name: 'Die-cut Folio',
   app: 'hozz',
   object: 'Closed bound record folio',
-  move: 'substitution',
+  move: 'aperture',
   reading: 'letters',
-  sentence: 'The ZZ is the exposed page edge of the bound folio.',
+  sentence: 'The ZZ is the die-cut index of the folio’s page block.',
   idea:
-    'Two adjacent signatures share one fore-edge, with bowed covers and heavy page cuts creating the paired profile. The letters are the folio’s exposed construction rather than marks placed inside it.',
+    'The knockout exists only in the visible page block, not in the cover: thin the pages and the letters crop; remove them and the letters disappear while the bound edge remains. One cover shape and one page shape are the entire object.',
   palette: ['#12b39a', '#08574b', '#82e5d3'],
 };

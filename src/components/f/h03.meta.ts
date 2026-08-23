@@ -2,7 +2,7 @@ export default {
   n: 'h03',
   name: 'Measure',
   app: 'hozz',
-  object: 'Graduated tank on feet',
+  object: 'Domed tank, ruled shell',
   move: 'weave',
   reading: 'letters',
   sentence: 'The ZZ is the swerve in the tank\u2019s ruling, from one graduation to the level.',

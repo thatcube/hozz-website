@@ -1,0 +1,69 @@
+---
+/**
+ * tw03 · Slab — the bubble given a thickness.
+ *
+ * The shipped mark is a sticker: a flat purple shape. This one is a piece of
+ * material. Same silhouette drawn twice, the second copy set down and right, so
+ * the mark has a face and an edge. Squarer corners than a chat bubble usually
+ * gets, and the tail is a straight fin rather than a spike, because a thing with
+ * a thickness is milled, not drawn.
+ *
+ * The letters and the mouth are cut clean through both layers, so they are holes
+ * in a solid rather than marks on a surface — you see daylight through them, and
+ * the thickness only ever shows at the outside edge. That is the whole idea:
+ * the depth is in the object, never in the letters.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.twozz;
+
+const uid = `tw03-${Math.random().toString(36).slice(2, 9)}`;
+const maskId = `${uid}-m`;
+
+/**
+ * Face 36 × 26 at x4–40, y4–30, with the fin leaving the bottom edge. The
+ * bottom-left corner is nearly square (2.5) and the rest are 7 — a bubble whose
+ * corner radius is not constant, which is what stops it reading as a rounded
+ * rectangle with a spike stuck on.
+ */
+const SIL =
+  'M11 4H33A7 7 0 0 1 40 11V23A7 7 0 0 1 33 30H17.6L8.4 38.6L13.4 30H6.5A2.5 2.5 0 0 1 4 27.5V11A7 7 0 0 1 11 4Z';
+
+const Z = { y: 7.6, w: 10, h: 12.6, bar: 3, diag: 5.2, cap: 'angled' as const };
+const zLeft = 10.9;
+const zRight = 23.1; // pair spans 10.9–33.1, centred in the 4–40 face
+
+const edgeFill = ground === 'dark' ? app.light : app.deep;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    <mask id={maskId}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
+      <path d={zPath({ ...Z, x: zRight })} fill="#000" />
+      {/* The mouth: a milled slot, straight because the object is machined. */}
+      <rect x="16.6" y="23" width="10.8" height="2.6" rx="1.3" fill="#000" />
+    </mask>
+  </defs>
+
+  {/* Both layers share one mask, so every cut goes all the way through. */}
+  <g mask={`url(#${maskId})`}>
+    <path d={SIL} transform="translate(2.9 2.9)" fill={edgeFill} />
+    <path d={SIL} fill={app.hue} />
+  </g>
+</svg>

@@ -17,11 +17,11 @@ const app = APP_BY_KEY.mozz;
 const uid = `m04-${Math.random().toString(36).slice(2, 9)}`;
 const Z = {
   y: 15.5,
-  w: 12.5,
+  w: 13.5,
   h: 17,
-  bar: 3.2,
+  bar: 2.6,
   diag: 5.8,
-  cap: 'angled' as const,
+  cap: 'open' as const,
 };
 ---
 
@@ -37,13 +37,13 @@ const Z = {
   <defs>
     <mask id={uid}>
       <rect width="48" height="48" fill="#fff" />
-      <path d={zPath({ ...Z, x: 11.5 })} fill="#000" />
-      <path d={zPath({ ...Z, x: 26 })} fill="#000" />
+      <path d={zPath({ ...Z, x: 6.5 })} fill="#000" />
+      <path d={zPath({ ...Z, x: 26.2 })} fill="#000" />
     </mask>
   </defs>
 
   <g mask={`url(#${uid})`}>
-    <path d="M3 19H11V15L45 4V44L11 33V29H3V19Z" fill={app.hue} />
-    <path d="M3 25H11V29L45 40V44L11 33V29H3V25Z" fill={app.deep} />
+    <path d="M3 19H7V15L42 4V44L7 33V29H3V19Z" fill={app.hue} />
+    <path d="M3 25H7V29L42 40V44L7 33V29H3V25Z" fill={app.deep} />
   </g>
 </svg>

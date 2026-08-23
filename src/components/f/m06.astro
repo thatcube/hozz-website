@@ -2,8 +2,9 @@
 /**
  * m06 · Fill front
  *
- * One shared level field rises into a double-Z crest. The letters are the outer
- * edge of the active fill, not marks placed inside separate meter windows.
+ * A single arched level gauge holds one field of active signal. The ZZ is
+ * knocked only out of that fill; lowering the level would crop the letters and
+ * emptying it would remove them.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -12,22 +13,19 @@ interface Props {
   size?: number;
   ground?: 'light' | 'dark';
 }
-const { size = 96, ground = 'light' } = Astro.props as Props;
+const { size = 96 } = Astro.props as Props;
 const app = APP_BY_KEY.mozz;
-const groundFill = ground === 'dark' ? '#16181c' : '#fbfbfa';
 const uid = `m06-${Math.random().toString(36).slice(2, 9)}`;
+const INNER = 'M7 38V23C7 14.5 14 9 24 9C34 9 41 14.5 41 23V38H7Z';
+const LEVEL = 14;
 const Z = {
-  y: 13,
-  w: 13.5,
-  h: 14,
-  bar: 2.8,
-  diag: 5.4,
+  y: 18,
+  w: 10,
+  h: 13,
+  bar: 3.1,
+  diag: 6,
   cap: 'angled' as const,
 };
-const active =
-  zPath({ ...Z, x: 9 }) +
-  zPath({ ...Z, x: 25.5 }) +
-  'M7 24H41V37H7V24Z';
 ---
 
 <svg
@@ -40,18 +38,18 @@ const active =
   aria-label={`${app.name} audio level mark`}
 >
   <defs>
-    <clipPath id={uid}>
-      <path d="M7 37V23C7 14.5 14 9 24 9C34 9 41 14.5 41 23V37H7Z" />
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: 12 })} fill="#000" />
+      <path d={zPath({ ...Z, x: 26 })} fill="#000" />
+    </mask>
+    <clipPath id={`${uid}-field`}>
+      <path d={INNER} />
     </clipPath>
   </defs>
 
-  <path
-    d="M4 41V23C4 12 12.5 5 24 5C35.5 5 44 12 44 23V41H4Z"
-    fill={app.deep}
-  />
-  <path
-    d="M7 37V23C7 14.5 14 9 24 9C34 9 41 14.5 41 23V37H7Z"
-    fill={groundFill}
-  />
-  <path d={active} fill={app.hue} clip-path={`url(#${uid})`} />
+  <g clip-path={`url(#${uid}-field)`} mask={`url(#${uid})`}>
+    <rect x="7" y={LEVEL} width="34" height={38 - LEVEL} fill={app.hue} />
+  </g>
+  <path d={INNER} stroke={app.deep} stroke-width="3" stroke-linejoin="round" />
 </svg>

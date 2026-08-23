@@ -7,6 +7,6 @@ export default {
   reading: 'letters',
   sentence: 'The ZZ is the stencil cutout of the live lightbox.',
   idea:
-    'A clipped lightbox and one illuminated tally point make the entire sign. Its two stencil openings are a clean side-by-side ZZ, using the sign face as figure and the ground as letter fill.',
+    'The ZZ exists only in the illuminated face inside the lightbox frame. Switch off that field and the letters disappear while the physical sign remains.',
   palette: ['#8f52f6', '#3d1d75'],
 };

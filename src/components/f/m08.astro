@@ -1,16 +1,17 @@
 ---
 /**
- * m08 · Cans — over-ear headphones, hung round the neck so the lead drapes.
+ * m08 · Cans — over-ear headphones, worn round the neck.
  *
- * The port is a real thing on a closed-back cup: a slot cut through the shell
- * so the driver can breathe. Here that port is the Z. Both bars run out to the
- * cup's rim and stop dead against it, because a slot cut in a shell can only go
- * as far as the shell — so the letter is shaped by the circle rather than
- * placed inside it. Take the cups away and the bars have no ends.
+ * A closed-back cup is a sealed drum, and a sealed drum will not breathe, so
+ * every real one has a port cut through the shell. Here that port is the Z: its
+ * two bars run out past the driver face and are severed by the cup's rim, which
+ * means the letter has no outline of its own — the circle finishes it. Move the
+ * cup and the Z is cut differently; remove the cup and there is nothing left to
+ * cut.
  *
- * The lead is slung between the two cups, which is where it sits when the
- * headphones are round your neck rather than on your head. It is the mouth, and
- * it is also the only part of the object that goes anywhere.
+ * The lead slung between the two cups is the mouth, and it is drawn at the sag
+ * it takes when the headphones are round your neck rather than on your head —
+ * which is where they are when you are walking, and where the downloads matter.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -24,14 +25,24 @@ const app = APP_BY_KEY.mozz;
 
 const uid = `m08-${Math.random().toString(36).slice(2, 9)}`;
 
-const CY = 29.4;
-const CX = [14, 34];
-const OUTER = 8; // the cup
-const FACE = 6.4; // the shell's inner face, where the port is cut
+const CUP = { cy: 27.8, r: 7.8, cx: [13.6, 34.4] };
+const FACE = 6.2;
 
-// bar 2 against diag 3.3. The slot widens as it crosses, the way a moulded vent
-// does where it has the most material behind it.
-const Z = { y: CY - 4.2, w: 9.6, h: 8.4, bar: 2, diag: 3.3, cap: 'open' as const };
+// The band's ends land inside the cups, so it reads as one piece with them
+// rather than as a hoop resting on top.
+const BAND = 'M11 21A13.4 13.4 0 0 1 37 21';
+
+// The sag of a lead when the cups are hanging at your collarbone.
+const LEAD = 'M12.2 32.6Q24 45.4 35.8 32.6';
+
+const Z = {
+  y: CUP.cy - 4.1,
+  w: 9.4,
+  h: 8.2,
+  bar: 1.9,
+  diag: 3.2,
+  cap: 'open' as const,
+};
 ---
 
 <svg
@@ -45,50 +56,34 @@ const Z = { y: CY - 4.2, w: 9.6, h: 8.4, bar: 2, diag: 3.3, cap: 'open' as const
 >
   <defs>
     {
-      CX.map((cx, i) => (
-        <clipPath id={`${uid}-${i}`}>
-          <circle cx={cx} cy={CY} r={FACE} />
+      CUP.cx.map((cx, i) => (
+        <clipPath id={`${uid}-f${i}`}>
+          <circle cx={cx} cy={CUP.cy} r={FACE} />
         </clipPath>
       ))
     }
   </defs>
 
-  {/* Band and lead are drawn first so both tuck under the cups. */}
+  {/* Band and lead go down first so the cups cover where they enter. */}
+  <path d={BAND} stroke={app.hue} stroke-width="3" stroke-linecap="round" fill="none" />
   <path
-    d="M8 25.6A17 17 0 0 1 40 25.6"
+    d={LEAD}
     stroke={app.hue}
-    stroke-width="3.6"
-    fill="none"
-  />
-  <path
-    d="M11.8 34.2Q24 47.6 36.2 34.2"
-    stroke={app.hue}
-    stroke-width="2.5"
+    stroke-width="2.3"
     stroke-linecap="round"
     fill="none"
-  />
-
-  {CX.map((cx) => <circle cx={cx} cy={CY} r={OUTER} fill={app.hue} />)}
-  <circle
-    cx={CX[0]}
-    cy={CY}
-    r={FACE}
-    fill={app.deep}
-    opacity={ground === 'dark' ? 1 : 0.96}
-  />
-  <circle
-    cx={CX[1]}
-    cy={CY}
-    r={FACE}
-    fill={app.deep}
-    opacity={ground === 'dark' ? 1 : 0.96}
+    opacity={ground === 'dark' ? 0.95 : 1}
   />
 
   {
-    CX.map((cx, i) => (
-      <g clip-path={`url(#${uid}-${i})`}>
-        <path d={zPath({ ...Z, x: cx - Z.w / 2 })} fill={app.light} />
-      </g>
+    CUP.cx.map((cx, i) => (
+      <>
+        <circle cx={cx} cy={CUP.cy} r={CUP.r} fill={app.hue} />
+        <circle cx={cx} cy={CUP.cy} r={FACE} fill={app.deep} />
+        <g clip-path={`url(#${uid}-f${i})`}>
+          <path d={zPath({ ...Z, x: cx - Z.w / 2 })} fill={app.light} />
+        </g>
+      </>
     ))
   }
 </svg>

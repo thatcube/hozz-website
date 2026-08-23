@@ -1,12 +1,12 @@
 export default {
   n: 'p01',
-  name: 'Bleed',
+  name: 'Fold',
   app: 'plozz',
-  object: 'Frameless slab, turned',
+  object: 'Creased panel, no bezel',
   move: 'occlusion',
   reading: 'letters',
-  sentence: 'The ZZ is the picture cut off by the edges of the glass.',
+  sentence: 'The ZZ is the picture broken across the fold of the screen.',
   idea:
-    'A screen with no bezel at all, turned a few degrees so you catch its near edge, carrying a picture drawn larger than the panel — two letters of 24 units on 40 units of glass, so they cannot both fit and the screen crops them. The bars end where the glass ends rather than at a terminal, which is the one thing only a frameless screen can do to an image.',
-  palette: ['#00a4dc', '#00506d'],
+    'A concave panel with no bezel and no stand: two facets meeting at a fold set further back than the ends, so the waist pinches. One Z lies in each facet and takes that facet\u2019s lean, and because the picture runs on across the fold the letters overlap in the middle \u2014 the lit crease passes in front of them and is the only thing making them read as two.',
+  palette: ['#00a4dc', '#00506d', '#7fd6f5'],
 };

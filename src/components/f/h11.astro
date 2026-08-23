@@ -1,10 +1,12 @@
 ---
 /**
- * h11 · Bound Edges
+ * h11 · Die-cut Folio
  *
- * A closed folio seen from its fore-edge: two adjacent signatures share one
- * field, while their bowed covers and heavy page cuts make the paired profile.
+ * The cover is one bound edge around one visible page block. The knockout lives
+ * only in that page block: thin the pages and the letters crop; remove them and
+ * the letters disappear while the cover remains.
  */
+import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
 
 interface Props {
@@ -13,8 +15,9 @@ interface Props {
 }
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.hozz;
-const pages = ground === 'dark' ? app.light : app.deep;
 const uid = `h11-${Math.random().toString(36).slice(2, 9)}`;
+const page = ground === 'dark' ? app.light : app.hue;
+const Z = { y: 16, w: 11.5, h: 15, bar: 3, diag: 5.8, cap: 'angled' as const };
 ---
 
 <svg
@@ -24,25 +27,25 @@ const uid = `h11-${Math.random().toString(36).slice(2, 9)}`;
   fill="none"
   xmlns="http://www.w3.org/2000/svg"
   role="img"
-  aria-label={`${app.name} bound-folio mark`}
+  aria-label={`${app.name} die-cut folio mark`}
 >
   <defs>
     <mask id={uid}>
       <rect width="48" height="48" fill="#fff" />
-      <circle cx="6.5" cy="24" r="2.1" fill="#000" />
+      <path d={zPath({ ...Z, x: 10 })} fill="#000" />
+      <path d={zPath({ ...Z, x: 26.5 })} fill="#000" />
     </mask>
   </defs>
-  <g mask={`url(#${uid})`}>
-    <path
-      d="M5 10Q14 8.5 23 10V14Q14 12.5 8 14V34Q14 35.5 23 34V38Q14 36.5 5 38Z"
-      fill={app.hue}
-    />
-    <path
-      d="M25 10Q34 8.5 43 10V14Q34 12.5 25 14Z
-         M25 34Q34 35.5 43 34V38Q34 36.5 25 38Z"
-      fill={app.hue}
-    />
-    <path d="M18 12H23.5L13 36H7.5Z" fill={pages} />
-    <path d="M38 12H43.5L33 36H27.5Z" fill={pages} />
-  </g>
+
+  {/* One continuous cover: top, rounded binding edge and bottom. */}
+  <path
+    d="M7 9H45V13H8Q6 13 6 15V33Q6 35 8 35H45V39H7Q3 39 3 35V13Q3 9 7 9Z"
+    fill={app.deep}
+  />
+  {/* Only the pages carry the knockout. */}
+  <path
+    d="M8 13H44V35H8Q6 35 6 33V15Q6 13 8 13Z"
+    fill={page}
+    mask={`url(#${uid})`}
+  />
 </svg>

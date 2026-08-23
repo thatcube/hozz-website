@@ -3,10 +3,10 @@ export default {
   name: 'Aisles',
   app: 'twozz',
   object: 'Audience bowl facing stage',
-  move: 'aperture',
+  move: 'substitution',
   reading: 'letters',
-  sentence: 'The ZZ is the pair of aisles cut through the audience bowl.',
+  sentence: 'The ZZ is the pair of aisles joining the audience bowl’s seating tiers.',
   idea:
-    'A single fan-shaped bowl faces one live screen, reducing the audience to one silhouette and one shading step. The doubled aisle is empty space in that primary mass: remove the bowl and the letters literally cease to exist.',
+    'Each Z uses two horizontal seating tiers and the diagonal aisle that joins them, so its stroke contrast comes from the bowl’s own plan. Remove the bowl and there are no tiers or aisles from which the letters can be made.',
   palette: ['#8f52f6', '#3d1d75', '#c9a9fb'],
 };

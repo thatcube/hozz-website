@@ -2,8 +2,8 @@
 /**
  * h10 · Open Punch
  *
- * One wide, tabbed record card. Two punches open through its top edge and end
- * inside the card, so the pair is carried by one continuous silhouette.
+ * One tabbed record card with a clean paired knockout. The filing tab is
+ * exactly the gap between the Zs, so the card itself fixes their letterspacing.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -16,7 +16,7 @@ const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.hozz;
 const uid = `h10-${Math.random().toString(36).slice(2, 9)}`;
 
-const Z = { y: 10, w: 13, h: 20, bar: 3.8, diag: 7.6, cap: 'angled' as const };
+const Z = { y: 14, w: 11.5, h: 15.5, bar: 3, diag: 5.8, cap: 'angled' as const };
 ---
 
 <svg
@@ -31,13 +31,13 @@ const Z = { y: 10, w: 13, h: 20, bar: 3.8, diag: 7.6, cap: 'angled' as const };
   <defs>
     <mask id={uid}>
       <rect width="48" height="48" fill="#fff" />
-      <path d={zPath({ ...Z, x: 8.5 })} fill="#000" />
-      <path d={zPath({ ...Z, x: 26 })} fill="#000" />
+      <path d={zPath({ ...Z, x: 9.5 })} fill="#000" />
+      <path d={zPath({ ...Z, x: 27 })} fill="#000" />
     </mask>
   </defs>
 
   <path
-    d="M4 10H11V6H21V10H44V38H4Z"
+    d="M4 10H21V6H27V10H44V38H4Z"
     fill={ground === 'dark' ? app.light : app.hue}
     mask={`url(#${uid})`}
   />

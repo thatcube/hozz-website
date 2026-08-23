@@ -3,19 +3,18 @@
  * tw08 · Howl — a head mid-laugh, eyes squeezed shut.
  *
  * An emote is a reaction, and the loudest reaction there is folds the eyes
- * away entirely: laugh hard enough and the eye stops being a shape and becomes
- * a crease. That crease *is* the Z here — not a letter laid over a face but the
- * fold the face makes when it is doing the one thing it exists to do.
+ * away: laugh hard enough and the eye stops being a shape and becomes a
+ * crease. That crease *is* the Z here — not a letter laid over a face but the
+ * fold the face makes while doing the one thing it exists to do.
  *
- * The head is squashed wider than tall and tipped back, and the creases take
- * their proportion from it: flat, wide, a thin bar with a diagonal twice its
- * mass, sheared with the head. Their outer ends run past the box on `open`
- * caps and are cut off by the skull's own edge, so the head decides where the
- * letters stop.
+ * The head is squashed wider than it is tall and tipped back, and the creases
+ * take their measure from it: their length is the skull's own chord at brow
+ * height, so both top bars run past the box on `open` caps and are cut off by
+ * the head's edge. The head decides where the letters stop.
  *
- * The mouth is the whole lower half of the face, open, with the upper teeth
- * showing — a howl. Two Zs with no mouth read as asleep; this one could not be
- * asleep if it tried.
+ * The mouth is the whole lower half of the face, open, upper teeth showing.
+ * Two Zs with no mouth read as asleep; this one could not be asleep if it
+ * tried.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -29,21 +28,19 @@ const app = APP_BY_KEY.twozz;
 
 const uid = `tw08-${Math.random().toString(36).slice(2, 9)}`;
 
-// 34 wide by 24.8 tall — laughter compresses a head, and the creases inherit
-// that proportion: w 10.6 against h 5.9, bar 1.8 against diag 3.6.
+// 33 across by 28 down. Laughter squashes a head, and the creases inherit it:
+// bar 2.0 against diag 3.9, so the fold's turn carries twice its own line.
 const HEAD =
-  'M7 25.6C7 18.4 14.4 13.6 24.2 13.6C34 13.6 41 18.6 41 26C41 33.6 34 38.4 24 38.4C14 38.4 7 33.4 7 25.6Z';
+  'M7.5 25C7.5 17.2 14.4 12 24.4 12C34.4 12 40.5 17.6 40.5 26.4C40.5 34.8 34 40 24 40C14 40 7.5 34.4 7.5 25Z';
 
-const Z = { y: 18.5, w: 10.6, h: 5.9, bar: 1.8, diag: 3.6, cap: 'open' as const };
-const zLeft = 10.6;
-const zRight = 26.7; // both pairs of bars run past the box; the head trims them
+const Z = { y: 16.6, w: 9.6, h: 7.4, bar: 2, diag: 3.9, cap: 'open' as const };
+const zLeft = 11.3;
+const zRight = 27.1; // the two boxes run 9.5–22.7 and 25.3–38.5; the brow trims both
 
-// The howl. Its lower edge sits a single unit inside the jaw, which is what
+// The howl. Its floor sits a unit and a half inside the jaw, which is what
 // makes the face look like it is barely containing the noise.
 const MOUTH =
-  'M12.6 27.6C18 26.2 30.4 25.6 35.8 26.8C35.4 33.6 31 37.4 24.4 37.4C17.6 37.4 13.2 34 12.6 27.6Z';
-const TEETH =
-  'M12.6 27.6C18 26.2 30.4 25.6 35.8 26.8L35.65 29.2C30.3 28.05 18.4 28.6 12.85 30Z';
+  'M13.6 28.2C18.5 26.6 30.5 26.4 34.8 28C34.4 34.6 30 38.6 24 38.6C17.6 38.6 14 34.4 13.6 28.2Z';
 ---
 
 <svg
@@ -56,16 +53,22 @@ const TEETH =
   aria-label={`${app.name} mark`}
 >
   <defs>
-    <clipPath id={uid}>
+    <clipPath id={`${uid}h`}>
       <path d={HEAD} />
+    </clipPath>
+    {/* The teeth are trimmed by the mouth, so the lip line is always the mouth's. */}
+    <clipPath id={`${uid}m`}>
+      <path d={MOUTH} />
     </clipPath>
   </defs>
 
-  <g transform="rotate(-10 24 26)">
+  <g transform="rotate(-9 24 26)">
     <path d={HEAD} fill={app.hue} />
     <path d={MOUTH} fill={app.deep} />
-    <path d={TEETH} fill={app.light} />
-    <g clip-path={`url(#${uid})`}>
+    <g clip-path={`url(#${uid}m)`}>
+      <rect x="13" y="25.6" width="23" height="3.4" fill={app.light} />
+    </g>
+    <g clip-path={`url(#${uid}h)`}>
       <path d={zPath({ ...Z, x: zLeft })} fill={app.deep} />
       <path d={zPath({ ...Z, x: zRight })} fill={app.deep} />
     </g>
