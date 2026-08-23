@@ -47,7 +47,26 @@ def disc(cy, r):
             if (x + 0.5 - 16) ** 2 + (y + 0.5 - cy) ** 2 <= r * r}
 
 
-DISC = disc(13, 11.5)  # 22x22, clean, the same rough size as c10
+def check_round(shape):
+    """Reject a raster circle with spurs or flat corners.
+
+    Rendered side by side, r=11.5 comes out visibly octagonal and some centres
+    grow single pixels standing off the left and right — the arms Brandon
+    rejected on c10. r=11.0 at cy=13 is clean, and this keeps it honest.
+    """
+    rows = {}
+    for x, y in shape:
+        rows.setdefault(y, []).append(x)
+    ws = [max(v) - min(v) + 1 for _, v in sorted(rows.items())]
+    for i in range(1, len(ws) - 1):
+        if ws[i] > ws[i - 1] and ws[i] > ws[i + 1]:
+            raise SystemExit(f'spur at row {sorted(rows)[i]}: width {ws[i]}')
+    assert ws == ws[::-1], 'circle is not symmetric top to bottom'
+    return ws
+
+
+DISC = disc(13, 11.0)  # 22x22 — chosen by rendering candidates and looking
+check_round(DISC)
 
 
 def build(slug, name, mode, size, idea, note):
