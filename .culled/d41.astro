@@ -1,0 +1,35 @@
+---
+/** 41 · Offset Press — misregistered flat inks resolve into ZZ at a glance. */
+import { APP_BY_KEY, type AppKey } from '../../data/brand';
+
+interface Props {
+  app: AppKey;
+  size?: number;
+}
+
+const { app, size = 96 } = Astro.props;
+const a = APP_BY_KEY[app];
+---
+
+<svg width={size} height={size} viewBox="0 0 64 64" role="img" aria-label={`${a.name} mark`} style="display:block">
+  <g transform="translate(-1.5 1.5)" fill={a.light}>
+    <path d="M16 17h17q2 0 2 2v3q0 1-.8 2L24 35h9q2 0 2 2v2q0 2-2 2H16q-2 0-2-2v-3q0-1 .8-2L25 23h-9q-2 0-2-2v-2q0-2 2-2Z" />
+    <path d="M32 25h17q2 0 2 2v3q0 1-.8 2L40 43h9q2 0 2 2v2q0 2-2 2H32q-2 0-2-2v-3q0-1 .8-2L43 31h-9q-2 0-2-2v-2q0-2 2-2Z" />
+  </g>
+  <g transform="translate(1.5 -1.5)" fill={a.deep}>
+    <path d="M16 17h17q2 0 2 2v3q0 1-.8 2L24 35h9q2 0 2 2v2q0 2-2 2H16q-2 0-2-2v-3q0-1 .8-2L25 23h-9q-2 0-2-2v-2q0-2 2-2Z" />
+    <path d="M32 25h17q2 0 2 2v3q0 1-.8 2L40 43h9q2 0 2 2v2q0 2-2 2H32q-2 0-2-2v-3q0-1 .8-2L43 31h-9q-2 0-2-2v-2q0-2 2-2Z" />
+  </g>
+  <g fill={a.hue}>
+    <path d="M16 17h17q2 0 2 2v3q0 1-.8 2L24 35h9q2 0 2 2v2q0 2-2 2H16q-2 0-2-2v-3q0-1 .8-2L25 23h-9q-2 0-2-2v-2q0-2 2-2Z" />
+    <path d="M32 25h17q2 0 2 2v3q0 1-.8 2L40 43h9q2 0 2 2v2q0 2-2 2H32q-2 0-2-2v-3q0-1 .8-2L43 31h-9q-2 0-2-2v-2q0-2 2-2Z" />
+  </g>
+  <g fill={a.light}>
+    <circle cx="19" cy="20" r="1.6" />
+    <circle cx="29" cy="20" r="1.6" />
+    <circle cx="19" cy="38" r="1.6" />
+    <circle cx="35" cy="28" r="1.6" />
+    <circle cx="45" cy="28" r="1.6" />
+    <circle cx="35" cy="46" r="1.6" />
+  </g>
+</svg>

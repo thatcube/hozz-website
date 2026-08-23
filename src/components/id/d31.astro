@@ -1,0 +1,37 @@
+---
+/** 31 · Quiet Orbit — a small, high face inside a generous soft circle. */
+import { APP_BY_KEY, type AppKey } from '../../data/brand';
+
+interface Props {
+  app: AppKey;
+  size?: number;
+}
+
+const { app, size = 96 } = Astro.props;
+const a = APP_BY_KEY[app];
+const id = `g-d31-${app}`;
+---
+
+<svg width={size} height={size} viewBox="0 0 64 64" role="img" aria-label={`${a.name} mark`} style="display:block">
+  <defs>
+    <radialGradient id={id} cx="34%" cy="25%" r="82%">
+      <stop offset="0" stop-color={a.light} />
+      <stop offset="0.58" stop-color={a.hue} />
+      <stop offset="1" stop-color={a.deep} />
+    </radialGradient>
+  </defs>
+
+  <circle cx="32" cy="32" r="29" fill={`url(#${id})`} />
+  <g
+    fill="none"
+    stroke="#fff"
+    stroke-opacity="0.96"
+    stroke-width="3.6"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M20 20H29L20 27H29" />
+    <path d="M35 20H44L35 27H44" />
+    <path d="M21 32C25 38 39 38 43 32" />
+  </g>
+</svg>

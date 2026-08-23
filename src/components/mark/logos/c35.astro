@@ -1,0 +1,25 @@
+---
+import MarkFrame from '../MarkFrame.astro';
+import { faceBoxAt, facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+const face = { cx: 16, cy: 16, size: 'md', smile: 'wide' } as const;
+const box = faceBoxAt(face);
+const air = [box.x - 3, 28 - box.right, box.y - 3, 28 - box.bottom];
+if (Math.min(...air) < 6) throw new Error('c35 face needs six clear pixels');
+---
+
+<MarkFrame size={size} title="Hozz — Two Temperatures">
+  <path
+    d="M6 2h20v1H6zM4 3h24v1H4zM3 4h26v2H3zM2 6h28v11H2z"
+    fill="#dfd4bd"
+  />
+  <path
+    d="M2 17h28v9H2zM3 26h26v2H3zM5 28h22v2H5z"
+    fill="#91aaa0"
+  />
+  <g fill="#203d37" shape-rendering="crispEdges">
+    {facePathsAt(face).map((d) => <path d={d} />)}
+  </g>
+</MarkFrame>

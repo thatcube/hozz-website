@@ -1,0 +1,17 @@
+---
+import MarkFrame from '../MarkFrame.astro';
+import { faceBoxAt, facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+const face = { cx: 16, cy: 16, size: 'md', smile: 'none' } as const;
+const box = faceBoxAt(face);
+const air = [box.x, 31 - box.right, box.y, 31 - box.bottom];
+if (Math.min(...air) < 6) throw new Error('c36 face needs six clear pixels');
+---
+
+<MarkFrame size={size} title="Hozz — Just Zs">
+  <g fill="#6f9289" shape-rendering="crispEdges">
+    {facePathsAt(face).map((d) => <path d={d} />)}
+  </g>
+</MarkFrame>

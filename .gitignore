@@ -25,3 +25,6 @@ pnpm-debug.log*
 
 # design hook session cache
 .impeccable/
+
+# agent scratch briefs
+.briefs/

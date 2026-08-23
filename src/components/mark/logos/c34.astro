@@ -1,0 +1,21 @@
+---
+import MarkFrame from '../MarkFrame.astro';
+import { faceBoxAt, facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+const face = { cx: 16, cy: 16, size: 'sm', smile: 'none' } as const;
+const box = faceBoxAt(face);
+const air = [box.x - 7, 25 - box.right, box.y - 7, 25 - box.bottom];
+if (Math.min(...air) < 6) throw new Error('c34 face needs six clear pixels');
+---
+
+<MarkFrame size={size} title="Hozz — Near Moon">
+  <path
+    d="M13 6h7v1h-7zM10 7h13v1h-13zM9 8h15v1H9zM8 9h17v1H8zM7 10h19v2H7zM6 12h21v9H6zM7 21h19v2H7zM8 23h17v1H8zM9 24h15v1H9zM10 25h13v1h-13zM13 26h7v1h-7z"
+    fill="#d8cfb3"
+  />
+  <g fill="#344740" shape-rendering="crispEdges">
+    {facePathsAt(face).map((d) => <path d={d} />)}
+  </g>
+</MarkFrame>

@@ -1,0 +1,45 @@
+---
+/**
+ * 03 · Pour — each Z laid down as one unbroken run of liquid.
+ *
+ * No container, no fill, no face: just two ribbons floating in the frame. Every
+ * terminal is round because a poured line has no corners, and the run ends in a
+ * bead where the flow stopped and gathered.
+ *
+ * Drawn as a stroked path so the ribbon has one constant weight the whole way
+ * through — the tell of something poured rather than constructed.
+ */
+import { APP_BY_KEY, type AppKey } from '../../data/brand';
+
+interface Props {
+  app: AppKey;
+  size?: number;
+}
+const { app, size = 96 } = Astro.props;
+const a = APP_BY_KEY[app];
+const id = `g-d03-${app}`;
+---
+
+<svg width={size} height={size} viewBox="0 0 64 64" role="img" aria-label={`${a.name} mark`} style="display:block">
+  <defs>
+    <linearGradient id={id} x1="0.1" y1="0.05" x2="0.82" y2="1">
+      <stop offset="0" stop-color={a.light} />
+      <stop offset="0.62" stop-color={a.hue} />
+      <stop offset="1" stop-color={a.deep} />
+    </linearGradient>
+  </defs>
+
+  <!-- The bead where the pour stopped, under the ribbon so they read as one body. -->
+  <circle cx="48.5" cy="44" r="3.3" fill={`url(#${id})`} />
+
+  <g
+    fill="none"
+    stroke={`url(#${id})`}
+    stroke-width="4.8"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M15.5 20H28L15.5 44H28" />
+    <path d="M36 20H48.5L36 44H48.5" />
+  </g>
+</svg>

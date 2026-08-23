@@ -1,0 +1,41 @@
+---
+/**
+ * 29 · Twist — the two Zs are one band, turned over in the middle.
+ *
+ * The strip pinches to a point between the letters and comes out the other
+ * way round, so the second Z shows the band's reverse: wherever the first has
+ * a lit face the second has a folded one, and the other way about. Same two
+ * tones throughout — nothing new is introduced, they simply swap sides.
+ *
+ * A pair you cannot pull apart, which is a fair thing to say about four
+ * products that share a suffix. The pinch is under a pixel by 20px and drops
+ * out, leaving two plain Zs.
+ */
+import { APP_BY_KEY, type AppKey } from '../../data/brand';
+
+interface Props {
+  app: AppKey;
+  size?: number;
+}
+const { app, size = 96 } = Astro.props;
+const a = APP_BY_KEY[app];
+---
+
+<svg width={size} height={size} viewBox="0 0 64 64" role="img" aria-label={`${a.name} mark`} style="display:block">
+  <!-- Band inside x/y 14–50, pinching to a point at x 32. -->
+  <g fill={a.hue}>
+    <path d="M14 21L30 21L21 37.6L30 37.6L30 43L14 43L14 37.6L23 26.4L14 26.4Z" />
+    <path d="M34 21L50 21L41 37.6L50 37.6L50 43L34 43L34 37.6L43 26.4L34 26.4Z" />
+    <path d="M30 37.9L32 40.15L32 40.45L30 42.7Z" />
+    <path d="M34 37.9L32 40.15L32 40.45L34 42.7Z" />
+  </g>
+
+  <!-- The reverse of the band. On the first Z it falls on the diagonal; past
+       the pinch it falls on the bars instead. -->
+  <g fill={a.deep} fill-opacity="0.42">
+    <path d="M30 21L21 37.6L14 43L14 37.6L23 26.4Z" />
+    <path d="M34 21L50 21L43 26.4L34 26.4Z" />
+    <path d="M41 37.6L50 37.6L50 43L34 43Z" />
+    <path d="M34 37.9L32 40.15L32 40.45L34 42.7Z" />
+  </g>
+</svg>

@@ -1,0 +1,51 @@
+---
+/**
+ * 10 · Lock — a ZZ ligature, not two letters side by side.
+ *
+ * The two Z's are chained vertically and *share their middle bar*: the upper
+ * Z's foot is the lower Z's roof. One stroke, two letters, one locked form.
+ * The pair is stepped to the right so the letters stay countable rather than
+ * collapsing into a single long zigzag.
+ *
+ * No container, no face. The letterforms are drawn as paths — no font
+ * dependency, identical everywhere. Every cut in the drawing is horizontal,
+ * vertical, or parallel to the diagonal; that one rule is what gives the
+ * letters their character. The diagonal is deliberately heavier than the bars,
+ * the way it is in a well cut Z.
+ *
+ * Colour: pure lettering has nowhere to hide, so the mark carries a single
+ * vertical ramp of the app's own hue — light at the roof, deep at the foot.
+ * The gradient runs past the bottom of the letter so the darkest end is never
+ * fully reached and the foot still holds on a dark ground.
+ */
+import { APP_BY_KEY, type AppKey } from '../../data/brand';
+
+interface Props {
+  app: AppKey;
+  size?: number;
+}
+const { app, size = 96 } = Astro.props;
+const a = APP_BY_KEY[app];
+const id = `g-d10-${app}`;
+---
+
+<svg width={size} height={size} viewBox="0 0 64 64" role="img" aria-label={`${a.name} mark`} style="display:block">
+  <defs>
+    <linearGradient id={id} gradientUnits="userSpaceOnUse" x1="0" y1="4" x2="0" y2="62">
+      <stop offset="0" stop-color={a.light} />
+      <stop offset="0.38" stop-color={a.hue} />
+      <stop offset="1" stop-color={a.deep} />
+    </linearGradient>
+  </defs>
+
+  <g fill={`url(#${id})`}>
+    <!-- upper Z: roof, diagonal -->
+    <path d="M20.5 14 L39 14 L39 18.6 L17 18.6 Z" />
+    <path d="M25.6 18.6 L39 18.6 L30.4 29.7 L17 29.7 Z" />
+    <!-- the shared stroke — foot of the first Z, roof of the second -->
+    <path d="M17 29.7 L47 29.7 L47 34.3 L17 34.3 Z" />
+    <!-- lower Z: diagonal, foot -->
+    <path d="M33.6 34.3 L47 34.3 L38.4 45.4 L25 45.4 Z" />
+    <path d="M25 45.4 L47 45.4 L43.5 50 L25 50 Z" />
+  </g>
+</svg>

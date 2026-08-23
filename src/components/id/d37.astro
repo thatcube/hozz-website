@@ -1,0 +1,45 @@
+---
+/**
+ * 37 · Orbit — a constant ring, holding a constant ZZ and one changing mark.
+ *
+ * The outline sibling of the set. A single circle of fixed radius and weight
+ * is the frame; the ZZ sits inside it, bold and dominant, in exactly the same
+ * place for every app. Above the ZZ, inside the ring, sits the one small mark
+ * that changes — play, disc, bubble, droplet.
+ *
+ * No fill, so the mark carries on light and dark grounds from the app's own
+ * hue alone. Weights are set heavier than the filled directions because an
+ * outline has less ink to spend at small sizes.
+ */
+import { APP_BY_KEY, type AppKey } from '../../data/brand';
+
+interface Props {
+  app: AppKey;
+  size?: number;
+}
+const { app, size = 96 } = Astro.props;
+const a = APP_BY_KEY[app];
+const c = a.hue;
+
+/** The one variable in the system. */
+const MOTIF: Record<AppKey, string> = {
+  plozz: `<path d="M28.33 13.22L37.4 18.3L28.33 23.38Z" fill="${c}" stroke="${c}" stroke-width="2.16" stroke-linejoin="round"/>`,
+  mozz: `<circle cx="32" cy="18.3" r="4.06" fill="none" stroke="${c}" stroke-width="3"/>`,
+  twozz: `<g fill="${c}" stroke="${c}" stroke-width="1.28" stroke-linejoin="round"><path d="M30.31 12.53H33.69A3.66 3.66 0 0 1 37.35 16.18V17A3.66 3.66 0 0 1 33.69 20.65H30.31A3.66 3.66 0 0 1 26.65 17V16.18A3.66 3.66 0 0 1 30.31 12.53Z"/><path d="M29.01 19.85L27.19 24.07L33.5 19.85Z"/></g>`,
+  hozz: `<path d="M32 11.69C35.28 14.97 36.97 17.36 36.97 19.94A4.97 4.97 0 1 1 27.03 19.94C27.03 17.36 28.72 14.97 32 11.69Z" fill="${c}"/>`,
+};
+---
+
+<svg width={size} height={size} viewBox="0 0 64 64" role="img" aria-label={`${a.name} mark`} style="display:block">
+  <!-- Constant: the ring. -->
+  <circle cx="32" cy="32" r="24.5" fill="none" stroke={c} stroke-width="3.9" />
+
+  <!-- Variable: the mark inside it. -->
+  <g set:html={MOTIF[app]} />
+
+  <!-- Constant: the ZZ, dominant, with clear air inside the ring. -->
+  <g fill="none" stroke={c} stroke-width="4.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M18.4 29.8H27.8L18.4 41.4H27.8" />
+    <path d="M36.2 29.8H45.6L36.2 41.4H45.6" />
+  </g>
+</svg>

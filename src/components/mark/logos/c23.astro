@@ -2,31 +2,39 @@
 /**
  * 23 · Ledger
  *
- * NDJSON is one record per line, so the page carries its records as ragged
- * two-pixel rules — long, short, long, short — with a bound teal gutter down
- * the left edge holding them together.
+ * A page still bound into its book: a teal spine stitched down the left edge,
+ * and then nothing at all. The earlier version ruled the page with record
+ * lines, which crowded the face and made the mark busy at small sizes; the
+ * binding alone says ledger, and the paper is left empty for the face.
  *
- * The rules are two pixels tall on purpose: one-pixel rules vanish at favicon
- * size, two survive as texture. The small smile keeps the middle of the page
- * quiet so the face never fights the lines.
+ * The face is centred on the paper (17.5), not on the mark, so the spine does
+ * not push it off-centre optically.
+ *
+ * Drawn against the shared face geometry in `src/data/mark.ts` rather than a
+ * hand-placed copy of it, so the eyes stay the family's eyes.
  */
 import MarkFrame from '../MarkFrame.astro';
-import Face from '../Face.astro';
+import { facePathsAt } from '../../../data/mark';
 
 interface Props { size?: number }
 const { size = 128 } = Astro.props;
+
+const face = facePathsAt({ cx: 17.5, cy: 16, size: 'md', smile: 'wide' });
 ---
 
 <MarkFrame size={size} title="Hozz — Ledger">
-  <path d="M5 3h22v26h-22z" fill="#f4eee2" />
-  <path d="M5 3h2v26h-2z" fill="#2c6a62" />
-  <path d="M8 4h17v2h-17z" fill="#8f8674" />
-  <path d="M8 8h11v2h-11z" fill="#8f8674" />
-  <path d="M8 22h18v2h-18z" fill="#8f8674" />
-  <path d="M8 26h8v2h-8z" fill="#8f8674" />
-  <path d="M4 2h24v1h-24z" fill="#24262b" />
-  <path d="M4 3h1v26h-1z" fill="#24262b" />
-  <path d="M27 3h1v26h-1z" fill="#24262b" />
-  <path d="M4 29h24v1h-24z" fill="#24262b" />
-  <Face cx={16} cy={16} smile="small" fill="#24262b" />
+  <path d="M3 2h25v1h-25z" fill="#24262b" />
+  <path d="M28 2h1v28h-1z" fill="#24262b" />
+  <path d="M3 3h1v27h-1z" fill="#24262b" />
+  <path d="M7 3h1v27h-1z" fill="#24262b" />
+  <path d="M4 29h3v1h-3z" fill="#24262b" />
+  <path d="M8 29h20v1h-20z" fill="#24262b" />
+  <path d="M4 3h3v26h-3z" fill="#2c6a62" />
+  <path d="M5 8h1v3h-1z" fill="#24262b" />
+  <path d="M5 15h1v3h-1z" fill="#24262b" />
+  <path d="M5 22h1v3h-1z" fill="#24262b" />
+  <path d="M8 3h20v26h-20z" fill="#f4eee2" />
+  <g fill="#24262b" shape-rendering="crispEdges">
+    {face.map((d) => <path d={d} />)}
+  </g>
 </MarkFrame>

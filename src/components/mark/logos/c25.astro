@@ -2,49 +2,55 @@
 /**
  * 25 · Tag
  *
- * The label you tie to the thing you are keeping: a chamfered kraft tag with a
- * real punched hole and an ochre header rule. The hole is a knockout, so it
- * reads as a hole on paper and on ink.
+ * The label you tie to the thing you are keeping: a chamfered kraft tag with
+ * an ochre head and a real punched hole. The two-tone head replaces the header
+ * rule — same ochre, one shape instead of two — which leaves the whole lower
+ * field of the tag empty for the face.
  *
- * The face is centred on the label field below the rule (16, 21), not on the
- * whole tag — the hole and the header are chrome.
+ * The face is centred on that field at (16, 19), not on the tag, so the head
+ * and the hole stay chrome.
+ *
+ * Drawn against the shared face geometry in `src/data/mark.ts` rather than a
+ * hand-placed copy of it, so the eyes stay the family's eyes.
  */
 import MarkFrame from '../MarkFrame.astro';
-import Face from '../Face.astro';
+import { facePathsAt } from '../../../data/mark';
 
 interface Props { size?: number }
 const { size = 128 } = Astro.props;
+
+const face = facePathsAt({ cx: 16, cy: 19, size: 'md', smile: 'wide' });
 ---
 
 <MarkFrame size={size} title="Hozz — Tag">
-  <path d="M11 3h10v1h-10z" fill="#e9dcc0" />
-  <path d="M10 4h4v1h-4z" fill="#e9dcc0" />
-  <path d="M18 4h4v1h-4z" fill="#e9dcc0" />
-  <path d="M9 5h4v1h-4z" fill="#e9dcc0" />
-  <path d="M19 5h4v1h-4z" fill="#e9dcc0" />
-  <path d="M8 6h5v1h-5z" fill="#e9dcc0" />
-  <path d="M19 6h5v1h-5z" fill="#e9dcc0" />
-  <path d="M7 7h6v1h-6z" fill="#e9dcc0" />
-  <path d="M19 7h6v1h-6z" fill="#e9dcc0" />
-  <path d="M7 8h7v1h-7z" fill="#e9dcc0" />
-  <path d="M18 8h7v1h-7z" fill="#e9dcc0" />
-  <path d="M7 9h18v20h-18z" fill="#e9dcc0" />
-  <path d="M7 10h18v2h-18z" fill="#c07f28" />
-  <path d="M11 2h10v1h-10z" fill="#33302a" />
-  <path d="M10 3h1v1h-1z" fill="#33302a" />
-  <path d="M21 3h1v1h-1z" fill="#33302a" />
-  <path d="M9 4h1v1h-1z" fill="#33302a" />
-  <path d="M22 4h1v1h-1z" fill="#33302a" />
-  <path d="M8 5h1v1h-1z" fill="#33302a" />
-  <path d="M23 5h1v1h-1z" fill="#33302a" />
-  <path d="M7 6h1v1h-1z" fill="#33302a" />
-  <path d="M24 6h1v1h-1z" fill="#33302a" />
-  <path d="M6 7h1v22h-1z" fill="#33302a" />
-  <path d="M25 7h1v22h-1z" fill="#33302a" />
+  <path d="M10 2h12v1h-12z" fill="#33302a" />
+  <path d="M9 3h2v1h-2z" fill="#33302a" />
+  <path d="M21 3h2v1h-2z" fill="#33302a" />
+  <path d="M8 4h2v1h-2z" fill="#33302a" />
+  <path d="M22 4h2v1h-2z" fill="#33302a" />
+  <path d="M7 5h2v1h-2z" fill="#33302a" />
+  <path d="M23 5h2v1h-2z" fill="#33302a" />
+  <path d="M6 6h2v1h-2z" fill="#33302a" />
+  <path d="M24 6h2v1h-2z" fill="#33302a" />
+  <path d="M5 7h2v1h-2z" fill="#33302a" />
+  <path d="M25 7h1v1h-1z" fill="#33302a" />
+  <path d="M26 7h1v23h-1z" fill="#33302a" />
+  <path d="M5 8h1v22h-1z" fill="#33302a" />
   <path d="M6 29h20v1h-20z" fill="#33302a" />
-  <path d="M14 4h4v1h-4z" fill="#33302a" />
-  <path d="M13 5h1v3h-1z" fill="#33302a" />
-  <path d="M18 5h1v3h-1z" fill="#33302a" />
-  <path d="M14 8h4v1h-4z" fill="#33302a" />
-  <Face cx={16} cy={21} smile="compact" fill="#33302a" />
+  <path d="M6 9h20v20h-20z" fill="#e9dcc0" />
+  <path d="M11 3h7v1h-7z" fill="#c07f28" />
+  <path d="M18 3h3v4h-3z" fill="#c07f28" />
+  <path d="M10 4h5v3h-5z" fill="#c07f28" />
+  <path d="M21 4h1v1h-1z" fill="#c07f28" />
+  <path d="M9 5h1v2h-1z" fill="#c07f28" />
+  <path d="M21 5h2v2h-2z" fill="#c07f28" />
+  <path d="M8 6h1v1h-1z" fill="#c07f28" />
+  <path d="M23 6h1v1h-1z" fill="#c07f28" />
+  <path d="M7 7h18v2h-18z" fill="#c07f28" />
+  <path d="M6 8h1v1h-1z" fill="#c07f28" />
+  <path d="M25 8h1v1h-1z" fill="#c07f28" />
+  <path d="M15 4h3v3h-3z" fill="#33302a" />
+  <g fill="#33302a" shape-rendering="crispEdges">
+    {face.map((d) => <path d={d} />)}
+  </g>
 </MarkFrame>

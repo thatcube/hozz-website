@@ -1,0 +1,45 @@
+---
+/** 22 · Glassline — frosted ZZ panes floating over a quiet colour field. */
+import { APP_BY_KEY, type AppKey } from '../../data/brand';
+
+interface Props {
+  app: AppKey;
+  size?: number;
+}
+
+const { app, size = 96 } = Astro.props;
+const a = APP_BY_KEY[app];
+const id = `g-d22-${app}`;
+---
+
+<svg width={size} height={size} viewBox="0 0 64 64" role="img" aria-label={`${a.name} mark`} style="display:block">
+  <defs>
+    <linearGradient id={`${id}-field`} x1="8" y1="7" x2="56" y2="57" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff" stop-opacity="0.16" />
+      <stop offset="0.58" stop-color="#fff" stop-opacity="0.02" />
+      <stop offset="1" stop-color={a.deep} stop-opacity="0.2" />
+    </linearGradient>
+    <linearGradient id={`${id}-glass`} x1="17" y1="18" x2="48" y2="47" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff" stop-opacity="0.78" />
+      <stop offset="0.52" stop-color="#fff" stop-opacity="0.62" />
+      <stop offset="1" stop-color={a.light} stop-opacity="0.54" />
+    </linearGradient>
+    <linearGradient id={`${id}-glint`} x1="18" y1="19" x2="43" y2="42" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff" stop-opacity="0.42" />
+      <stop offset="1" stop-color="#fff" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+
+  <rect x="5" y="5" width="54" height="54" rx="18" fill={a.hue} />
+  <rect x="5" y="5" width="54" height="54" rx="18" fill={`url(#${id}-field)`} />
+
+  <g fill={`url(#${id}-glass)`}>
+    <path d="M15 18h21v5.2L24.2 37H36v6H15v-5.2L26.8 24H15Z" />
+    <path d="M31 25h18v4.7L39.3 41H49v5H31v-4.7L40.7 30H31Z" />
+  </g>
+
+  <path
+    d="M17 19.5h17.2L31.7 22H19.5Zm16 7h14.2l-2.3 2.4H35.2Z"
+    fill={`url(#${id}-glint)`}
+  />
+</svg>

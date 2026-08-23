@@ -1,0 +1,55 @@
+---
+/**
+ * t10 · Calm
+ *
+ * The plainest bubble that still has weight. Radius 5, so the corners are
+ * genuinely round rather than chamfered; the tail is a short pennant that
+ * reaches the bottom of the safe area without dragging; and the only shading is
+ * a single row of ground under the body, carried down through the tail — enough
+ * to seat the shape, not enough to notice.
+ *
+ * Two fills and a face. No keyline, no highlight, no pip. If a plain purple
+ * bubble is the right answer, this is the best-made version of it.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Twozz — Calm">
+  <path d="M5 2h22v1h-22z" fill="#8f52f6" />
+  <path d="M3 3h26v1h-26z" fill="#8f52f6" />
+  <path d="M3 4h26v1h-26z" fill="#8f52f6" />
+  <path d="M2 5h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 6h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 7h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 8h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 9h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 10h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 11h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 12h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 13h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 14h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 15h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 16h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 17h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 18h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 19h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 20h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 21h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 22h28v1h-28z" fill="#8f52f6" />
+  <path d="M3 23h26v1h-26z" fill="#8f52f6" />
+  <path d="M3 24h26v1h-26z" fill="#8f52f6" />
+  <path d="M5 25h22v1h-22z" fill="#7243c3" />
+  <path d="M6 26h7v1h-7z" fill="#7243c3" />
+  <path d="M6 27h5v1h-5z" fill="#7243c3" />
+  <path d="M6 28h3v1h-3z" fill="#7243c3" />
+  <path d="M6 29h1v1h-1z" fill="#7243c3" />
+  <g fill="#ffffff" shape-rendering="crispEdges">
+    {facePathsAt({ cx: 16, cy: 13.5, size: 'md', smile: 'wide' }).map((d) => (
+      <path d={d} />
+    ))}
+  </g>
+</MarkFrame>

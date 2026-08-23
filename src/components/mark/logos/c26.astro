@@ -2,20 +2,39 @@
 /**
  * 26 · Coral Heart
  *
- * A warm coral heart keeps the requested red away from Mozz’s deep crimson while testing the most immediate reading.
- * The 28×28 silhouette reaches x/y 2–29; its compact face sits at the heart’s
- * measured visual-mass centre (16, 14), above the long lower point.
+ * Coral pulls the hue well clear of Mozz’s #b00023 while keeping the
+ * warmest, most immediate reading of the five.
+ *
+ * The silhouette is shared across 26–30 so the five read as one colour study
+ * rather than five ideas. It is a heart drawn wide: crowns four pixels across,
+ * a cleft carved four rows deep, shoulders held out to the full 28 until row
+ * 12, and a straight diagonal to a two-pixel tip. The edge tone is a deeper
+ * step of the body rather than near-black, which is the single thing that
+ * stops a 32×32 heart reading as a game sprite.
+ *
+ * Three fills: edge (the ring and the rim under the lobes are the same
+ * colour), body, and the face’s ink.
+ *
+ * The face is the small one, eyes only. A heart narrows fast, so a smile would
+ * have had to sit in the taper; two Zs on their own sit in open field. It is
+ * centred at (16, 14) — the shape’s measured centroid is y 14.2, well above
+ * the box centre, which is where a heart’s optical middle actually is.
+ * Measured air: 8 left, 8 right, 5 above, 7 below.
  */
 import MarkFrame from '../MarkFrame.astro';
-import Face from '../Face.astro';
+import { facePathsAt } from '../../../data/mark';
 
 interface Props { size?: number }
 const { size = 128 } = Astro.props;
 ---
 
 <MarkFrame size={size} title="Hozz — Coral Heart">
-  <path d="M6 2h6v1h-6z M20 2h6v1h-6z M4 3h2v1h-2z M12 3h2v1h-2z M18 3h2v1h-2z M26 3h2v1h-2z M3 4h1v1h-1z M14 4h1v1h-1z M17 4h1v1h-1z M28 4h1v1h-1z M2 5h1v1h-1z M14 5h1v1h-1z M17 5h1v1h-1z M29 5h1v1h-1z M2 6h1v1h-1z M14 6h1v1h-1z M17 6h1v1h-1z M29 6h1v1h-1z M2 7h1v1h-1z M15 7h2v1h-2z M29 7h1v1h-1z M2 8h1v1h-1z M29 8h1v1h-1z M2 9h1v1h-1z M29 9h1v1h-1z M2 10h1v1h-1z M29 10h1v1h-1z M2 11h1v1h-1z M29 11h1v1h-1z M2 12h1v1h-1z M29 12h1v1h-1z M2 13h1v1h-1z M29 13h1v1h-1z M3 14h1v1h-1z M28 14h1v1h-1z M3 15h1v1h-1z M28 15h1v1h-1z M4 16h1v1h-1z M27 16h1v1h-1z M4 17h1v1h-1z M27 17h1v1h-1z M5 18h1v1h-1z M26 18h1v1h-1z M5 19h1v1h-1z M26 19h1v1h-1z M6 20h1v1h-1z M25 20h1v1h-1z M6 21h1v1h-1z M25 21h1v1h-1z M7 22h1v1h-1z M24 22h1v1h-1z M8 23h1v1h-1z M23 23h1v1h-1z M9 24h1v1h-1z M22 24h1v1h-1z M10 25h1v1h-1z M21 25h1v1h-1z M11 26h1v1h-1z M20 26h1v1h-1z M12 27h2v1h-2z M18 27h2v1h-2z M14 28h1v1h-1z M17 28h1v1h-1z M15 29h2v1h-2z" fill="#8d3535" />
-  <path d="M6 3h6v1h-6z M20 3h6v1h-6z M4 4h2v1h-2z M12 4h2v1h-2z M18 4h10v1h-10z M3 5h1v1h-1z M13 5h1v1h-1z M18 5h11v1h-11z M3 6h1v1h-1z M13 6h1v1h-1z M18 6h11v1h-11z M3 7h1v1h-1z M14 7h1v1h-1z M17 7h12v1h-12z M3 8h1v1h-1z M14 8h15v1h-15z M3 9h1v1h-1z M14 9h15v1h-15z M3 10h1v1h-1z M14 10h15v1h-15z M3 11h1v1h-1z M14 11h15v1h-15z M3 12h1v1h-1z M14 12h15v1h-15z M3 13h2v1h-2z M12 13h17v1h-17z M4 14h2v1h-2z M11 14h17v1h-17z M4 15h24v1h-24z M5 16h22v1h-22z M5 17h22v1h-22z M6 18h20v1h-20z M6 19h20v1h-20z M7 20h18v1h-18z M7 21h18v1h-18z M8 22h16v1h-16z M9 23h14v1h-14z M10 24h12v1h-12z M11 25h10v1h-10z M12 26h8v1h-8z M14 27h4v1h-4z M15 28h2v1h-2z" fill="#df665f" />
-  <path d="M6 4h6v1h-6z M4 5h9v1h-9z M4 6h9v1h-9z M4 7h10v1h-10z M4 8h10v1h-10z M4 9h10v1h-10z M4 10h10v1h-10z M4 11h10v1h-10z M4 12h10v1h-10z M5 13h7v1h-7z M6 14h5v1h-5z" fill="#f59a88" />
-  <Face cx={16} cy={14} smile="compact" fill="#4e1f20" />
+  <path d="M8 2h4v1h-4z M20 2h4v1h-4z M6 3h2v1h-2z M12 3h1v1h-1z M19 3h1v1h-1z M24 3h2v1h-2z M5 4h1v1h-1z M13 4h1v1h-1z M18 4h1v1h-1z M26 4h1v1h-1z M4 5h1v1h-1z M14 5h1v1h-1z M17 5h1v1h-1z M27 5h1v1h-1z M3 6h1v1h-1z M15 6h2v1h-2z M28 6h1v1h-1z M2 7h1v1h-1z M29 7h1v1h-1z M2 8h1v1h-1z M29 8h1v1h-1z M2 9h1v1h-1z M29 9h1v1h-1z M2 10h1v1h-1z M29 10h1v1h-1z M2 11h1v1h-1z M29 11h1v1h-1z M2 12h1v1h-1z M29 12h1v1h-1z M3 13h1v1h-1z M28 13h1v1h-1z M3 14h1v1h-1z M28 14h1v1h-1z M3 15h1v1h-1z M28 15h1v1h-1z M4 16h1v1h-1z M27 16h1v1h-1z M4 17h1v1h-1z M27 17h1v1h-1z M5 18h1v1h-1z M26 18h1v1h-1z M5 19h1v1h-1z M26 19h1v1h-1z M6 20h1v1h-1z M25 20h1v1h-1z M7 21h1v1h-1z M24 21h1v1h-1z M8 22h1v1h-1z M23 22h1v1h-1z M9 23h1v1h-1z M22 23h1v1h-1z M10 24h1v1h-1z M21 24h1v1h-1z M11 25h1v1h-1z M20 25h1v1h-1z M12 26h1v1h-1z M19 26h1v1h-1z M13 27h1v1h-1z M18 27h1v1h-1z M14 28h1v1h-1z M17 28h1v1h-1z M15 29h2v1h-2z" fill="#c9503a" />
+  <path d="M8 3h4v1h-4z M20 3h4v1h-4z M6 4h7v1h-7z M19 4h7v1h-7z M5 5h9v1h-9z M18 5h9v1h-9z M4 6h11v1h-11z M17 6h11v1h-11z M3 7h26v1h-26z M3 8h26v1h-26z M3 9h26v1h-26z M3 10h26v1h-26z M3 11h26v1h-26z M3 12h26v1h-26z M4 13h24v1h-24z M4 14h24v1h-24z M4 15h24v1h-24z M5 16h22v1h-22z M5 17h22v1h-22z M6 18h20v1h-20z M6 19h20v1h-20z M7 20h18v1h-18z M8 21h16v1h-16z M9 22h14v1h-14z M10 23h12v1h-12z M11 24h10v1h-10z M12 25h8v1h-8z M13 26h6v1h-6z M14 27h4v1h-4z M15 28h2v1h-2z" fill="#ef7e64" />
+  <path d="M8 21h2v1h-2z M22 21h2v1h-2z M9 22h2v1h-2z M21 22h2v1h-2z M10 23h2v1h-2z M20 23h2v1h-2z M11 24h2v1h-2z M19 24h2v1h-2z M12 25h2v1h-2z M18 25h2v1h-2z M13 26h2v1h-2z M17 26h2v1h-2z M14 27h4v1h-4z M15 28h2v1h-2z" fill="#c9503a" />
+  <g fill="#521a15" shape-rendering="crispEdges">
+    {facePathsAt({ cx: 16, cy: 14, size: 'md', smile: 'none' }).map((d) => (
+      <path d={d} />
+    ))}
+  </g>
 </MarkFrame>

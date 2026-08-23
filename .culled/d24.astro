@@ -1,0 +1,36 @@
+---
+/** 24 · Tonefield — the ZZ emerges as a gentle tonal shift in one continuous hue. */
+import { APP_BY_KEY, type AppKey } from '../../data/brand';
+
+interface Props {
+  app: AppKey;
+  size?: number;
+}
+
+const { app, size = 96 } = Astro.props;
+const a = APP_BY_KEY[app];
+const id = `g-d24-${app}`;
+---
+
+<svg width={size} height={size} viewBox="0 0 64 64" role="img" aria-label={`${a.name} mark`} style="display:block">
+  <defs>
+    <linearGradient id={`${id}-field`} x1="4" y1="5" x2="60" y2="59" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff" stop-opacity="0.2" />
+      <stop offset="0.5" stop-color={a.hue} stop-opacity="0" />
+      <stop offset="1" stop-color={a.deep} stop-opacity="0.22" />
+    </linearGradient>
+    <linearGradient id={`${id}-tone`} x1="14" y1="18" x2="50" y2="47" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff" stop-opacity="0.58" />
+      <stop offset="0.5" stop-color="#fff" stop-opacity="0.44" />
+      <stop offset="1" stop-color="#fff" stop-opacity="0.32" />
+    </linearGradient>
+  </defs>
+
+  <path d="M32 3C51.3 3 61 12.7 61 32S51.3 61 32 61 3 51.3 3 32 12.7 3 32 3Z" fill={a.hue} />
+  <path d="M32 3C51.3 3 61 12.7 61 32S51.3 61 32 61 3 51.3 3 32 12.7 3 32 3Z" fill={`url(#${id}-field)`} />
+
+  <g fill={`url(#${id}-tone)`}>
+    <path d="M14 18h22v6L24.1 38H36v6H14v-6l11.9-14H14Z" />
+    <path d="M31 24h19v5.5L39.9 41H50v5H31v-5.5L41.1 29H31Z" />
+  </g>
+</svg>

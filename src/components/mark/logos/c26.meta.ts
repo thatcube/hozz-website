@@ -1,7 +1,7 @@
 export default {
   n: '26',
   name: 'Coral Heart',
-  idea: 'A warm coral heart keeps the requested red away from Mozz’s deep crimson while testing the most immediate reading.',
+  idea: 'Coral rather than crimson, so the heart is warm without standing on Mozz’s red. One flat body, one deeper tone doing both the edge and the rim under the lobes.',
   ground: 'light',
-  palette: ['#4e1f20', '#8d3535', '#df665f', '#f59a88'],
+  palette: ['#521a15', '#c9503a', '#ef7e64'],
 };

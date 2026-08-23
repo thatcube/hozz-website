@@ -2,24 +2,38 @@
 /**
  * 11 · Catalog Card
  *
- * A tabbed archive card makes the exported copy feel tangible: filed because
- * it belongs to you, and easy to find again without becoming a generic file.
+ * A cream card with a tan divider tab on its *right* edge. Tabs on the top-left
+ * are the folder icon every OS ships; a tab on the long edge is a drawer
+ * divider, which is the thing this actually is — a copy you can file, find and
+ * keep.
  *
- * The card reaches the 28-pixel safe area. Its tab is deliberately ignored
- * when centring the compact face on the broad writing panel at (16, 18).
+ * The face is centred on the card, ignoring the tab, so it keeps six clear
+ * pixels on both sides.
+ *
+ * Drawn against the shared face geometry in `src/data/mark.ts` rather than a
+ * hand-placed copy of it, so the eyes stay the family's eyes.
  */
 import MarkFrame from '../MarkFrame.astro';
-import Face from '../Face.astro';
+import { facePathsAt } from '../../../data/mark';
 
 interface Props { size?: number }
 const { size = 128 } = Astro.props;
+
+const face = facePathsAt({ cx: 13.5, cy: 16, size: 'md', smile: 'wide' });
 ---
 
 <MarkFrame size={size} title="Hozz — Catalog Card">
-  <path d="M7 2h11v1h-11zM5 3h15v1h-15zM4 4h17v1h-17zM4 5h24v1h-24zM3 6h26v1h-26zM2 7h28v21h-28zM3 28h26v1h-26zM5 29h22v1h-22z" fill="#514638" />
-  <path d="M7 3h11v1h-11zM6 4h13v1h-13zM5 5h15v1h-15zM5 6h22v1h-22zM4 7h24v20h-24zM5 27h22v1h-22zM7 28h18v1h-18z" fill="#b89b68" />
-  <path d="M7 4h11v1h-11zM6 5h13v1h-13zM5 8h22v19h-22z" fill="#e5d4a9" />
-  <path d="M6 8h5v1h-5zM5 9h5v3h-5zM5 12h3v12h-3zM6 24h2v2h-2zM7 27h18v1h-18z" fill="#fff3d1" />
-  <path d="M9 8h14v1h-14zM7 11h2v2h-2zM23 11h2v2h-2zM7 24h2v2h-2zM23 24h2v2h-2z" fill="#b89b68" />
-  <Face cx={16} cy={18} smile="compact" fill="#514638" />
+  <path d="M3 2h21v1h-21z" fill="#514638" />
+  <path d="M3 3h1v27h-1z" fill="#514638" />
+  <path d="M23 3h1v5h-1z" fill="#514638" />
+  <path d="M24 7h4v1h-4z" fill="#514638" />
+  <path d="M28 7h1v18h-1z" fill="#514638" />
+  <path d="M23 24h5v1h-5z" fill="#514638" />
+  <path d="M23 25h1v4h-1z" fill="#514638" />
+  <path d="M4 29h20v1h-20z" fill="#514638" />
+  <path d="M4 3h19v26h-19z" fill="#fff3d1" />
+  <path d="M23 8h5v16h-5z" fill="#b89b68" />
+  <g fill="#514638" shape-rendering="crispEdges">
+    {face.map((d) => <path d={d} />)}
+  </g>
 </MarkFrame>

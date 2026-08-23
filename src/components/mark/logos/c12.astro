@@ -2,25 +2,23 @@
 /**
  * 12 · Preserve Jar
  *
- * A lidded jar treats health history as something gently preserved, with pale
- * glass and a side glint keeping the object airy rather than locked.
- *
- * The glass body reaches the safe-area sides and base. The lid is excluded
- * from the body's optical centre, placing the compact face at (16, 19).
+ * A pale glass body and a warm lid, with no internal glint competing with the
+ * face. The face is centred on the glass body alone; the lid is ignored.
  */
 import MarkFrame from '../MarkFrame.astro';
-import Face from '../Face.astro';
+import { faceBoxAt, facePathsAt } from '../../../data/mark';
 
 interface Props { size?: number }
 const { size = 128 } = Astro.props;
+const face = { cx: 16, cy: 19, size: 'sm', smile: 'wide' } as const;
+const box = faceBoxAt(face);
 ---
 
 <MarkFrame size={size} title="Hozz — Preserve Jar">
-  <path d="M9 2h14v1h-14zM7 3h18v1h-18zM6 4h20v2h-20zM7 6h18v1h-18z" fill="#31544b" />
-  <path d="M8 3h16v1h-16zM7 4h18v2h-18z" fill="#b59b6a" />
-  <path d="M7 7h18v1h-18zM5 8h22v1h-22zM3 9h26v1h-26zM2 10h28v18h-28zM3 28h26v1h-26zM6 29h20v1h-20z" fill="#31544b" />
-  <path d="M8 7h16v1h-16zM6 8h20v1h-20zM4 9h24v1h-24zM3 10h26v17h-26zM4 27h24v1h-24zM7 28h18v1h-18z" fill="#79a68d" />
-  <path d="M7 9h18v1h-18zM5 10h22v16h-22zM6 26h20v1h-20zM8 27h16v1h-16z" fill="#cde2bd" />
-  <path d="M7 9h8v1h-8zM5 10h6v2h-6zM5 12h4v11h-4zM6 23h3v3h-3zM8 26h5v1h-5z" fill="#eff4d2" />
-  <Face cx={16} cy={19} smile="compact" fill="#31544b" />
+  <path d="M9 2h14v1h-14z M7 3h18v1h-18z M6 4h20v1h-20z M6 5h20v1h-20z M6 6h20v1h-20z M7 7h18v1h-18z M5 8h22v1h-22z M3 9h26v1h-26z M2 10h28v1h-28z M2 11h28v1h-28z M2 12h28v1h-28z M2 13h28v1h-28z M2 14h28v1h-28z M2 15h28v1h-28z M2 16h28v1h-28z M2 17h28v1h-28z M2 18h28v1h-28z M2 19h28v1h-28z M2 20h28v1h-28z M2 21h28v1h-28z M2 22h28v1h-28z M2 23h28v1h-28z M2 24h28v1h-28z M2 25h28v1h-28z M2 26h28v1h-28z M2 27h28v1h-28z M3 28h26v1h-26z M6 29h20v1h-20z" fill="#31544b" />
+  <path d="M8 3h16v1h-16z M7 4h18v1h-18z M7 5h18v1h-18z M8 6h16v1h-16z" fill="#b59b6a" />
+  <path d="M5 9h22v1h-22z M3 10h26v1h-26z M3 11h26v1h-26z M3 12h26v1h-26z M3 13h26v1h-26z M3 14h26v1h-26z M3 15h26v1h-26z M3 16h26v1h-26z M3 17h26v1h-26z M3 18h26v1h-26z M3 19h26v1h-26z M3 20h26v1h-26z M3 21h26v1h-26z M3 22h26v1h-26z M3 23h26v1h-26z M3 24h26v1h-26z M3 25h26v1h-26z M3 26h26v1h-26z M3 27h26v1h-26z M4 28h24v1h-24z" fill="#cde2bd" />
+  <g fill="#31544b" shape-rendering="crispEdges" data-face-box={`${box.x},${box.y},${box.w},${box.h}`}>
+    {facePathsAt(face).map((d) => <path d={d} />)}
+  </g>
 </MarkFrame>

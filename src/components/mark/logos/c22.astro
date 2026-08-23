@@ -2,35 +2,47 @@
 /**
  * 22 · Sheaf
  *
- * Not one page — a cascade of three, stepping down and left, so the mark says
- * *years of it* rather than *a document*. Depth is three flat sheets and two
- * ink edges, no shading.
+ * Three sheets stepping up and to the right, each offset by three pixels, so
+ * the silhouette is a staircase rather than a rectangle: the export is a stack
+ * of years, not a document. Two flat tones and an ink edge — no shading.
  *
- * The face is centred on the front sheet (13, 18), not on the 32-box, exactly
- * as Plozz centres on the screen rather than the TV.
+ * The face is centred on the front sheet, not on the 32-box, exactly as Plozz
+ * centres on the screen rather than the TV.
+ *
+ * Drawn against the shared face geometry in `src/data/mark.ts` rather than a
+ * hand-placed copy of it, so the eyes stay the family's eyes.
  */
 import MarkFrame from '../MarkFrame.astro';
-import Face from '../Face.astro';
+import { facePathsAt } from '../../../data/mark';
 
 interface Props { size?: number }
 const { size = 128 } = Astro.props;
+
+const face = facePathsAt({ cx: 13, cy: 19, size: 'md', smile: 'wide' });
 ---
 
 <MarkFrame size={size} title="Hozz — Sheaf">
-  <path d="M9 3h20v22h-20z" fill="#cfc9bb" />
   <path d="M8 2h22v1h-22z" fill="#403c34" />
-  <path d="M8 3h1v22h-1z" fill="#403c34" />
-  <path d="M29 3h1v22h-1z" fill="#403c34" />
-  <path d="M8 25h22v1h-22z" fill="#403c34" />
-  <path d="M6 5h20v22h-20z" fill="#e8d7ae" />
-  <path d="M5 4h22v1h-22z" fill="#403c34" />
-  <path d="M5 5h1v22h-1z" fill="#403c34" />
-  <path d="M26 5h1v22h-1z" fill="#403c34" />
-  <path d="M5 27h22v1h-22z" fill="#403c34" />
-  <path d="M3 7h20v22h-20z" fill="#f9f6ef" />
-  <path d="M2 6h22v1h-22z" fill="#403c34" />
-  <path d="M2 7h1v22h-1z" fill="#403c34" />
-  <path d="M23 7h1v22h-1z" fill="#403c34" />
+  <path d="M8 3h1v2h-1z" fill="#403c34" />
+  <path d="M29 3h1v21h-1z" fill="#403c34" />
+  <path d="M5 5h4v1h-4z" fill="#403c34" />
+  <path d="M5 6h1v2h-1z" fill="#403c34" />
+  <path d="M2 8h4v1h-4z" fill="#403c34" />
+  <path d="M2 9h1v20h-1z" fill="#403c34" />
+  <path d="M26 23h3v1h-3z" fill="#403c34" />
+  <path d="M26 24h1v2h-1z" fill="#403c34" />
+  <path d="M23 26h4v1h-4z" fill="#403c34" />
+  <path d="M23 27h1v2h-1z" fill="#403c34" />
   <path d="M2 29h22v1h-22z" fill="#403c34" />
-  <Face cx={13} cy={18} smile="wide" fill="#403c34" />
+  <path d="M9 3h20v20h-20z" fill="#cfc9bb" />
+  <path d="M6 6h3v20h-3z" fill="#cfc9bb" />
+  <path d="M9 23h17v3h-17z" fill="#cfc9bb" />
+  <path d="M9 5h17v1h-17z" fill="#403c34" />
+  <path d="M26 6h1v17h-1z" fill="#403c34" />
+  <path d="M6 8h17v1h-17z" fill="#403c34" />
+  <path d="M23 9h1v17h-1z" fill="#403c34" />
+  <path d="M3 9h20v20h-20z" fill="#f9f6ef" />
+  <g fill="#403c34" shape-rendering="crispEdges">
+    {face.map((d) => <path d={d} />)}
+  </g>
 </MarkFrame>

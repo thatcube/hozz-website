@@ -1,7 +1,7 @@
 export default {
   n: '27',
-  name: 'Moss Heart',
-  idea: 'A broad moss-and-sage heart makes health feel cultivated and calm rather than urgent.',
+  name: 'Sage Heart',
+  idea: 'Sage takes the urgency out of the shape — a heart in a planted, cultivated green rather than an alarm colour.',
   ground: 'light',
-  palette: ['#1f3527', '#314c3a', '#78956b', '#b7c8a1'],
+  palette: ['#20301c', '#5f8455', '#93b177'],
 };

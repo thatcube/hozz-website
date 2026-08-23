@@ -1,0 +1,41 @@
+---
+/** 25 · Afterlight — overlapping Z apertures gather light from behind. */
+import { APP_BY_KEY, type AppKey } from '../../data/brand';
+
+interface Props {
+  app: AppKey;
+  size?: number;
+}
+
+const { app, size = 96 } = Astro.props;
+const a = APP_BY_KEY[app];
+const id = `g-d25-${app}`;
+---
+
+<svg width={size} height={size} viewBox="0 0 64 64" role="img" aria-label={`${a.name} mark`} style="display:block">
+  <defs>
+    <linearGradient id={`${id}-shell`} x1="8" y1="7" x2="56" y2="58" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff" stop-opacity="0.04" />
+      <stop offset="0.55" stop-color={a.hue} stop-opacity="0" />
+      <stop offset="1" stop-color={a.deep} stop-opacity="0.32" />
+    </linearGradient>
+    <radialGradient id={`${id}-light`} cx="50%" cy="48%" r="54%">
+      <stop offset="0" stop-color="#fff" stop-opacity="0.34" />
+      <stop offset="0.62" stop-color={a.light} stop-opacity="0.14" />
+      <stop offset="1" stop-color={a.light} stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id={`${id}-beam`} x1="15" y1="19" x2="49" y2="45" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff" stop-opacity="0.86" />
+      <stop offset="1" stop-color={a.light} stop-opacity="0.68" />
+    </linearGradient>
+  </defs>
+
+  <path d="M32 4C50.5 4 60 13.5 60 32S50.5 60 32 60 4 50.5 4 32 13.5 4 32 4Z" fill={a.hue} />
+  <path d="M32 4C50.5 4 60 13.5 60 32S50.5 60 32 60 4 50.5 4 32 13.5 4 32 4Z" fill={`url(#${id}-shell)`} />
+  <circle cx="32" cy="32" r="24" fill={`url(#${id}-light)`} />
+
+  <g fill={`url(#${id}-beam)`} opacity="0.66">
+    <path d="M14 19h23v5.8L24.2 40H37v6H14v-5.8L26.8 25H14Z" />
+    <path d="M27 19h23v5.8L37.2 40H50v6H27v-5.8L39.8 25H27Z" />
+  </g>
+</svg>

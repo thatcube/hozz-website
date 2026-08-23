@@ -1,0 +1,76 @@
+---
+/**
+ * t07 · Bare
+ *
+ * The same bubble as t05 with the black keyline deleted — the ring pixels are
+ * simply repainted body purple, so the outer silhouette is identical to the
+ * pixel. Only the line is gone.
+ *
+ * That makes this a controlled test rather than a new drawing: if the mark
+ * holds up here, the keyline was carrying weight it did not need to, and two
+ * fills will do the job three were doing.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Twozz — Bare">
+  <path d="M5 2h21v1h-21z" fill="#8f52f6" />
+  <path d="M4 3h22v1h-22z" fill="#8f52f6" />
+  <path d="M3 4h23v1h-23z" fill="#8f52f6" />
+  <path d="M2 5h24v1h-24z" fill="#8f52f6" />
+  <path d="M2 6h24v1h-24z" fill="#8f52f6" />
+  <path d="M2 7h24v1h-24z" fill="#8f52f6" />
+  <path d="M2 8h24v1h-24z" fill="#8f52f6" />
+  <path d="M2 9h24v1h-24z" fill="#8f52f6" />
+  <path d="M2 10h24v1h-24z" fill="#8f52f6" />
+  <path d="M2 11h24v1h-24z" fill="#8f52f6" />
+  <path d="M2 12h24v1h-24z" fill="#8f52f6" />
+  <path d="M2 13h24v1h-24z" fill="#8f52f6" />
+  <path d="M2 14h24v1h-24z" fill="#8f52f6" />
+  <path d="M2 15h24v1h-24z" fill="#8f52f6" />
+  <path d="M2 16h24v1h-24z" fill="#8f52f6" />
+  <path d="M2 17h24v1h-24z" fill="#8f52f6" />
+  <path d="M2 18h24v1h-24z" fill="#8f52f6" />
+  <path d="M2 19h24v1h-24z" fill="#8f52f6" />
+  <path d="M2 20h24v1h-24z" fill="#8f52f6" />
+  <path d="M2 21h24v1h-24z" fill="#8f52f6" />
+  <path d="M2 22h24v1h-24z" fill="#8f52f6" />
+  <path d="M3 23h23v1h-23z" fill="#8f52f6" />
+  <path d="M26 2h1v1h-1z" fill="#7243c3" />
+  <path d="M26 3h2v1h-2z" fill="#7243c3" />
+  <path d="M26 4h3v1h-3z" fill="#7243c3" />
+  <path d="M26 5h4v1h-4z" fill="#7243c3" />
+  <path d="M26 6h4v1h-4z" fill="#7243c3" />
+  <path d="M26 7h4v1h-4z" fill="#7243c3" />
+  <path d="M26 8h4v1h-4z" fill="#7243c3" />
+  <path d="M26 9h4v1h-4z" fill="#7243c3" />
+  <path d="M26 10h4v1h-4z" fill="#7243c3" />
+  <path d="M26 11h4v1h-4z" fill="#7243c3" />
+  <path d="M26 12h4v1h-4z" fill="#7243c3" />
+  <path d="M26 13h4v1h-4z" fill="#7243c3" />
+  <path d="M26 14h4v1h-4z" fill="#7243c3" />
+  <path d="M26 15h4v1h-4z" fill="#7243c3" />
+  <path d="M26 16h4v1h-4z" fill="#7243c3" />
+  <path d="M26 17h4v1h-4z" fill="#7243c3" />
+  <path d="M26 18h4v1h-4z" fill="#7243c3" />
+  <path d="M26 19h4v1h-4z" fill="#7243c3" />
+  <path d="M26 20h4v1h-4z" fill="#7243c3" />
+  <path d="M26 21h4v1h-4z" fill="#7243c3" />
+  <path d="M26 22h4v1h-4z" fill="#7243c3" />
+  <path d="M26 23h3v1h-3z" fill="#7243c3" />
+  <path d="M4 24h24v1h-24z" fill="#7243c3" />
+  <path d="M5 25h22v1h-22z" fill="#7243c3" />
+  <path d="M5 26h9v1h-9z" fill="#7243c3" />
+  <path d="M5 27h8v1h-8z" fill="#7243c3" />
+  <path d="M5 28h6v1h-6z" fill="#7243c3" />
+  <path d="M6 29h3v1h-3z" fill="#7243c3" />
+  <g fill="#ffffff" shape-rendering="crispEdges">
+    {facePathsAt({ cx: 16, cy: 13.5, size: 'md', smile: 'wide' }).map((d) => (
+      <path d={d} />
+    ))}
+  </g>
+</MarkFrame>

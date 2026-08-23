@@ -1,0 +1,59 @@
+---
+/**
+ * 04 · Lens Drops — two droplets, one Z each, and the overlap is the mark.
+ *
+ * Two translucent drops of the same hue drift into each other. Where they cross,
+ * the colour doubles down toward the app's deep tone — a real multiply, drawn as
+ * a clipped intersection rather than a blend mode, so it looks identical on a
+ * white ground and a black one.
+ *
+ * Each drop is a true teardrop: its flanks are the tangent lines from the tip to
+ * the bowl, so the silhouette turns without a kink. Each carries one Z, knocked
+ * out white straight through both bodies — the letters meet exactly where the
+ * drops do.
+ */
+import { APP_BY_KEY, type AppKey } from '../../data/brand';
+
+interface Props {
+  app: AppKey;
+  size?: number;
+}
+const { app, size = 96 } = Astro.props;
+const a = APP_BY_KEY[app];
+const clip = `c-d04-${app}`;
+---
+
+<svg width={size} height={size} viewBox="0 0 64 64" role="img" aria-label={`${a.name} mark`} style="display:block">
+  <defs>
+    <clipPath id={clip}>
+      <path d="M20.2 12.12Q22 9 23.8 12.12L34.56 30.75A14.5 14.5 0 1 1 9.44 30.75Z" />
+    </clipPath>
+  </defs>
+
+  <!-- Drop one. -->
+  <path
+    d="M20.2 12.12Q22 9 23.8 12.12L34.56 30.75A14.5 14.5 0 1 1 9.44 30.75Z"
+    fill={a.hue}
+    fill-opacity="0.88"
+  />
+  <!-- Drop two. -->
+  <path
+    d="M40.2 9.12Q42 6 43.8 9.12L54.56 27.75A14.5 14.5 0 1 1 29.44 27.75Z"
+    fill={a.hue}
+    fill-opacity="0.88"
+  />
+  <!-- Their intersection, deepened. This is the whole idea. -->
+  <g clip-path={`url(#${clip})`}>
+    <path
+      d="M40.2 9.12Q42 6 43.8 9.12L54.56 27.75A14.5 14.5 0 1 1 29.44 27.75Z"
+      fill={a.deep}
+      fill-opacity="0.62"
+    />
+  </g>
+
+  <!-- ZZ knocked through both, each drifting with its own drop, held inside 16–48. -->
+  <g fill="#fff">
+    <path d="M16 27.5h12v4.3L21.6 40.7H28V45H16v-4.3l6.4-8.9H16z" />
+    <path d="M36 24.5h12v4.3L41.6 37.7H48V42H36v-4.3l6.4-8.9H36z" />
+  </g>
+</svg>

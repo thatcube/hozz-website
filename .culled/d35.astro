@@ -1,0 +1,70 @@
+---
+/**
+ * 35 · Vessel — one ZZ, four containers.
+ *
+ * The opposite trade to 34: here the silhouette itself is the motif. A screen
+ * for Plozz, a disc for Mozz, a bubble for Twozz, a soft vessel for Hozz —
+ * each filled with the same diagonal gradient ramp.
+ *
+ * The family is held by the ZZ, which is byte-for-byte identical across all
+ * four: same stroke weight, same size, same position, dead centre of the 64
+ * grid with 15 units of air on every side. Optical mass is matched too, so no
+ * one sibling reads heavier than the others at a glance.
+ */
+import { APP_BY_KEY, type AppKey } from '../../data/brand';
+
+interface Props {
+  app: AppKey;
+  size?: number;
+}
+const { app, size = 96 } = Astro.props;
+const a = APP_BY_KEY[app];
+const id = `g-d35-${app}`;
+
+/** The one variable in the system. Each is ~2200 units of area. */
+const SILHOUETTE: Record<AppKey, string> = {
+  plozz:
+    'M14 12.5H50A10 10 0 0 1 60 22.5V41.5A10 10 0 0 1 50 51.5H14A10 10 0 0 1 4 41.5V22.5A10 10 0 0 1 14 12.5Z',
+  mozz: 'M32 5.8A26.2 26.2 0 0 1 58.2 32A26.2 26.2 0 0 1 32 58.2A26.2 26.2 0 0 1 5.8 32A26.2 26.2 0 0 1 32 5.8Z',
+  twozz:
+    'M19 8H45A14 14 0 0 1 59 22V37A14 14 0 0 1 45 51H19A14 14 0 0 1 5 37V22A14 14 0 0 1 19 8Z',
+  hozz: 'M17.5 9.5H46.5A11 11 0 0 1 57.5 20.5V29A25.5 25.5 0 0 1 32 54.5A25.5 25.5 0 0 1 6.5 29V20.5A11 11 0 0 1 17.5 9.5Z',
+};
+---
+
+<svg width={size} height={size} viewBox="0 0 64 64" role="img" aria-label={`${a.name} mark`} style="display:block">
+  <defs>
+    <linearGradient id={id} gradientUnits="userSpaceOnUse" x1="6" y1="4" x2="58" y2="60">
+      <stop offset="0" stop-color={a.light} />
+      <stop offset="0.52" stop-color={a.hue} />
+      <stop offset="1" stop-color={a.deep} />
+    </linearGradient>
+  </defs>
+
+  <!-- Variable: the container. -->
+  <path d={SILHOUETTE[app]} fill={`url(#${id})`} />
+  {
+    app === 'twozz' && (
+      <path
+        d="M19.5 44L13.6 58L32.5 46.5Z"
+        fill={`url(#${id})`}
+        stroke={`url(#${id})`}
+        stroke-width="2.4"
+        stroke-linejoin="round"
+      />
+    )
+  }
+
+  <!-- Constant: the ZZ, identical in all four. -->
+  <g
+    fill="none"
+    stroke="#fff"
+    stroke-width="4.3"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    opacity="0.96"
+  >
+    <path d="M17.15 25.8H27.85L17.15 38.2H27.85" />
+    <path d="M36.15 25.8H46.85L36.15 38.2H46.85" />
+  </g>
+</svg>

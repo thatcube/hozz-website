@@ -2,21 +2,22 @@
 /**
  * 07 · Afterglow
  *
- * A pale core sends its light through three deliberate pixel steps. The outer
- * step stretches into cardinal rays instead of closing into a plain disc.
+ * A broad pale core pushes into four cardinal rays. Removing the concentric
+ * rings leaves one clear source and one radiating silhouette.
  */
 import MarkFrame from '../MarkFrame.astro';
-import Face from '../Face.astro';
+import { faceBoxAt, facePathsAt } from '../../../data/mark';
 
 interface Props { size?: number }
 const { size = 128 } = Astro.props;
+const face = { cx: 16, cy: 16, size: 'md', smile: 'wide' } as const;
+const box = faceBoxAt(face);
 ---
 
 <MarkFrame size={size} title="Hozz — Afterglow">
-  <path d="M14 2h4v1h-4z M14 3h4v1h-4z M11 4h10v1h-10z M9 5h14v1h-14z M7 6h18v1h-18z M6 7h20v1h-20z M5 8h22v1h-22z M4 9h24v1h-24z M4 10h24v1h-24z M3 11h26v1h-26z M3 12h26v1h-26z M2 13h28v1h-28z M2 14h28v1h-28z M2 15h28v1h-28z M2 16h28v1h-28z M2 17h28v1h-28z M2 18h28v1h-28z M3 19h26v1h-26z M3 20h26v1h-26z M4 21h24v1h-24z M4 22h24v1h-24z M5 23h22v1h-22z M6 24h20v1h-20z M7 25h18v1h-18z M9 26h14v1h-14z M11 27h10v1h-10z M14 28h4v1h-4z M14 29h4v1h-4z" fill="#555f44" />
-  <path d="M12 5h8v1h-8z M10 6h12v1h-12z M8 7h16v1h-16z M7 8h18v1h-18z M7 9h18v1h-18z M6 10h20v1h-20z M6 11h20v1h-20z M5 12h22v1h-22z M5 13h22v1h-22z M5 14h22v1h-22z M5 15h22v1h-22z M5 16h22v1h-22z M5 17h22v1h-22z M5 18h22v1h-22z M5 19h22v1h-22z M6 20h20v1h-20z M6 21h20v1h-20z M7 22h18v1h-18z M7 23h18v1h-18z M8 24h16v1h-16z M10 25h12v1h-12z M12 26h8v1h-8z" fill="#818c68" />
-  <path d="M15 2h2v2h-2z M2 15h2v2h-2z M28 15h2v2h-2z M15 28h2v2h-2z" fill="#818c68" />
-  <path d="M14 7h4v1h-4z M11 8h10v1h-10z M10 9h12v1h-12z M9 10h14v1h-14z M8 11h16v1h-16z M8 12h16v1h-16z M8 13h16v1h-16z M7 14h18v1h-18z M7 15h18v1h-18z M7 16h18v1h-18z M7 17h18v1h-18z M8 18h16v1h-16z M8 19h16v1h-16z M8 20h16v1h-16z M9 21h14v1h-14z M10 22h12v1h-12z M11 23h10v1h-10z M14 24h4v1h-4z" fill="#b4bf8e" />
-  <path d="M12 9h8v1h-8z M10 10h12v1h-12z M9 11h14v1h-14z M9 12h14v1h-14z M9 13h14v1h-14z M9 14h14v1h-14z M9 15h14v1h-14z M9 16h14v1h-14z M9 17h14v1h-14z M9 18h14v1h-14z M9 19h14v1h-14z M9 20h14v1h-14z M10 21h12v1h-12z M12 22h8v1h-8z" fill="#eef0c8" />
-  <Face cx={16} cy={16} smile="wide" fill="#33382b" />
+  <path d="M15 2h2v1h-2z M2 15h2v2h-2z M28 15h2v2h-2z M15 29h2v1h-2z" fill="#555f44" />
+  <path d="M14 4h4v1h-4z M10 5h12v1h-12z M8 6h16v1h-16z M7 7h18v1h-18z M6 8h20v1h-20z M5 9h22v1h-22z M5 10h22v1h-22z M5 11h22v1h-22z M5 12h22v1h-22z M5 13h22v1h-22z M5 14h22v1h-22z M5 15h22v1h-22z M5 16h22v1h-22z M5 17h22v1h-22z M5 18h22v1h-22z M5 19h22v1h-22z M5 20h22v1h-22z M5 21h22v1h-22z M5 22h22v1h-22z M6 23h20v1h-20z M7 24h18v1h-18z M8 25h16v1h-16z M10 26h12v1h-12z M14 27h4v1h-4z" fill="#b4bf8e" />
+  <g fill="#33382b" shape-rendering="crispEdges" data-face-box={`${box.x},${box.y},${box.w},${box.h}`}>
+    {facePathsAt(face).map((d) => <path d={d} />)}
+  </g>
 </MarkFrame>

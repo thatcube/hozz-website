@@ -2,47 +2,51 @@
 /**
  * 21 · Dog-ear
  *
- * The classic file, but the fold is a third of the page instead of a token
- * triangle: the corner is really turned, the cut is really missing, and the
- * underside is the one warm colour in the mark. A page you have opened.
+ * A square sheet with one corner genuinely turned up: the corner is *missing*
+ * from the silhouette and the warm underside lies back across the page. The
+ * generic file icon is a portrait rectangle with a token triangle notched out
+ * of the top-right; this is square, the fold is at the foot, and the flap is a
+ * real piece of paper with its own cut edges.
  *
- * The face is centred on the paper at (16, 16.5) — the middle of the page
- * itself, with the family's half-pixel bias low.
+ * The face sits up and left of centre, in the quarter of the page the fold
+ * leaves alone — eight pixels wide with six clear either side.
+ *
+ * Drawn against the shared face geometry in `src/data/mark.ts` rather than a
+ * hand-placed copy of it, so the eyes stay the family's eyes.
  */
 import MarkFrame from '../MarkFrame.astro';
-import Face from '../Face.astro';
+import { facePathsAt } from '../../../data/mark';
 
 interface Props { size?: number }
 const { size = 128 } = Astro.props;
+
+const face = facePathsAt({ cx: 13, cy: 12, size: 'md', smile: 'compact' });
 ---
 
 <MarkFrame size={size} title="Hozz — Dog-ear">
-  <path d="M6 3h14v1h-14z" fill="#f2ecdd" />
-  <path d="M6 4h15v1h-15z" fill="#f2ecdd" />
-  <path d="M6 5h16v1h-16z" fill="#f2ecdd" />
-  <path d="M6 6h17v1h-17z" fill="#f2ecdd" />
-  <path d="M6 7h18v1h-18z" fill="#f2ecdd" />
-  <path d="M6 8h19v1h-19z" fill="#f2ecdd" />
-  <path d="M6 9h20v20h-20z" fill="#f2ecdd" />
-  <path d="M21 10h5v1h-5z" fill="#dcd2bd" />
-  <path d="M19 3h1v1h-1z" fill="#e0a13c" />
-  <path d="M19 4h2v1h-2z" fill="#e0a13c" />
-  <path d="M19 5h3v1h-3z" fill="#e0a13c" />
-  <path d="M19 6h4v1h-4z" fill="#e0a13c" />
-  <path d="M19 7h5v1h-5z" fill="#e0a13c" />
-  <path d="M19 8h6v1h-6z" fill="#e0a13c" />
-  <path d="M19 9h7v1h-7z" fill="#e0a13c" />
-  <path d="M19 3h1v6h-1z" fill="#a9691b" />
-  <path d="M19 9h7v1h-7z" fill="#a9691b" />
-  <path d="M5 2h15v1h-15z" fill="#2b2a26" />
-  <path d="M5 3h1v26h-1z" fill="#2b2a26" />
-  <path d="M20 3h1v1h-1z" fill="#2b2a26" />
-  <path d="M21 4h1v1h-1z" fill="#2b2a26" />
-  <path d="M22 5h1v1h-1z" fill="#2b2a26" />
-  <path d="M23 6h1v1h-1z" fill="#2b2a26" />
-  <path d="M24 7h1v1h-1z" fill="#2b2a26" />
-  <path d="M25 8h1v1h-1z" fill="#2b2a26" />
-  <path d="M26 9h1v20h-1z" fill="#2b2a26" />
-  <path d="M5 29h22v1h-22z" fill="#2b2a26" />
-  <Face cx={16} cy={16.5} smile="wide" fill="#2b2a26" />
+  <path d="M2 2h28v1h-28z" fill="#2b2a26" />
+  <path d="M2 3h1v27h-1z" fill="#2b2a26" />
+  <path d="M29 3h1v21h-1z" fill="#2b2a26" />
+  <path d="M22 21h7v1h-7z" fill="#2b2a26" />
+  <path d="M21 22h1v7h-1z" fill="#2b2a26" />
+  <path d="M28 23h1v2h-1z" fill="#2b2a26" />
+  <path d="M27 24h1v2h-1z" fill="#2b2a26" />
+  <path d="M26 25h1v2h-1z" fill="#2b2a26" />
+  <path d="M25 26h1v2h-1z" fill="#2b2a26" />
+  <path d="M24 27h1v2h-1z" fill="#2b2a26" />
+  <path d="M23 28h1v1h-1z" fill="#2b2a26" />
+  <path d="M3 29h21v1h-21z" fill="#2b2a26" />
+  <path d="M3 3h26v18h-26z" fill="#f2ecdd" />
+  <path d="M3 21h19v1h-19z" fill="#f2ecdd" />
+  <path d="M3 22h18v7h-18z" fill="#f2ecdd" />
+  <path d="M22 22h7v1h-7z" fill="#e0a13c" />
+  <path d="M22 23h6v1h-6z" fill="#e0a13c" />
+  <path d="M22 24h5v1h-5z" fill="#e0a13c" />
+  <path d="M22 25h4v1h-4z" fill="#e0a13c" />
+  <path d="M22 26h3v1h-3z" fill="#e0a13c" />
+  <path d="M22 27h2v1h-2z" fill="#e0a13c" />
+  <path d="M22 28h1v1h-1z" fill="#e0a13c" />
+  <g fill="#2b2a26" shape-rendering="crispEdges">
+    {face.map((d) => <path d={d} />)}
+  </g>
 </MarkFrame>

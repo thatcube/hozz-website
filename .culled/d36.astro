@@ -1,0 +1,62 @@
+---
+/**
+ * 36 · Tail — the second Z keeps going.
+ *
+ * The bottom bar of the second Z does not stop where the letter stops. It
+ * carries on, curves down, and turns into the app's motif: a play triangle, a
+ * groove, a bubble, a droplet. One letterform doing double duty.
+ *
+ * Frame, gradient, ZZ and the curve of the tail are all identical across the
+ * four — only the terminal at the end of the tail changes, at matched optical
+ * mass. The ZZ sits high-left with 14 units of air so the tail has somewhere
+ * to go without crowding it.
+ */
+import { APP_BY_KEY, type AppKey } from '../../data/brand';
+
+interface Props {
+  app: AppKey;
+  size?: number;
+}
+const { app, size = 96 } = Astro.props;
+const a = APP_BY_KEY[app];
+const id = `g-d36-${app}`;
+
+const c = '#fff';
+/** The one variable: what the tail becomes. */
+const TERMINAL: Record<AppKey, string> = {
+  plozz: `<path d="M43.31 39.31L52.05 44.2L43.31 49.09Z" fill="${c}" stroke="${c}" stroke-width="2.08" stroke-linejoin="round"/>`,
+  mozz: `<circle cx="46.85" cy="44.2" r="3.91" fill="none" stroke="${c}" stroke-width="2.89"/>`,
+  twozz: `<g fill="${c}" stroke="${c}" stroke-width="1.24" stroke-linejoin="round"><path d="M45.22 38.64H48.48A3.52 3.52 0 0 1 52 42.16V42.94A3.52 3.52 0 0 1 48.48 46.47H45.22A3.52 3.52 0 0 1 41.7 42.94V42.16A3.52 3.52 0 0 1 45.22 38.64Z"/><path d="M43.97 45.67L42.22 49.76L48.29 45.67Z"/></g>`,
+  hozz: `<path d="M46.85 37.84C50.01 40.99 51.63 43.29 51.63 45.78A4.78 4.78 0 1 1 42.07 45.78C42.07 43.29 43.69 40.99 46.85 37.84Z" fill="${c}"/>`,
+};
+---
+
+<svg width={size} height={size} viewBox="0 0 64 64" role="img" aria-label={`${a.name} mark`} style="display:block">
+  <defs>
+    <linearGradient id={id} gradientUnits="userSpaceOnUse" x1="6" y1="4" x2="58" y2="60">
+      <stop offset="0" stop-color={a.light} />
+      <stop offset="0.52" stop-color={a.hue} />
+      <stop offset="1" stop-color={a.deep} />
+    </linearGradient>
+  </defs>
+
+  <!-- Constant: the frame. -->
+  <path d="M32 3C53.4 3 61 10.6 61 32S53.4 61 32 61 3 53.4 3 32 10.6 3 32 3Z" fill={`url(#${id})`} />
+
+  <!-- Constant: the ZZ, and the tail that leaves the second Z. -->
+  <g
+    fill="none"
+    stroke="#fff"
+    stroke-width="4.3"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    opacity="0.96"
+  >
+    <path d="M16.15 20.2H25.45L16.15 31.8H25.45" />
+    <path d="M33.55 20.2H42.85L33.55 31.8H42.85" />
+    <path d="M42.85 31.8C45.85 31.8 46.85 34.4 46.85 38.4" />
+  </g>
+
+  <!-- Variable: what the tail runs into. -->
+  <g opacity="0.96" set:html={TERMINAL[app]} />
+</svg>

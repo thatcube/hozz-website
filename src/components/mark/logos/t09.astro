@@ -1,0 +1,77 @@
+---
+/**
+ * t09 · Void
+ *
+ * The same bubble, knocked out of the purple instead of drawn on it. Nothing is
+ * added — the square and the bubble were both already there, as figure and as
+ * ground; this swaps which one is which, and the face inverts with it.
+ *
+ * The frame is 3 px so it survives the 16 px column, which a 2 px one does not.
+ * The face is centred on the bubble body (16, 13) — 7 px of air left and right,
+ * 5 above and below.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Twozz — Void">
+  <path d="M4 2h24v1h-24z" fill="#8f52f6" />
+  <path d="M3 3h26v1h-26z" fill="#8f52f6" />
+  <path d="M2 4h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 5h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 6h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 7h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 8h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 9h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 10h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 11h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 12h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 13h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 14h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 15h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 16h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 17h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 18h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 19h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 20h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 21h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 22h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 23h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 24h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 25h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 26h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 27h28v1h-28z" fill="#8f52f6" />
+  <path d="M3 28h26v1h-26z" fill="#8f52f6" />
+  <path d="M4 29h24v1h-24z" fill="#8f52f6" />
+  <path d="M6 4h20v1h-20z" fill="#ffffff" />
+  <path d="M5 5h22v1h-22z" fill="#ffffff" />
+  <path d="M5 6h22v1h-22z" fill="#ffffff" />
+  <path d="M5 7h22v1h-22z" fill="#ffffff" />
+  <path d="M5 8h22v1h-22z" fill="#ffffff" />
+  <path d="M5 9h22v1h-22z" fill="#ffffff" />
+  <path d="M5 10h22v1h-22z" fill="#ffffff" />
+  <path d="M5 11h22v1h-22z" fill="#ffffff" />
+  <path d="M5 12h22v1h-22z" fill="#ffffff" />
+  <path d="M5 13h22v1h-22z" fill="#ffffff" />
+  <path d="M5 14h22v1h-22z" fill="#ffffff" />
+  <path d="M5 15h22v1h-22z" fill="#ffffff" />
+  <path d="M5 16h22v1h-22z" fill="#ffffff" />
+  <path d="M5 17h22v1h-22z" fill="#ffffff" />
+  <path d="M5 18h22v1h-22z" fill="#ffffff" />
+  <path d="M5 19h22v1h-22z" fill="#ffffff" />
+  <path d="M5 20h22v1h-22z" fill="#ffffff" />
+  <path d="M5 21h22v1h-22z" fill="#ffffff" />
+  <path d="M6 22h20v1h-20z" fill="#ffffff" />
+  <path d="M8 23h6v1h-6z" fill="#ffffff" />
+  <path d="M8 24h4v1h-4z" fill="#ffffff" />
+  <path d="M8 25h2v1h-2z" fill="#ffffff" />
+  <path d="M8 26h1v1h-1z" fill="#ffffff" />
+  <g fill="#8f52f6" shape-rendering="crispEdges">
+    {facePathsAt({ cx: 16, cy: 13, size: 'md', smile: 'wide' }).map((d) => (
+      <path d={d} />
+    ))}
+  </g>
+</MarkFrame>

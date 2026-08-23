@@ -1,0 +1,55 @@
+---
+/**
+ * t08 · Plain
+ *
+ * A bubble reduced to the two primitives it cannot do without: a rounded
+ * rectangle and a notch. Radius 2, so the corners are softened rather than
+ * rounded; the tail is a straight-sided triangle with a vertical left edge and
+ * no curve anywhere in it.
+ *
+ * One fill. No keyline, no shading, no highlight — this is the floor of the
+ * set, drawn so the others have something honest to be measured against.
+ * The face has 10 px of air left and right and 7 above.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Twozz — Plain">
+  <path d="M3 2h26v1h-26z" fill="#8f52f6" />
+  <path d="M2 3h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 4h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 5h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 6h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 7h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 8h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 9h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 10h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 11h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 12h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 13h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 14h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 15h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 16h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 17h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 18h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 19h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 20h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 21h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 22h28v1h-28z" fill="#8f52f6" />
+  <path d="M2 23h28v1h-28z" fill="#8f52f6" />
+  <path d="M3 24h26v1h-26z" fill="#8f52f6" />
+  <path d="M8 25h7v1h-7z" fill="#8f52f6" />
+  <path d="M8 26h5v1h-5z" fill="#8f52f6" />
+  <path d="M8 27h4v1h-4z" fill="#8f52f6" />
+  <path d="M8 28h2v1h-2z" fill="#8f52f6" />
+  <path d="M8 29h1v1h-1z" fill="#8f52f6" />
+  <g fill="#ffffff" shape-rendering="crispEdges">
+    {facePathsAt({ cx: 16, cy: 13, size: 'md', smile: 'wide' }).map((d) => (
+      <path d={d} />
+    ))}
+  </g>
+</MarkFrame>
