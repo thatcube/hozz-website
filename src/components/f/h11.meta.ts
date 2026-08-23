@@ -1,12 +1,12 @@
 export default {
   n: 'h11',
-  name: 'Ledger Weave',
+  name: 'Bound Edges',
   app: 'hozz',
-  object: 'Open bound ruled ledger',
-  move: 'weave',
+  object: 'Closed bound record folio',
+  move: 'substitution',
   reading: 'letters',
-  sentence: 'The ZZ is the broken ruling of the bound ledger.',
+  sentence: 'The ZZ is the exposed page edge of the bound folio.',
   idea:
-    'A bound ledger is a durable record that stays intelligible without the tool that created it. Its own horizontal rules thicken, cross each page and settle back into rows, making the pair part of the book’s readable structure.',
+    'Two adjacent signatures share one fore-edge, with bowed covers and heavy page cuts creating the paired profile. The letters are the folio’s exposed construction rather than marks placed inside it.',
   palette: ['#12b39a', '#08574b', '#82e5d3'],
 };

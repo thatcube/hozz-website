@@ -1,12 +1,12 @@
 export default {
   n: 'h05',
-  name: 'Own Bank',
+  name: 'Crossing',
   app: 'hozz',
-  object: 'Two-bank transfer bridge',
-  move: 'aperture',
+  object: 'Open two-bank bridge',
+  move: 'substitution',
   reading: 'letters',
-  sentence: 'The ZZ is the open trusswork of the bridge.',
+  sentence: 'The ZZ is the load-bearing truss of the bridge.',
   idea:
-    'A load-bearing span moves the record from one bank to another instead of pointing vaguely outward. The letterforms are holes through the bridge itself, making Hozz the crossing from Apple’s silo to a destination the user owns.',
+    'Two diagonals meet one continuous deck above a single open arch, making a ZZ truss rather than letters cut into a bridge-shaped box. The span is Hozz’s handoff from Apple’s bank to storage owned by the user.',
   palette: ['#12b39a', '#08574b', '#82e5d3'],
 };

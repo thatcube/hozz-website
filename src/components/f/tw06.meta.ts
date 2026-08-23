@@ -1,12 +1,12 @@
 export default {
   n: 'tw06',
-  name: 'Live paths',
+  name: 'Broadcast beam',
   app: 'twozz',
-  object: 'Twin-path live broadcast',
-  move: 'weave',
+  object: 'Fanning live broadcast beam',
+  move: 'aperture',
   reading: 'letters',
-  sentence: 'The ZZ is the kinked wave path of the live signal.',
+  sentence: 'The ZZ is the phase break of the broadcast beam.',
   idea:
-    'A small source point sends two active paths toward advancing wavefronts, making transmission rather than stored playback the subject. Each rib deviates into a stacked Z before reaching its live endpoint, so the letters cannot be detached from the broadcast.',
-  palette: ['#8f52f6', '#3d1d75', '#c9a9fb'],
+    'One source point, one fanning beam and one advancing wavefront make the whole signal. Two clean phase breaks knock a side-by-side ZZ through the beam with full ground contrast.',
+  palette: ['#8f52f6', '#3d1d75'],
 };

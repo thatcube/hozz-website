@@ -1,0 +1,94 @@
+---
+/**
+ * tw01 · Fold — the bubble as one sheet, folded.
+ *
+ * The shipped mark is a bubble with a stub glued to its corner. Here the
+ * bottom edge never stops: it leaves the body on a tangent, curls down-left
+ * and comes back — a hooked fold, the way a real drawn bubble's tail behaves,
+ * and the way a sheet of paper behaves when you pull its corner. The underside
+ * of that fold is the only second colour in the mark, and it runs along the
+ * bottom of the body as a continuous rim, so the tail is visibly the same sheet
+ * rather than an attachment.
+ *
+ * The letters have no fill of their own. They are the bubble's interior — the
+ * only room the words get — and the smile is cut with the same knife, so face
+ * and container are one operation. Corner radii vary around the shape (12 at
+ * the three free corners, 3 where the fold springs) because a bubble drawn by
+ * hand tightens where it is pulled.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.twozz;
+
+// Rendered eight times on one page — a shared id would apply the wrong mask.
+const uid = `tw01-${Math.random().toString(36).slice(2, 9)}`;
+const maskId = `${uid}-m`;
+const clipId = `${uid}-c`;
+
+/**
+ * Body 40 × 27 (1.48), tail hooking to y 42. The tail's leading edge leaves the
+ * bottom edge as a quadratic whose control point sits only 1.4 below it, so the
+ * departure is near-tangent: one unbroken stroke, not a corner.
+ */
+const SIL =
+  'M16 5H32A12 12 0 0 1 44 17V20A12 12 0 0 1 32 32H20' +
+  'Q11 33.4 5.6 42L11.8 32H7A3 3 0 0 1 4 29V17A12 12 0 0 1 16 5Z';
+
+// The fold's underside. Everything below this line is the back of the sheet.
+const RIM_Y = 28.5;
+
+const Z = { y: 8.4, w: 10.6, h: 12.6, bar: 3.1, diag: 5.3, cap: 'angled' as const };
+const zLeft = 12.8;
+const zRight = 25.8; // 2.4 of gap; the pair spans 12.8–36.4, centred on 24.6
+
+// Face centre lands at y 17.9 against a body centre of 18.5 — the fold pulls
+// the mass down-left, so the face sits a touch high and left of it on purpose.
+const SMILE = 'M19.7 24.2Q24.6 28.2 29.5 24.2';
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    <mask id={maskId}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
+      <path d={zPath({ ...Z, x: zRight })} fill="#000" />
+      <path
+        d={SMILE}
+        fill="none"
+        stroke="#000"
+        stroke-width="2.6"
+        stroke-linecap="round"
+      />
+    </mask>
+    <clipPath id={clipId}>
+      <path d={SIL} />
+    </clipPath>
+  </defs>
+
+  <g mask={`url(#${maskId})`}>
+    <path d={SIL} fill={app.hue} />
+    <g clip-path={`url(#${clipId})`}>
+      <rect
+        x="0"
+        y={RIM_Y}
+        width="48"
+        height={48 - RIM_Y}
+        fill={ground === 'dark' ? app.light : app.deep}
+      />
+    </g>
+  </g>
+</svg>

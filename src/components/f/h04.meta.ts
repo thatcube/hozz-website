@@ -1,12 +1,12 @@
 export default {
   n: 'h04',
-  name: 'Carbon Fold',
+  name: 'Transfer Tape',
   app: 'hozz',
-  object: 'Continuous-feed transfer form',
-  move: 'relief',
+  object: 'Doubled folded transfer tape',
+  move: 'silhouette',
   reading: 'letters',
-  sentence: 'The ZZ is the pair of transfer folds pressed into the continuous sheet.',
+  sentence: 'The ZZ is the doubled fold of the transfer tape.',
   idea:
-    'A tractor-fed sheet carries one readable record forward while two identical folds register the copy in its surface. Hozz likewise duplicates Health data into a form the owner can handle, without turning the mark into a generic copy-pages symbol.',
+    'Two identical lengths of broad transfer tape make the copy and the suffix the same visible event. Their heavy level-changing folds move from an upper source to a lower owned destination without any container or arrow.',
   palette: ['#12b39a', '#08574b', '#82e5d3'],
 };

@@ -1,0 +1,92 @@
+---
+/**
+ * h03 · Measure — a domed tank, and the ZZ is a swerve in its ruling.
+ *
+ * The tank is ruled, because the only question anyone asks a tank is how much
+ * is in it. Two of the graduations misbehave: the line at 21.5 thickens and
+ * drops away on the diagonal, cuts through the line below it, and lands on the
+ * surface of the contents — then the ruling picks up again either side as if
+ * nothing had happened. Erase the scale and there are no letters. Erase the
+ * letters and the scale has two holes in it.
+ *
+ * Reading: letters — the pair is embedded in a ruled band, not floated on a
+ * face. Should anyone read them as eyes anyway, the bright level line directly
+ * beneath them is a mouth, so the mark cannot fall into the asleep trap.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.hozz;
+
+const uid = `h03-${Math.random().toString(36).slice(2, 9)}`;
+
+// Dome on top, barrel below, flat base: a pressure vessel, not a box.
+const SHELL =
+  'M8 20.5A16 10 0 0 1 40 20.5V39.5A3.2 3.2 0 0 1 36.8 42.7H11.2A3.2 3.2 0 0 1 8 39.5Z';
+const IN = { x: 9.5, y: 16, w: 29, h: 25.4, r: 2.4 };
+
+// The ruling. One run for every line, so the scale reads as one system.
+const RULE = { x: 10.6, w: 26.8, t: 1.3 };
+const TOP = 21.5;
+const FILL = 34;
+
+// bar 3 against diag 5.2: the graduation thickens, and the fold is heavier
+// still. Flat caps, because every other line on the scale ends flat too.
+const Z = { y: TOP, w: 10.8, h: FILL - TOP, bar: 3, diag: 5.2, cap: 'flat' as const };
+const zL = 11.6;
+const zR = 25.6;
+
+const sub = ground === 'dark' ? 0.4 : 0.52;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    <clipPath id={`${uid}-c`}>
+      <rect x={IN.x} y={IN.y} width={IN.w} height={IN.h} rx={IN.r} />
+    </clipPath>
+  </defs>
+
+  {/* Filler on the crown, then the shell. */}
+  <rect x="21.2" y="5.2" width="5.6" height="6" rx="1.4" fill={app.hue} />
+  <path d={SHELL} fill={app.hue} />
+
+  <g clip-path={`url(#${uid}-c)`}>
+    {/* Three graduations. The letters grow out of the first and cross the second. */}
+    <rect x={RULE.x} y={TOP} width={RULE.w} height={RULE.t} fill={app.deep} />
+    <rect x={RULE.x} y="27.6" width={RULE.w} height={RULE.t} fill={app.deep} />
+
+    <path d={zPath({ ...Z, x: zL })} fill={app.deep} />
+    <path d={zPath({ ...Z, x: zR })} fill={app.deep} />
+
+    {/* The level itself, and the contents below it. */}
+    <rect x={IN.x} y={FILL} width={IN.w} height="1.4" fill={app.light} />
+    <rect
+      x={IN.x}
+      y={FILL + 1.4}
+      width={IN.w}
+      height={IN.y + IN.h - FILL - 1.4}
+      fill={app.deep}
+    />
+    <rect
+      x={RULE.x}
+      y="38.4"
+      width={RULE.w}
+      height="1.1"
+      fill={app.light}
+      opacity={sub}
+    />
+  </g>
+</svg>

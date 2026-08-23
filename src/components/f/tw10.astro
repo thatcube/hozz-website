@@ -1,10 +1,10 @@
 ---
 /**
- * tw10 · Linked lines
+ * tw10 · Chat column
  *
- * A live-chat transcript made from avatar pips and a few heavy message lines.
- * The middle two messages are not labels laid over that transcript: their own
- * top and bottom lines join into the two Zs.
+ * A single scrolling column has a stepped, ragged message edge and two ordinary
+ * line slots. ZZ is knocked cleanly through that same column as the central
+ * pair of messages, with no independent letter fill.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -15,8 +15,9 @@ interface Props {
 }
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.twozz;
+const uid = `tw10-${Math.random().toString(36).slice(2, 9)}`;
 
-const Z = { y: 14, w: 12.5, h: 13, bar: 3.2, diag: 6.1, cap: 'angled' as const };
+const Z = { y: 15, w: 14, h: 18, bar: 4.5, diag: 7.5, cap: 'angled' as const };
 ---
 
 <svg
@@ -26,18 +27,23 @@ const Z = { y: 14, w: 12.5, h: 13, bar: 3.2, diag: 6.1, cap: 'angled' as const }
   fill="none"
   xmlns="http://www.w3.org/2000/svg"
   role="img"
-  aria-label={`${app.name} linked live-chat lines mark`}
+  aria-label={`${app.name} live-chat column mark`}
 >
-  <circle cx="6.5" cy="7.5" r="3" fill={app.deep} />
-  <rect x="11.5" y="4.5" width="27" height="6" rx="3" fill={app.hue} />
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <rect x="9" y="7" width="23" height="4" rx="2" fill="#000" />
+      <path d={zPath({ ...Z, x: 7.5 })} fill="#000" />
+      <path d={zPath({ ...Z, x: 26.5 })} fill="#000" />
+      <rect x="9" y="37" width="20" height="4" rx="2" fill="#000" />
+    </mask>
+  </defs>
 
-  <circle cx="6.5" cy="17" r="3" fill={app.light} />
-  <path d={zPath({ ...Z, x: 11.5 })} fill={app.light} />
-  <path d={zPath({ ...Z, x: 26 })} fill={app.light} />
-
-  <circle cx="6.5" cy="34" r="3" fill={app.deep} />
-  <rect x="11.5" y="31" width="31" height="6" rx="3" fill={app.hue} />
-
-  <circle cx="6.5" cy="42" r="3" fill={app.light} />
-  <rect x="11.5" y="39" width="21" height="6" rx="3" fill={app.hue} />
+  <g mask={`url(#${uid})`}>
+    <path
+      d="M8 4H34Q38 4 38 8V11H42Q45 11 45 14Q45 17 42 17H40V22H43Q46 22 46 25.5Q46 29 43 29H39V34H34Q38 34 38 38V40Q38 44 34 44H8Q4 44 4 40V8Q4 4 8 4Z"
+      fill={app.hue}
+    />
+    <path d="M4 8Q4 4 8 4H12V44H8Q4 44 4 40V8Z" fill={app.deep} opacity="0.52" />
+  </g>
 </svg>

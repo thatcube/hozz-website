@@ -1,0 +1,105 @@
+---
+/**
+ * h02 · Seal — a clamped preserving jar, and the ZZ is the part you see through.
+ *
+ * The jar is filled to a little over a third. Above the contents the glass is
+ * empty, and empty glass is transparent: the ZZ is punched clean through the
+ * headspace, so whatever is behind the mark comes through it. Cover the jar and
+ * the letters stop existing, because they have no fill of their own — they are
+ * the absence of anything to look at. Their top bars run up under the gasket
+ * ring, which is drawn last and hides the join, so the pair hangs off the seal.
+ *
+ * Reading: eyes. The mouth is the meniscus — water in glass rides up the walls
+ * and dips in the middle, which is a smile drawn by physics rather than by a
+ * cartoonist. It is also the fill line, the one number this app is about.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.hozz;
+
+const uid = `h02-${Math.random().toString(36).slice(2, 9)}`;
+
+const BODY = { x: 7, y: 11.4, w: 34, h: 31.6, r: 4.2 };
+// Interior: 1.5 of glass all round.
+const IN = { x: 8.5, y: 13, w: 31, h: 28.5, r: 3.2 };
+
+// Surface at the walls, and the control point that pulls the middle down.
+const SURF = 28.4;
+const DIP = 34.8;
+
+// 11.4 wide, 13 tall, 3.2 gap. The diagonal is nearly twice the bar, and
+// `angled` shears the terminals parallel to it so the letter knits to itself.
+const Z = { y: 12, w: 11.4, h: 13, bar: 3, diag: 5.4, cap: 'angled' as const };
+const zL = 11;
+const zR = 25.6;
+
+// The apertures show the page through them; the gasket has to hold its own
+// against whichever page that is.
+const ring = ground === 'dark' ? 0.92 : 1;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    <mask id={`${uid}-m`}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: zL })} fill="#000" />
+      <path d={zPath({ ...Z, x: zR })} fill="#000" />
+    </mask>
+    <clipPath id={`${uid}-c`}>
+      <rect x={IN.x} y={IN.y} width={IN.w} height={IN.h} rx={IN.r} />
+    </clipPath>
+  </defs>
+
+  <g mask={`url(#${uid}-m)`}>
+    {/* Lid plate seated on the rim, then the jar. */}
+    <rect x="12.5" y="4.5" width="23" height="3.5" rx="1.4" fill={app.hue} />
+    <rect x="10" y="8" width="28" height="2.6" rx="1" fill={app.hue} />
+    <rect
+      x={BODY.x}
+      y={BODY.y}
+      width={BODY.w}
+      height={BODY.h}
+      rx={BODY.r}
+      fill={app.hue}
+    />
+  </g>
+
+  {/* What is kept, and the meniscus riding up the glass at both walls. */}
+  <g clip-path={`url(#${uid}-c)`}>
+    <path
+      d={`M${IN.x} ${SURF}Q24 ${DIP} ${IN.x + IN.w} ${SURF}V41.6H${IN.x}Z`}
+      fill={app.deep}
+    />
+    <path
+      d={`M${IN.x} ${SURF}Q24 ${DIP} ${IN.x + IN.w} ${SURF}`}
+      stroke={app.light}
+      stroke-width="1.7"
+      fill="none"
+    />
+  </g>
+
+  {/* Gasket last: proud of the jar on both sides, and it caps the letters. */}
+  <rect
+    x="6.5"
+    y="10.4"
+    width="35"
+    height="2"
+    rx="1"
+    fill={app.light}
+    opacity={ring}
+  />
+</svg>

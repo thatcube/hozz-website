@@ -1,12 +1,12 @@
 export default {
   n: 'p11',
-  name: 'Casework',
+  name: 'Box Set',
   app: 'plozz',
-  object: 'Cases on a shelf',
-  move: 'substitution',
+  object: 'Staggered cases and shelf',
+  move: 'aperture',
   reading: 'letters',
-  sentence: 'The ZZ is the shelf and leaning cases of the collection.',
+  sentence: 'The ZZ is the title cut through the shared box set.',
   idea:
-    'A row of varied media spines stands for the library the viewer already owns. Each Z is assembled from two flat cases with visible spine edges and one thicker leaning collector case, rather than rendered as a solid letter panel.',
-  palette: ['#00a4dc', '#00506d', '#7fd6f5'],
+    'Three case tops remain individually visible, then join into one simple box-set field above the shelf. The paired title begins below that join, so its knockout stays clean and uninterrupted.',
+  palette: ['#00a4dc', '#00506d'],
 };

@@ -1,0 +1,91 @@
+---
+/**
+ * h08 · Loop — a day's cycle, drawn as one ribbon.
+ *
+ * The object is a loop: the round of a day, the rhythm a body keeps whether or
+ * not anything is recording it. It is one band of constant width, and it is
+ * open at the top — a cycle that has not closed yet.
+ *
+ * The gap is not empty. The band's two ends fold across it, and the two folds
+ * are the Zs. Nothing was placed here: the letters are the same ribbon, the
+ * same 3.4 units wide, and their diagonal is 4.7 wide only because a constant
+ * band crossing at 46° measures wider horizontally. Cover the letters and the
+ * loop is a broken ring with two ends reaching at nothing. Cover the loop and
+ * the letters have tails that go nowhere.
+ *
+ * Zs as letters. There is no face, and no mouth is needed.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.hozz;
+
+const uid = `h08-${Math.random().toString(36).slice(2, 9)}`;
+
+const BAND = 3.4;
+// The arc runs from 158° round the bottom to 22°, leaving the top open.
+const END_L = { x: 9.165, y: 19.206 };
+const END_R = { x: 38.835, y: 19.206 };
+const RING = `M${END_L.x} ${END_L.y}A16 16 0 1 0 ${END_R.x} ${END_R.y}`;
+
+// The letters pick up exactly where the band stops: their bottom bars are
+// centred on the band's centreline, and they span the gap end to end.
+const Z = {
+  y: 5.1,
+  w: 13.3,
+  h: 15.806,
+  bar: BAND,
+  diag: 4.7,
+  cap: 'flat' as const,
+};
+const zLeft = END_L.x;
+const zRight = 25.535; // 3.07 of gap; the pair ends exactly on the right end
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    {/* The folds sit over the band's ends; this keeps the joint from showing
+        a seam where the two shapes meet at an angle. */}
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
+      <path d={zPath({ ...Z, x: zRight })} fill="#000" />
+    </mask>
+  </defs>
+
+  <g mask={`url(#${uid})`}>
+    <path
+      d={RING}
+      stroke={app.hue}
+      stroke-width={BAND}
+      stroke-linecap="round"
+      fill="none"
+    />
+  </g>
+
+  <path d={zPath({ ...Z, x: zLeft })} fill={app.hue} />
+  <path d={zPath({ ...Z, x: zRight })} fill={app.hue} />
+
+  {/* One step of shade under each fold, so the ribbon has a near side. */}
+  <g fill={ground === 'dark' ? app.deep : app.deep} opacity="0.55">
+    <path
+      d={`M${zLeft} ${Z.y + Z.h}h${Z.w - 2.4}l-1.5 1.15h-${Z.w - 2.4}Z`}
+    />
+    <path
+      d={`M${zRight} ${Z.y + Z.h}h${Z.w - 2.4}l-1.5 1.15h-${Z.w - 2.4}Z`}
+    />
+  </g>
+</svg>

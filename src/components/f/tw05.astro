@@ -1,10 +1,4 @@
 ---
-/**
- * tw05 · Live mast
- *
- * The Zs are negative-space lattice openings cut through a tapered broadcast
- * mast. Their open terminals notch the tower edges instead of floating inside.
- */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
 
@@ -15,8 +9,15 @@ interface Props {
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.twozz;
 const uid = `tw05-${Math.random().toString(36).slice(2, 9)}`;
-const MAST = 'M20 11H28L36 41H12Z';
-const signal = ground === 'dark' ? app.light : app.deep;
+const LIGHTBOX = 'M6 11H42L45 14V34L42 37H6L3 34V14Z';
+const Z = {
+  y: 17,
+  w: 15,
+  h: 14,
+  bar: 3.2,
+  diag: 6.8,
+  cap: 'angled' as const,
+};
 ---
 
 <svg
@@ -31,53 +32,12 @@ const signal = ground === 'dark' ? app.light : app.deep;
   <defs>
     <mask id={uid}>
       <rect width="48" height="48" fill="#000" />
-      <path d={MAST} fill="#fff" />
-      <path
-        d={zPath({
-          x: 16.7,
-          y: 16,
-          w: 14.6,
-          h: 8,
-          bar: 2.2,
-          diag: 5.1,
-          cap: 'open',
-        })}
-        fill="#000"
-      />
-      <path
-        d={zPath({
-          x: 14.2,
-          y: 27,
-          w: 19.6,
-          h: 9.2,
-          bar: 2.4,
-          diag: 6.4,
-          cap: 'open',
-        })}
-        fill="#000"
-      />
+      <path d={LIGHTBOX} fill="#fff" />
+      <path d={zPath({ ...Z, x: 8 })} fill="#000" />
+      <path d={zPath({ ...Z, x: 25 })} fill="#000" />
     </mask>
   </defs>
 
-  {/* The live point and its paired arcs remain legible when the lattice is hidden. */}
-  <path d="M21.8 12V8.2H26.2V12Z" fill={app.deep} />
-  <circle cx="24" cy="6" r="3" fill={app.hue} />
-  <circle cx="24" cy="6" r="1.25" fill={app.light} />
-  <path
-    d="M18.8 12.2C13.5 11.2 10 8.5 8.4 4.4M15.7 15.4C8.8 14.2 4.2 10.4 2.8 5"
-    stroke={signal}
-    stroke-width="2.2"
-    stroke-linecap="round"
-  />
-  <path
-    d="M29.2 12.2C34.5 11.2 38 8.5 39.6 4.4M32.3 15.4C39.2 14.2 43.8 10.4 45.2 5"
-    stroke={signal}
-    stroke-width="2.2"
-    stroke-linecap="round"
-  />
-
-  <g mask={`url(#${uid})`}>
-    <path d={MAST} fill={app.hue} />
-  </g>
-  <rect x="10" y="40" width="28" height="3" rx="1.5" fill={app.deep} />
+  <path d={LIGHTBOX} fill={app.hue} mask={`url(#${uid})`} />
+  <circle cx="8" cy="8" r="3" fill={ground === 'dark' ? app.light : app.deep} />
 </svg>

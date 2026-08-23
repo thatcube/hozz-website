@@ -2,10 +2,10 @@
 /**
  * p05 · Switchback scrubber
  *
- * Two chapter rails bend into Zs. Their end stops, chapter ticks, and circular
- * playheads are transport hardware; without the rails there is no letterform.
+ * A single progress rail swelling into one circular thumb. The pair is punched
+ * through the filled portion of the track as one shared interval.
  */
-import { zSpine } from '../../data/zstroke';
+import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
 
 interface Props {
@@ -14,10 +14,15 @@ interface Props {
 }
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.plozz;
-
-const LEFT = { x: 5.5, y: 12, w: 16, h: 24 };
-const RIGHT = { x: 26.5, y: 12, w: 16, h: 24 };
-const rail = ground === 'dark' ? app.light : app.deep;
+const uid = `p05-${Math.random().toString(36).slice(2, 9)}`;
+const Z = {
+  y: 18,
+  w: 9,
+  h: 12,
+  bar: 3,
+  diag: 5.4,
+  cap: 'angled' as const,
+};
 ---
 
 <svg
@@ -29,41 +34,17 @@ const rail = ground === 'dark' ? app.light : app.deep;
   role="img"
   aria-label={`${app.name} scrubber mark`}
 >
-  <path
-    d={zSpine(LEFT)}
-    stroke={rail}
-    stroke-width="5.4"
-    stroke-linecap="round"
-    stroke-linejoin="bevel"
-  />
-  <path
-    d={zSpine(RIGHT)}
-    stroke={rail}
-    stroke-width="5.4"
-    stroke-linecap="round"
-    stroke-linejoin="bevel"
-  />
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: 8 })} fill="#000" />
+      <path d={zPath({ ...Z, x: 19.5 })} fill="#000" />
+    </mask>
+  </defs>
 
-  <path
-    d={zSpine(LEFT)}
-    stroke={app.hue}
-    stroke-width="2.4"
-    stroke-linecap="round"
-    stroke-linejoin="bevel"
-  />
-  <path
-    d={zSpine(RIGHT)}
-    stroke={app.hue}
-    stroke-width="2.4"
-    stroke-linecap="round"
-    stroke-linejoin="bevel"
-  />
-
-  <circle cx="13.6" cy="21.9" r="3.2" fill={app.hue} stroke={rail} stroke-width="1.8" />
-  <circle cx="34.6" cy="21.9" r="3.2" fill={app.hue} stroke={rail} stroke-width="1.8" />
-  <path d="M12.6 20.3L15.1 21.9L12.6 23.5Z" fill={rail} />
-  <path d="M33.6 20.3L36.1 21.9L33.6 23.5Z" fill={rail} />
-
-  <path d="M8.5 7.5V10M18.5 7.5V10M29.5 7.5V10M39.5 7.5V10" stroke={rail} stroke-width="2" />
-  <path d="M8.5 38V40.5M18.5 38V40.5M29.5 38V40.5M39.5 38V40.5" stroke={rail} stroke-width="2" />
+  <g mask={`url(#${uid})`}>
+    <rect x="4" y="15" width="35" height="18" rx="9" fill={app.hue} />
+  </g>
+  <circle cx="38" cy="24" r="9.5" fill={ground === 'dark' ? app.light : app.deep} />
+  <circle cx="38" cy="24" r="5" fill={app.hue} />
 </svg>

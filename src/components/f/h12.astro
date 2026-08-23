@@ -1,10 +1,11 @@
 ---
 /**
- * h12 · Tabbed Index
+ * h12 · Record Stamp
  *
- * A catalogue drawer seen from the front. Two adjacent file dividers supply the
- * ZZ: flat card edges make the bars and heavier leaning cards make the diagonals.
+ * A compact hand stamp whose paired rubber dies are the ZZ. The letters are
+ * the working face of the tool, joined by one mount rather than set in boxes.
  */
+import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
 
 interface Props {
@@ -13,8 +14,8 @@ interface Props {
 }
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.hozz;
-const divider = ground === 'dark' ? app.hue : app.light;
-const starts = [11.2, 25.3];
+const rubber = ground === 'dark' ? app.light : app.deep;
+const Z = { y: 21, w: 13.5, h: 18, bar: 3.4, diag: 7.2, cap: 'angled' as const };
 ---
 
 <svg
@@ -24,26 +25,13 @@ const starts = [11.2, 25.3];
   fill="none"
   xmlns="http://www.w3.org/2000/svg"
   role="img"
-  aria-label={`${app.name} tabbed-index mark`}
+  aria-label={`${app.name} record-stamp mark`}
 >
-  {/* Surrounding dividers keep the object a card index when the pair is hidden. */}
-  <rect x="5" y="17" width="3.1" height="20.5" rx="0.7" fill={app.deep} />
-  <path d="M8.6 12.8H12L11 37.5H7.6Z" fill={app.hue} />
-  <path d="M36 14H39.4L40.4 37.5H37Z" fill={app.hue} />
-  <rect x="40" y="18" width="3" height="19.5" rx="0.7" fill={app.deep} />
-
-  {
-    starts.map((x) => (
-      <g fill={divider}>
-        {/* The raised step is a filing tab, not a typographic terminal. */}
-        <path d={`M${x} 12H${x + 5.8}V9.4H${x + 11.5}V14.8H${x}Z`} />
-        <path d={`M${x + 7.1} 14.8H${x + 11.5}L${x + 4.4} 29.4H${x}Z`} />
-        <rect x={x} y="29.4" width="11.5" height="2.8" rx="0.55" />
-      </g>
-    ))
-  }
-
-  {/* The rail turns the loose dividers into one physical catalogue drawer. */}
-  <path d="M3.5 35.8H44.5V41.5Q44.5 43 43 43H5Q3.5 43 3.5 41.5Z" fill={app.deep} />
-  <rect x="8" y="38.2" width="32" height="1.4" rx="0.7" fill={app.hue} />
+  <path
+    d="M18 5H30Q33 5 33 8V11Q33 15 29 18H19Q15 15 15 11V8Q15 5 18 5Z"
+    fill={app.hue}
+  />
+  <path d="M10 17H38Q40 17 40 19V23H8V19Q8 17 10 17Z" fill={app.hue} />
+  <path d={zPath({ ...Z, x: 8.5 })} fill={rubber} />
+  <path d={zPath({ ...Z, x: 26 })} fill={rubber} />
 </svg>

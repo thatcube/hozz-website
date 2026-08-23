@@ -1,0 +1,79 @@
+---
+/**
+ * p01 · Bleed — a screen turned away, and a picture too big for it.
+ *
+ * The object is a slab of glass with no frame at all, turned a few degrees so
+ * you catch its near edge and the shadow it throws. Everything on it — panel,
+ * edge, letters — sits in one skew, so the letters are in the plane of the
+ * screen rather than pasted to the front of it.
+ *
+ * The picture is the ZZ, drawn at 24 units a letter when only 40 are available.
+ * Two of them cannot fit, so the glass cuts them: the bars stop at the edge,
+ * not at a terminal. Take the screen away and the letters have no ends of their
+ * own. That is the whole of it — a frameless screen is the one kind that can
+ * crop an image, because there is no border to stop it first.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.plozz;
+
+// Rendered eight times on one page; a shared clip id crops the wrong mark.
+const uid = `p01-${Math.random().toString(36).slice(2, 9)}`;
+
+// 40 : 23 — a panel, turned six degrees about its vertical axis.
+const P = { x: 4, y: 10, w: 40, h: 23, r: 2 };
+const TURN = 'translate(24 21.5) skewY(-6) translate(-24 -21.5)';
+
+// diag 9.5 against bar 4.8: the diagonal is twice the mass of the bars. No text
+// face is cut that way, which is exactly the point.
+const Z = { y: 11.5, w: 24, h: 20, bar: 4.8, diag: 9.5, cap: 'flat' as const };
+// 24 + 24 + a unit of gap is 49 across a 40-unit screen. 4.5 of each letter is
+// off the glass; the pair still centres on 24.
+const zLeft = -0.5;
+const zRight = 24.5;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    <clipPath id={uid}>
+      <rect x={P.x} y={P.y} width={P.w} height={P.h} rx={P.r} transform={TURN} />
+    </clipPath>
+  </defs>
+
+  <g transform={TURN}>
+    {/* The wall it hangs off. */}
+    <rect
+      x={P.x + 2.6}
+      y={P.y + 3.4}
+      width={P.w}
+      height={P.h}
+      rx={P.r}
+      fill={app.deep}
+      opacity={ground === 'dark' ? 0.45 : 0.26}
+    />
+    {/* The near edge, which is all the thickness a screen like this has. */}
+    <rect x="1.6" y="10.8" width="2.4" height="21.4" rx="0.9" fill={app.deep} />
+  </g>
+
+  <g clip-path={`url(#${uid})`}>
+    <g transform={TURN}>
+      <rect x={P.x} y={P.y} width={P.w} height={P.h} rx={P.r} fill={app.hue} />
+      <path d={zPath({ ...Z, x: zLeft })} fill={app.deep} />
+      <path d={zPath({ ...Z, x: zRight })} fill={app.deep} />
+    </g>
+  </g>
+</svg>

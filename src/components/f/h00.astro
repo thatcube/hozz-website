@@ -1,0 +1,79 @@
+---
+/**
+ * h00 · Level — reference exemplar for Hozz.
+ *
+ * A jar with something kept in it, and the ZZ cut out of the contents rather
+ * than out of the jar. That is what ties the letters to the object: they exist
+ * only inside the fill. Lower the level and they would be cropped; empty it and
+ * they would be gone. The glass above the line stays empty, so the mark reads
+ * as a vessel holding something, which is what the app does.
+ *
+ * Both tests pass. Cover the letters and a sealed jar is plainly there. Glance
+ * at it and you plainly read ZZ, because the knockout gives full tonal
+ * separation between letter and contents.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.hozz;
+const uid = `h00-${Math.random().toString(36).slice(2, 9)}`;
+
+const JAR = { x: 10.5, y: 13, w: 27, h: 29, r: 4.5 };
+const LEVEL = 22.5; // the surface of what is kept
+
+const Z = { y: 27.2, w: 7.6, h: 9.4, bar: 2.4, diag: 4.6, cap: 'angled' as const };
+// 7.6 + 2.4 + 7.6 = 17.6, running 15.2 to 32.8, centred on 24.
+const zLeft = 15.2;
+const zRight = 25.2;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
+      <path d={zPath({ ...Z, x: zRight })} fill="#000" />
+    </mask>
+    <clipPath id={`${uid}-jar`}>
+      <rect x={JAR.x} y={JAR.y} width={JAR.w} height={JAR.h} rx={JAR.r} />
+    </clipPath>
+  </defs>
+
+  {/* The contents, cut to the jar and knocked through by the letters. */}
+  <g clip-path={`url(#${uid}-jar)`} mask={`url(#${uid})`}>
+    <rect
+      x={JAR.x}
+      y={LEVEL}
+      width={JAR.w}
+      height={JAR.y + JAR.h - LEVEL}
+      fill={app.hue}
+    />
+  </g>
+
+  {/* The glass, drawn after so its wall reads in front of the fill. */}
+  <rect
+    x={JAR.x + 1.1}
+    y={JAR.y + 1.1}
+    width={JAR.w - 2.2}
+    height={JAR.h - 2.2}
+    rx={JAR.r - 1.1}
+    stroke={app.deep}
+    stroke-width="2.2"
+  />
+
+  {/* Lid, sitting on the shoulder. */}
+  <rect x="15" y="7.2" width="18" height="5.2" rx="1.8" fill={app.deep} />
+</svg>

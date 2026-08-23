@@ -1,12 +1,12 @@
 export default {
   n: 'm05',
-  name: 'Tension frame',
+  name: 'Fork tines',
   app: 'mozz',
-  object: 'Twin-string vibration frame',
+  object: 'Single vibrating tuning fork',
   move: 'substitution',
-  reading: 'eyes',
-  sentence: 'The ZZ is the pair of strings tensioned through the bridge pins.',
+  reading: 'letters',
+  sentence: 'The ZZ is the vibrating pair of tines of the tuning fork.',
   idea:
-    'A tapered resonator frame holds two strings, each laced continuously through four bridge pins while neighboring straight courses establish the instrument. The sound hole in the lower rail becomes a restrained mouth, so the paired Z paths read as an awake face rather than sleep marks.',
-  palette: ['#e0243f', '#6d0f1e', '#f58a99'],
+    'Two drawn tines grow from one curved yoke and one stem, making a single tuning fork without a surrounding frame. The letter pair is the sound-producing structure itself.',
+  palette: ['#e0243f'],
 };

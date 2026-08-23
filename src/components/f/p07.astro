@@ -1,0 +1,91 @@
+---
+/**
+ * p07 · Iris — a projector lens seen down the barrel.
+ *
+ * A knurled focus ring, a lamp behind it, and the blade plate closed down to
+ * an opening. The opening is the ZZ: the letters have no fill of their own,
+ * they are the shape of the gap the blades left, and the light behind the
+ * plate is what you see through them. Close the blades and the letters stop
+ * existing; take the letters away and the lens has no aperture at all.
+ *
+ * The blade plate sits slightly high in the barrel, so the light spilling past
+ * its lower flat is fatter than the sliver above it. That crescent is the
+ * mouth — the Zs sit above it as eyes, and the mark does not read as asleep.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.plozz;
+
+// Unique per instance: the board renders this eight times on one page and a
+// duplicated mask id would silently apply the wrong mask.
+const uid = `p07-${Math.random().toString(36).slice(2, 9)}`;
+
+const CX = 24;
+const CY = 24;
+const R_BARREL = 20.6;
+const R_LAMP = 16.7;
+
+// The blade plate: six blades, so a hexagon, pointed left and right to give the
+// widest possible opening. Lifted so the spill below it is the fatter one.
+const R_BLADE = 15.7;
+const BLADE_CY = CY - 1.2;
+const blade =
+  'M' +
+  Array.from({ length: 6 }, (_, i) => {
+    const a = (Math.PI / 3) * i;
+    return `${(CX + R_BLADE * Math.cos(a)).toFixed(3)} ${(BLADE_CY + R_BLADE * Math.sin(a)).toFixed(3)}`;
+  }).join('L') +
+  'Z';
+
+// Knurling on the focus ring — twelve cuts, so the barrel is a barrel and not
+// the six-bladed camera glyph every system icon set already ships.
+const knurl = Array.from({ length: 12 }, (_, i) => {
+  const a = (Math.PI / 6) * i + Math.PI / 12;
+  const c = Math.cos(a);
+  const s = Math.sin(a);
+  return `M${(CX + c * 17.9).toFixed(3)} ${(CY + s * 17.9).toFixed(3)}L${(CX + c * 20.5).toFixed(3)} ${(CY + s * 20.5).toFixed(3)}`;
+}).join('');
+
+// diag is more than twice bar: the opening is wide across its throat and thin
+// at the lips, which is what a closing blade leaves and a typeface never does.
+const Z = { y: BLADE_CY - 5.2, w: 11, h: 10.4, bar: 2.8, diag: 6.1, cap: 'angled' as const };
+const zLeft = 12.3;
+const zRight = 24.7;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
+      <path d={zPath({ ...Z, x: zRight })} fill="#000" />
+    </mask>
+  </defs>
+
+  <circle cx={CX} cy={CY} r={R_BARREL} fill={app.hue} />
+  <g stroke={app.deep} stroke-width="1.3" opacity={ground === 'dark' ? 0.62 : 0.5}>
+    <path d={knurl} />
+  </g>
+
+  {/* The lamp. Everything the letters show is this. */}
+  <circle cx={CX} cy={CY} r={R_LAMP} fill={app.light} />
+  {/* Retaining ring: where the glass is held, and what makes this a barrel. */}
+  <circle cx={CX} cy={CY} r={R_LAMP} fill="none" stroke={app.deep} stroke-width="1.5" />
+
+  {/* The blades, punched. */}
+  <path d={blade} fill={app.deep} mask={`url(#${uid})`} />
+</svg>

@@ -1,12 +1,12 @@
 export default {
   n: 'h12',
-  name: 'Tabbed Index',
+  name: 'Record Stamp',
   app: 'hozz',
-  object: 'Drawer of tabbed records',
+  object: 'Compact hand record stamp',
   move: 'substitution',
   reading: 'letters',
-  sentence: 'The ZZ is the stepped dividers of the card index.',
+  sentence: 'The ZZ is the rubber face of the record stamp.',
   idea:
-    'A small catalogue drawer holds physical records whose raised tabs make retrieval possible decades later. Two adjacent dividers become the pair through their tabbed top edges, leaning bodies and flat lower edges rather than through added lettering.',
+    'A hand stamp makes a durable written impression with almost no machinery. The paired rubber dies are the tool’s working face, joined by one mount instead of parked inside separate compartments.',
   palette: ['#12b39a', '#08574b', '#82e5d3'],
 };

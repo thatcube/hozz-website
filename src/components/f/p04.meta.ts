@@ -1,12 +1,12 @@
 export default {
   n: 'p04',
-  name: 'Play cleave',
+  name: 'Playhead',
   app: 'plozz',
-  object: 'Triangular playhead and rail',
+  object: 'Single forward playhead',
   move: 'aperture',
   reading: 'letters',
-  sentence: 'The ZZ is the pair of transport channels cleaving the playhead.',
+  sentence: 'The ZZ is the transport aperture cut through the playhead.',
   idea:
-    'A right-facing playhead travels along a short rail, separating it from a generic play-button glyph. The first switchback opens into the square tail and the second into the raked nose, making opposite edges of the object complete the pair.',
-  palette: ['#00a4dc', '#00506d', '#7fd6f5'],
+    'A broad right-facing playhead keeps the playback metaphor immediate while one lower facet gives it physical depth. The complete pair is punched through the same solid body with full ground contrast at every size.',
+  palette: ['#00a4dc', '#00506d'],
 };

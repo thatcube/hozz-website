@@ -1,10 +1,11 @@
 ---
 /**
- * h10 · Punched Record
+ * h10 · Open Punch
  *
- * A machine-readable card with an orientation cut and feed notch. The pair of
- * Zs is made from the card's rectangular punches, not printed over its face.
+ * One wide, tabbed record card. Two punches open through its top edge and end
+ * inside the card, so the pair is carried by one continuous silhouette.
  */
+import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
 
 interface Props {
@@ -15,21 +16,7 @@ const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.hozz;
 const uid = `h10-${Math.random().toString(36).slice(2, 9)}`;
 
-const punchedZ = (x: number) => [
-  [x, 14],
-  [x + 3.2, 14],
-  [x + 6.4, 14],
-  [x + 9.6, 14],
-  [x + 8.3, 18],
-  [x + 5.8, 21.6],
-  [x + 3.3, 25.2],
-  [x, 29.2],
-  [x + 3.2, 29.2],
-  [x + 6.4, 29.2],
-  [x + 9.6, 29.2],
-];
-const holes = [...punchedZ(9.2), ...punchedZ(26.8)];
-const ink = ground === 'dark' ? app.light : app.deep;
+const Z = { y: 10, w: 13, h: 20, bar: 3.8, diag: 7.6, cap: 'angled' as const };
 ---
 
 <svg
@@ -39,26 +26,19 @@ const ink = ground === 'dark' ? app.light : app.deep;
   fill="none"
   xmlns="http://www.w3.org/2000/svg"
   role="img"
-  aria-label={`${app.name} punched-record mark`}
+  aria-label={`${app.name} open-punch record mark`}
 >
   <defs>
     <mask id={uid}>
       <rect width="48" height="48" fill="#fff" />
-      {
-        holes.map(([x, y]) => (
-          <rect x={x} y={y} width="2.2" height="2.45" rx="0.45" fill="#000" />
-        ))
-      }
-      <circle cx="43.2" cy="23.8" r="2.35" fill="#000" />
+      <path d={zPath({ ...Z, x: 8.5 })} fill="#000" />
+      <path d={zPath({ ...Z, x: 26 })} fill="#000" />
     </mask>
   </defs>
 
-  <g mask={`url(#${uid})`}>
-    <path
-      d="M9 6H41.5Q44 6 44 8.5V39.5Q44 42 41.5 42H6.5Q4 42 4 39.5V11Z"
-      fill={app.hue}
-    />
-    <path d="M4 35.8H44V39.5Q44 42 41.5 42H6.5Q4 42 4 39.5Z" fill={ink} />
-    <path d="M9 9.3H39.5V10.8H7.5Z" fill={app.light} opacity="0.85" />
-  </g>
+  <path
+    d="M4 10H11V6H21V10H44V38H4Z"
+    fill={ground === 'dark' ? app.light : app.hue}
+    mask={`url(#${uid})`}
+  />
 </svg>

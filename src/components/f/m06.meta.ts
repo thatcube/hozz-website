@@ -1,12 +1,12 @@
 export default {
   n: 'm06',
-  name: 'Peak ladder',
+  name: 'Fill front',
   app: 'mozz',
-  object: 'Twin physical level meters',
-  move: 'weave',
-  reading: 'eyes',
-  sentence: 'The ZZ is the lit ladder of the twin level meters.',
+  object: 'Single arched level gauge',
+  move: 'silhouette',
+  reading: 'letters',
+  sentence: 'The ZZ is the rising fill line of the audio level field.',
   idea:
-    'A screw-fastened audio meter contains two regular segment ladders, with the active cells widening and stepping into the suffix. The lower rack vent supplies the mouth, making the twin readouts an intentional awake face rather than two unowned sleep marks.',
-  palette: ['#e0243f', '#6d0f1e', '#f58a99'],
+    'One arched gauge fills upward until its active edge crests into the suffix. The pair is a single shared level front with no ticks, screws, rails or separate compartments.',
+  palette: ['#e0243f', '#6d0f1e'],
 };

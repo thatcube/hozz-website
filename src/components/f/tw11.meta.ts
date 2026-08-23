@@ -7,6 +7,6 @@ export default {
   reading: 'letters',
   sentence: 'The ZZ is the pair of aisles cut through the audience bowl.',
   idea:
-    'Curved seating tiers gather around one small live stage, showing many people focused together without using the generic group icon. The two Z-shaped aisles are empty space inside those tiers, so neither the letters nor the crowd can be separated from the other.',
+    'A single fan-shaped bowl faces one live screen, reducing the audience to one silhouette and one shading step. The doubled aisle is empty space in that primary mass: remove the bowl and the letters literally cease to exist.',
   palette: ['#8f52f6', '#3d1d75', '#c9a9fb'],
 };

@@ -1,0 +1,100 @@
+---
+/**
+ * tw09 · Wall — the chat column when the same emote is going off.
+ *
+ * The object is the stack itself: message lines running down a column, some of
+ * them broken into equal chunks because that is what a spammed emote looks like
+ * from a distance — the same block, over and over, at the same width.
+ *
+ * Three of those lines stop being messages. Two of them kink: the top bar of
+ * each eye is one line, the bottom bar is the line beneath it, and the diagonal
+ * is the jump between them across the gutter. A third line bows out of true
+ * into a grin. Either side of the face every one of them picks the row back up
+ * and carries on at exactly the same height, which is the whole move — the
+ * texture deviates into the letter and returns.
+ *
+ * So the Zs are not drawn in the wall, they are drawn *by* it. Take the lines
+ * away and the bars have nothing to be made of; take the letters away and three
+ * rows of the column are missing their middles.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.twozz;
+
+// No defs, no mask, no gradient — so there is no id to collide with the seven
+// other copies of this component on the board.
+
+const BAR = 2.6; // line height
+const R = 1.3;
+
+/**
+ * The column. `face` marks the three rows the emote has taken over — they keep
+ * their own height and their own ends, and only their middles are missing.
+ */
+const ROWS: { y: number; runs: [number, number][]; face: boolean }[] = [
+  { y: 8.2, runs: [[6.5, 12.1], [13.7, 19.3], [20.9, 26.5], [28.1, 33.7]], face: false },
+  { y: 12.8, runs: [[6.5, 38]], face: false },
+  { y: 17.4, runs: [[6.5, 11.3], [36.7, 41.5]], face: true },
+  { y: 22, runs: [[6.5, 11.3], [36.7, 41.5]], face: true },
+  { y: 26.6, runs: [[6.5, 13.2], [34.8, 41.5]], face: false },
+  { y: 31.2, runs: [[6.5, 11.3], [36.7, 41.5]], face: true },
+  { y: 35.8, runs: [[6.5, 11]], face: false },
+];
+
+// h 7.2 = line + gutter + line, and bar 2.6 is the line height itself, so the
+// letter's horizontals are literally two rows of the column. diag 4.4 against
+// bar 2.6 keeps the jump heavier than the lines it joins.
+const Z = { y: 17.4, w: 8.6, h: 7.2, bar: BAR, diag: 4.4, round: 1.2, cap: 'flat' as const };
+const zLeft = 14.3;
+const zRight = 25.1; // 2.2 of gutter; the pair spans 14.3–33.7, centred on 24
+
+// Row six, bowed out of true. Left corner lower than the right — a grin has a
+// side it favours, and a level curve would be the shipped smile again.
+const GRIN = 'M14.3 31.9C15.4 38.6 31.8 38.9 33.7 30.1';
+
+const wall = ground === 'dark' ? app.light : app.deep;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <g transform="translate(0 0.8)">
+    {
+      ROWS.map((row) =>
+        row.runs.map(([a, b]) => (
+          <rect
+            x={a}
+            y={row.y}
+            width={b - a}
+            height={BAR}
+            rx={R}
+            fill={row.face ? app.hue : wall}
+            opacity={row.face ? 1 : 0.34}
+          />
+        )),
+      )
+    }
+
+    <path d={zPath({ ...Z, x: zLeft })} fill={app.hue} />
+    <path d={zPath({ ...Z, x: zRight })} fill={app.hue} />
+    <path
+      d={GRIN}
+      fill="none"
+      stroke={app.hue}
+      stroke-width={BAR}
+      stroke-linecap="round"
+    />
+  </g>
+</svg>

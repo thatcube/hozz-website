@@ -1,12 +1,12 @@
 export default {
   n: 'm12',
-  name: 'Return Sign',
+  name: 'Repeat Tab',
   app: 'mozz',
-  object: 'Repeat-bounded music system',
-  move: 'substitution',
+  object: 'Double-bar repeat tab',
+  move: 'aperture',
   reading: 'letters',
-  sentence: 'The ZZ is the crossed return sign of the score.',
+  sentence: 'The ZZ is the pair of holes through the repeat tab.',
   idea:
-    'A score bounded by repeat bars carries two custom navigation signs: counter-facing bowls crossed by a heavy diagonal resolve as Zs rather than copied segno glyphs. Staff rules occlude the marks at their joints, making musical structure necessary to complete the Mozz suffix.',
+    'A hand-built double bar opens directly into one broad return tab, avoiding a generic rounded container. Two complete Zs are punched through the tab with full figure-ground separation on either ground.',
   palette: ['#e0243f', '#6d0f1e', '#f58a99'],
 };

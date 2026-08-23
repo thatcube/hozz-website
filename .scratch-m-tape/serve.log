@@ -1,0 +1,19 @@
+ INFO  Accepting connections at http://localhost:4713
+ HTTP  8/23/2026 3:00:31 PM ::1 GET /f/
+ HTTP  8/23/2026 3:00:31 PM ::1 Returned 200 in 12 ms
+ HTTP  8/23/2026 3:00:45 PM ::1 GET /f/
+ HTTP  8/23/2026 3:00:45 PM ::1 Returned 200 in 1 ms
+ HTTP  8/23/2026 3:00:45 PM ::1 GET /fonts/switzer-400.woff2
+ HTTP  8/23/2026 3:00:45 PM ::1 GET /fonts/switzer-700.woff2
+ HTTP  8/23/2026 3:00:45 PM ::1 GET /fonts/ibm-plex-mono-400.woff2
+ HTTP  8/23/2026 3:00:45 PM ::1 Returned 200 in 1 ms
+ HTTP  8/23/2026 3:00:45 PM ::1 Returned 200 in 1 ms
+ HTTP  8/23/2026 3:00:45 PM ::1 Returned 200 in 1 ms
+ HTTP  8/23/2026 3:00:53 PM ::1 GET /f/
+ HTTP  8/23/2026 3:00:53 PM ::1 Returned 200 in 1 ms
+ HTTP  8/23/2026 3:00:53 PM ::1 GET /fonts/switzer-400.woff2
+ HTTP  8/23/2026 3:00:53 PM ::1 GET /fonts/switzer-700.woff2
+ HTTP  8/23/2026 3:00:53 PM ::1 GET /fonts/ibm-plex-mono-400.woff2
+ HTTP  8/23/2026 3:00:53 PM ::1 Returned 200 in 1 ms
+ HTTP  8/23/2026 3:00:53 PM ::1 Returned 200 in 0 ms
+ HTTP  8/23/2026 3:00:53 PM ::1 Returned 200 in 1 ms

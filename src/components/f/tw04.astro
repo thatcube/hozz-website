@@ -1,10 +1,4 @@
 ---
-/**
- * tw04 · Tally lamp
- *
- * The two Zs are live windows cut through the face of a studio tally lamp.
- * Their open terminals run into the lens edges, so the glass completes them.
- */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
 
@@ -15,16 +9,14 @@ interface Props {
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.twozz;
 const uid = `tw04-${Math.random().toString(36).slice(2, 9)}`;
-
-const LENS =
-  'M17 8H31L33 10V36L31 38H17L15 36V10Z';
+const CAMERA = 'M7 6H31V13H40L45 18V30L40 35H31V42H7L3 38V10Z';
 const Z = {
-  x: 16.4,
-  w: 15.2,
-  h: 7.2,
-  bar: 2.1,
-  diag: 4.7,
-  cap: 'open' as const,
+  y: 14,
+  w: 11.5,
+  h: 16,
+  bar: 3.1,
+  diag: 5.6,
+  cap: 'angled' as const,
 };
 ---
 
@@ -38,29 +30,14 @@ const Z = {
   aria-label={`${app.name} tally lamp mark`}
 >
   <defs>
-    <clipPath id={`${uid}-clip`}>
-      <path d={LENS} />
-    </clipPath>
-    <mask id={`${uid}-face`}>
+    <mask id={uid}>
       <rect width="48" height="48" fill="#000" />
-      <path d={LENS} fill="#fff" />
-      <circle cx="24" cy="12.6" r="2.5" fill="#000" />
-      <path d={zPath({ ...Z, y: 17 })} fill="#000" />
-      <path d={zPath({ ...Z, y: 27 })} fill="#000" />
-      <rect x="22.8" y="36" width="2.4" height="3" fill="#000" />
+      <path d={CAMERA} fill="#fff" />
+      <path d={zPath({ ...Z, x: 6 })} fill="#000" />
+      <path d={zPath({ ...Z, x: 18.5 })} fill="#000" />
     </mask>
   </defs>
 
-  {/* A clipped-corner housing and camera-shoe foot make this a studio tally. */}
-  <path d="M15 5H33L37 9V38L33 42H15L11 38V9Z" fill={app.deep} />
-  {/* One backlight, revealed only by apertures in the darker faceplate. */}
-  <path d={LENS} fill={app.light} clip-path={`url(#${uid}-clip)`} />
-  <path
-    d={LENS}
-    fill={app.hue}
-    opacity={ground === 'dark' ? '0.9' : '1'}
-    mask={`url(#${uid}-face)`}
-  />
-
-  <path d="M18 42H30L28 45H20Z" fill={app.deep} />
+  <path d={CAMERA} fill={app.hue} mask={`url(#${uid})`} />
+  <circle cx="18" cy="4" r="2.8" fill={ground === 'dark' ? app.light : app.deep} />
 </svg>

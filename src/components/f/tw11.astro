@@ -2,8 +2,8 @@
 /**
  * tw11 · Aisles
  *
- * A fan-shaped audience bowl faces one small stage. Two aisles are removed from
- * the seating itself, so the ground showing through the bowl is what draws ZZ.
+ * One fan-shaped audience bowl faces one live screen. Two aisles are removed
+ * from the bowl's primary mass, so the ground showing through it draws ZZ.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -16,7 +16,7 @@ const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.twozz;
 const uid = `tw11-${Math.random().toString(36).slice(2, 9)}`;
 
-const Z = { y: 24, w: 12.5, h: 13, bar: 3.1, diag: 6.2, cap: 'angled' as const };
+const Z = { y: 21, w: 13, h: 15, bar: 4, diag: 7.2, cap: 'angled' as const };
 ---
 
 <svg
@@ -32,22 +32,20 @@ const Z = { y: 24, w: 12.5, h: 13, bar: 3.1, diag: 6.2, cap: 'angled' as const }
     <mask id={uid}>
       <rect width="48" height="48" fill="#fff" />
       <path d={zPath({ ...Z, x: 9.5 })} fill="#000" />
-      <path d={zPath({ ...Z, x: 26 })} fill="#000" />
+      <path d={zPath({ ...Z, x: 25.5 })} fill="#000" />
     </mask>
   </defs>
 
-  <rect x="14" y="3.5" width="20" height="7.5" rx="1.8" fill={app.deep} />
+  <rect x="14" y="4" width="20" height="7" rx="2" fill={app.deep} />
 
   <g mask={`url(#${uid})`}>
     <path
-      d="M24 15C14.5 15 7.5 18.5 4.5 23L7.5 41Q24 47 40.5 41L43.5 23C40.5 18.5 33.5 15 24 15Z"
+      d="M4 20Q24 7 44 20L40 41Q24 47 8 41L4 20Z"
       fill={app.hue}
     />
     <path
-      d="M7 23.5Q24 15 41 23.5M6.5 31Q24 22.5 41.5 31M8 38.5Q24 32 40 38.5"
-      stroke={app.light}
-      stroke-width="3.2"
-      stroke-linecap="round"
+      d="M7.2 37Q24 44 40.8 37L40 41Q24 47 8 41L7.2 37Z"
+      fill={app.deep}
     />
   </g>
 </svg>

@@ -1,12 +1,12 @@
 export default {
   n: 'tw05',
-  name: 'Live mast',
+  name: 'On air',
   app: 'twozz',
-  object: 'Radiating broadcast tower',
+  object: 'Lit ON AIR sign',
   move: 'aperture',
   reading: 'letters',
-  sentence: 'The ZZ is the open lattice of the broadcast mast.',
+  sentence: 'The ZZ is the stencil cutout of the live lightbox.',
   idea:
-    'A live point crowns a tapered transmitter while symmetric arcs show the signal leaving right now. The stacked letters are holes in the mast itself, widening with its structure and cutting into both edges like real lattice openings.',
-  palette: ['#8f52f6', '#3d1d75', '#c9a9fb'],
+    'A clipped lightbox and one illuminated tally point make the entire sign. Its two stencil openings are a clean side-by-side ZZ, using the sign face as figure and the ground as letter fill.',
+  palette: ['#8f52f6', '#3d1d75'],
 };

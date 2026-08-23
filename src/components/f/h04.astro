@@ -1,12 +1,10 @@
 ---
 /**
- * h04 · Carbon Fold
+ * h04 · Transfer Tape
  *
- * A continuous-feed form whose two Zs exist only as pressed folds: a light
- * shoulder and a deep valley in the sheet's own material. The tractor holes
- * keep the object legible when the creases are covered.
+ * The object is the pair: two equal lengths of broad tape folded through the
+ * same level change. Each plane changes shade at the physical fold.
  */
-import { zSpine } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
 
 interface Props {
@@ -15,12 +13,6 @@ interface Props {
 }
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.hozz;
-const uid = `h04-${Math.random().toString(36).slice(2, 9)}`;
-
-const sheet = 'M6 8H40L44 12V36L40 40H6L4 38V10Z';
-const fold = { y: 14.5, w: 10.5, h: 19 };
-const folds = [10.7, 26.8].map((x) => zSpine({ ...fold, x }));
-const holes = [13, 19, 25, 31, 37];
 ---
 
 <svg
@@ -33,37 +25,7 @@ const holes = [13, 19, 25, 31, 37];
   aria-label={`${app.name} mark`}
   data-ground={ground}
 >
-  <defs>
-    <mask id={uid}>
-      <path d={sheet} fill="#fff" />
-      {holes.map((y) => <circle cx="7.2" cy={y} r="1.05" fill="#000" />)}
-      {holes.map((y) => <circle cx="40.8" cy={y} r="1.05" fill="#000" />)}
-    </mask>
-  </defs>
-
-  <g mask={`url(#${uid})`}>
-    <path d={sheet} fill={app.hue} />
-    <path d="M4 34L8 38H40L44 34V36L40 40H6L4 38Z" fill={app.deep} opacity="0.38" />
-    {folds.map((d) => (
-      <path
-        d={d}
-        transform="translate(0 .7)"
-        stroke={app.deep}
-        stroke-width="2.8"
-        stroke-linecap="square"
-        stroke-linejoin="miter"
-        opacity="0.78"
-      />
-    ))}
-    {folds.map((d) => (
-      <path
-        d={d}
-        transform="translate(0 -.55)"
-        stroke={app.light}
-        stroke-width="1.65"
-        stroke-linecap="square"
-        stroke-linejoin="miter"
-      />
-    ))}
-  </g>
+  <path d="M5 10H22L21 14H5ZM27 10H44L43 14H27Z" fill={app.light} />
+  <path d="M15 14H21L12 32H6ZM37 14H43L34 32H28Z" fill={app.hue} />
+  <path d="M6 32H22L21 36H6ZM28 32H44L43 36H28Z" fill={app.deep} />
 </svg>

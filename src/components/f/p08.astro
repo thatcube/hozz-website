@@ -1,0 +1,116 @@
+---
+/**
+ * p08 · Throw — a projector angled up in a dark room, and what its beam carries.
+ *
+ * Every Z here is built from the cone, not placed in it. The bars are rays out
+ * of the lamp, so they splay as they travel and thicken with distance, and the
+ * far Z is larger than the near one because it is further down the throw. That
+ * is the whole test: these letterforms cannot exist without a light source at a
+ * specific point, and moving them anywhere else makes their geometry wrong.
+ *
+ * The Zs are the dark. They are punched clean out of the beam, so what fills
+ * them is the room — which is exactly what a shadow is. Two letters thrown on a
+ * wall, read as the suffix and not as a face, so no mouth is wanted.
+ */
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.plozz;
+
+// Unique per instance: the board renders this eight times on one page and a
+// duplicated mask id would silently apply the wrong mask.
+const uid = `p08-${Math.random().toString(36).slice(2, 9)}`;
+
+// The lamp, and the axis it throws along. Everything downstream is measured
+// from here in (u, v): u is distance along the throw, v is the fraction of the
+// way from the axis out to the edge of the cone.
+const AX = 8.5;
+const AY = 30.5;
+const TILT = -16;
+const TH = (TILT * Math.PI) / 180;
+const DX = Math.cos(TH);
+const DY = Math.sin(TH);
+const NX = -DY;
+const NY = DX;
+const SPREAD = 0.4;
+
+const P = (u: number, v: number): [number, number] => [
+  AX + DX * u + NX * v * u * SPREAD,
+  AY + DY * u + NY * v * u * SPREAD,
+];
+const at = (u: number, v: number) => {
+  const [x, y] = P(u, v);
+  return `${x.toFixed(3)} ${y.toFixed(3)}`;
+};
+
+const U_LENS = 9;
+const U_WALL = 32.5;
+
+const beam = `M${at(U_LENS, -1)}L${at(U_WALL, -1)}L${at(U_WALL, 1)}L${at(U_LENS, 1)}Z`;
+
+/**
+ * One Z, walked in beam coordinates and only then flattened to the picture
+ * plane. Ten points: bar, diagonal, bar. `diagU` is measured along the throw
+ * and `barV` across it, so the two are not even the same quantity — there is
+ * no single weight here for a typeface to have balanced.
+ */
+function zInBeam(u0: number, u1: number, v: number, barV: number, diagU: number) {
+  const p: [number, number][] = [
+    [u0, -v],
+    [u1, -v],
+    [u1, -v + barV],
+    [u0 + diagU, v - barV],
+    [u1, v - barV],
+    [u1, v],
+    [u0, v],
+    [u0, v - barV],
+    [u1 - diagU, -v + barV],
+    [u0, -v + barV],
+  ];
+  return p.map(([u, vv], i) => `${i === 0 ? 'M' : 'L'}${at(u, vv)}`).join('') + 'Z';
+}
+
+const zNear = zInBeam(13.2, 22, 0.72, 0.4, 4.7);
+const zFar = zInBeam(22.9, 31.7, 0.52, 0.29, 4.7);
+
+// The machine is drawn level and then tilted with the throw, nose up on its
+// front foot, which is how a projector actually ends up pointing at a wall.
+const BODY = { x: 3, y: 24.6, w: 14, h: 11.6, r: 2 };
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zNear} fill="#000" />
+      <path d={zFar} fill="#000" />
+    </mask>
+  </defs>
+
+  <path d={beam} fill={app.hue} mask={`url(#${uid})`} />
+
+  <g transform={`rotate(${TILT} ${AX} ${AY})`}>
+    <rect x={BODY.x + 1} y={BODY.y + BODY.h - 0.6} width="2.6" height="2.8" rx="0.7" fill={app.deep} />
+    <rect x={BODY.x + BODY.w - 5} y={BODY.y + BODY.h - 0.6} width="2.6" height="2.8" rx="0.7" fill={app.deep} />
+    <rect x={BODY.x} y={BODY.y} width={BODY.w} height={BODY.h} rx={BODY.r} fill={app.deep} />
+    {/* Intake louvre, so the box is a machine and not a horn. */}
+    <g fill={app.hue} opacity={ground === 'dark' ? 0.95 : 0.8}>
+      <rect x={BODY.x + 2.2} y={BODY.y + 2.4} width="6.6" height="1.4" rx="0.7" />
+      <rect x={BODY.x + 2.2} y={BODY.y + 7.6} width="4.2" height="1.4" rx="0.7" />
+    </g>
+    <circle cx={BODY.x + BODY.w} cy={AY} r="4.1" fill={app.deep} />
+    <circle cx={BODY.x + BODY.w} cy={AY} r="2.6" fill={app.light} />
+  </g>
+</svg>

@@ -1,11 +1,10 @@
 ---
 /**
- * h06 · Open Gate
+ * h06 · Handoff Gate
  *
- * Two gate leaves are built as Z-braced frames. Their horizontal strokes are
- * the working rails and their heavy diagonals stop the open leaves from racking.
+ * One gate leaf, one shared field. Its long rails and two broad braces form
+ * the pair; there are no separate panels for the Zs to sit inside.
  */
-import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
 
 interface Props {
@@ -14,13 +13,6 @@ interface Props {
 }
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.hozz;
-const uid = `h06-${Math.random().toString(36).slice(2, 9)}`;
-
-const Z = { y: 14.2, w: 13.2, h: 20.6, bar: 3, diag: 5.7, cap: 'angled' as const };
-const panels = [
-  { x: 8, clip: `${uid}-left` },
-  { x: 26.8, clip: `${uid}-right` },
-];
 ---
 
 <svg
@@ -33,31 +25,10 @@ const panels = [
   aria-label={`${app.name} mark`}
   data-ground={ground}
 >
-  <defs>
-    <clipPath id={`${uid}-left`}>
-      <path d="M8 13H21.6L20.6 36H8Z" />
-    </clipPath>
-    <clipPath id={`${uid}-right`}>
-      <path d="M26.4 13H40V36H27.4Z" />
-    </clipPath>
-  </defs>
-
-  <rect x="4.3" y="9" width="4.2" height="31" rx="1.2" fill={app.deep} />
-  <rect x="39.5" y="9" width="4.2" height="31" rx="1.2" fill={app.deep} />
-  <rect x="3.4" y="8" width="6" height="3.2" rx="1.1" fill={app.light} />
-  <rect x="38.6" y="8" width="6" height="3.2" rx="1.1" fill={app.light} />
-
-  {panels.map(({ x, clip }) => (
-    <g clip-path={`url(#${clip})`}>
-      <rect x={x} y="13" width="13.2" height="23" fill={app.light} opacity="0.24" />
-      <rect x={x} y="13" width="2.5" height="23" fill={app.deep} />
-      <rect x={x + 10.7} y="13" width="2.5" height="23" fill={app.deep} />
-      <path d={zPath({ ...Z, x })} fill={app.hue} />
-    </g>
-  ))}
-
-  <circle cx="8.2" cy="17.2" r="1.15" fill={app.light} />
-  <circle cx="8.2" cy="31.8" r="1.15" fill={app.light} />
-  <circle cx="39.8" cy="17.2" r="1.15" fill={app.light} />
-  <circle cx="39.8" cy="31.8" r="1.15" fill={app.light} />
+  <path d="M4 7H8V41H4Z" fill={app.deep} />
+  <path
+    d="M8 12H24V16H8ZM8 32H24V36H8ZM18 16H24L16 32H10ZM27 12H44V16H27ZM27 32H44V36H27ZM36 16H42L34 32H28ZM40 12H44V36H40Z"
+    fill={app.hue}
+  />
+  <path d="M4 7H8V10H4ZM8 12H44V14H8Z" fill={app.light} />
 </svg>

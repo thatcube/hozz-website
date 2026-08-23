@@ -1,12 +1,12 @@
 export default {
   n: 'h06',
-  name: 'Open Gate',
+  name: 'Handoff Gate',
   app: 'hozz',
-  object: 'Parted double transfer gate',
+  object: 'Single open transfer gate',
   move: 'substitution',
   reading: 'letters',
-  sentence: 'The ZZ is the structural bracing of the open gate.',
+  sentence: 'The ZZ is the shared bracing of the handoff gate.',
   idea:
-    'Two parted leaves make a threshold rather than an export arrow, and each leaf needs its Z-shaped brace to remain square. The opening expresses Hozz’s handoff from a closed health silo into storage controlled by the owner.',
+    'A single leaf uses one pair of rails and two structural diagonals, keeping ZZ together in a shared field. The gate turns exporting into an opened threshold rather than the usual box-and-arrow symbol.',
   palette: ['#12b39a', '#08574b', '#82e5d3'],
 };

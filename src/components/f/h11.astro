@@ -1,11 +1,10 @@
 ---
 /**
- * h11 · Ledger Weave
+ * h11 · Bound Edges
  *
- * An open, bound ledger whose page rules leave their rows, cross the page as
- * heavy diagonals, and return. The dark cover beneath supplies the ZZ colour.
+ * A closed folio seen from its fore-edge: two adjacent signatures share one
+ * field, while their bowed covers and heavy page cuts make the paired profile.
  */
-import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
 
 interface Props {
@@ -14,10 +13,8 @@ interface Props {
 }
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.hozz;
+const pages = ground === 'dark' ? app.light : app.deep;
 const uid = `h11-${Math.random().toString(36).slice(2, 9)}`;
-
-const Z = { y: 15, w: 11.5, h: 13.5, bar: 2.2, diag: 4.9, cap: 'angled' as const };
-const page = ground === 'dark' ? app.hue : app.light;
 ---
 
 <svg
@@ -27,33 +24,25 @@ const page = ground === 'dark' ? app.hue : app.light;
   fill="none"
   xmlns="http://www.w3.org/2000/svg"
   role="img"
-  aria-label={`${app.name} bound-ledger mark`}
+  aria-label={`${app.name} bound-folio mark`}
 >
   <defs>
     <mask id={uid}>
       <rect width="48" height="48" fill="#fff" />
-      <path d={zPath({ ...Z, x: 8.5 })} fill="#000" />
-      <path d={zPath({ ...Z, x: 28 })} fill="#000" />
-
-      {/* Each Z bar continues to the page edge as an actual ledger rule. */}
-      <path
-        d="M6.3 15H8.7M19.8 15H22.7M6.3 28.5H8.7M19.8 28.5H22.7
-           M25.3 15H28.2M39.3 15H41.7M25.3 28.5H28.2M39.3 28.5H41.7"
-        stroke="#000"
-        stroke-width="2.2"
-      />
-      <path d="M7 33.5H21.7M26.3 33.5H41" stroke="#000" stroke-width="1.35" />
+      <circle cx="6.5" cy="24" r="2.1" fill="#000" />
     </mask>
   </defs>
-
-  <path
-    d="M4 11Q13.8 7 23.3 11L24 12L24.7 11Q34.2 7 44 11V41
-       Q34.2 37.7 24.8 42H23.2Q13.8 37.7 4 41Z"
-    fill={app.deep}
-  />
   <g mask={`url(#${uid})`}>
-    <path d="M5.8 9.5Q15.2 7.8 23.3 11.8V39.1Q15 35.7 5.8 38.3Z" fill={page} />
-    <path d="M24.7 11.8Q32.8 7.8 42.2 9.5V38.3Q33 35.7 24.7 39.1Z" fill={page} />
+    <path
+      d="M5 10Q14 8.5 23 10V14Q14 12.5 8 14V34Q14 35.5 23 34V38Q14 36.5 5 38Z"
+      fill={app.hue}
+    />
+    <path
+      d="M25 10Q34 8.5 43 10V14Q34 12.5 25 14Z
+         M25 34Q34 35.5 43 34V38Q34 36.5 25 38Z"
+      fill={app.hue}
+    />
+    <path d="M18 12H23.5L13 36H7.5Z" fill={pages} />
+    <path d="M38 12H43.5L33 36H27.5Z" fill={pages} />
   </g>
-  <path d="M24 12V40.7" stroke={app.hue} stroke-width="1.25" stroke-linecap="round" />
 </svg>

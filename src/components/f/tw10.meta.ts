@@ -1,12 +1,12 @@
 export default {
   n: 'tw10',
-  name: 'Linked lines',
+  name: 'Chat column',
   app: 'twozz',
-  object: 'Scrolling live-chat transcript',
-  move: 'substitution',
+  object: 'Ragged scrolling chat column',
+  move: 'aperture',
   reading: 'letters',
-  sentence: 'The ZZ is the pair of linked messages in the scrolling transcript.',
+  sentence: 'The ZZ is the central pair of messages cut through the chat column.',
   idea:
-    'A few heavy lines and avatar pips read as live chat without turning to a speech bubble. Two messages link their own bars diagonally, making the suffix out of the audience activity that distinguishes a stream from solitary video.',
+    'A stepped outer edge and two ordinary slots reduce a scrolling live-chat column to one silhouette. The central messages are a clean knockout, preserving immediate ZZ legibility while making the letters disappear with the transcript.',
   palette: ['#8f52f6', '#3d1d75', '#c9a9fb'],
 };

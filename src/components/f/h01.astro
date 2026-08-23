@@ -1,0 +1,104 @@
+---
+/**
+ * h01 · Manifold — one inlet, two tanks, and the ZZ is what settles in them.
+ *
+ * A header pipe takes one feed in at the top and splits it into two standing
+ * tanks. Inside each tank the contents are not a plain block: the surface runs
+ * across, folds down and returns along the floor, so the Z *is* what is being
+ * kept. Both bars are cut off flat by the tank walls (`cap: 'open'`, then
+ * clipped to the tank), which is why the letter cannot be lifted out — its
+ * terminals belong to the vessel and stop existing without it.
+ *
+ * Two tanks standing at the same level is the whole Hozz argument in one
+ * picture: one export, more than one destination, and both of them yours.
+ *
+ * Reading: letters. The pair sits low under a tall headspace, inside two
+ * separate containers, so it reads as contents rather than as a face.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.hozz;
+
+// Rendered eight times on one board; a shared clip id would clip the wrong one.
+const uid = `h01-${Math.random().toString(36).slice(2, 9)}`;
+
+const TANK = { y: 11.2, w: 14.8, h: 31.2, r: 3.2 };
+const tL = 7.6;
+const tR = 25.6;
+
+// Walls 1.3, floor at 41.1. The interiors are what the letters are clipped to.
+const IN = { y: 12.5, w: 12.2, bottom: 41.1 };
+const inL = 8.9;
+const inR = 26.9;
+
+// Fill at 26.2, floor at 41.1. diag 5.2 against bar 3.2 — the fold is heavier
+// than the surface, which is the cheapest way to stop looking like type.
+const FILL = 26.2;
+const Z = {
+  y: FILL,
+  w: IN.w,
+  h: IN.bottom - FILL,
+  bar: 3.2,
+  diag: 5.2,
+  cap: 'open' as const,
+};
+
+const weld = ground === 'dark' ? 0.8 : 0.6;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    <clipPath id={`${uid}-c`}>
+      <rect x={inL} y={IN.y} width={IN.w} height={IN.bottom - IN.y} />
+      <rect x={inR} y={IN.y} width={IN.w} height={IN.bottom - IN.y} />
+    </clipPath>
+  </defs>
+
+  {/* One feed in through a flanged port, then the header that splits it. */}
+  <rect x="20.6" y="3.6" width="6.8" height="1.8" rx="0.9" fill={app.hue} />
+  <rect x="22.4" y="5.4" width="3.2" height="2.4" fill={app.hue} />
+  <rect x="6.2" y="6.8" width="35.6" height="4.4" rx="1.6" fill={app.hue} />
+
+  <rect
+    x={tL}
+    y={TANK.y}
+    width={TANK.w}
+    height={TANK.h}
+    rx={TANK.r}
+    fill={app.hue}
+  />
+  <rect
+    x={tR}
+    y={TANK.y}
+    width={TANK.w}
+    height={TANK.h}
+    rx={TANK.r}
+    fill={app.hue}
+  />
+
+  <g clip-path={`url(#${uid}-c)`}>
+    <path d={zPath({ ...Z, x: inL })} fill={app.deep} />
+    <path d={zPath({ ...Z, x: inR })} fill={app.deep} />
+    {/* One surface line, and it is at the same height in both tanks. */}
+    <rect x={inL} y={FILL} width={IN.w} height="1.1" fill={app.light} />
+    <rect x={inR} y={FILL} width={IN.w} height="1.1" fill={app.light} />
+  </g>
+
+  {/* Where each tank is welded to the header. */}
+  <rect x={tL} y="10.9" width={TANK.w} height="1" fill={app.deep} opacity={weld} />
+  <rect x={tR} y="10.9" width={TANK.w} height="1" fill={app.deep} opacity={weld} />
+</svg>

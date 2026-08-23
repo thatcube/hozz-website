@@ -1,0 +1,73 @@
+---
+/**
+ * tw08 · Howl — a head mid-laugh, eyes squeezed shut.
+ *
+ * An emote is a reaction, and the loudest reaction there is folds the eyes
+ * away entirely: laugh hard enough and the eye stops being a shape and becomes
+ * a crease. That crease *is* the Z here — not a letter laid over a face but the
+ * fold the face makes when it is doing the one thing it exists to do.
+ *
+ * The head is squashed wider than tall and tipped back, and the creases take
+ * their proportion from it: flat, wide, a thin bar with a diagonal twice its
+ * mass, sheared with the head. Their outer ends run past the box on `open`
+ * caps and are cut off by the skull's own edge, so the head decides where the
+ * letters stop.
+ *
+ * The mouth is the whole lower half of the face, open, with the upper teeth
+ * showing — a howl. Two Zs with no mouth read as asleep; this one could not be
+ * asleep if it tried.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.twozz;
+
+const uid = `tw08-${Math.random().toString(36).slice(2, 9)}`;
+
+// 34 wide by 24.8 tall — laughter compresses a head, and the creases inherit
+// that proportion: w 10.6 against h 5.9, bar 1.8 against diag 3.6.
+const HEAD =
+  'M7 25.6C7 18.4 14.4 13.6 24.2 13.6C34 13.6 41 18.6 41 26C41 33.6 34 38.4 24 38.4C14 38.4 7 33.4 7 25.6Z';
+
+const Z = { y: 18.5, w: 10.6, h: 5.9, bar: 1.8, diag: 3.6, cap: 'open' as const };
+const zLeft = 10.6;
+const zRight = 26.7; // both pairs of bars run past the box; the head trims them
+
+// The howl. Its lower edge sits a single unit inside the jaw, which is what
+// makes the face look like it is barely containing the noise.
+const MOUTH =
+  'M12.6 27.6C18 26.2 30.4 25.6 35.8 26.8C35.4 33.6 31 37.4 24.4 37.4C17.6 37.4 13.2 34 12.6 27.6Z';
+const TEETH =
+  'M12.6 27.6C18 26.2 30.4 25.6 35.8 26.8L35.65 29.2C30.3 28.05 18.4 28.6 12.85 30Z';
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    <clipPath id={uid}>
+      <path d={HEAD} />
+    </clipPath>
+  </defs>
+
+  <g transform="rotate(-10 24 26)">
+    <path d={HEAD} fill={app.hue} />
+    <path d={MOUTH} fill={app.deep} />
+    <path d={TEETH} fill={app.light} />
+    <g clip-path={`url(#${uid})`}>
+      <path d={zPath({ ...Z, x: zLeft })} fill={app.deep} />
+      <path d={zPath({ ...Z, x: zRight })} fill={app.deep} />
+    </g>
+  </g>
+</svg>

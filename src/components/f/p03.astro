@@ -1,0 +1,80 @@
+---
+/**
+ * p03 · Matte — the shape a widescreen film makes inside a 16:9 screen.
+ *
+ * No zPath here on purpose. The letters are built out of the screen's own
+ * geometry: the two horizontals are the mattes — the dead bands top and bottom
+ * that appear whenever a 2.4:1 picture is played on a 16:9 panel — and the two
+ * diagonals are wipes cutting between shots. The bars therefore run the full
+ * width of the glass, edge to edge, because that is what a matte does. They are
+ * not letter-width. They are screen-width, and the two Zs share them.
+ *
+ * So the letters cannot be lifted: detached from the panel the bars have no
+ * reason to be that long, and the panel without them is not showing a film.
+ */
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.plozz;
+
+const uid = `p03-${Math.random().toString(36).slice(2, 9)}`;
+
+// 40 : 22.5 — 16:9 exactly, which is the whole reason the mattes exist.
+const P = { x: 4, y: 10.5, w: 40, h: 22.5, r: 2 };
+
+const EDGE = 11.6; // underside of the lit top edge of the glass
+const MATTE = 4.95; // both mattes, equal: these are the bars
+const TOP = EDGE + MATTE; // 16.55 — where the picture starts
+const BOT = P.y + P.h - MATTE; // 28.05 — where it stops
+
+// The wipes. 6.4 across against bars of 4.95, and steep — 8.2 of run against
+// 11.5 of drop — so each one closes a letter instead of striping the picture.
+const wipe = (xl: number) =>
+  `M${xl + 14.6 - 6.4} ${TOP}L${xl + 14.6} ${TOP}L${xl + 6.4} ${BOT}L${xl} ${BOT}Z`;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    <clipPath id={uid}>
+      <rect x={P.x} y={P.y} width={P.w} height={P.h} rx={P.r} />
+    </clipPath>
+  </defs>
+
+  {/* Hung on a wall, so the only thing under it is its own shadow. */}
+  <rect
+    x="13"
+    y="34"
+    width="22"
+    height="1.3"
+    rx="0.65"
+    fill={app.deep}
+    opacity={ground === 'dark' ? 0.5 : 0.3}
+  />
+
+  <g clip-path={`url(#${uid})`}>
+    {/* The lit top edge of the glass — the whole of the chassis you ever see. */}
+    <rect x={P.x} y={P.y} width={P.w} height={P.h} fill={app.light} />
+    <rect x={P.x} y={EDGE} width={P.w} height={P.h - (EDGE - P.y)} fill={app.hue} />
+
+    {/* The mattes. Full width, because the picture is wider than the panel is tall. */}
+    <rect x={P.x} y={EDGE} width={P.w} height={MATTE} fill={app.deep} />
+    <rect x={P.x} y={BOT} width={P.w} height={MATTE} fill={app.deep} />
+
+    {/* The wipes, which turn two bars into two letters. The pair sits 9.4–38.6,
+        so 5.4 of bar overhangs at each end — that overhang is the point. */}
+    <path d={wipe(9.4)} fill={app.deep} />
+    <path d={wipe(24)} fill={app.deep} />
+  </g>
+</svg>

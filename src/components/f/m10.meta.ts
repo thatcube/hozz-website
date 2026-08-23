@@ -1,12 +1,12 @@
 export default {
   n: 'm10',
-  name: 'Staff Weave',
+  name: 'Flag Aperture',
   app: 'mozz',
-  object: 'Five-line musical staff',
-  move: 'weave',
+  object: 'Single broad-flagged note',
+  move: 'aperture',
   reading: 'letters',
-  sentence: 'The ZZ is the melody woven through the staff.',
+  sentence: 'The ZZ is the pair of holes through the note flag.',
   idea:
-    'A five-line staff is held between firm bar lines while two of its rules break formation, travel as Z-shaped melodies, and rejoin the grid. The pair belongs to Mozz because it turns the basic structure of written music into the shared suffix.',
+    'A single note has an intentionally broad, gently falling flag rather than a separate badge or frame. Two complete high-contrast Zs are punched through the flag, so removing the note removes the suffix with it.',
   palette: ['#e0243f', '#6d0f1e', '#f58a99'],
 };

@@ -1,11 +1,11 @@
 ---
 /**
- * m11 · Folded Flags
+ * m11 · Shared Beam
  *
- * Each quaver is complete only when its flag leaves the stem, folds through a
- * heavy diagonal, and returns. Its two bars are made from the note material;
- * without them the coloured fold is only a slash, not a detachable letter.
+ * Two note heads and stems support one uninterrupted beam. The pair is punched
+ * through that single shared field, not split into one compartment per note.
  */
+import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
 
 interface Props {
@@ -14,12 +14,8 @@ interface Props {
 }
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.mozz;
-const ink = ground === 'dark' ? app.light : app.deep;
-
-const notes = [
-  { x: 8.2, cx: 8.3 },
-  { x: 27, cx: 27.1 },
-];
+const uid = `m11-${Math.random().toString(36).slice(2, 9)}`;
+const Z = { y: 13, w: 12, h: 10.5, bar: 2.8, diag: 5.5, cap: 'angled' as const };
 ---
 
 <svg
@@ -29,34 +25,23 @@ const notes = [
   fill="none"
   xmlns="http://www.w3.org/2000/svg"
   role="img"
-  aria-label={`${app.name} folded note flags mark`}
+  aria-label={`${app.name} shared note beam mark`}
 >
-  {
-    notes.map((note) => (
-      <g>
-        <rect x={note.x - 1.15} y="22.8" width="2.8" height="13.6" rx="1.4" fill={ink} />
-        <ellipse
-          cx={note.cx}
-          cy="36.4"
-          rx="4.3"
-          ry="2.9"
-          transform={`rotate(-18 ${note.cx} 36.4)`}
-          fill={ink}
-        />
-        <path
-          d={`M${note.x} 10H${note.x + 12.8}M${note.x} 24H${note.x + 12.8}`}
-          stroke={ink}
-          stroke-width="2.4"
-          stroke-linecap="square"
-        />
-        <path
-          d={`M${note.x + 11.7} 10L${note.x + 1.1} 24`}
-          stroke={app.hue}
-          stroke-width="5.2"
-          stroke-linecap="square"
-          stroke-linejoin="bevel"
-        />
-      </g>
-    ))
-  }
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: 10 })} fill="#000" />
+      <path d={zPath({ ...Z, x: 26 })} fill="#000" />
+    </mask>
+  </defs>
+
+  <path
+    d="M6.5 22H10V35C13.3 35.4 12.8 39.3 8.1 40C3.4 40.7 2.3 37.2 5.4 35.8L6.5 35.4ZM38.5 25H42V36.5C45.2 36.9 44.6 40.7 40.1 41.2C35.5 41.8 34.3 38.5 37.4 37L38.5 36.6Z"
+    fill={app.deep}
+  />
+  <path
+    d="M5 8L43 11V28L5 25Z"
+    fill={app.hue}
+    mask={`url(#${uid})`}
+  />
 </svg>

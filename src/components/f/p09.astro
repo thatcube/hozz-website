@@ -1,0 +1,102 @@
+---
+/**
+ * p09 · Blind — the slats you close before you watch anything.
+ *
+ * The object is a venetian blind: head rail, bottom rail, and a stack of slats
+ * with daylight in the gaps between them. In the middle of the stack the slats
+ * are pried open, and the run of light deviates — it enters at the left edge,
+ * drops a Z, crosses, drops a second Z, and leaves at the right edge, where the
+ * ordinary thin gaps pick the rhythm back up above and below.
+ *
+ * So the letters are the same channel of light as the slat gaps, just wider
+ * where the slats are bent. Straighten the slats and the ZZ is gone; delete the
+ * blind and the light has nothing to come between.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.plozz;
+
+const uid = `p09-${Math.random().toString(36).slice(2, 9)}`;
+
+const PANEL = { x: 4, y: 10.4, w: 40, h: 26.2 };
+const R = PANEL.x + PANEL.w;
+
+// Ordinary gaps: two above the letters, two below, on the same pitch the Z bars
+// sit on, so the deviation reads as the same run of light and not as decoration.
+const SLIT = 1.35;
+const slits = [12.1, 15.3, 31.5, 34.7];
+
+// The bars are more than twice the ordinary gap because those slats are forced
+// open; the diagonal is wider still. Nothing here shares a weight.
+const Z = { y: 18.5, w: 13, h: 11, bar: 2.9, diag: 6.6, cap: 'flat' as const };
+const zLeft = 8;
+const zRight = 27;
+const barTop = Z.y;
+const barBot = Z.y + Z.h - Z.bar;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      {
+        slits.map((y) => (
+          <rect x={PANEL.x} y={y} width={PANEL.w} height={SLIT} fill="#000" />
+        ))
+      }
+      {/* The run enters at the left edge and leaves at the right. */}
+      <rect x={PANEL.x} y={barTop} width={zLeft - PANEL.x} height={Z.bar} fill="#000" />
+      <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
+      <path d={zPath({ ...Z, x: zRight })} fill="#000" />
+      <rect x={zRight + Z.w} y={barBot} width={R - zRight - Z.w} height={Z.bar} fill="#000" />
+    </mask>
+  </defs>
+
+  {/* Daylight, which only ever shows where the slats let it. */}
+  <rect x={PANEL.x} y={PANEL.y} width={PANEL.w} height={PANEL.h} fill={app.light} />
+
+  <rect
+    x={PANEL.x}
+    y={PANEL.y}
+    width={PANEL.w}
+    height={PANEL.h}
+    fill={app.hue}
+    mask={`url(#${uid})`}
+  />
+
+  {/* Head rail and bottom rail, outside the mask — nothing is cut through them.
+      Both run the full width, which is what separates a blind from a screen. */}
+  <rect x="3.2" y="6.4" width="41.6" height="4" rx="1.4" fill={app.deep} />
+  <rect x="3.2" y="36.6" width="41.6" height="3.6" rx="1.4" fill={app.deep} />
+
+  {/* Lift cords, in front of everything, holding the stack. */}
+  <g fill={app.deep} opacity={ground === 'dark' ? 0.95 : 0.85}>
+    <rect x="10.3" y="10.4" width="1.1" height="26.2" />
+    <rect x="36.6" y="10.4" width="1.1" height="26.2" />
+  </g>
+
+  {/* The tilt wand. */}
+  <rect
+    x="45.1"
+    y="9.6"
+    width="1.3"
+    height="20"
+    rx="0.65"
+    fill={app.deep}
+    opacity={ground === 'dark' ? 0.8 : 0.65}
+  />
+</svg>

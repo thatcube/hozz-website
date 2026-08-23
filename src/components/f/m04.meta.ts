@@ -1,12 +1,12 @@
 export default {
   n: 'm04',
-  name: 'Cone fold',
+  name: 'Folded horn',
   app: 'mozz',
-  object: 'Twin folded speaker cones',
-  move: 'substitution',
-  reading: 'eyes',
-  sentence: 'The ZZ is the folded diaphragm of the twin speaker cones.',
+  object: 'Single flared speaker horn',
+  move: 'aperture',
+  reading: 'letters',
+  sentence: 'The ZZ is the folded acoustic channel of the speaker horn.',
   idea:
-    'A compact cabinet holds two face-on drivers whose pale diaphragms fold into the shared suffix. The circular surrounds clip the open terminals, while the narrow bass port is the mouth that makes the deliberate face read awake.',
-  palette: ['#e0243f', '#6d0f1e', '#f58a99'],
+    'A single flared horn carries one open acoustic path through its body. The doubled channel is the suffix, while the lower facet gives the speaker one decisive depth step.',
+  palette: ['#e0243f', '#6d0f1e'],
 };

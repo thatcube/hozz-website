@@ -1,12 +1,12 @@
 export default {
   n: 'p12',
-  name: 'Index Sleeve',
+  name: 'Collection Folder',
   app: 'plozz',
-  object: 'Fanned portrait media sleeves',
+  object: 'Tabbed folder with contents',
   move: 'aperture',
   reading: 'letters',
-  sentence: 'The ZZ is the die-cut index window of the media sleeve.',
+  sentence: 'The ZZ is the index cut through the folder flap.',
   idea:
-    'Three portrait sleeves fan out like a physical collection selected from a shelf. Two high-contrast apertures run beyond opposite edges of the front sleeve and are clipped by it, making the suffix a working index cut rather than printed decoration.',
+    'A conventional tabbed folder stands for media kept in the viewer’s own library. The front flap carries one clean paired cut, with the lighter contents behind supplying immediate contrast.',
   palette: ['#00a4dc', '#00506d', '#7fd6f5'],
 };

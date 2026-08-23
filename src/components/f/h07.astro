@@ -1,0 +1,97 @@
+---
+/**
+ * h07 · Resting — a readout strip, and one line living in it.
+ *
+ * The object is a window onto a signal: a wide, dark strip with a resting line
+ * running clean through it, entering at the left edge and leaving at the right.
+ * The line is the flat, quiet state — which is what Hozz is about. It does not
+ * coach and it does not score; it takes a measurement that already exists.
+ *
+ * Twice, the trace leaves that rest, holds, and falls back. Those two
+ * excursions are the Zs — and they are only Zs because the resting line closes
+ * them: the line is the bottom bar of both letters. Cover the line and the two
+ * marks become sevens. Cover the letters and the strip still reads, still has
+ * a baseline crossing it. Neither survives alone.
+ *
+ * Zs as letters, deliberately. A sleeping face on a health app that measures
+ * sleep would be a genuinely confusing double meaning, so there is no face
+ * here at all.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.hozz;
+
+// The board renders this component eight times on one page; a shared clip id
+// would silently clip the wrong instance.
+const uid = `h07-${Math.random().toString(36).slice(2, 9)}`;
+
+// 40 : 22 is 1.82 — a readout window, not a rounded square.
+const WIN = { x: 4, y: 13, w: 40, h: 22, r: 4.6 };
+
+const BAR = 2.6; // the trace's own weight, everywhere it is at rest
+const REST = 28; // top edge of the resting line
+
+// The letter's height is set by where the trace rests: its bottom bar *is* the
+// resting line, so h is measured from the top of the excursion down to it.
+const Z = {
+  y: 17.2,
+  w: 10.6,
+  h: REST + BAR - 17.2,
+  bar: BAR,
+  diag: 4.6, // heavier than the bars: the fall back to rest is the fast part
+  cap: 'angled' as const,
+};
+const zLeft = 12.1;
+const zRight = 25.3; // 2.6 of gap; the pair spans 12.1–35.9, centred on 24
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    <clipPath id={uid}>
+      <rect x={WIN.x} y={WIN.y} width={WIN.w} height={WIN.h} rx={WIN.r} />
+    </clipPath>
+  </defs>
+
+  <rect
+    x={WIN.x}
+    y={WIN.y}
+    width={WIN.w}
+    height={WIN.h}
+    rx={WIN.r}
+    fill={app.deep}
+  />
+
+  <g clip-path={`url(#${uid})`}>
+    {/* The resting line runs past both edges: the window is a view onto a
+        signal that was already running and keeps running. */}
+    <rect x="1" y={REST} width="46" height={BAR} fill={app.hue} />
+    <path d={zPath({ ...Z, x: zLeft })} fill={app.light} />
+    <path d={zPath({ ...Z, x: zRight })} fill={app.light} />
+  </g>
+
+  {/* A lit edge, so the strip keeps a silhouette on a dark ground. */}
+  <rect
+    x={WIN.x + 0.55}
+    y={WIN.y + 0.55}
+    width={WIN.w - 1.1}
+    height={WIN.h - 1.1}
+    rx={WIN.r - 0.55}
+    stroke={app.hue}
+    stroke-width="1.1"
+    opacity={ground === 'dark' ? 0.9 : 0.5}
+  />
+</svg>

@@ -1,0 +1,79 @@
+---
+/**
+ * tw02 · Crease — the bubble folded across itself.
+ *
+ * One sheet, creased once. Everything below the crease is the back of the
+ * sheet, and it runs on past the silhouette to become the tail — so the tail is
+ * not a stub applied to a corner, it is the folded part of the bubble arriving
+ * somewhere. The crease is bowed, which means the same single feature does
+ * three jobs at once: it is the fold, it is the tail's root, and it is the
+ * mouth. Nothing was added to the shipped bubble to get a face; one edge was
+ * bent.
+ *
+ * The letters are cut through the front of the sheet only. The fold is in front
+ * of them, so their lower bars tuck behind it — which is where the depth comes
+ * from. There is no gradient anywhere in this mark.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.twozz;
+
+const uid = `tw02-${Math.random().toString(36).slice(2, 9)}`;
+const maskId = `${uid}-m`;
+const clipId = `${uid}-c`;
+
+// Body 40 × 28.
+const BODY =
+  'M15 5H33A11 11 0 0 1 44 16V22A11 11 0 0 1 33 33H15A11 11 0 0 1 4 22V16A11 11 0 0 1 15 5Z';
+
+/**
+ * The crease. A quadratic from edge to edge, 21.5 at the sides and 24.2 at the
+ * centre — a 2.7-unit bow, which is a mouth and not a horizon.
+ */
+const FOLD = 'M0 21.5Q24 26.9 48 21.5V48H0Z';
+
+/** The fold arriving. Straight edges, because folded paper has straight edges. */
+const TAIL = 'M11.6 27L6.2 42.6L21.4 28.4Z';
+
+const Z = { y: 10.2, w: 10.6, h: 14.4, bar: 3.1, diag: 5.3, cap: 'angled' as const };
+const zLeft = 12.8;
+const zRight = 25.8; // the pair spans 12.8–36.4 and the crease crosses it at 23.6
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    <mask id={maskId}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
+      <path d={zPath({ ...Z, x: zRight })} fill="#000" />
+    </mask>
+    <clipPath id={clipId}>
+      <path d={BODY} />
+    </clipPath>
+  </defs>
+
+  {/* Front of the sheet, with the letters cut out of it. */}
+  <g mask={`url(#${maskId})`}>
+    <path d={BODY} fill={app.hue} />
+  </g>
+
+  {/* The back of the sheet: in front of the letters, and continuing as the tail. */}
+  <path d={TAIL} fill={ground === 'dark' ? app.light : app.deep} />
+  <g clip-path={`url(#${clipId})`}>
+    <path d={FOLD} fill={ground === 'dark' ? app.light : app.deep} />
+  </g>
+</svg>
