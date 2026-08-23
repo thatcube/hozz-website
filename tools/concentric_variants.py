@@ -1,10 +1,4 @@
-"""
-Generate c31-c34: four pixel studies of the Breathe animation.
-
-The bands are filled contour steps, not alternating outlines. Broad, adjacent
-tones keep the expansion readable when the 32-pixel source is shown at 24px
-instead of turning into a high-contrast target or moiré pattern.
-"""
+"""Generate c31-c34: four quiet studies of the Breathe animation."""
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -12,7 +6,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tools'))
 
-from shade import keyline, rings, to_paths  # noqa: E402
+from shade import keyline, to_paths  # noqa: E402
 
 OUT = ROOT / 'src/components/mark/logos'
 
@@ -23,12 +17,6 @@ FACE_GEOMETRY = {
     'sm': {1: (7, -3), 2: (8, -4), 3: (9, -4), 4: (10, -5)},
 }
 FACE_WIDTH = {'lg': 10, 'md': 8, 'sm': 7}
-
-# A circle-equation disc jumps six pixels between its first two rows at this
-# scale. This measured profile keeps the round cap but limits every outward
-# step to two pixels, so there can be no shoulder spur.
-HALF_PROFILE = [8, 10, 12, 14, 16, 18, 20, 22, 24, 24, 26, 26, 28, 28]
-
 
 @dataclass(frozen=True)
 class Mark:
@@ -42,34 +30,22 @@ class Mark:
     ring_count: int
     ring_note: str
     target_guard: str
-    face_size: str = 'md'
-    face_gap: int = 3
+    face_size: str = 'sm'
+    face_gap: int = 2
 
 
-def profiled_disc():
-    pixels = set()
-    for y, width in enumerate(HALF_PROFILE + HALF_PROFILE[::-1], 2):
-        left = 16 - width // 2
-        pixels |= {(x, y) for x in range(left, left + width)}
-    return pixels
+def disc(cy, radius):
+    return {
+        (x, y) for x in range(32) for y in range(32)
+        if (x + 0.5 - 16) ** 2 + (y + 0.5 - cy) ** 2 <= radius * radius
+    }
 
 
-def erode(body, depth):
-    return rings(body, depth)[1]
-
-
-def shift_y(body, amount):
-    return {(x, y + amount) for x, y in body}
-
-
-def concentric_layers(body, thicknesses):
-    outside = keyline(body)
-    current = body - outside
-    bands = []
-    for thickness in thicknesses:
-        peeled, current = rings(current, thickness)
-        bands.append(set().union(*peeled))
-    return outside, bands, current
+def two_rings(outer, middle, field):
+    outside = keyline(outer)
+    interior = outer - outside
+    assert field <= middle <= interior
+    return outside, interior - middle, middle - field, field
 
 
 def luminance(colour):
@@ -93,6 +69,7 @@ def face_placement(field, size, gap):
     below = ys[-1] - (top + height - 1)
     assert top == cy + offset
     assert above == below
+    assert above >= 4, f'face has only {above}/{below} rows of air'
 
     width = FACE_WIDTH[size]
     left = 16 - width // 2
@@ -103,7 +80,7 @@ def face_placement(field, size, gap):
 
 
 def assert_and_write(mark):
-    assert len(mark.layers) == len(mark.palette)
+    assert len(mark.layers) + 1 == len(mark.palette)
     assert len(set(mark.palette)) >= 5, f'{mark.slug}: fewer than five tones'
     assert all(mark.layers), f'{mark.slug}: empty layer'
     assert sum(map(len, mark.layers)) == len(set().union(*mark.layers)), (
@@ -111,6 +88,9 @@ def assert_and_write(mark):
     )
 
     body = set().union(*mark.layers)
+    assert body <= mark.outer, f'{mark.slug}: paint escapes the outer circle'
+    assert mark.field <= body, f'{mark.slug}: field is not painted'
+    assert mark.outer == disc(13, 11.0), f'{mark.slug}: not the approved r11 circle'
     x0 = min(x for x, _ in body)
     x1 = max(x for x, _ in body)
     y0 = min(y for _, y in body)
@@ -124,13 +104,16 @@ def assert_and_write(mark):
             f'{mark.slug}: layer {index} is not mirror-symmetric about x=16'
         )
 
-    ys = sorted({y for _, y in body})
-    assert ys == list(range(y0, y1 + 1)), f'{mark.slug}: silhouette has a missing row'
-    widths = [sum(py == y for _, py in body) for y in ys]
-    for y, previous, width in zip(ys[1:], widths, widths[1:]):
-        assert width <= previous + 2, (
-            f'{mark.slug}: row {y} is {width}, more than 2 wider than {previous}'
-        )
+    # Empty gaps and broken arcs are deliberate in this round. Reject only
+    # genuinely isolated pixels; the approved r11 envelope supplies roundness.
+    neighbours = tuple(
+        (dx, dy) for dx in (-1, 0, 1) for dy in (-1, 0, 1)
+        if (dx, dy) != (0, 0)
+    )
+    assert all(
+        any((x + dx, y + dy) in body for dx, dy in neighbours)
+        for x, y in body
+    ), f'{mark.slug}: isolated painted pixel'
 
     full_outside = keyline(mark.outer)
     dark_keyline = mark.layers[0]
@@ -140,13 +123,17 @@ def assert_and_write(mark):
     assert luminance(mark.palette[0]) < min(map(luminance, mark.palette[1:])), (
         f'{mark.slug}: outside keyline is not the darkest tone'
     )
+    field_ratio = len(mark.field) / len(body)
+    assert field_ratio >= 0.5, (
+        f'{mark.slug}: field is only {field_ratio:.1%} of the mark'
+    )
 
     cy, above, below, face_height = face_placement(
         mark.field, mark.face_size, mark.face_gap
     )
     layer_rows = '\n'.join(
         f'  <path d="{" ".join(to_paths(pixels))}" fill="{fill}" />'
-        for pixels, fill in zip(mark.layers, mark.palette)
+        for pixels, fill in zip(mark.layers, mark.palette[:-1])
     )
     (OUT / f'{mark.slug}.astro').write_text(f'''---
 /**
@@ -154,9 +141,8 @@ def assert_and_write(mark):
  *
  * {mark.idea}
  *
- * {mark.ring_note} The tones are adjacent fills rather than alternating
- * outlines, and the family face breaks the centre, guarding against a target
- * reading at small sizes.
+ * {mark.ring_note} The field is {field_ratio:.1%} of the painted area, leaving
+ * the rings subordinate to the face rather than turning the mark into a bevel.
  *
  * The face uses the measured {mark.face_size}/gap{mark.face_gap} geometry:
  * field y{min(y for _, y in mark.field)}-{max(y for _, y in mark.field)},
@@ -171,7 +157,7 @@ const {{ size = 128 }} = Astro.props;
 
 <MarkFrame size={{size}} title="Hozz — {mark.name}">
 {layer_rows}
-  <g fill="{mark.palette[0]}" shape-rendering="crispEdges">
+  <g fill="{mark.palette[-1]}" shape-rendering="crispEdges">
     {{facePathsAt({{ cx: 16, cy: {cy}, size: '{mark.face_size}', smile: 'wide', gap: {mark.face_gap} }}).map((d) => (
       <path d={{d}} />
     ))}}
@@ -190,81 +176,98 @@ const {{ size = 128 }} = Astro.props;
     print(
         f'{mark.slug} {mark.name}: rings={mark.ring_count}; tones={len(mark.palette)} PASS; '
         f'air={above}/{below} PASS (face {mark.face_size} gap{mark.face_gap}, '
-        f'{face_height} rows); symmetry=PASS; protrusions=PASS; '
+        f'{face_height} rows); field={len(mark.field)}/{len(body)}={field_ratio:.1%} PASS; '
+        f'symmetry=PASS; envelope=reference r11 circle PASS; no isolated pixels=PASS; '
         f'fit=x{x0}-{x1},y{y0}-{y1} PASS; dark outside keyline=PASS; '
         f'target guard={mark.target_guard}'
     )
 
 
 def build_marks():
-    outer = profiled_disc()
+    outer = disc(13, 11.0)
 
-    key31, bands31, field31 = concentric_layers(outer, [2, 2, 2])
+    # Answer 1: separation. A single outer ring and the field never touch; the
+    # ground itself is the second concentric band.
+    field31 = disc(13, 8.0)
+    key31 = keyline(outer)
+    ring31 = (outer - disc(13, 9.5)) - key31
+    upper31 = {(x, y) for x, y in ring31 if y + 0.5 < 13}
+    lower31 = ring31 - upper31
+    layers31 = (key31, upper31, lower31, field31)
     c31 = Mark(
         slug='c31',
-        name='Even Breath',
-        idea='Three broad, evenly spaced tones let one calm breath expand from Hozz’s face without the alternating contrast of a target.',
-        palette=('#08574b', '#0a7061', '#0d8976', '#12b39a', '#82e5d3'),
-        layers=(key31, *bands31, field31),
+        name='Open Air',
+        idea='A single ring floats beyond an empty band, making the ground itself part of one breath expanding outward.',
+        palette=('#08574b', '#12b39a', '#0b806e', '#82e5d3', '#096052'),
+        layers=layers31,
         field=field31,
         outer=outer,
-        ring_count=3,
-        ring_note='Three two-pixel bands move inward at an even pace.',
-        target_guard='broad 2px bands + face',
+        ring_count=1,
+        ring_note='One two-tone ring is separated from the field by a fully transparent radial gap.',
+        target_guard='empty gap + 66% field/paint ratio + face',
     )
 
-    key32, bands32, field32 = concentric_layers(outer, [1, 1, 1, 2, 2])
+    # Answer 2: motion. Top and bottom are removed from the ring altogether,
+    # leaving two side arcs that read as outward-moving parentheses.
+    field32 = disc(13, 8.0)
+    key32_full = keyline(outer)
+    middle32 = disc(13, 9.5)
+    side32 = {
+        (x, y) for x, y in outer
+        if abs(x + 0.5 - 16) >= 0.75 * abs(y + 0.5 - 13)
+    }
+    layers32 = (
+        key32_full & side32,
+        ((outer - middle32) - key32_full) & side32,
+        (middle32 - field32) & side32,
+        field32,
+    )
     c32 = Mark(
         slug='c32',
-        name='Quickening Breath',
-        idea='Five bands compress toward the outside, making one measured breath accelerate into places its owner controls.',
-        palette=('#08574b', '#09695b', '#0a7b69', '#0b8c77', '#0d9d85', '#12b39a', '#82e5d3'),
-        layers=(key32, *bands32, field32),
+        name='Outward Breath',
+        idea='Two open side arcs move away from a calm centre, turning concentric expansion into visible outward motion.',
+        palette=('#08574b', '#0b7565', '#12b39a', '#82e5d3', '#096052'),
+        layers=layers32,
         field=field32,
         outer=outer,
-        ring_count=5,
-        ring_note='The inner bands are two pixels thick, then compress to one pixel as the breath travels outward.',
-        target_guard='single-direction tone ramp + face',
+        ring_count=1,
+        ring_note='One ring is broken symmetrically at both top and bottom, leaving paired side arcs.',
+        target_guard='two large breaks + 67% field/paint ratio + face',
     )
 
-    shifted = (
-        shift_y(erode(outer, 1), 0),
-        shift_y(erode(outer, 3), 0),
-        shift_y(erode(outer, 5), -1),
-        shift_y(erode(outer, 6), -1),
-        shift_y(erode(outer, 8), -2),
-    )
-    for inner, parent in zip(shifted[1:], shifted):
-        assert inner <= parent, 'c33: offset layer escapes its parent'
-    key33 = outer - shifted[0]
-    bands33 = tuple(parent - inner for parent, inner in zip(shifted, shifted[1:]))
-    field33 = shifted[-1]
+    # Answer 3: weight. The outer ring is deliberately sparse and dark; the
+    # inner ring is broad and bright, so the expansion reads as arriving.
+    field33 = disc(13, 8.0)
+    layers33 = two_rings(outer, disc(13, 9.75), field33)
     c33 = Mark(
         slug='c33',
-        name='Toplit Breath',
-        idea='Successive rings settle lower as they expand, leaving the lightest centre high as if breath itself were lit from above.',
-        palette=('#08574b', '#0a6c5d', '#0c8270', '#0e9882', '#35c5ad', '#82e5d3'),
-        layers=(key33, *bands33, field33),
+        name='Arriving Breath',
+        idea='A thin dark outer ring gives way to a broad bright inner ring, so the breath reads as arriving at its centre.',
+        palette=('#08574b', '#0a6759', '#24c2a8', '#a9eee2', '#096052'),
+        layers=layers33,
         field=field33,
         outer=outer,
-        ring_count=4,
-        ring_note='Four nested fields step downward by two pixels from the light core to the outer silhouette, creating direction without a separate shade.',
-        target_guard='offset centres + face',
+        ring_count=2,
+        ring_note='The outer ring is 24 pixels while the inner ring is 92, a nearly fourfold weight change.',
+        target_guard='4:1 ring weight + high tonal jump + face',
     )
 
-    full_key34, bands34, field34 = concentric_layers(outer, [1, 3, 2])
-    key34 = {p for p in full_key34 if p[1] < 27}
+    # The open-ring experiment still read as bottom lighting rather than an
+    # exhale, so drop that idea instead of defending it. This is the quietest
+    # reading: an 18-row field and only two narrow warm rings.
+    field34 = disc(13, 9.0)
+    layers34 = two_rings(outer, disc(13, 9.75), field34)
     c34 = Mark(
         slug='c34',
-        name='Warm Exhale',
-        idea='Warm tones keep health human, while the broken lower ring lets breath leave rather than closing into a data target.',
-        palette=('#652f2b', '#93443b', '#c35e4d', '#eb8068', '#f6ad91'),
-        layers=(key34, *bands34, field34),
+        name='Warm Centre',
+        idea='A warm, unusually wide centre keeps health human and gives the floating face the quietest breath in the set.',
+        palette=('#652f2b', '#a34c40', '#e17a62', '#f6ad91', '#814038'),
+        layers=layers34,
         field=field34,
         outer=outer,
-        ring_count=3,
-        ring_note='Three unequal bands sit inside a dark keyline whose lower five-pixel arc is left open.',
-        target_guard='open lower keyline + face',
+        ring_count=2,
+        ring_note='Two narrow warm rings leave an 18-row centre covering two thirds of the mark.',
+        target_guard='two rings + 67% plain field + face',
     )
 
     for mark in (c31, c32, c33, c34):

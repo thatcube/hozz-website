@@ -1,0 +1,34 @@
+---
+/**
+ * 38 · Held
+ *
+ * A soft-cornered square with a breath inside it. The square is the thing
+ * you own — the phone, the machine under the desk, the app icon itself —
+ * and the circle inside is what is being kept there. It is the only one of
+ * the four with a container, and it sits closest to the siblings, which are
+ * all square in outline.
+ *
+ * Six tones, and the same lighting rule as the two-circle mark so they read
+ * as one family. The corner is a superellipse rather than a quarter circle,
+ * so the sides stay flat for longer and the corner turns in one move.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Hozz — Held">
+  <path d="M7 3h18v1h-18z M6 4h20v1h-20z M5 5h22v1h-22z M5 6h6v1h-6z M21 6h6v1h-6z M4 7h6v1h-6z M22 7h6v1h-6z M4 8h5v1h-5z M23 8h5v1h-5z M3 9h5v1h-5z M24 9h5v1h-5z M3 10h4v1h-4z M25 10h4v1h-4z M3 11h4v1h-4z M25 11h4v1h-4z M3 12h3v1h-3z M26 12h3v1h-3z M3 13h3v1h-3z M26 13h3v1h-3z M3 14h3v1h-3z M26 14h3v1h-3z M3 15h3v1h-3z M26 15h3v1h-3z M3 16h3v1h-3z M26 16h3v1h-3z M3 17h3v1h-3z M26 17h3v1h-3z M3 18h3v1h-3z M26 18h3v1h-3z M3 19h3v1h-3z M26 19h3v1h-3z M3 20h4v1h-4z M25 20h4v1h-4z M3 21h4v1h-4z M25 21h4v1h-4z M3 22h5v1h-5z M24 22h5v1h-5z M4 23h5v1h-5z M23 23h5v1h-5z M4 24h6v1h-6z M22 24h6v1h-6z M5 25h6v1h-6z M21 25h6v1h-6z M5 26h22v1h-22z M6 27h20v1h-20z M7 28h18v1h-18z" fill="#12b39a" />
+  <path d="M3 21h1v1h-1z M28 21h1v1h-1z M3 22h1v1h-1z M28 22h1v1h-1z M4 23h1v1h-1z M27 23h1v1h-1z M4 24h1v1h-1z M27 24h1v1h-1z M5 25h1v1h-1z M26 25h1v1h-1z M5 26h2v1h-2z M25 26h2v1h-2z M6 27h20v1h-20z M7 28h18v1h-18z" fill="#08574b" />
+  <path d="M6 16h1v1h-1z M25 16h1v1h-1z M6 17h1v1h-1z M25 17h1v1h-1z M6 18h1v1h-1z M25 18h1v1h-1z M6 19h1v1h-1z M25 19h1v1h-1z M7 20h1v1h-1z M24 20h1v1h-1z M7 21h1v1h-1z M24 21h1v1h-1z M8 22h1v1h-1z M23 22h1v1h-1z M9 23h1v1h-1z M22 23h1v1h-1z M10 24h1v1h-1z M21 24h1v1h-1z M11 25h10v1h-10z" fill="#4fd0b9" />
+  <path d="M11 7h10v1h-10z M10 8h12v1h-12z M9 9h14v1h-14z M8 10h16v1h-16z M8 11h16v1h-16z M7 12h18v1h-18z M7 13h18v1h-18z M7 14h18v1h-18z M7 15h18v1h-18z M7 16h18v1h-18z M7 17h18v1h-18z M7 18h18v1h-18z M7 19h18v1h-18z M8 20h16v1h-16z M8 21h16v1h-16z M9 22h14v1h-14z M10 23h12v1h-12z M11 24h10v1h-10z" fill="#82e5d3" />
+  <path d="M11 6h10v1h-10z M10 7h1v1h-1z M21 7h1v1h-1z M9 8h1v1h-1z M22 8h1v1h-1z M8 9h1v1h-1z M23 9h1v1h-1z M7 10h1v1h-1z M24 10h1v1h-1z M7 11h1v1h-1z M24 11h1v1h-1z M6 12h1v1h-1z M25 12h1v1h-1z M6 13h1v1h-1z M25 13h1v1h-1z M6 14h1v1h-1z M25 14h1v1h-1z M6 15h1v1h-1z M25 15h1v1h-1z" fill="#dff8f2" />
+  <path d="M7 2h18v1h-18z M6 3h1v1h-1z M25 3h1v1h-1z M5 4h1v1h-1z M26 4h1v1h-1z M4 5h1v1h-1z M27 5h1v1h-1z M4 6h1v1h-1z M27 6h1v1h-1z M3 7h1v1h-1z M28 7h1v1h-1z M3 8h1v1h-1z M28 8h1v1h-1z M2 9h1v1h-1z M29 9h1v1h-1z M2 10h1v1h-1z M29 10h1v1h-1z M2 11h1v1h-1z M29 11h1v1h-1z M2 12h1v1h-1z M29 12h1v1h-1z M2 13h1v1h-1z M29 13h1v1h-1z M2 14h1v1h-1z M29 14h1v1h-1z M2 15h1v1h-1z M29 15h1v1h-1z M2 16h1v1h-1z M29 16h1v1h-1z M2 17h1v1h-1z M29 17h1v1h-1z M2 18h1v1h-1z M29 18h1v1h-1z M2 19h1v1h-1z M29 19h1v1h-1z M2 20h1v1h-1z M29 20h1v1h-1z M2 21h1v1h-1z M29 21h1v1h-1z M2 22h1v1h-1z M29 22h1v1h-1z M3 23h1v1h-1z M28 23h1v1h-1z M3 24h1v1h-1z M28 24h1v1h-1z M4 25h1v1h-1z M27 25h1v1h-1z M4 26h1v1h-1z M27 26h1v1h-1z M5 27h1v1h-1z M26 27h1v1h-1z M6 28h1v1h-1z M25 28h1v1h-1z M7 29h18v1h-18z" fill="#04302a" />
+  <g fill="#04302a" shape-rendering="crispEdges">
+    {facePathsAt({ cx: 16, cy: 16, size: 'md', smile: 'wide', gap: 1 }).map((d) => (
+      <path d={d} />
+    ))}
+  </g>
+</MarkFrame>

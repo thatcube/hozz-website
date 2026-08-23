@@ -1,6 +1,6 @@
 export default {
-  n: '31', name: 'Even Breath',
-  idea: 'Three broad, evenly spaced tones let one calm breath expand from Hozz’s face without the alternating contrast of a target.',
+  n: '31', name: 'Open Air',
+  idea: 'A single ring floats beyond an empty band, making the ground itself part of one breath expanding outward.',
   ground: 'light',
-  palette: ['#08574b', '#0a7061', '#0d8976', '#12b39a', '#82e5d3'],
+  palette: ['#08574b', '#12b39a', '#0b806e', '#82e5d3', '#096052'],
 };

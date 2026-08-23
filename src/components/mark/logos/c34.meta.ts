@@ -1,6 +1,6 @@
 export default {
-  n: '34', name: 'Warm Exhale',
-  idea: 'Warm tones keep health human, while the broken lower ring lets breath leave rather than closing into a data target.',
+  n: '34', name: 'Warm Centre',
+  idea: 'A warm, unusually wide centre keeps health human and gives the floating face the quietest breath in the set.',
   ground: 'light',
-  palette: ['#652f2b', '#93443b', '#c35e4d', '#eb8068', '#f6ad91'],
+  palette: ['#652f2b', '#a34c40', '#e17a62', '#f6ad91', '#814038'],
 };
