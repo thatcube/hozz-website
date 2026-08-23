@@ -8,15 +8,13 @@ all the quality has to come out of *tone* and *air* rather than out of incident.
 Three things in here are defences against defects this project has actually
 shipped, so they are enforced rather than trusted:
 
-1. **Protrusions.** A pixel circle taken straight off the circle equation grows
-   its top row far too fast — a 28-wide disc goes 8, 12, 16 across its first
-   three rows. Those first rows leave single pixels standing off the sides,
-   which is the "little arms" Brandon rejected twice. `smooth()` walks the
-   row-width profile and widens whatever it has to until no row differs from
-   its neighbour by more than two, then rebuilds every row centred on x=16.0.
-   That makes the profile step by at most 2 the whole way down *and* makes
-   mirror symmetry structural rather than hoped for. It costs a slightly
-   flatter cap — twelve pixels across instead of eight — and buys a clean edge.
+1. **The circle.** Not chosen, not rasterised from a radius test. Every round
+   form in here is `circles.circle(...)` — the profile of the disc from the
+   shipped Mozz mark, which is known good because it is on the App Store, plus
+   the smaller circles derived in the same idiom. Radius tests were what made
+   the first pass of these four come out octagonal. `circles.check()` is run on
+   every silhouette and on every shape derived from one; it raises on a spur (a
+   row wider than both its neighbours) and on any break in mirror symmetry.
 
 2. **Centring.** The face's placement is never computed; it comes from the
    measured (height, top-offset-from-cy) table, and the gap is chosen as the
@@ -53,14 +51,7 @@ PAPER = '#dff8f2'
 # shapes
 # --------------------------------------------------------------------------
 
-def raw_disc(cy, r):
-    return {(x, y) for x in range(GRID) for y in range(GRID)
-            if (x + 0.5 - CX) ** 2 + (y + 0.5 - cy) ** 2 <= r * r}
-
-
-def raw_squircle(cy, a, n):
-    return {(x, y) for x in range(GRID) for y in range(GRID)
-            if abs((x + 0.5 - CX) / a) ** n + abs((y + 0.5 - cy) / a) ** n <= 1}
+from circles import circle, check  # noqa: E402
 
 
 def row_widths(s):
@@ -70,49 +61,17 @@ def row_widths(s):
     return {y: max(rows[y]) - min(rows[y]) + 1 for y in rows}
 
 
-def smooth(s):
-    """Rebuild every row centred on x=16.0 with |width step| <= 2 everywhere.
+# A soft-cornered square, 28 across. The corner is four pixels deep — enough to
+# take the hardness off, little enough that the form still reads square. Widths
+# are even so every row centres on x=16.0 and mirrors by construction.
+SQUARE_28 = [20, 24, 26, 26] + [28] * 20 + [26, 26, 24, 20]
 
-    Widths only grow, so the form stays convex and no area is lost. Rebuilding
-    from the centre is what guarantees (31-x, y) is present for every (x, y).
-    """
-    w = row_widths(s)
-    ys = sorted(w)
-    changed = True
-    while changed:
-        changed = False
-        for i in range(1, len(ys)):
-            a, b = ys[i - 1], ys[i]
-            if w[b] - w[a] > 2:
-                w[a] = w[b] - 2
-                changed = True
-            if w[a] - w[b] > 2:
-                w[b] = w[a] - 2
-                changed = True
+
+def square(top=2):
     out = set()
-    for y in ys:
-        half = w[y] // 2
-        out |= {(x, y) for x in range(int(CX) - half, int(CX) + half)}
+    for i, w in enumerate(SQUARE_28):
+        out |= {(16 - w // 2 + k, top + i) for k in range(w)}
     return out
-
-
-def disc(d, top):
-    """A smoothed pixel circle `d` across, its first row on `top`."""
-    r = {28: 14.0, 26: 13.3, 24: 12.4, 22: 11.2, 20: 10.4, 18: 9.3, 16: 8.5}[d]
-    s = smooth(raw_disc(16, r))
-    ys = sorted({y for _, y in s})
-    assert len(ys) == d and max(row_widths(s).values()) == d, f'disc {d}: got {len(ys)}x{max(row_widths(s).values())}'
-    dy = top - ys[0]
-    return {(x, y + dy) for x, y in s}
-
-
-def squircle(d, top, n=3.0):
-    s = smooth(raw_squircle(16, d / 2 + 0.1, n))
-    ys = sorted({y for _, y in s})
-    assert len(ys) == d, f'squircle {d}: got {len(ys)}'
-    dy = top - ys[0]
-    return {(x, y + dy) for x, y in s}
-
 
 
 def ring_split(shape):
@@ -202,9 +161,16 @@ def profile(s):
 
 
 def check_profile(slug, s):
-    p = profile(s)
+    """circles.check(): raises on a spur or on any break in mirror symmetry.
+
+    It replaces the step<=2 rule this generator used to enforce. That rule was
+    wrong: it forbids the 4,4,2,2 shoulder that is exactly what makes a pixel
+    circle read round, and it is why the first pass of these four came out
+    octagonal. The real defect is a spur — a row wider than both its
+    neighbours — and that is what is checked here, on the canonical profile.
+    """
+    p = check(s)
     worst = max(p[i] - p[i - 1] for i in range(1, len(p)))
-    assert worst <= 2, f'{slug}: row grows by {worst} — protrusion. {p}'
     return p, worst
 
 
@@ -317,11 +283,13 @@ PREVIEW = '--preview' in sys.argv
 # --------------------------------------------------------------------------
 
 def c35():
-    body = disc(28, 2)
+    body = circle(28, top=2)
+    check(body)
     k = keyline(body)
     r1 = keyline(body - k)
     r2 = keyline(body - k - r1)
     core = body - k - r1 - r2
+    check(core)
     lit, low = ring_split(core)
     field = clear(core, lit, low)
     layers = [(field, LIGHT), (low, SOFT), (lit, PAPER), (r2, MID), (r1, DEEP), (k, INK)]
@@ -331,27 +299,29 @@ def c35():
            ' * sit somewhere calm and unwatched \u2014 so the mark is the calmest shape\n'
            ' * there is, and the face gets more room here than in any other mark on the\n'
            ' * board: six clear pixels above, below and to each side.\n *\n'
-           ' * Six tones, every one taken off the silhouette. A dark keyline, two rings\n'
+           ' * The circle is the shipped Mozz disc, taken whole rather than rasterised\n'
+           ' * from a radius \u2014 the doubled rows and the four, four, two, two shoulder\n'
+           ' * are what stop it reading as an octagon.\n *\n'
+           ' * Six tones, every one taken off that silhouette. A dark keyline, two rings\n'
            ' * of bevel stepping in from deep teal to the hue, then a light field with a\n'
-           ' * pale arc over the top of it and a soft one under the bottom \u2014 one ring\n'
-           ' * cut at its waist, so the light has a direction without a shadow being\n'
-           ' * painted anywhere.\n *\n'
-           ' * The circle is regularised: the raw circle equation grows 8, 12, 16 across\n'
-           ' * its first three rows, and rows that widen that fast leave single pixels\n'
-           ' * standing off the sides. No row here differs from its neighbour by more\n'
-           ' * than two, which costs a slightly flatter cap and buys a clean edge.')
+           ' * near-white arc over the top of it and a soft one under the bottom \u2014 one\n'
+           ' * ring cut at its waist, so the light has a direction without a shadow being\n'
+           ' * painted anywhere.')
     return emit('c35', 'One Breath',
                 'One held breath: a single circle, and the most air any mark here gives the face.',
                 doc, layers, field, 'md', prefer=(1, 3, 2, 4), preview=PREVIEW)
 
 
 # --------------------------------------------------------------------------
-# c36 — a disc inside a disc
+# c36 — a circle inside a circle
 # --------------------------------------------------------------------------
 
 def c36():
-    outer = disc(28, 2)
-    inner = disc(20, 6)
+    outer = circle(28, top=2)
+    inner = circle(20, top=6)
+    check(outer)
+    check(inner)
+    assert inner <= outer, 'c36: inner circle leaves the outer'
     k = keyline(outer)
     surround = clear(outer, k, inner)
     deep = crescent(outer - k, 0, -2) & surround
@@ -361,47 +331,53 @@ def c36():
               (lit, PAPER), (k, INK)]
     doc = (' * 36 \u00b7 Two Circles\n *\n'
            ' * The plainest of the breath references: two concentric circles, the inner\n'
-           ' * one the field the face sits on and the outer a four-pixel surround. The\n'
+           ' * one the field the face sits on and the outer a four-pixel surround \u2014 the\n * widest ring on the board. The\n'
            ' * breath is the inner circle; the room around it is the argument. Hozz keeps\n'
            ' * your data in a place that has space around it.\n *\n'
+           ' * Both circles are canonical \u2014 the shipped Mozz disc at 28 across and the\n'
+           ' * derived one at 22 \u2014 so they are the same circle at two sizes rather than\n'
+           ' * two different rasterisations, and they agree.\n *\n'
            ' * Six tones. The surround carries the Hozz hue so the mark still reads teal\n'
-           ' * at 16px, and it darkens along its underside; the inner circle takes a pale\n'
-           ' * arc over the top and a soft one beneath. Both circles are lit the same way\n'
-           ' * by the same rule, so the two forms agree.')
+           ' * at 16px, and it darkens along its underside; the inner circle takes a\n'
+           ' * near-white arc over the top and a soft one beneath. No keyline between the\n'
+           ' * two circles: they meet tone to tone, which is what keeps this the quiet\n'
+           ' * one of the four.')
     return emit('c36', 'Two Circles',
                 'Two concentric circles: the breath, and the room it is given.',
                 doc, layers, field, 'md', prefer=(1, 3, 2, 4), preview=PREVIEW)
 
 
 # --------------------------------------------------------------------------
-# c37 — the surround offset down, so the geometry is the light
+# c37 — the circles hung from the top, so the geometry is the light
 # --------------------------------------------------------------------------
 
 def c37():
-    a = disc(28, 2)
-    b = disc(26, 2)
-    c = disc(24, 3)
-    d = disc(22, 3)
-    e = disc(20, 4)
-    for inner, outer in ((b, a), (c, b), (d, c), (e, d)):
-        assert inner <= outer, 'nested circles must contain one another'
+    a = circle(28, top=2)
+    b = circle(24, top=3)
+    c = circle(22, top=3)
+    d = circle(20, top=4)
+    for inner, outer in ((b, a), (c, b), (d, c)):
+        check(inner)
+        assert inner <= outer, 'c37: nested circles must contain one another'
     k = keyline(a)
     layers = [(clear(a, k, b), DEEP), (clear(b, c), MID), (clear(c, d), SOFT),
-              (clear(d, e), LIGHT), (e, PALE), (k, INK)]
+              (d, LIGHT), (k, INK)]
     doc = (' * 37 \u00b7 Lit From Above\n *\n'
-           ' * The same two circles, but every circle hangs from the same top edge\n'
-           ' * instead of sitting concentrically, so the ring is one row at the top and\n'
-           ' * six at the bottom. There is no shade layer anywhere in this mark. Every\n'
-           ' * tone is a whole circle; the light is only where the circles sit relative\n'
-           ' * to each other. A breath rising.\n *\n'
-           ' * Six tones and not one of them painted. Five nested circles, each two\n'
-           ' * pixels narrower than the last and each hung from the top, so the crescents\n'
-           ' * they leave uncovered stack into a graded shadow underneath \u2014 pale,\n'
-           ' * light, soft, mid, deep, keyline over six rows \u2014 while the top of the\n'
-           ' * mark stays one row from the light.')
+           ' * The same circles, but each one hangs nearer the top of the last instead\n'
+           ' * of sitting concentrically inside it, so the ring is one row above the\n'
+           ' * breath and six below it. There is no shade layer anywhere in this mark.\n'
+           ' * Every tone is a whole circle; the light is only where the circles sit\n'
+           ' * relative to each other. A breath rising.\n *\n'
+           ' * Five tones and not one of them painted \u2014 the fewest of the four, which\n'
+           ' * is the price of the idea: four canonical circles leave four bands, and a\n'
+           ' * fifth band would have to be a shade. Twenty-eight, twenty-four, twenty-two\n'
+           ' * and twenty across, each hung a little higher than the one holding it, so\n'
+           ' * the crescents they leave uncovered stack into a graded shadow underneath\n'
+           ' * \u2014 light, soft, mid, deep, keyline over six rows \u2014 while the top of\n'
+           ' * the mark stays one row from the light.')
     return emit('c37', 'Lit From Above',
                 'The surround dropped below the breath, so the geometry itself is the light.',
-                doc, layers, e, 'md', prefer=(1, 3, 2, 4), preview=PREVIEW)
+                doc, layers, d, 'md', prefer=(1, 3, 2, 4), preview=PREVIEW)
 
 
 # --------------------------------------------------------------------------
@@ -409,24 +385,34 @@ def c37():
 # --------------------------------------------------------------------------
 
 def c38():
-    outer = squircle(28, 2)
-    inner = disc(20, 6)
+    outer = square(top=2)
+    inner = circle(22, top=5)
+    check(outer)
+    check(inner)
+    assert inner <= outer, 'c38: the circle leaves the square'
     k = keyline(outer)
-    surround = clear(outer, k, inner)
-    deep = crescent(outer - k, 0, -2) & surround
-    lit, low = ring_split(inner)
-    field = clear(inner, lit, low)
-    layers = [(surround, MID), (deep, DEEP), (low, SOFT), (field, LIGHT),
-              (lit, PAPER), (k, INK)]
+    ring = keyline(inner)
+    core = inner - ring
+    check(core)
+    lit, low = ring_split(core)
+    field = clear(core, lit, low)
+    layers = [(clear(outer, k, inner), MID), (ring, DEEP), (low, SOFT),
+              (field, LIGHT), (lit, PAPER), (k, INK)]
     doc = (' * 38 \u00b7 Held\n *\n'
            ' * A soft-cornered square with a breath inside it. The square is the thing\n'
            ' * you own \u2014 the phone, the machine under the desk, the app icon itself \u2014\n'
            ' * and the circle inside is what is being kept there. It is the only one of\n'
            ' * the four with a container, and it sits closest to the siblings, which are\n'
            ' * all square in outline.\n *\n'
-           ' * Six tones, and the same lighting rule as the two-circle mark so they read\n'
-           ' * as one family. The corner is a superellipse rather than a quarter circle,\n'
-           ' * so the sides stay flat for longer and the corner turns in one move.')
+           ' * The corner is four pixels deep and no more, so the form reads square and\n'
+           ' * not as a circle that has been squared off \u2014 twenty rows of the mark are\n'
+           ' * full width and flat-sided. The circle inside is the canonical one at 22\n'
+           ' * across and it carries its own dark keyline, so it reads as an object set\n'
+           ' * into the square rather than a hole cut out of it. That keyline is the\n'
+           ' * whole difference between this mark and the two-circle one.\n *\n'
+           ' * Six tones. The square stays flat \u2014 a container should not compete \u2014\n'
+           ' * and all the light is spent on the circle: near-white over the top of it,\n'
+           ' * soft underneath.')
     return emit('c38', 'Held',
                 'A soft-cornered square holding one circle: the breath, and the thing that keeps it.',
                 doc, layers, field, 'md', prefer=(1, 3, 2, 4), preview=PREVIEW)

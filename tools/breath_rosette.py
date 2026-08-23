@@ -358,7 +358,9 @@ const {{ size = 128 }} = Astro.props;
   </g>
 </MarkFrame>
 ''')
-    swatch = ', '.join(f"'{c}'" for c in [spec['palette'][0]] + tones[:-1][::-1][:4])
+    lum = lambda c: (int(c[1:3], 16) * 2 + int(c[3:5], 16) * 5 + int(c[5:7], 16))
+    ordered = sorted((t for t in tones if t != spec['palette'][0]), key=lum)
+    swatch = ', '.join(f"'{c}'" for c in [spec['palette'][0]] + ordered[:4])
     (OUT / f'{slug}.meta.ts').write_text(f'''export default {{
   n: '{slug[1:]}', name: '{name}',
   idea: '{idea}',
@@ -425,13 +427,14 @@ MARKS = [
      ' *\n'
      ' * The silhouette is still the filled union, so there are no holes to the\n'
      ' * paper and the row-width rule holds; the lattice is painted inside it.\n'
-     ' * The centre is a plain disc that absorbs the arcs that would otherwise\n'
-     ' * cross the face.\n'
+     ' * The centre is a plain disc, wide enough that the arcs which would\n'
+     ' * otherwise cross the eyes are absorbed into it and the face still reads\n'
+     ' * at 28 pixels.\n'
      ' *\n'
-     ' * Busiest of the four by a distance. It holds at 48 and is texture by 24,\n'
-     ' * which is an honest cost of the idea rather than a fault in it.',
-     dict(mode='lattice', n=6, dist=6.5, r=8.0, cy=16.0, ring=2, K=3,
-          core=5.5, lat=(1, 2, 4, 5), palette=PETROL)),
+     ' * Busiest of the four by a distance. It holds at 48 and is ornament by\n'
+     ' * 16, which is an honest cost of the idea rather than a fault in it.',
+     dict(mode='lattice', n=6, dist=7.0, r=7.5, cy=16.0, ring=2, K=3,
+          core=7.0, lat=(1, 2, 4, 5), palette=PETROL)),
     ('c25', 'Rosette, Five', MINT,
      'Five breaths, flattened to two bands and an outline — the calmest reading of the same rule.',
      ' * Five circles, ring 5.0, radius 9.0. Odd counts have no mirror pair top\n'

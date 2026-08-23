@@ -8,16 +8,15 @@
  * there is, and the face gets more room here than in any other mark on the
  * board: six clear pixels above, below and to each side.
  *
- * Six tones, every one taken off the silhouette. A dark keyline, two rings
- * of bevel stepping in from deep teal to the hue, then a light field with a
- * pale arc over the top of it and a soft one under the bottom — one ring
- * cut at its waist, so the light has a direction without a shadow being
- * painted anywhere.
+ * The circle is the shipped Mozz disc, taken whole rather than rasterised
+ * from a radius — the doubled rows and the four, four, two, two shoulder
+ * are what stop it reading as an octagon.
  *
- * The circle is regularised: the raw circle equation grows 8, 12, 16 across
- * its first three rows, and rows that widen that fast leave single pixels
- * standing off the sides. No row here differs from its neighbour by more
- * than two, which costs a slightly flatter cap and buys a clean edge.
+ * Six tones, every one taken off that silhouette. A dark keyline, two rings
+ * of bevel stepping in from deep teal to the hue, then a light field with a
+ * near-white arc over the top of it and a soft one under the bottom — one
+ * ring cut at its waist, so the light has a direction without a shadow being
+ * painted anywhere.
  */
 import MarkFrame from '../MarkFrame.astro';
 import { facePathsAt } from '../../../data/mark';
@@ -27,12 +26,12 @@ const { size = 128 } = Astro.props;
 ---
 
 <MarkFrame size={size} title="Hozz — One Breath">
-  <path d="M10 6h12v1h-12z M9 7h14v1h-14z M8 8h16v1h-16z M8 9h16v1h-16z M7 10h18v1h-18z M7 11h18v1h-18z M6 12h20v1h-20z M6 13h20v1h-20z M6 14h20v1h-20z M6 15h20v1h-20z M6 16h20v1h-20z M6 17h20v1h-20z M6 18h20v1h-20z M6 19h20v1h-20z M7 20h18v1h-18z M7 21h18v1h-18z M8 22h16v1h-16z M8 23h16v1h-16z M9 24h14v1h-14z M10 25h12v1h-12z" fill="#82e5d3" />
-  <path d="M5 16h1v1h-1z M26 16h1v1h-1z M5 17h1v1h-1z M26 17h1v1h-1z M5 18h1v1h-1z M26 18h1v1h-1z M5 19h1v1h-1z M26 19h1v1h-1z M6 20h1v1h-1z M25 20h1v1h-1z M6 21h1v1h-1z M25 21h1v1h-1z M7 22h1v1h-1z M24 22h1v1h-1z M7 23h1v1h-1z M24 23h1v1h-1z M8 24h1v1h-1z M23 24h1v1h-1z M9 25h1v1h-1z M22 25h1v1h-1z M10 26h12v1h-12z" fill="#4fd0b9" />
-  <path d="M10 5h12v1h-12z M9 6h1v1h-1z M22 6h1v1h-1z M8 7h1v1h-1z M23 7h1v1h-1z M7 8h1v1h-1z M24 8h1v1h-1z M7 9h1v1h-1z M24 9h1v1h-1z M6 10h1v1h-1z M25 10h1v1h-1z M6 11h1v1h-1z M25 11h1v1h-1z M5 12h1v1h-1z M26 12h1v1h-1z M5 13h1v1h-1z M26 13h1v1h-1z M5 14h1v1h-1z M26 14h1v1h-1z M5 15h1v1h-1z M26 15h1v1h-1z" fill="#dff8f2" />
-  <path d="M10 4h12v1h-12z M9 5h1v1h-1z M22 5h1v1h-1z M8 6h1v1h-1z M23 6h1v1h-1z M7 7h1v1h-1z M24 7h1v1h-1z M6 8h1v1h-1z M25 8h1v1h-1z M6 9h1v1h-1z M25 9h1v1h-1z M5 10h1v1h-1z M26 10h1v1h-1z M5 11h1v1h-1z M26 11h1v1h-1z M4 12h1v1h-1z M27 12h1v1h-1z M4 13h1v1h-1z M27 13h1v1h-1z M4 14h1v1h-1z M27 14h1v1h-1z M4 15h1v1h-1z M27 15h1v1h-1z M4 16h1v1h-1z M27 16h1v1h-1z M4 17h1v1h-1z M27 17h1v1h-1z M4 18h1v1h-1z M27 18h1v1h-1z M4 19h1v1h-1z M27 19h1v1h-1z M5 20h1v1h-1z M26 20h1v1h-1z M5 21h1v1h-1z M26 21h1v1h-1z M6 22h1v1h-1z M25 22h1v1h-1z M6 23h1v1h-1z M25 23h1v1h-1z M7 24h1v1h-1z M24 24h1v1h-1z M8 25h1v1h-1z M23 25h1v1h-1z M9 26h1v1h-1z M22 26h1v1h-1z M10 27h12v1h-12z" fill="#12b39a" />
-  <path d="M10 3h12v1h-12z M9 4h1v1h-1z M22 4h1v1h-1z M8 5h1v1h-1z M23 5h1v1h-1z M7 6h1v1h-1z M24 6h1v1h-1z M6 7h1v1h-1z M25 7h1v1h-1z M5 8h1v1h-1z M26 8h1v1h-1z M5 9h1v1h-1z M26 9h1v1h-1z M4 10h1v1h-1z M27 10h1v1h-1z M4 11h1v1h-1z M27 11h1v1h-1z M3 12h1v1h-1z M28 12h1v1h-1z M3 13h1v1h-1z M28 13h1v1h-1z M3 14h1v1h-1z M28 14h1v1h-1z M3 15h1v1h-1z M28 15h1v1h-1z M3 16h1v1h-1z M28 16h1v1h-1z M3 17h1v1h-1z M28 17h1v1h-1z M3 18h1v1h-1z M28 18h1v1h-1z M3 19h1v1h-1z M28 19h1v1h-1z M4 20h1v1h-1z M27 20h1v1h-1z M4 21h1v1h-1z M27 21h1v1h-1z M5 22h1v1h-1z M26 22h1v1h-1z M5 23h1v1h-1z M26 23h1v1h-1z M6 24h1v1h-1z M25 24h1v1h-1z M7 25h1v1h-1z M24 25h1v1h-1z M8 26h1v1h-1z M23 26h1v1h-1z M9 27h1v1h-1z M22 27h1v1h-1z M10 28h12v1h-12z" fill="#08574b" />
-  <path d="M10 2h12v1h-12z M9 3h1v1h-1z M22 3h1v1h-1z M8 4h1v1h-1z M23 4h1v1h-1z M7 5h1v1h-1z M24 5h1v1h-1z M6 6h1v1h-1z M25 6h1v1h-1z M5 7h1v1h-1z M26 7h1v1h-1z M4 8h1v1h-1z M27 8h1v1h-1z M4 9h1v1h-1z M27 9h1v1h-1z M3 10h1v1h-1z M28 10h1v1h-1z M3 11h1v1h-1z M28 11h1v1h-1z M2 12h1v1h-1z M29 12h1v1h-1z M2 13h1v1h-1z M29 13h1v1h-1z M2 14h1v1h-1z M29 14h1v1h-1z M2 15h1v1h-1z M29 15h1v1h-1z M2 16h1v1h-1z M29 16h1v1h-1z M2 17h1v1h-1z M29 17h1v1h-1z M2 18h1v1h-1z M29 18h1v1h-1z M2 19h1v1h-1z M29 19h1v1h-1z M3 20h1v1h-1z M28 20h1v1h-1z M3 21h1v1h-1z M28 21h1v1h-1z M4 22h1v1h-1z M27 22h1v1h-1z M4 23h1v1h-1z M27 23h1v1h-1z M5 24h1v1h-1z M26 24h1v1h-1z M6 25h1v1h-1z M25 25h1v1h-1z M7 26h1v1h-1z M24 26h1v1h-1z M8 27h1v1h-1z M23 27h1v1h-1z M9 28h1v1h-1z M22 28h1v1h-1z M10 29h12v1h-12z" fill="#04302a" />
+  <path d="M12 6h8v1h-8z M10 7h12v1h-12z M8 8h16v1h-16z M8 9h16v1h-16z M7 10h18v1h-18z M7 11h18v1h-18z M6 12h20v1h-20z M6 13h20v1h-20z M6 14h20v1h-20z M6 15h20v1h-20z M6 16h20v1h-20z M6 17h20v1h-20z M6 18h20v1h-20z M6 19h20v1h-20z M7 20h18v1h-18z M7 21h18v1h-18z M8 22h16v1h-16z M8 23h16v1h-16z M10 24h12v1h-12z M12 25h8v1h-8z" fill="#82e5d3" />
+  <path d="M5 16h1v1h-1z M26 16h1v1h-1z M5 17h1v1h-1z M26 17h1v1h-1z M5 18h1v1h-1z M26 18h1v1h-1z M5 19h1v1h-1z M26 19h1v1h-1z M6 20h1v1h-1z M25 20h1v1h-1z M6 21h1v1h-1z M25 21h1v1h-1z M7 22h1v1h-1z M24 22h1v1h-1z M7 23h1v1h-1z M24 23h1v1h-1z M8 24h2v1h-2z M22 24h2v1h-2z M10 25h2v1h-2z M20 25h2v1h-2z M12 26h8v1h-8z" fill="#4fd0b9" />
+  <path d="M12 5h8v1h-8z M10 6h2v1h-2z M20 6h2v1h-2z M8 7h2v1h-2z M22 7h2v1h-2z M7 8h1v1h-1z M24 8h1v1h-1z M7 9h1v1h-1z M24 9h1v1h-1z M6 10h1v1h-1z M25 10h1v1h-1z M6 11h1v1h-1z M25 11h1v1h-1z M5 12h1v1h-1z M26 12h1v1h-1z M5 13h1v1h-1z M26 13h1v1h-1z M5 14h1v1h-1z M26 14h1v1h-1z M5 15h1v1h-1z M26 15h1v1h-1z" fill="#dff8f2" />
+  <path d="M12 4h8v1h-8z M10 5h2v1h-2z M20 5h2v1h-2z M8 6h2v1h-2z M22 6h2v1h-2z M7 7h1v1h-1z M24 7h1v1h-1z M6 8h1v1h-1z M25 8h1v1h-1z M6 9h1v1h-1z M25 9h1v1h-1z M5 10h1v1h-1z M26 10h1v1h-1z M5 11h1v1h-1z M26 11h1v1h-1z M4 12h1v1h-1z M27 12h1v1h-1z M4 13h1v1h-1z M27 13h1v1h-1z M4 14h1v1h-1z M27 14h1v1h-1z M4 15h1v1h-1z M27 15h1v1h-1z M4 16h1v1h-1z M27 16h1v1h-1z M4 17h1v1h-1z M27 17h1v1h-1z M4 18h1v1h-1z M27 18h1v1h-1z M4 19h1v1h-1z M27 19h1v1h-1z M5 20h1v1h-1z M26 20h1v1h-1z M5 21h1v1h-1z M26 21h1v1h-1z M6 22h1v1h-1z M25 22h1v1h-1z M6 23h1v1h-1z M25 23h1v1h-1z M7 24h1v1h-1z M24 24h1v1h-1z M8 25h2v1h-2z M22 25h2v1h-2z M10 26h2v1h-2z M20 26h2v1h-2z M12 27h8v1h-8z" fill="#12b39a" />
+  <path d="M12 3h8v1h-8z M10 4h2v1h-2z M20 4h2v1h-2z M8 5h2v1h-2z M22 5h2v1h-2z M7 6h1v1h-1z M24 6h1v1h-1z M6 7h1v1h-1z M25 7h1v1h-1z M5 8h1v1h-1z M26 8h1v1h-1z M5 9h1v1h-1z M26 9h1v1h-1z M4 10h1v1h-1z M27 10h1v1h-1z M4 11h1v1h-1z M27 11h1v1h-1z M3 12h1v1h-1z M28 12h1v1h-1z M3 13h1v1h-1z M28 13h1v1h-1z M3 14h1v1h-1z M28 14h1v1h-1z M3 15h1v1h-1z M28 15h1v1h-1z M3 16h1v1h-1z M28 16h1v1h-1z M3 17h1v1h-1z M28 17h1v1h-1z M3 18h1v1h-1z M28 18h1v1h-1z M3 19h1v1h-1z M28 19h1v1h-1z M4 20h1v1h-1z M27 20h1v1h-1z M4 21h1v1h-1z M27 21h1v1h-1z M5 22h1v1h-1z M26 22h1v1h-1z M5 23h1v1h-1z M26 23h1v1h-1z M6 24h1v1h-1z M25 24h1v1h-1z M7 25h1v1h-1z M24 25h1v1h-1z M8 26h2v1h-2z M22 26h2v1h-2z M10 27h2v1h-2z M20 27h2v1h-2z M12 28h8v1h-8z" fill="#08574b" />
+  <path d="M12 2h8v1h-8z M10 3h2v1h-2z M20 3h2v1h-2z M8 4h2v1h-2z M22 4h2v1h-2z M7 5h1v1h-1z M24 5h1v1h-1z M6 6h1v1h-1z M25 6h1v1h-1z M5 7h1v1h-1z M26 7h1v1h-1z M4 8h1v1h-1z M27 8h1v1h-1z M4 9h1v1h-1z M27 9h1v1h-1z M3 10h1v1h-1z M28 10h1v1h-1z M3 11h1v1h-1z M28 11h1v1h-1z M2 12h1v1h-1z M29 12h1v1h-1z M2 13h1v1h-1z M29 13h1v1h-1z M2 14h1v1h-1z M29 14h1v1h-1z M2 15h1v1h-1z M29 15h1v1h-1z M2 16h1v1h-1z M29 16h1v1h-1z M2 17h1v1h-1z M29 17h1v1h-1z M2 18h1v1h-1z M29 18h1v1h-1z M2 19h1v1h-1z M29 19h1v1h-1z M3 20h1v1h-1z M28 20h1v1h-1z M3 21h1v1h-1z M28 21h1v1h-1z M4 22h1v1h-1z M27 22h1v1h-1z M4 23h1v1h-1z M27 23h1v1h-1z M5 24h1v1h-1z M26 24h1v1h-1z M6 25h1v1h-1z M25 25h1v1h-1z M7 26h1v1h-1z M24 26h1v1h-1z M8 27h2v1h-2z M22 27h2v1h-2z M10 28h2v1h-2z M20 28h2v1h-2z M12 29h8v1h-8z" fill="#04302a" />
   <g fill="#04302a" shape-rendering="crispEdges">
     {facePathsAt({ cx: 16, cy: 16, size: 'md', smile: 'wide', gap: 1 }).map((d) => (
       <path d={d} />
