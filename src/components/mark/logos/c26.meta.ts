@@ -1,7 +1,6 @@
 export default {
-  n: '26',
-  name: 'Coral Heart',
-  idea: 'Coral rather than crimson, so the heart is warm without standing on Mozz’s red. One flat body, one deeper tone doing both the edge and the rim under the lobes.',
+  n: '26', name: 'Coral Heart',
+  idea: 'A rounder heart — blunt at the tip, shallow in the cleft — carrying the full face, not just the eyes.',
   ground: 'light',
-  palette: ['#521a15', '#c9503a', '#ef7e64'],
+  palette: ['#5e1f14', '#8f2f22', '#c9503a', '#ef7e64', '#f7a894'],
 };

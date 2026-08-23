@@ -11,6 +11,8 @@ if (Math.min(...air) < 6) throw new Error('c36 face needs six clear pixels');
 ---
 
 <MarkFrame size={size} title="Hozz — Just Zs">
+  <path d="M12 14h3v1h-3z M13 15h2v1h-2z M12 16h2v1h-2z M12 17h3v1h-3z" fill="#1e2a27" />
+  <path d="M17 14h3v1h-3z M18 15h2v1h-2z M17 16h2v1h-2z M17 17h3v1h-3z" fill="#1e2a27" />
   <g fill="#6f9289" shape-rendering="crispEdges">
     {facePathsAt(face).map((d) => <path d={d} />)}
   </g>
