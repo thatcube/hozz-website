@@ -1,6 +1,6 @@
 export default {
   n: '22', name: 'Rosette, Six',
-  idea: 'Six breaths overlapping — the six-pointed star is where they meet.',
+  idea: 'Six breaths overlapping, and you can count them round the rim.',
   ground: 'light',
-  palette: ['#06282e', '#0e4f57', '#1b7a80', '#86d3c5', '#cdefe1'],
+  palette: ['#06282e', '#2f948f', '#54b3a6', '#b8e6da', '#eefaf5'],
 };

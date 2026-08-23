@@ -23,6 +23,22 @@ must be symmetric about x=16 and free of spurs, where a spur is a row wider than
 both its neighbours. `monotone()` below enforces exactly that and nothing more,
 so the four-steps survive.
 
+*Light runs outward, not inward.* The references are pale flowers glowing out of
+a mid ground, so depth is mapped to *brightness*: the pixel covered by every
+petal is nearly white, and the fringe covered by one is the darkest thing inside
+the keyline. Nothing in these marks is darker than its own rim except the
+keyline, which is the only dark tone and the only thing holding the mark off the
+paper. An earlier pass ran the ramp the other way and the overlaps read as dirt.
+
+*Scallops are legal vertically and illegal horizontally.* The union of n discs
+has a cleft wherever two petals meet, and `bite` mode keeps those clefts instead
+of filling them. It can only ever show at the top and bottom: `circles.check`
+defines a spur as a row wider than both its neighbours, and it measures a row
+edge to edge, so a notch bitten downward does not widen the row and passes,
+while a notch bitten into the left or right side shrinks that row and turns its
+neighbours into spurs by definition. That is a hard limit of the rule, not a
+shortcoming of the search — c22 takes the two clefts that are available.
+
 *Symmetry.* Petal offsets are whole pixels in ± pairs and the canonical circle is
 symmetric about x=16, so every layer mirrors by construction, not by luck.
 
@@ -137,6 +153,48 @@ def fill_rows(body):
     break the mirror."""
     return {(x, y) for y, xs in rows_of(body).items()
             for x in range(xs[0], xs[-1] + 1)}
+
+
+def connected(shape):
+    """One 4-connected piece."""
+    if not shape:
+        return False
+    seed = min(shape)
+    seen, stack = {seed}, [seed]
+    while stack:
+        x, y = stack.pop()
+        for q in ((x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)):
+            if q in shape and q not in seen:
+                seen.add(q)
+                stack.append(q)
+    return len(seen) == len(shape)
+
+
+def scallop(body):
+    """Clamp the row *extent* to one rise and one fall, but leave the interior
+    alone — so the notches between petals at the top and bottom of the ring
+    survive as real bites out of the outline.
+
+    `circles.check` measures a row by `max - min + 1`, so a bite that cuts down
+    into the mark between two petal caps does not read as a spur: the extent
+    still climbs once and falls once. A bite at the *side* would, which is why
+    the ring is always turned so the notches land top and bottom.
+    """
+    w = widths(body)
+    ys = sorted(w)
+    peak = max(range(len(ys)), key=lambda i: (w[ys[i]], -abs(i - len(ys) // 2)))
+    v = dict(w)
+    for i in range(peak - 1, -1, -1):
+        v[ys[i]] = min(v[ys[i]], v[ys[i + 1]])
+    for i in range(peak + 1, len(ys)):
+        v[ys[i]] = min(v[ys[i]], v[ys[i - 1]])
+    out = set()
+    for y in ys:
+        if v[y] < 2:
+            continue
+        lo, hi = int(CX - v[y] / 2.0), int(CX + v[y] / 2.0) - 1
+        out |= {(x, y) for x, y in body if lo <= x <= hi}
+    return out
 
 
 def monotone(body):
@@ -277,7 +335,7 @@ def build(spec):
     dy0 = 2 + (28 - (max(y for _, y in dep) - min(y for _, y in dep) + 1)) // 2
     dy0 -= min(y for _, y in dep)
     dep = {(x, y + dy0): v for (x, y), v in dep.items()}
-    body = monotone(set(dep))
+    body = (scallop(set(dep)) if spec.get('bite') else monotone(set(dep)))
     dep = {p: v for p, v in dep.items() if p in body}
     key = keyline(body)
     inner = body - key
@@ -324,7 +382,8 @@ def build(spec):
     fit = place_face(field, body, sizes=spec.get('sizes', ('md', 'sm', 'lg')),
                      gaps=spec.get('gaps', (2, 3, 1, 4)),
                      pad_min=spec.get('pad_min', 1))
-    return dict(layers=layers, body=body, field=field, key=key, dep=dep, fit=fit)
+    return dict(layers=layers, body=body, field=field, key=key, dep=dep, fit=fit,
+                bite=bool(spec.get('bite')))
 
 
 def check(slug, r):
@@ -336,11 +395,21 @@ def check(slug, r):
         assert symmetric(px), f'{slug}: layer {fill} is not symmetric about x=16'
         assert not is_slab(px, body), f'{slug}: layer {fill} floats as a slab'
     assert symmetric(body), f'{slug}: silhouette not symmetric'
+    assert connected(body), f'{slug}: silhouette is in more than one piece'
     circle_check(body)  # canonical authority: mirrored about x=16, no spurs
     pf, cf = profile_faults(body), count_faults(body)
     assert not pf, f'{slug}: protrusion {pf}'
     assert not cf, f'{slug}: row-count spur {cf}'
-    assert not split_rows(body), f'{slug}: split rows {split_rows(body)}'
+    sr = split_rows(body)
+    if r.get('bite'):
+        # A bitten rosette is allowed gaps, but only where they are notches
+        # between petal caps at the very top and bottom — never a row that has
+        # come apart into two feet somewhere in the middle.
+        mid = (min(p[1] for p in body) + max(p[1] for p in body)) / 2.0
+        deep = [y for y in sr if abs(y - mid) < len(set(p[1] for p in body)) / 4.0]
+        assert not deep, f'{slug}: split rows near the equator {deep}'
+    else:
+        assert not sr, f'{slug}: split rows {sr}'
     xs = [p[0] for p in body]
     ys = [p[1] for p in body]
     assert min(xs) >= 2 and max(xs) <= 29, f'{slug}: x {min(xs)}..{max(xs)} outside 2..29'
@@ -428,31 +497,44 @@ const {{ size = 128 }} = Astro.props;
     return line
 
 
-SEA = ['#06282e', '#0e4f57', '#1b7a80', '#45aca4', '#86d3c5', '#cdefe1']
-GLACIER = ['#062632', '#0d4b60', '#17738b', '#3ba0ab', '#79c9cf', '#c6ecec']
-PETROL = ['#041f27', '#0b4450', '#157079', '#3aa39c', '#7bcfbf', '#d2f0e2']
-MINT = ['#08302f', '#10585a', '#1e8781', '#4fb5a3', '#93dcc4', '#d8f2e3']
+# Light-forward ramps. The first entry is the keyline and the face; everything
+# after it is the mark itself, and it starts at a *mid* teal rather than a dark
+# one. The reference flowers are pale shapes glowing out of a mid ground, so the
+# darkest thing inside any of these marks is its outermost band, and the deepest
+# overlap — the calm middle where the face goes — is very nearly white.
+SEA = ['#06282e', '#2f948f', '#54b3a6', '#87d0c1', '#b8e6da', '#eefaf5']
+GLACIER = ['#062632', '#2f8ca4', '#54acbc', '#8bcbd5', '#bde5ea', '#eef9fb']
+LAGOON = ['#04222a', '#2a9b91', '#57bcaa', '#8ed8c3', '#c0ebdd', '#f0fbf6']
+MINT = ['#08302f', '#35a08e', '#5fbfa8', '#95dac2', '#c4ecdc', '#f1fbf6']
 
 MARKS = [
     ('c22', 'Rosette, Six', SEA,
-     'Six breaths overlapping — the six-pointed star is where they meet.',
+     'Six breaths overlapping, and you can count them round the rim.',
      ' * Six identical circles, each one `circles.circle(14)` translated seven\n'
      ' * pixels off centre and nothing more. Not a radius test in sight: the\n'
      ' * petal profile is the one lifted off the shipped Mozz mark, so all six\n'
      ' * petals are the same shape to the pixel, as they plainly are in the\n'
      ' * reference.\n'
      ' *\n'
-     ' * Every pixel is toned by how many circles cover it, so the star is not\n'
-     ' * drawn — it is the region three or more petals agree on. The ring is\n'
-     ' * turned flat-side-up, which puts two petals on the centre line and makes\n'
-     ' * the silhouette widen once and narrow once. That matters: a rosette\n'
-     ' * whose widest row sat halfway up would have a spur, and this one cannot.\n'
+     ' * This is the one where the petal count reaches the outline. The union of\n'
+     ' * six discs is not a circle — it has a cleft wherever two petals meet —\n'
+     ' * and here those clefts are kept rather than filled in, so the top and\n'
+     ' * bottom of the mark are bitten into by the gap between two petal caps.\n'
+     ' * That is as far as a scallop can honestly go: `circles.check` calls any\n'
+     ' * row wider than both its neighbours a spur, so a cleft cut into the left\n'
+     ' * or right side would be a fault by definition. Vertically it is legal,\n'
+     ' * because a row is measured edge to edge and a notch does not widen it.\n'
+     ' *\n'
+     ' * Tone runs the other way from a shadow: the more petals cover a pixel\n'
+     ' * the lighter it is, so the middle is nearly white and the single-petal\n'
+     ' * fringe is the darkest thing inside the keyline. The mark gives off\n'
+     ' * light instead of collecting dirt.\n'
      ' *\n'
      ' * The bright centre is another canonical circle, concentric, so the face\n'
      ' * never sits on a ragged star. Its height and offset come from the\n'
      ' * measured face table, never computed here.',
-     dict(mode='fill', n=6, dist=7.0, size=14, phase=0.0, K=4, core=12,
-          merge=[0, 0, 1, 2, 3, 3, 3, 3, 3], palette=SEA)),
+     dict(mode='fill', n=6, dist=7.0, size=14, phase=0.0, K=4, core=12, bite=True,
+          merge=[0, 0, 1, 2, 2, 2, 2, 2, 2], palette=SEA)),
     ('c23', 'Rosette, Eight', GLACIER,
      'Eight breaths instead of six — finer petals, and a sunburst rather than a star.',
      ' * Eight circles on a ring of six, each the same translated\n'
@@ -461,46 +543,48 @@ MARKS = [
      ' * resolves into a sunburst of eight rays instead of a six-pointed star.\n'
      ' *\n'
      ' * The ring is rolled half a step so no petal sits on an axis. Eight caps\n'
-     ' * scallop the rim finely enough that it reads as a flower rather than as\n'
-     ' * a disc with dents, and the widest row is still the centre one, so the\n'
+     ' * facet the rim finely enough that it reads as a flower rather than as a\n'
+     ' * disc with dents, and the widest row is still the centre one, so the\n'
      ' * profile rises once and falls once with no spur anywhere.\n'
      ' *\n'
      ' * Depth is grouped into three broad bands rather than left as a gradient,\n'
      ' * which is what keeps the rays legible once the mark is small enough that\n'
      ' * individual petals stop resolving.\n'
      ' *\n'
+     ' * Lit from the middle out: eight petals deep is almost white, one petal\n'
+     ' * deep is the mid teal the whole thing floats on. The rays are light\n'
+     ' * leaving the centre, which is the only way this reads as breathing\n'
+     ' * rather than as staining.\n'
+     ' *\n'
      ' * Glacier teal: pushed bluer than the six so the two do not read as the\n'
      ' * same mark twice.',
      dict(mode='fill', n=8, dist=6.0, size=14, phase=-67.5, K=3, core=10,
           merge=[0, 0, 1, 2, 2, 2, 2, 2, 2], palette=GLACIER)),
-    ('c24', 'Rosette, Lattice', PETROL,
-     'The petals drawn as rings, not discs — so the mark is the lattice their edges make.',
-     ' * Eight petals again, but each one is the *outline* of the canonical\n'
-     ' * circle rather than the filled disc — two pixels of it, peeled off by\n'
-     ' * erosion so the ring keeps the circle profile instead of needing a\n'
-     ' * second radius guessed to fit inside the first.\n'
+    ('c24', 'Rosette, Bloom', LAGOON,
+     'The same flower with everything small taken out of it — built to be read at 24 pixels.',
+     ' * This replaces a lattice mark that was lovely at 96 pixels and mud at\n'
+     ' * 24. An app icon lives at small sizes, so this one is designed at the\n'
+     ' * small size and allowed to be plain at the large one.\n'
      ' *\n'
-     ' * The ring is rolled half a step so no petal sits on the horizontal axis.\n'
-     ' * That was worth finding: with a petal squarely on it, the two rows at\n'
-     ' * the equator were the only ones at full width and stood off the rim as a\n'
-     ' * pair of tabs. Rolled, the width climbs and falls smoothly.\n'
+     ' * Six petals again, but bigger — `circles.circle(16)` on a ring of six —\n'
+     ' * and turned point-up rather than flat-up, so it stands vertically where\n'
+     ' * the six lies horizontally and the two cannot be confused.\n'
      ' *\n'
-     ' * The rings cross, and the crossings — two rings deep — are the brightest\n'
-     ' * tone in the mark, brighter than the centre. That is the one place the\n'
-     ' * overlap rule is visible as light rather than as shape, and it leaves a\n'
-     ' * ring of dark cells ribbed apart by bright arcs.\n'
+     ' * Everything narrow has been merged away. Depths one and two are one\n'
+     ' * band, three is a second, and everything deeper is the centre, which is\n'
+     ' * a canonical circle of near-white. What is left is three areas, not a\n'
+     ' * gradient: a mid-teal rim, a pale six-pointed star where the petals\n'
+     ' * agree, and a light middle with the face on it. Three areas survive\n'
+     ' * being four pixels across; eight rays do not.\n'
      ' *\n'
-     ' * The silhouette is still the filled union, so there are no holes to the\n'
-     ' * paper; the lattice is painted inside it. The centre is a plain circle,\n'
-     ' * wide enough that the arcs which would otherwise cross the eyes are\n'
-     ' * absorbed into it.\n'
-     ' *\n'
-     ' * Busiest of the four by a distance. It holds at 32 and is ornament at\n'
-     ' * 16, which is an honest cost of the idea rather than a fault in it.',
-     dict(mode='lattice', n=8, dist=6.0, size=16, phase=-67.5, ring=2, K=3,
-          core=14, lat=(1, 2, 4, 5), palette=PETROL)),
+     ' * At this ring distance the petals overlap too far to leave a cleft in the\n'
+     ' * outline, so unlike the six the flower is carried entirely by the star\n'
+     ' * inside it. That is the trade: a bitten rim is the first thing to go\n'
+     ' * when the mark has to survive being twenty-four pixels wide.',
+     dict(mode='fill', n=6, dist=6.0, size=16, phase=-90.0, K=3, core=12, bite=True,
+          merge=[0, 0, 1, 2, 2, 2, 2, 2, 2], palette=LAGOON)),
     ('c25', 'Rosette, Five', MINT,
-     'Five breaths, flattened to an outline, one shade and a five-pointed field.',
+     'Five breaths — the one count with no mirror pair, so the field itself is a five-pointed star.',
      ' * Five circles, which is the one count with no mirror pair top to bottom,\n'
      ' * so the pentafoil sits point-up and the two halves of the mark are\n'
      ' * genuinely different shapes.\n'
@@ -511,14 +595,22 @@ MARKS = [
      ' * itself* — the region all five petals cover. The five-pointed shape the\n'
      ' * face sits on is the rule made visible, not a disc laid on top of it.\n'
      ' *\n'
-     ' * Flattest of the four on purpose. Depths one to three are collapsed into\n'
-     ' * a single band, so what is left is a pentagon outline, one step of shade\n'
-     ' * and the field. Nothing gradates, and it is the one that still reads as\n'
-     ' * a five-sided object at 16 pixels.\n'
+     ' * Five is also the most constrained count on this grid. The face has to\n'
+     ' * split both the field and the whole mark into equal air, and with five\n'
+     ' * petals almost nothing does: a full sweep of petal size, ring distance,\n'
+     ' * phase, centre and depth threshold leaves one ring distance standing.\n'
+     ' * So the petals here sit closer in than the six or the eight, and the\n'
+     ' * mark earns its shape from the five-pointed field rather than from a\n'
+     ' * deeply lobed rim. That is a real limit of the geometry, not a choice.\n'
+     ' *\n'
+     ' * What it does have is light. Four even steps run from a mid teal at the\n'
+     ' * rim to the palest tone in the set at the middle, and because the field\n'
+     ' * is the five-fold overlap rather than a disc, that palest tone arrives\n'
+     ' * in the shape of a five-pointed star.\n'
      ' *\n'
      ' * Soft mint — the least saturated of the set.',
-     dict(mode='fill', n=5, dist=4.0, size=18, phase=-90.0, K=5, core=None,
-          merge=[0, 0, 0, 1, 2, 2, 2, 2, 2], palette=MINT)),
+     dict(mode='fill', n=5, dist=4.0, size=20, phase=-54.0, K=5, core=None,
+          merge=[0, 1, 2, 3, 3, 3, 3, 3, 3], palette=MINT)),
 ]
 
 if __name__ == '__main__':

@@ -8,11 +8,19 @@
  * petals are the same shape to the pixel, as they plainly are in the
  * reference.
  *
- * Every pixel is toned by how many circles cover it, so the star is not
- * drawn — it is the region three or more petals agree on. The ring is
- * turned flat-side-up, which puts two petals on the centre line and makes
- * the silhouette widen once and narrow once. That matters: a rosette
- * whose widest row sat halfway up would have a spur, and this one cannot.
+ * This is the one where the petal count reaches the outline. The union of
+ * six discs is not a circle — it has a cleft wherever two petals meet —
+ * and here those clefts are kept rather than filled in, so the top and
+ * bottom of the mark are bitten into by the gap between two petal caps.
+ * That is as far as a scallop can honestly go: `circles.check` calls any
+ * row wider than both its neighbours a spur, so a cleft cut into the left
+ * or right side would be a fault by definition. Vertically it is legal,
+ * because a row is measured edge to edge and a notch does not widen it.
+ *
+ * Tone runs the other way from a shadow: the more petals cover a pixel
+ * the lighter it is, so the middle is nearly white and the single-petal
+ * fringe is the darkest thing inside the keyline. The mark gives off
+ * light instead of collecting dirt.
  *
  * The bright centre is another canonical circle, concentric, so the face
  * never sits on a ragged star. Its height and offset come from the
@@ -26,11 +34,11 @@ const { size = 128 } = Astro.props;
 ---
 
 <MarkFrame size={size} title="Hozz — Rosette, Six">
-  <path d="M9 4h6v1h-6z M17 4h6v1h-6z M8 5h7v1h-7z M17 5h7v1h-7z M7 6h7v1h-7z M18 6h7v1h-7z M7 7h7v1h-7z M18 7h7v1h-7z M6 8h7v1h-7z M19 8h7v1h-7z M12 9h1v1h-1z M19 9h1v1h-1z M4 12h2v1h-2z M26 12h2v1h-2z M4 13h2v1h-2z M26 13h2v1h-2z M3 14h4v1h-4z M25 14h4v1h-4z M3 15h4v1h-4z M25 15h4v1h-4z M3 16h4v1h-4z M25 16h4v1h-4z M3 17h4v1h-4z M25 17h4v1h-4z M4 18h2v1h-2z M26 18h2v1h-2z M4 19h2v1h-2z M26 19h2v1h-2z M12 22h1v1h-1z M19 22h1v1h-1z M6 23h7v1h-7z M19 23h7v1h-7z M7 24h7v1h-7z M18 24h7v1h-7z M7 25h7v1h-7z M18 25h7v1h-7z M8 26h7v1h-7z M17 26h7v1h-7z M9 27h6v1h-6z M17 27h6v1h-6z" fill="#0e4f57" />
-  <path d="M15 4h2v1h-2z M15 5h2v1h-2z M14 6h4v1h-4z M14 7h4v1h-4z M13 8h6v1h-6z M6 9h6v1h-6z M13 9h6v1h-6z M20 9h6v1h-6z M5 10h8v1h-8z M19 10h8v1h-8z M5 11h7v1h-7z M20 11h7v1h-7z M6 12h5v1h-5z M21 12h5v1h-5z M6 13h5v1h-5z M21 13h5v1h-5z M7 14h3v1h-3z M22 14h3v1h-3z M7 15h2v1h-2z M23 15h2v1h-2z M7 16h2v1h-2z M23 16h2v1h-2z M7 17h3v1h-3z M22 17h3v1h-3z M6 18h5v1h-5z M21 18h5v1h-5z M6 19h5v1h-5z M21 19h5v1h-5z M5 20h7v1h-7z M20 20h7v1h-7z M5 21h8v1h-8z M19 21h8v1h-8z M6 22h6v1h-6z M13 22h6v1h-6z M20 22h6v1h-6z M13 23h6v1h-6z M14 24h4v1h-4z M14 25h4v1h-4z M15 26h2v1h-2z M15 27h2v1h-2z" fill="#1b7a80" />
-  <path d="M9 15h1v1h-1z M22 15h1v1h-1z M9 16h1v1h-1z M22 16h1v1h-1z" fill="#86d3c5" />
-  <path d="M13 10h6v1h-6z M12 11h8v1h-8z M11 12h10v1h-10z M11 13h10v1h-10z M10 14h12v1h-12z M10 15h12v1h-12z M10 16h12v1h-12z M10 17h12v1h-12z M11 18h10v1h-10z M11 19h10v1h-10z M12 20h8v1h-8z M13 21h6v1h-6z" fill="#cdefe1" />
-  <path d="M9 3h14v1h-14z M7 4h2v1h-2z M23 4h2v1h-2z M7 5h1v1h-1z M24 5h1v1h-1z M6 6h1v1h-1z M25 6h1v1h-1z M6 7h1v1h-1z M25 7h1v1h-1z M5 8h1v1h-1z M26 8h1v1h-1z M5 9h1v1h-1z M26 9h1v1h-1z M4 10h1v1h-1z M27 10h1v1h-1z M4 11h1v1h-1z M27 11h1v1h-1z M3 12h1v1h-1z M28 12h1v1h-1z M3 13h1v1h-1z M28 13h1v1h-1z M2 14h1v1h-1z M29 14h1v1h-1z M2 15h1v1h-1z M29 15h1v1h-1z M2 16h1v1h-1z M29 16h1v1h-1z M2 17h1v1h-1z M29 17h1v1h-1z M3 18h1v1h-1z M28 18h1v1h-1z M3 19h1v1h-1z M28 19h1v1h-1z M4 20h1v1h-1z M27 20h1v1h-1z M4 21h1v1h-1z M27 21h1v1h-1z M5 22h1v1h-1z M26 22h1v1h-1z M5 23h1v1h-1z M26 23h1v1h-1z M6 24h1v1h-1z M25 24h1v1h-1z M6 25h1v1h-1z M25 25h1v1h-1z M7 26h1v1h-1z M24 26h1v1h-1z M7 27h2v1h-2z M23 27h2v1h-2z M9 28h14v1h-14z" fill="#06282e" />
+  <path d="M9 4h6v1h-6z M17 4h6v1h-6z M8 5h7v1h-7z M17 5h7v1h-7z M7 6h7v1h-7z M18 6h7v1h-7z M7 7h7v1h-7z M18 7h7v1h-7z M6 8h7v1h-7z M19 8h7v1h-7z M12 9h1v1h-1z M19 9h1v1h-1z M4 12h2v1h-2z M26 12h2v1h-2z M4 13h2v1h-2z M26 13h2v1h-2z M3 14h4v1h-4z M25 14h4v1h-4z M3 15h4v1h-4z M25 15h4v1h-4z M3 16h4v1h-4z M25 16h4v1h-4z M3 17h4v1h-4z M25 17h4v1h-4z M4 18h2v1h-2z M26 18h2v1h-2z M4 19h2v1h-2z M26 19h2v1h-2z M12 22h1v1h-1z M19 22h1v1h-1z M6 23h7v1h-7z M19 23h7v1h-7z M7 24h7v1h-7z M18 24h7v1h-7z M7 25h7v1h-7z M18 25h7v1h-7z M8 26h7v1h-7z M17 26h7v1h-7z M9 27h6v1h-6z M17 27h6v1h-6z" fill="#2f948f" />
+  <path d="M15 5h2v1h-2z M14 6h4v1h-4z M14 7h4v1h-4z M13 8h6v1h-6z M6 9h6v1h-6z M13 9h6v1h-6z M20 9h6v1h-6z M5 10h8v1h-8z M19 10h8v1h-8z M5 11h7v1h-7z M20 11h7v1h-7z M6 12h5v1h-5z M21 12h5v1h-5z M6 13h5v1h-5z M21 13h5v1h-5z M7 14h3v1h-3z M22 14h3v1h-3z M7 15h2v1h-2z M23 15h2v1h-2z M7 16h2v1h-2z M23 16h2v1h-2z M7 17h3v1h-3z M22 17h3v1h-3z M6 18h5v1h-5z M21 18h5v1h-5z M6 19h5v1h-5z M21 19h5v1h-5z M5 20h7v1h-7z M20 20h7v1h-7z M5 21h8v1h-8z M19 21h8v1h-8z M6 22h6v1h-6z M13 22h6v1h-6z M20 22h6v1h-6z M13 23h6v1h-6z M14 24h4v1h-4z M14 25h4v1h-4z M15 26h2v1h-2z" fill="#54b3a6" />
+  <path d="M9 15h1v1h-1z M22 15h1v1h-1z M9 16h1v1h-1z M22 16h1v1h-1z" fill="#b8e6da" />
+  <path d="M13 10h6v1h-6z M12 11h8v1h-8z M11 12h10v1h-10z M11 13h10v1h-10z M10 14h12v1h-12z M10 15h12v1h-12z M10 16h12v1h-12z M10 17h12v1h-12z M11 18h10v1h-10z M11 19h10v1h-10z M12 20h8v1h-8z M13 21h6v1h-6z" fill="#eefaf5" />
+  <path d="M9 3h6v1h-6z M17 3h6v1h-6z M7 4h2v1h-2z M15 4h2v1h-2z M23 4h2v1h-2z M7 5h1v1h-1z M24 5h1v1h-1z M6 6h1v1h-1z M25 6h1v1h-1z M6 7h1v1h-1z M25 7h1v1h-1z M5 8h1v1h-1z M26 8h1v1h-1z M5 9h1v1h-1z M26 9h1v1h-1z M4 10h1v1h-1z M27 10h1v1h-1z M4 11h1v1h-1z M27 11h1v1h-1z M3 12h1v1h-1z M28 12h1v1h-1z M3 13h1v1h-1z M28 13h1v1h-1z M2 14h1v1h-1z M29 14h1v1h-1z M2 15h1v1h-1z M29 15h1v1h-1z M2 16h1v1h-1z M29 16h1v1h-1z M2 17h1v1h-1z M29 17h1v1h-1z M3 18h1v1h-1z M28 18h1v1h-1z M3 19h1v1h-1z M28 19h1v1h-1z M4 20h1v1h-1z M27 20h1v1h-1z M4 21h1v1h-1z M27 21h1v1h-1z M5 22h1v1h-1z M26 22h1v1h-1z M5 23h1v1h-1z M26 23h1v1h-1z M6 24h1v1h-1z M25 24h1v1h-1z M6 25h1v1h-1z M25 25h1v1h-1z M7 26h1v1h-1z M24 26h1v1h-1z M7 27h2v1h-2z M15 27h2v1h-2z M23 27h2v1h-2z M9 28h6v1h-6z M17 28h6v1h-6z" fill="#06282e" />
   <g fill="#06282e" shape-rendering="crispEdges">
     {facePathsAt({ cx: 16, cy: 16, size: 'md', smile: 'wide', gap: 3 }).map((d) => (
       <path d={d} />
