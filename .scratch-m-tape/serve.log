@@ -1,0 +1,24 @@
+npm warn exec The following package was not found and will be installed: serve@14.2.6
+ INFO  Accepting connections at http://localhost:4761
+ HTTP  8/23/2026 4:12:42 PM ::1 GET /f/
+ HTTP  8/23/2026 4:12:42 PM ::1 Returned 200 in 8 ms
+ HTTP  8/23/2026 4:12:47 PM ::1 GET /f/
+ HTTP  8/23/2026 4:12:47 PM ::1 Returned 200 in 2 ms
+ HTTP  8/23/2026 4:12:47 PM ::1 GET /_astro/f.j-wm4-KM.css
+ HTTP  8/23/2026 4:12:47 PM ::1 Returned 200 in 1 ms
+ HTTP  8/23/2026 4:12:47 PM ::1 GET /fonts/switzer-400.woff2
+ HTTP  8/23/2026 4:12:47 PM ::1 GET /fonts/switzer-700.woff2
+ HTTP  8/23/2026 4:12:47 PM ::1 GET /fonts/ibm-plex-mono-400.woff2
+ HTTP  8/23/2026 4:12:47 PM ::1 Returned 200 in 1 ms
+ HTTP  8/23/2026 4:12:47 PM ::1 Returned 200 in 1 ms
+ HTTP  8/23/2026 4:12:47 PM ::1 Returned 200 in 1 ms
+ HTTP  8/23/2026 4:13:45 PM ::1 GET /f/
+ HTTP  8/23/2026 4:13:45 PM ::1 Returned 200 in 1 ms
+ HTTP  8/23/2026 4:13:45 PM ::1 GET /_astro/f.j-wm4-KM.css
+ HTTP  8/23/2026 4:13:45 PM ::1 Returned 200 in 0 ms
+ HTTP  8/23/2026 4:13:45 PM ::1 GET /fonts/switzer-400.woff2
+ HTTP  8/23/2026 4:13:45 PM ::1 GET /fonts/switzer-700.woff2
+ HTTP  8/23/2026 4:13:45 PM ::1 GET /fonts/ibm-plex-mono-400.woff2
+ HTTP  8/23/2026 4:13:45 PM ::1 Returned 200 in 1 ms
+ HTTP  8/23/2026 4:13:45 PM ::1 Returned 200 in 0 ms
+ HTTP  8/23/2026 4:13:45 PM ::1 Returned 200 in 0 ms

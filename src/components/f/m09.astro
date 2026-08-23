@@ -1,15 +1,15 @@
 ---
 /**
- * m09 · Thread — tape threaded between two spools.
+ * m09 · Sleeve — a record halfway out of its cover.
  *
- * The supply spool sits high on the left, the take-up spool low on the right,
- * and the whole run of tape between them is the ZZ: it leaves the first hub,
- * folds, folds back, and winds onto the second. Each Z ends inside a hub, so
- * the letters are the tape path and cannot be lifted away from the spools that
- * hold them. The bars are the ribbon flat and the diagonals are the ribbon
- * crossing the run, which is why the two weights differ.
+ * The dependency: **the sleeve's mouth is the top edge of both Zs**. The card
+ * is open along one line, the record is leaving through it, and the ZZ is the
+ * rest of that same cut — it hangs directly off the opening, so moving the
+ * mouth moves the letters and closing the sleeve would close them too.
  *
- * Three shapes: two spools and one tape. Two fills.
+ * Everything visible is one hue and every light shape is a hole, so the letters
+ * hold full tonal separation on either ground. Two shapes make the object: the
+ * disc and the card. Nothing else.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -20,23 +20,19 @@ interface Props {
 }
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.mozz;
+const uid = `m09-${Math.random().toString(36).slice(2, 9)}`;
 
-// bar 3 against diag 4.8.
-const Z = { y: 17.5, h: 12.6, w: 13, bar: 3, diag: 4.8 };
-const ZX = [9.5, 26.5];
+// A record is nearly as wide as its sleeve, so most of it stays inside and what
+// shows above the card is a broad shallow cap, not a tab.
+const DISC = { cx: 28, cy: 20, r: 16.5 };
+const SLEEVE = { x: 5.5, y: 13.5, w: 34, h: 29, r: 2.5 };
 
-const TOP_Y = Z.y + Z.bar / 2;
-const FOOT_Y = Z.y + Z.h - Z.bar / 2;
+// The open edge. The letters hang 1.7 below it — one card's thickness.
+const MOUTH = { x: 8.5, y: 18.2, w: 28, h: 1.7, r: 0.85 };
 
-// Both loose ends of the ribbon land on a hub: the supply and the take-up. They
-// stay small deliberately — at full spool size they read as letters themselves.
-const HUBS = [
-  { x: ZX[0], y: TOP_Y },
-  { x: ZX[1] + Z.w, y: FOOT_Y },
-];
-const HUB = { r: 3.6, core: 1.45 };
-
-const FOLD = `M${ZX[0] + Z.w} ${FOOT_Y}C25.9 27.9 24.5 20.3 ${ZX[1]} ${TOP_Y}`;
+const Z = { y: 21.6, w: 12.4, h: 13.8, bar: 3.1, diag: 5, cap: 'angled' as const };
+// 12.4 + 3.3 + 12.4 = 28.1, running 8.5 to 36.6, centred on the card at 22.5.
+const ZX = [8.5, 24.2];
 ---
 
 <svg
@@ -48,12 +44,39 @@ const FOLD = `M${ZX[0] + Z.w} ${FOOT_Y}C25.9 27.9 24.5 20.3 ${ZX[1]} ${TOP_Y}`;
   role="img"
   aria-label={`${app.name} mark`}
 >
-  {HUBS.map((h) => <circle cx={h.x} cy={h.y} r={HUB.r} fill={app.hue} />)}
-  <path d={FOLD} stroke={app.hue} stroke-width={Z.bar * 0.62} fill="none" />
-  {ZX.map((zx) => <path d={zPath({ ...Z, x: zx })} fill={app.hue} />)}
-  {
-    HUBS.map((h) => (
-      <circle cx={h.x} cy={h.y} r={HUB.core} fill={app.deep} />
-    ))
-  }
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      {ZX.map((zx) => <path d={zPath({ ...Z, x: zx })} fill="#000" />)}
+      <rect
+        x={MOUTH.x}
+        y={MOUTH.y}
+        width={MOUTH.w}
+        height={MOUTH.h}
+        rx={MOUTH.r}
+        fill="#000"
+      />
+      {/* The spindle is buried, so one groove in the exposed rim says record. */}
+    </mask>
+  </defs>
+
+  <g mask={`url(#${uid})`}>
+    <circle cx={DISC.cx} cy={DISC.cy} r={DISC.r} fill={app.hue} />
+    <circle
+      cx={DISC.cx}
+      cy={DISC.cy}
+      r={DISC.r - 2.8}
+      fill="none"
+      stroke={app.deep}
+      stroke-width="1.1"
+    />
+    <rect
+      x={SLEEVE.x}
+      y={SLEEVE.y}
+      width={SLEEVE.w}
+      height={SLEEVE.h}
+      rx={SLEEVE.r}
+      fill={app.hue}
+    />
+  </g>
 </svg>

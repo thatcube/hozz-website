@@ -2,16 +2,17 @@
 /**
  * tw14 · Wheeze — caught mid-laugh, and losing.
  *
- * The family's other marks are composed. This one is not: the grin has slipped
- * up at one corner and the whole head has gone over with it. Nothing here is
- * level except the letters, which stay square and upright inside a face that is
- * doing the opposite — the head is rotated under them, they are not.
+ * The family's other marks are level. This one is not: the grin has slipped up
+ * at one corner, and the squint above it has gone over with it. The head stays
+ * round, so the only thing tilted is the face — which is what leaning looks
+ * like on an emote.
  *
- * The dependency: **the head leans by exactly the angle the grin is crooked.**
- * LIP holds the two corners of the mouth; TILT is the angle between them, and
- * that same angle rotates the entire skull. Level the grin and the face stands
- * up straight; drag one corner higher and the head follows it over. The lean is
- * not a styling choice applied afterwards — it is measured off the laugh.
+ * The dependency: **the squint is canted by exactly the angle the grin is
+ * crooked.** LIP holds the two corners of the mouth; TILT is the angle between
+ * them, and that same angle sets the whole ZZ pair. Level the grin and the eyes
+ * straighten with it; drag one corner higher and they follow. The pair rotates
+ * as one unit, so the letters are canted but never distorted — a Z at seven degrees is
+ * still a Z, and both are still the same Z.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -24,11 +25,11 @@ const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.twozz;
 const uid = `tw14-${Math.random().toString(36).slice(2, 9)}`;
 
-// The two corners of the mouth. The pose follows from these and nothing else.
-const LIP = { x0: 13.4, y0: 32, x1: 36.6, y1: 29.4 };
+// The two corners of the mouth. The cant of the face follows from these.
+const LIP = { x0: 13.2, y0: 32.2, x1: 36.8, y1: 29.2 };
 const TILT = (Math.atan2(LIP.y1 - LIP.y0, LIP.x1 - LIP.x0) * 180) / Math.PI;
 
-const Z = { y: 13.4, w: 10, h: 12.8, bar: 3.1, diag: 5.6, cap: 'angled' as const };
+const Z = { y: 13.4, w: 10, h: 12.8, bar: 3.3, diag: 5.8, cap: 'angled' as const };
 const zLeft = 12;
 const zRight = 26;
 
@@ -36,8 +37,8 @@ const SKULL =
   'M24 6.8C33.8 6.8 41 14 41 24.4C41 34.8 33.6 42 23.6 42C14 42 7 34.8 7 24.4C7 14 14.2 6.8 24 6.8Z';
 
 const MOUTH =
-  `M${LIP.x0} ${LIP.y0}C19 29.8 31.4 28.4 ${LIP.x1} ${LIP.y1}` +
-  `C37 35.8 31.6 39.9 24.8 39.7C18.2 39.5 12.9 36.8 ${LIP.x0} ${LIP.y0}Z`;
+  `M${LIP.x0} ${LIP.y0}C19 30.2 31.4 27.6 ${LIP.x1} ${LIP.y1}` +
+  `C37.2 35.4 31.6 40.2 24.8 40C18.2 39.8 12.7 37.4 ${LIP.x0} ${LIP.y0}Z`;
 ---
 
 <svg
@@ -52,15 +53,15 @@ const MOUTH =
   <defs>
     <mask id={uid}>
       <rect width="48" height="48" fill="#fff" />
-      <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
-      <path d={zPath({ ...Z, x: zRight })} fill="#000" />
+      <g transform={`rotate(${TILT} 24 20)`}>
+        <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
+        <path d={zPath({ ...Z, x: zRight })} fill="#000" />
+      </g>
       <path d={MOUTH} fill="#000" />
     </mask>
   </defs>
 
   <g mask={`url(#${uid})`}>
-    <g transform={`rotate(${TILT} 24 25)`}>
-      <path d={SKULL} fill={ground === 'dark' ? app.hue : app.hue} />
-    </g>
+    <path d={SKULL} fill={ground === 'dark' ? app.hue : app.hue} />
   </g>
 </svg>

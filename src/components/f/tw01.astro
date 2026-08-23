@@ -1,18 +1,17 @@
 ---
 /**
- * tw01 · Spout — a bubble, and the ZZ cut clean through it.
+ * tw01 · Aside — a bubble whose tail is the last stroke still going.
  *
- * One dependency, and it is the only thing holding the concept up: **the tail
- * is the gap between the two Zs.** The bubble's single defining feature — the
- * thing that makes it a bubble rather than a rounded box — starts exactly where
- * the left Z ends and finishes exactly where the right Z begins, so the pair
- * sets the letterspacing and the letterspacing sets the tail. Slide the letters
- * apart and the tail widens with them; close them up and the bubble loses its
- * point.
+ * The dependency is the bubble's own tail, and it belongs to no other object in
+ * the family: **the tail is the second Z's diagonal, run on past the letter and
+ * out of the bubble.** Its right edge sits on that diagonal's line, its root is
+ * exactly the diagonal's thickness, and it hangs from the bottom edge directly
+ * below where the stroke lands. Re-pitch the diagonal and the tail swings with
+ * it; take the letters away and the tail points nowhere in particular.
  *
- * That is the whole object: one outline, one fill, no highlight, no keyline.
- * The corner radius is generous at the top and tight at the bottom, which is
- * how a bubble is drawn by hand and where its character comes from.
+ * That is also why the diagonal is nearly twice the weight of the bars — the
+ * stroke has to survive leaving the bubble, so it is drawn as the letter's
+ * strongest move rather than as a font's even sixth.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -25,30 +24,39 @@ const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.twozz;
 const uid = `tw01-${Math.random().toString(36).slice(2, 9)}`;
 
-/** 13.4 + 7 + 13.4 = 33.8, running 7.1 to 40.9, centred on 24. Flat caps, so
- *  the channel between the pair is a true vertical 7 units wide. */
-const Z = { y: 12, w: 13.4, h: 17, bar: 3.6, diag: 6.2, cap: 'flat' as const };
-const zLeft = 7.1;
-const zRight = 27.5;
+const Z = { y: 8, w: 13.6, h: 17, bar: 3.6, diag: 6.4, cap: 'flat' as const };
+const zLeft = 8.1;
+const zRight = 26.3;
 
-const gapL = zLeft + Z.w; // 20.5
-const gapR = zRight; //      27.5
+// The right edge of the second Z's diagonal, from under the top bar to its foot.
+const dTop: [number, number] = [zRight + Z.w, Z.y + Z.bar]; //   39.9, 11.6
+const dFoot: [number, number] = [zRight + Z.diag, Z.y + Z.h - Z.bar]; // 32.7, 21.4
+const pitch = (dFoot[0] - dTop[0]) / (dFoot[1] - dTop[1]); // -0.735
 
-/** Body 4–44 by 8–34, soft over the top, firm underneath, and the tail hung
- *  off the bottom edge across exactly the width of the gap. */
+const FLOOR = 30; // the bubble's bottom edge
+const TIP_Y = 37.6; // how far the stroke carries past it
+const at = (y: number) => dFoot[0] + pitch * (y - dFoot[1]);
+const r = (v: number) => Math.round(v * 100) / 100;
+
+const rootR = r(at(FLOOR)); //        where the diagonal crosses the floor
+const rootL = r(at(FLOOR) - Z.diag); // one diagonal-width behind it
+const tipX = r(at(TIP_Y));
+
+/** 4–44 by 5–30, soft over the top, firmer underneath, and the tail cut by the
+ *  diagonal rather than stuck on. */
 const BODY = [
-  'M13 8',
-  'H35',
-  'A9 9 0 0 1 44 17',
-  'V29',
-  'A5 5 0 0 1 39 34',
-  `H${gapR}`,
-  'L24 40.2',
-  `L${gapL} 34`,
-  'H9',
-  'A5 5 0 0 1 4 29',
-  'V17',
-  'A9 9 0 0 1 13 8',
+  'M12 5',
+  'H36',
+  'A8 8 0 0 1 44 13',
+  'V24',
+  'A6 6 0 0 1 38 30',
+  `H${rootR}`,
+  `L${tipX} ${TIP_Y}`,
+  `L${rootL} 30`,
+  'H10',
+  'A6 6 0 0 1 4 24',
+  'V13',
+  'A8 8 0 0 1 12 5',
   'Z',
 ].join(' ');
 ---

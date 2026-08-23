@@ -8,10 +8,10 @@
  *
  * The dependency: **the spam's direction and its rate of retreat both come out
  * of the letter.** STEP is the Z's own diagonal — across by (w - diag), up by
- * (h - 2·bar) — and SHRINK is one bar taken off the letter's height, so each
- * copy loses exactly the weight of a stroke. Redraw the Z heavier and the
- * barrage falls away faster; redraw it wider and the column leans further.
- * Neither number is chosen.
+ * (h - 2·bar) — and SHRINK is one bar taken off the letter's full extent, so
+ * each copy retreats by exactly the weight of a stroke. Redraw the Z heavier
+ * and the barrage falls away faster; redraw it wider and the column leans
+ * further. Neither number is chosen.
  *
  * The face is one hole bored through the whole pile, so the letters belong to
  * no single copy — they are the thing all three have in common.
@@ -27,13 +27,13 @@ const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.twozz;
 const uid = `tw13-${Math.random().toString(36).slice(2, 9)}`;
 
-const Z = { y: 15.2, w: 10, h: 11.6, bar: 2.9, diag: 5, cap: 'angled' as const };
+const Z = { y: 15.4, w: 10, h: 11.6, bar: 2.9, diag: 5, cap: 'angled' as const };
 
 const STEP = { x: Z.w - Z.diag, y: -(Z.h - 2 * Z.bar) };
-const SHRINK = 1 - Z.bar / Z.h;
+const SHRINK = 1 - Z.bar / (Z.h + Z.bar);
 
-const CARD = 28;
-const HEAD = { x: 22, y: 26.7 }; // centre of the front copy
+const CARD = 30;
+const HEAD = { x: 21.7, y: 27.1 }; // centre of the front copy
 
 const copies = [0, 1, 2].map((i) => {
   const s = CARD * SHRINK ** i;
@@ -45,11 +45,11 @@ const copies = [0, 1, 2].map((i) => {
   };
 });
 
-const zLeft = 10.5;
-const zRight = 23.5;
+const zLeft = 10.2;
+const zRight = 23.2;
 
 const GRIN =
-  'M12.6 30.4C17.4 28.8 26.8 28.6 31.2 30.2C30.8 35.8 26.8 39.2 21.8 39.2C16.4 39.2 13 36 12.6 30.4Z';
+  'M12.4 31.2C17.2 29.8 26.8 29.6 31.2 31C30.8 36.8 26.8 40.4 21.7 40.4C16.2 40.4 12.8 36.6 12.4 31.2Z';
 ---
 
 <svg
@@ -78,7 +78,7 @@ const GRIN =
       height={copies[2].s}
       rx={copies[2].r}
       fill={app.light}
-      opacity="0.45"
+      opacity="0.5"
     />
     <rect
       x={copies[1].x}

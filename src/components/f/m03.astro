@@ -32,7 +32,7 @@ const EDGE = 1.8; // the record's thickness, the one shading step
 const EDGE_FILL = ground === 'dark' ? app.light : app.deep;
 
 // Drawn upright at 20 tall, then squashed with the surface it is cut into.
-const GAP = 5;
+const GAP = 7; // wider than the hole on purpose: the spacing is not its job
 const Z = {
   y: CY - 8 / K,
   w: 11,
@@ -66,7 +66,7 @@ const squash = `translate(0 ${CY}) scale(1 ${K}) translate(0 ${-CY})`;
         <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
         <path d={zPath({ ...Z, x: zRight })} fill="#000" />
       </g>
-      <ellipse cx="24" cy={CY} rx="2" ry={2 * K} fill="#000" />
+      <ellipse cx="24" cy={CY} rx="1.6" ry={1.6 * K} fill="#000" />
     </mask>
   </defs>
 

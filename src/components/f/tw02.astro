@@ -1,16 +1,22 @@
 ---
 /**
- * tw02 · Overlap — two bubbles, and the ZZ cut out of where they cross.
+ * tw02 · Through — two bubbles, one in front of the other.
  *
- * One dependency: **the overlap is the field the letters live in.** The pair is
- * exactly as wide as the band the two bubbles share and sits centred in it, so
- * pull the bubbles apart and the letters have nowhere to be; push them together
- * and the pair is squeezed. The letters are not in either bubble — they are in
- * the conversation, which is the app.
+ * Not a knockout: the letters have no ground behind them. **The far bubble is
+ * what you see through the near one.** The ZZ is an opening cut in the front
+ * bubble and the only thing filling it is the bubble behind — take the second
+ * bubble away and the letters go empty, slide it and they change colour. The
+ * letters are not the property of either speaker; they are what shows when the
+ * two of them are lined up.
  *
- * Three shapes: two bubbles in the same purple, and their intersection one step
- * darker. The letters knock through all of it to the ground, so they carry the
- * full tonal separation at 24px.
+ * Two shapes and two fills. The far bubble reads at the top and right, and its
+ * tail points the other way, so it is plainly a second bubble rather than a
+ * plate behind the first.
+ *
+ * Tried and rejected: running the second Z out through the front wall so its
+ * openings met the far bubble. It made the dependency obvious and truncated the
+ * letter, because an opening that touches a field of its own colour has no edge
+ * left. Legibility won.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -22,49 +28,48 @@ interface Props {
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.twozz;
 const uid = `tw02-${Math.random().toString(36).slice(2, 9)}`;
-const clipId = `${uid}-b`;
 
-/** Said first: 4–35 by 7–29, tail down to the left. */
-const SAID = [
-  'M10 7',
-  'H29',
-  'A6 6 0 0 1 35 13',
-  'V23',
-  'A6 6 0 0 1 29 29',
-  'H16.5',
-  'L7.5 35.6',
-  'L11 29',
-  'H10',
-  'A6 6 0 0 1 4 23',
-  'V13',
-  'A6 6 0 0 1 10 7',
-  'Z',
-].join(' ');
-
-/** Answered: 13–44 by 13–35, tail down to the right. */
+/** Behind: 12–44 by 13–35, tail down to the right. */
 const BACK = [
   'M19 13',
-  'H38',
-  'A6 6 0 0 1 44 19',
-  'V29',
-  'A6 6 0 0 1 38 35',
-  'L41.5 41.6',
+  'H37',
+  'A7 7 0 0 1 44 20',
+  'V28',
+  'A7 7 0 0 1 37 35',
+  'L40.5 41',
   'L32.5 35',
   'H19',
-  'A6 6 0 0 1 13 29',
-  'V19',
-  'A6 6 0 0 1 19 13',
+  'A7 7 0 0 1 12 28',
+  'V20',
+  'A7 7 0 0 1 19 13',
   'Z',
 ].join(' ');
 
-/** The shared band is 13–35 by 13–29. The pair spans 14.2–33.8 and 15–27:
- *  filling it to within a couple of units all round, so the overlap is visibly
- *  what sizes the letters. */
-const Z = { y: 15, w: 8.7, h: 12, bar: 3, diag: 5.3, cap: 'flat' as const };
-const zLeft = 14.2;
-const zRight = 25.1;
+/** In front: 4–38 by 8–32, tail down to the left. */
+const FRONT = [
+  'M11 8',
+  'H31',
+  'A7 7 0 0 1 38 15',
+  'V25',
+  'A7 7 0 0 1 31 32',
+  'H17',
+  'L8 39',
+  'L12.5 32',
+  'H11',
+  'A7 7 0 0 1 4 25',
+  'V15',
+  'A7 7 0 0 1 11 8',
+  'Z',
+].join(' ');
 
-const crossFill = ground === 'dark' ? app.light : app.deep;
+/** The pair spans 13.6–36.4 by 15.5–29.5, filling the one patch of the front
+ *  bubble that has anything behind it, to within half a unit of its corners. The letters are filled by the far bubble and by nothing
+ *  else, which is why they are its exact purple and not the ground's. */
+const Z = { y: 15.5, w: 10, h: 14, bar: 3.4, diag: 5.9, cap: 'flat' as const };
+const zLeft = 13.6;
+const zRight = 26.4;
+
+const behind = ground === 'dark' ? app.light : app.deep;
 ---
 
 <svg
@@ -82,17 +87,8 @@ const crossFill = ground === 'dark' ? app.light : app.deep;
       <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
       <path d={zPath({ ...Z, x: zRight })} fill="#000" />
     </mask>
-    <clipPath id={clipId}>
-      <path d={BACK} />
-    </clipPath>
   </defs>
 
-  <g mask={`url(#${uid})`}>
-    <path d={BACK} fill={app.hue} />
-    <path d={SAID} fill={app.hue} />
-    {/* One shading step, and it is the concept: the two of them at once. */}
-    <g clip-path={`url(#${clipId})`}>
-      <path d={SAID} fill={crossFill} />
-    </g>
-  </g>
+  <path d={BACK} fill={behind} />
+  <path d={FRONT} fill={app.hue} mask={`url(#${uid})`} />
 </svg>

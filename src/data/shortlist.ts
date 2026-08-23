@@ -45,15 +45,15 @@ export const SHORTLIST: Pick[] = [
   },
   {
     slug: 'p02',
-    why: 'A curved screen that keeps a mouth, so it stays a face rather than becoming a wordmark.',
+    why: 'The panel is turned away from you, so it has a front face and a foreshortened side. The letters turn with it, which is why they cannot be lifted off.',
   },
   {
     slug: 'm01',
-    why: 'The groove does the work a bevel could not — one repeating texture says record without any other detail.',
+    why: 'The cut runs wider than the record and is stopped by the rim, so the disc decides where the letters end.',
   },
   {
     slug: 'm03',
-    why: 'Two discs overlapping, which gives real depth from geometry rather than from a gradient.',
+    why: 'The record is raked away and the slot rakes with it — depth from geometry rather than from a gradient.'
   },
   {
     slug: 'tw01',

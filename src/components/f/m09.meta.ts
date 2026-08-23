@@ -1,12 +1,12 @@
 export default {
   n: 'm09',
-  name: 'Thread',
+  name: 'Sleeve',
   app: 'mozz',
-  object: 'Two hubs, one tape',
-  move: 'continuation',
-  sentence: 'The ZZ is the threaded run of the tape between the hubs.',
+  object: 'A record leaving its cover',
+  move: 'aperture',
   reading: 'letters',
+  sentence: 'The ZZ is the rest of the cut that opens the sleeve.',
   idea:
-    'Supply hub high on the left, take-up hub low on the right, and every inch of tape between them is the ZZ — it leaves the first, folds, folds back, and winds onto the second. The hubs are kept small on purpose: at spool size they turn into letters themselves and the mark starts reading OZZO. Reading is letters, not eyes — the hubs sit on a diagonal, so there is no pair to mistake for a face. Three shapes, two fills.',
+    'The sleeve is open along one line and the record is leaving through it. The ZZ hangs directly off that opening and is part of the same cut, so moving the mouth moves the letters and a closed sleeve would have neither. One hue, and every pale shape is a hole — including the spindle, which is the only mark that makes the disc a record.',
   palette: ['#e0243f', '#6d0f1e', '#f58a99'],
 };

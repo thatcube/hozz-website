@@ -1,12 +1,12 @@
 export default {
   n: 'tw02',
-  name: 'Overlap',
+  name: 'Through',
   app: 'twozz',
-  object: 'Two speech bubbles, crossing',
-  move: 'aperture',
+  object: 'Two speech bubbles, one behind the other',
+  move: 'occlusion',
   reading: 'letters',
-  sentence: 'The ZZ is the space cut out of where the two bubbles overlap.',
+  sentence: 'The ZZ is the opening in the near bubble that the far one fills.',
   idea:
-    'The letters exist only in the band the two bubbles share: the pair is as wide as the overlap and centred in it, so separating the bubbles would leave the letters nowhere to be and closing them would squeeze the pair. They belong to the conversation rather than to either speaker. The overlap is also the only shading step in the mark.',
+    'The letters are not a knockout — nothing shows through them but the second bubble. They are cut in the front bubble at the one patch of it that has anything behind, so removing the far bubble empties them and sliding it changes their colour. You read it by colour: the letters are the far bubble\u2019s exact purple and nothing else in the mark is. Both tails point outward, so the two shapes read as two speakers rather than as a shape on a plate.',
   palette: ['#8f52f6', '#3d1d75'],
 };

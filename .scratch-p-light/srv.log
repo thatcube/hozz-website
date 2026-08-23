@@ -1,5 +1,0 @@
-127.0.0.1 - - [23/Aug/2026 16:08:14] "GET /f/ HTTP/1.1" 200 -
-127.0.0.1 - - [23/Aug/2026 16:08:14] "GET /_astro/f.j-wm4-KM.css HTTP/1.1" 200 -
-127.0.0.1 - - [23/Aug/2026 16:08:14] "GET /fonts/switzer-400.woff2 HTTP/1.1" 200 -
-127.0.0.1 - - [23/Aug/2026 16:08:14] "GET /fonts/switzer-700.woff2 HTTP/1.1" 200 -
-127.0.0.1 - - [23/Aug/2026 16:08:14] "GET /fonts/ibm-plex-mono-400.woff2 HTTP/1.1" 200 -
