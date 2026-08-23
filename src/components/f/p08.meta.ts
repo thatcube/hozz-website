@@ -1,12 +1,12 @@
 export default {
   n: 'p08',
-  name: 'Throw',
+  name: 'Iris',
   app: 'plozz',
-  object: 'Projector, beam, far wall',
-  move: 'reflection',
+  object: 'A lens wide open in the dark',
+  move: 'aperture',
+  sentence: "The ZZ is the shape cut out of the aperture's light.",
   reading: 'letters',
-  sentence: 'The ZZ is the shadow the beam carries to the wall.',
   idea:
-    'A projector in a dark room with its throw widening onto the far wall, and the letters are the part of that light the gate stops — which is the only reason a beam carries a picture. Both Zs are walked in beam coordinates before being flattened, so their bars are rays: they splay, they thicken with distance, and the far one is larger because it is further down the throw.',
+    "The opening sets the pair's width. The two letters are inscribed in the aperture: they swell to touch it at its widest and its curve cuts back the corners of every bar, where the dark of the barrel floods into the ends. Narrow the hole and the letters get eaten; shrink the pair and it rattles inside. They are one measurement, so neither can be changed alone.",
   palette: ['#00a4dc', '#00506d', '#7fd6f5'],
 };

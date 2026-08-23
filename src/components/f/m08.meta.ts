@@ -1,12 +1,12 @@
 export default {
   n: 'm08',
-  name: 'Cans',
+  name: 'Slack',
   app: 'mozz',
-  object: 'Over-ear headphones, lead slung',
-  move: 'aperture',
+  object: 'Earbuds, one cable',
+  move: 'continuation',
+  sentence: 'The ZZ is the fold of the cable between the two buds.',
   reading: 'eyes',
-  sentence: 'The ZZ is the port cut through the two earcups.',
   idea:
-    'A closed-back cup needs a slot cut through it so the driver can breathe, and that slot is the Z — both bars run out to the rim and are cut off by it, so the letter is shaped by the cup rather than sitting inside it. The lead slung between the cups, the way it hangs when the headphones are round your neck, is the mouth.',
+    'One cable drawn once and never lifted: out of the left bud, down into a fold, straight back up into a second fold, then the leftover length falls away underneath to the other bud. The two Zs are two folds in the same run, so neither can be moved without dragging the other with it. The slack is the mouth. Three shapes, one fill.',
   palette: ['#e0243f', '#6d0f1e', '#f58a99'],
 };

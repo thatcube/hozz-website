@@ -1,16 +1,15 @@
 ---
 /**
- * p02 · Sheen — a bowed sheet of glass, and what the room leaves on it.
+ * p02 · Turn — a bezel-less panel, turned a few degrees off square.
  *
- * The object is a curved screen: no frame, no foot, just a lens of glass that
- * swells in the middle, held by a hairline of its own bright edge. The glass is
- * dark, the way a screen is dark before you look at it properly.
+ * The one structural dependency: **the turn sets the two Zs' sizes.** Both are
+ * drawn to the same vanishing point as the panel, so the far one is the near
+ * one at 78% — they cannot be equal while the screen is turned, and squaring
+ * the screen up would make them match. The panel's thin edge is visible at the
+ * far side, which is the only other thing in the drawing.
  *
- * Every bright mark on it is one reflection, arriving across the glass at an
- * angle: the wash, the two Zs at its core, and the crescent below where the
- * sheen runs out along the bow of the surface. That crescent is the mouth — it
- * only bends that way because the screen is curved, which is why the face
- * cannot be carried across to a flat one.
+ * Cover the letters and a screen seen from an angle is plainly there. Glance at
+ * it and you read ZZ: both letters are upright and both are a full knockout.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -21,27 +20,25 @@ interface Props {
 }
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.plozz;
-
 const uid = `p02-${Math.random().toString(36).slice(2, 9)}`;
-const clipId = `${uid}-glass`;
-const sheenId = `${uid}-sheen`;
 
-// The outer lens. Ends 23 tall, middle 25.8 — enough bow to be a curved panel,
-// not so much that it swells into the front glass of a cathode tube.
-const OUTER = 'M4 10.5Q24 7.7 44 10.5V33.5Q24 36.3 4 33.5Z';
-// The glass itself, inset 1.1 all round, leaving the bright edge as a hairline.
-const GLASS = 'M5.1 11.6Q24 8.8 42.9 11.6V32.4Q24 35.2 5.1 32.4Z';
+// Near edge 25 tall, far edge 18.8 — the panel converges to the right.
+const FACE = 'M5 11.5L43 14.6L43 33.4L5 36.5Z';
+// The panel's own thickness, running away from us at the far edge.
+const EDGE = 'M43 14.6L45.6 16.5L45.6 31.5L43 33.4Z';
 
-// diag 6.2 against bar 2.9 — the diagonal is more than twice the bars, so the
-// letter has a wedge in it that no typeface would tolerate.
-const Z = { y: 14.4, w: 12.2, h: 13.5, bar: 2.9, diag: 6.2, cap: 'angled' as const };
-const zLeft = 10.6;
-const zRight = 25.2; // pair spans 10.6–37.4, centred on 24
-
-// The reflection: one broad band leaning down the glass. Everything bright on
-// this screen is inside it, and everything the band misses stays half-lit.
-const SHEEN = 'M0 6L25 6L43 42L18 42Z';
-const MOUTH = 'M15.5 29.4Q24 33.4 32.5 29.4';
+const NEAR = 16;
+const FAR = NEAR * 0.78; // the same convergence the panel has
+const k = (h: number) => ({
+  y: 24 - h / 2,
+  w: 0.936 * h,
+  h,
+  bar: 0.287 * h,
+  diag: 0.511 * h,
+  cap: 'angled' as const,
+});
+const ZN = k(NEAR);
+const ZF = k(FAR);
 ---
 
 <svg
@@ -54,35 +51,15 @@ const MOUTH = 'M15.5 29.4Q24 33.4 32.5 29.4';
   aria-label={`${app.name} mark`}
 >
   <defs>
-    <clipPath id={clipId}>
-      <path d={GLASS} />
-    </clipPath>
-    <clipPath id={sheenId}>
-      <path d={SHEEN} />
-    </clipPath>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...ZN, x: 9.4 })} fill="#000" />
+      <path d={zPath({ ...ZF, x: 26.9 })} fill="#000" />
+    </mask>
   </defs>
 
-  {/* The lit edge of the lens, which is all the frame a screen like this gets. */}
-  <path d={OUTER} fill={app.hue} />
-  <path d={GLASS} fill={app.deep} />
-
-  <g clip-path={`url(#${clipId})`}>
-    {/* The band of room light crossing the glass. */}
-    <path d={SHEEN} fill={app.light} opacity={ground === 'dark' ? 0.16 : 0.13} />
-
-    {/* The face, half-lit where the band has already passed by. */}
-    <g fill={app.light} opacity="0.5">
-      <path d={zPath({ ...Z, x: zLeft })} />
-      <path d={zPath({ ...Z, x: zRight })} />
-      <path d={MOUTH} stroke={app.light} stroke-width="2.4" stroke-linecap="round" fill="none" />
-    </g>
-
-    {/* And at full strength only inside the band. The letters brighten along a
-        diagonal because the light does, not because they were drawn that way. */}
-    <g clip-path={`url(#${sheenId})`} fill={app.light}>
-      <path d={zPath({ ...Z, x: zLeft })} />
-      <path d={zPath({ ...Z, x: zRight })} />
-      <path d={MOUTH} stroke={app.light} stroke-width="2.4" stroke-linecap="round" fill="none" />
-    </g>
+  <g mask={`url(#${uid})`}>
+    <path d={FACE} fill={app.hue} />
+    <path d={EDGE} fill={app.deep} />
   </g>
 </svg>

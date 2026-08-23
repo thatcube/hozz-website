@@ -1,22 +1,17 @@
 ---
 /**
- * m01 · Groove — a record, and the groove that stops circling.
+ * m01 · Rim — a record, cut wider than itself.
  *
- * The whole surface is one family of cut grooves. Most of them hold their
- * circle; two of them do not. Those two leave the circle they were travelling
- * on, cut a Z, and hand back to the arc they came from — which is why each
- * letter still begins with a curve. The four bar-ends are not placed: they sit
- * exactly on one groove circle (r ≈ 18.17), so the pair is inscribed rather
- * than positioned, and the spindle falls in the gap the letters leave because
- * that gap is the middle of the disc.
+ * The dependency: **the disc's edge is what ends every bar.** The pair is drawn
+ * wider than the record, so all four bar ends fall outside it and are taken by
+ * the rim — the silhouette is notched four times and no terminal in the mark is
+ * drawn by hand. Narrow the record and the letters lose their ends; widen it
+ * and the notches close.
  *
- * Every groove here is an absence — the mark is punched, not painted, which is
- * what a groove is. Cover the disc and there is nothing left to cut into.
- *
- * Zs read as letters, not eyes: they span rim to rim at nearly the full height
- * of the surface. Nothing that large has ever been an eye.
+ * The spindle is deliberately smaller than the gap here: the spacing is not its
+ * job in this one.
  */
-import { zSpine } from '../../data/zstroke';
+import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
 
 interface Props {
@@ -25,61 +20,16 @@ interface Props {
 }
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.mozz;
-
-// Unique per instance: the board renders this eight times on one page and a
-// duplicated mask id would silently apply the wrong mask.
 const uid = `m01-${Math.random().toString(36).slice(2, 9)}`;
 
-const C = 24;
-const SURF = 18.5; // the playing surface, inside the edge lip
-const GW = 2.85; // the two grooves that carry the letters
-const TW = ground === 'dark' ? 0.95 : 0.85; // the rest of the texture
+const R = 19; // disc spans 5–43
+const GAP = 7;
 
-const yT = 16.6;
-const yB = 31.4;
-const xOut = 7.4; // outer bar ends
-const xIn = 22.1; // inner bar ends — the gap runs 22.1 → 25.9
-
-/** The circle all four bar-ends sit on. The letters are inscribed in it. */
-const R0 = Math.hypot(C - xOut, C - yT);
-
-const nn = (v: number) => Math.round(v * 1000) / 1000;
-const pt = (r: number, deg: number) => {
-  const a = (deg * Math.PI) / 180;
-  return [nn(C + r * Math.cos(a)), nn(C + r * Math.sin(a))] as const;
-};
-
-const SPINE = { y: yT, w: xIn - xOut, h: yB - yT };
-
-// Each Z keeps one terminal on its groove circle — the lead-in that proves the
-// letter came from an arc. They sit diagonally opposite, so the pair has the
-// disc's own two-fold rotational symmetry.
-const A1 = pt(R0, 195);
-const A2 = pt(R0, 15);
-
-const z1 =
-  `M${A1[0]} ${A1[1]}A${nn(R0)} ${nn(R0)} 0 0 1 ` +
-  zSpine({ ...SPINE, x: xOut }).slice(1);
-const z2 =
-  zSpine({ ...SPINE, x: 48 - xIn }) +
-  `A${nn(R0)} ${nn(R0)} 0 0 0 ${A2[0]} ${A2[1]}`;
-
-/** A short arc of one groove, centred on the top or the bottom of the disc. */
-const cap = (r: number, mid: number, span: number) => {
-  const a = pt(r, mid - span);
-  const b = pt(r, mid + span);
-  return `M${a[0]} ${a[1]}A${nn(r)} ${nn(r)} 0 0 1 ${b[0]} ${b[1]}`;
-};
-
-// Spans chosen so no texture groove reaches the letters' band.
-const texture = [
-  cap(16.4, 270, 46),
-  cap(13.4, 270, 40),
-  cap(10.4, 270, 26),
-  cap(16.4, 90, 46),
-  cap(13.4, 90, 40),
-  cap(10.4, 90, 26),
-];
+// 17 + 7 + 17 = 41, running 3.5 to 44.5 across a disc that runs 5 to 43, so
+// every bar end is over the edge. `cap` is moot: the ends are never on screen.
+const Z = { y: 14, w: 17, h: 20, bar: 3.4, diag: 6.4, cap: 'flat' as const };
+const zLeft = 24 - GAP / 2 - Z.w;
+const zRight = 24 + GAP / 2;
 ---
 
 <svg
@@ -92,43 +42,25 @@ const texture = [
   aria-label={`${app.name} mark`}
 >
   <defs>
-    <mask id={uid} maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48">
+    <mask id={uid}>
       <rect width="48" height="48" fill="#fff" />
-      {
-        texture.map((d) => (
-          <path
-            d={d}
-            fill="none"
-            stroke="#000"
-            stroke-width={TW}
-            stroke-linecap="round"
-          />
-        ))
-      }
-      <path
-        d={z1}
-        fill="none"
-        stroke="#000"
-        stroke-width={GW}
-        stroke-linejoin="miter"
-        stroke-linecap="butt"
-      />
-      <path
-        d={z2}
-        fill="none"
-        stroke="#000"
-        stroke-width={GW}
-        stroke-linejoin="miter"
-        stroke-linecap="butt"
-      />
-      <circle cx={C} cy={C} r="1.75" fill="#000" />
+      <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
+      <path d={zPath({ ...Z, x: zRight })} fill="#000" />
+      <circle cx="24" cy="24" r="2" fill="#000" />
     </mask>
   </defs>
 
-  {/* The edge lip is left uncut — a record is not grooved all the way out. */}
-  <circle cx={C} cy={C} r="19.25" fill="none" stroke={app.deep} stroke-width="1.5" />
-
   <g mask={`url(#${uid})`}>
-    <circle cx={C} cy={C} r={SURF} fill={app.hue} />
+    <circle cx="24" cy="24" r={R} fill={app.hue} />
+    {/* One groove near the rim is the whole object budget. */}
+    <circle
+      cx="24"
+      cy="24"
+      r={R - 2.8}
+      fill="none"
+      stroke={app.deep}
+      stroke-width="1.3"
+      opacity="0.5"
+    />
   </g>
 </svg>

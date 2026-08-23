@@ -1,17 +1,16 @@
 ---
 /**
- * p08 · Throw — a projector angled up in a dark room, and what its beam carries.
+ * p08 · Iris — a lens wide open in the dark, and the light it lets through.
  *
- * Every Z here is built from the cone, not placed in it. The bars are rays out
- * of the lamp, so they splay as they travel and thicken with distance, and the
- * far Z is larger than the near one because it is further down the throw. That
- * is the whole test: these letterforms cannot exist without a light source at a
- * specific point, and moving them anywhere else makes their geometry wrong.
+ * The dependency: **the opening sets the pair's width.** The two letters are
+ * inscribed in the iris. They swell to fill it at its widest, and the blades
+ * cut the outer corner off every bar on the blade's own slant, so the dark of
+ * the barrel floods into the ends. Narrow the hole and the letters are eaten;
+ * shrink the pair and it rattles around inside. They are one measurement.
  *
- * The Zs are the dark. They are punched clean out of the beam, so what fills
- * them is the room — which is exactly what a shadow is. Two letters thrown on a
- * wall, read as the suffix and not as a face, so no mouth is wanted.
+ * Two shapes, two fills. The letters are a full knockout of the light.
  */
+import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
 
 interface Props {
@@ -20,66 +19,17 @@ interface Props {
 }
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.plozz;
-
-// Unique per instance: the board renders this eight times on one page and a
-// duplicated mask id would silently apply the wrong mask.
 const uid = `p08-${Math.random().toString(36).slice(2, 9)}`;
 
-// The lamp, and the axis it throws along. Everything downstream is measured
-// from here in (u, v): u is distance along the throw, v is the fraction of the
-// way from the axis out to the edge of the cone.
-const AX = 8.5;
-const AY = 30.5;
-const TILT = -16;
-const TH = (TILT * Math.PI) / 180;
-const DX = Math.cos(TH);
-const DY = Math.sin(TH);
-const NX = -DY;
-const NY = DX;
-const SPREAD = 0.4;
+// Six blades, opened to a hexagon 36 across and 31.2 high, inside the barrel.
+const R_BARREL = 21.5;
+const iris = 'M42 24L33 8.41H15L6 24L15 39.59H33Z';
 
-const P = (u: number, v: number): [number, number] => [
-  AX + DX * u + NX * v * u * SPREAD,
-  AY + DY * u + NY * v * u * SPREAD,
-];
-const at = (u: number, v: number) => {
-  const [x, y] = P(u, v);
-  return `${x.toFixed(3)} ${y.toFixed(3)}`;
-};
-
-const U_LENS = 9;
-const U_WALL = 32.5;
-
-const beam = `M${at(U_LENS, -1)}L${at(U_WALL, -1)}L${at(U_WALL, 1)}L${at(U_LENS, 1)}Z`;
-
-/**
- * One Z, walked in beam coordinates and only then flattened to the picture
- * plane. Ten points: bar, diagonal, bar. `diagU` is measured along the throw
- * and `barV` across it, so the two are not even the same quantity — there is
- * no single weight here for a typeface to have balanced.
- */
-function zInBeam(u0: number, u1: number, v: number, barV: number, diagU: number) {
-  const p: [number, number][] = [
-    [u0, -v],
-    [u1, -v],
-    [u1, -v + barV],
-    [u0 + diagU, v - barV],
-    [u1, v - barV],
-    [u1, v],
-    [u0, v],
-    [u0, v - barV],
-    [u1 - diagU, -v + barV],
-    [u0, -v + barV],
-  ];
-  return p.map(([u, vv], i) => `${i === 0 ? 'M' : 'L'}${at(u, vv)}`).join('') + 'Z';
-}
-
-const zNear = zInBeam(14.4, 22.4, 0.76, 0.4, 4.3);
-const zFar = zInBeam(24, 32, 0.52, 0.29, 4.3);
-
-// The machine is drawn level and then tilted with the throw, nose up on its
-// front foot, which is how a projector actually ends up pointing at a wall.
-const BODY = { x: 3, y: 24.6, w: 14, h: 11.6, r: 2 };
+// 14.2 + 1.6 + 14.2 = 30, running 9 to 39. At the top and bottom of the bars
+// the blades are only 27.9 apart, so each outer corner loses 1.04 on the slant.
+const Z = { y: 17, w: 14.2, h: 14, bar: 3.9, diag: 7.4, cap: 'flat' as const };
+const zLeft = 9;
+const zRight = 24.8;
 ---
 
 <svg
@@ -94,23 +44,16 @@ const BODY = { x: 3, y: 24.6, w: 14, h: 11.6, r: 2 };
   <defs>
     <mask id={uid}>
       <rect width="48" height="48" fill="#fff" />
-      <path d={zNear} fill="#000" />
-      <path d={zFar} fill="#000" />
+      <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
+      <path d={zPath({ ...Z, x: zRight })} fill="#000" />
     </mask>
   </defs>
 
-  <path d={beam} fill={app.hue} mask={`url(#${uid})`} />
-
-  <g transform={`rotate(${TILT} ${AX} ${AY})`}>
-    <rect x={BODY.x + 1} y={BODY.y + BODY.h - 0.6} width="2.6" height="2.8" rx="0.7" fill={app.deep} />
-    <rect x={BODY.x + BODY.w - 5} y={BODY.y + BODY.h - 0.6} width="2.6" height="2.8" rx="0.7" fill={app.deep} />
-    <rect x={BODY.x} y={BODY.y} width={BODY.w} height={BODY.h} rx={BODY.r} fill={app.deep} />
-    {/* Intake louvre, so the box is a machine and not a horn. */}
-    <g fill={app.hue} opacity={ground === 'dark' ? 0.95 : 0.8}>
-      <rect x={BODY.x + 2.2} y={BODY.y + 2.4} width="6.6" height="1.4" rx="0.7" />
-      <rect x={BODY.x + 2.2} y={BODY.y + 7.6} width="4.2" height="1.4" rx="0.7" />
-    </g>
-    <circle cx={BODY.x + BODY.w} cy={AY} r="4.1" fill={app.deep} />
-    <circle cx={BODY.x + BODY.w} cy={AY} r="2.6" fill={app.light} />
-  </g>
+  <circle
+    cx="24"
+    cy="24"
+    r={R_BARREL}
+    fill={ground === 'dark' ? app.deep : app.deep}
+  />
+  <path d={iris} fill={app.hue} mask={`url(#${uid})`} />
 </svg>

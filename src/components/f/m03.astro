@@ -1,17 +1,12 @@
 ---
 /**
- * m03 · Stack — three records dropped on top of one another.
+ * m03 · Rake — a record turned away from you.
  *
- * The stagger is the object: each disc sits up and to the right of the one
- * beneath it, so the pile shows a dark crescent, then a lit one, then the face
- * of the record on top. The suffix is slotted straight through the pile — one
- * cut, all three discs — so the letters carry the stack's tonal steps across
- * their own bars, and where the pile runs out, so do they. The top-left bar is
- * taken by the middle disc's rim and the bottom-right by the front disc's,
- * which is the stagger showing up inside the letters.
- *
- * Nothing here is drawn on anything. Take the discs away and the slots have
- * nothing to be cut in.
+ * The dependency: **the turn squashes the letters by exactly what it squashes
+ * the disc by.** The cut lies in the record's surface, so it takes the same
+ * 0.72 the rim does — the proof is the spindle, which is an oval for the same
+ * reason. Stand the letters upright and the record would have to stand up with
+ * them.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -22,31 +17,29 @@ interface Props {
 }
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.mozz;
-
 const uid = `m03-${Math.random().toString(36).slice(2, 9)}`;
 
-const R = 13.6;
-/** Back to front, each one up and right of the last. */
-const DISCS = [
-  { cx: 18.8, cy: 29.6, fill: app.deep },
-  { cx: 24, cy: 24, fill: app.light },
-  { cx: 29.2, cy: 18.4, fill: app.hue },
-];
+const CY = 22.4;
+const RX = 19;
+const K = 0.72; // what the turn takes out of every vertical
+const RY = RX * K;
+const EDGE = 3.4; // the record's thickness, the one shading step
+// In shadow against paper, catching the light against black; either way it is
+// what stops the lens reading as a flat hoop.
+const EDGE_FILL = ground === 'dark' ? app.light : app.deep;
 
+// Drawn upright at 20 tall, then squashed with the surface it is cut into.
 const Z = {
-  y: 17.1,
-  w: 12.75,
-  h: 13.8,
-  bar: 2.8,
-  diag: 4.9,
-  cap: 'flat' as const,
+  y: CY - 10 / K,
+  w: 15,
+  h: 20 / K,
+  bar: 3.4 / K,
+  diag: 6.4, // horizontal, so the turn leaves it alone
+  cap: 'angled' as const,
 };
-const zLeft = 9.45; // runs past the pile at the top left — the rim takes it
-const zRight = 25.8; // and past it at the bottom right
-
-// On a dark ground the pile's own edges do most of the separating, so the
-// seams between discs can be quieter.
-const SEAM = ground === 'dark' ? 0.55 : 0.75;
+const zLeft = 6;
+const zRight = 27;
+const squash = `translate(0 ${CY}) scale(1 ${K}) translate(0 ${-CY})`;
 ---
 
 <svg
@@ -59,30 +52,18 @@ const SEAM = ground === 'dark' ? 0.55 : 0.75;
   aria-label={`${app.name} mark`}
 >
   <defs>
-    <mask id={uid} maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48">
+    <mask id={uid}>
       <rect width="48" height="48" fill="#fff" />
-      <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
-      <path d={zPath({ ...Z, x: zRight })} fill="#000" />
+      <g transform={squash}>
+        <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
+        <path d={zPath({ ...Z, x: zRight })} fill="#000" />
+      </g>
+      <ellipse cx="24" cy={CY} rx="2" ry={2 * K} fill="#000" />
     </mask>
   </defs>
 
   <g mask={`url(#${uid})`}>
-    {
-      DISCS.map((d, i) => (
-        <>
-          <circle cx={d.cx} cy={d.cy} r={R} fill={d.fill} />
-          {i > 0 && (
-            <circle
-              cx={d.cx}
-              cy={d.cy}
-              r={R - SEAM / 2}
-              fill="none"
-              stroke={app.deep}
-              stroke-width={SEAM}
-            />
-          )}
-        </>
-      ))
-    }
+    <ellipse cx="24" cy={CY + EDGE} rx={RX} ry={RY} fill={EDGE_FILL} />
+    <ellipse cx="24" cy={CY} rx={RX} ry={RY} fill={app.hue} />
   </g>
 </svg>

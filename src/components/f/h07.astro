@@ -1,22 +1,19 @@
 ---
 /**
- * h07 · Resting — a readout window, and one line living in it.
+ * h07 · Trace — a day plotted, and the ZZ cut out from under it.
  *
- * The object is a window onto a signal already running: a wide dark strip with
- * a time scale ticked along its base and a single trace crossing it, entering
- * at one edge and leaving at the other. The trace is flat for most of the
- * window, because that is what a resting body looks like, and because Hozz
- * does not coach or score — it takes a measurement that already exists.
+ * The object is one chart: a line across the day with the area under it
+ * filled, running off both sides because the body was doing this before the
+ * app looked. The move that ties the letters to it: **the plotted line is the
+ * lid of the letters** — they are cut out of the area beneath it and nowhere
+ * else, and the lowest dip of the trace comes down to sit on the second Z.
+ * Flatten the day and the letters would be cropped away with the fill.
  *
- * Twice the trace leaves rest, holds, and falls back. Those excursions are the
- * Zs, and they are only Zs because the resting line closes them: the line is
- * the bottom bar of both letters, at the same weight and the same colour, and
- * it keeps running to both edges afterwards. Cover the line and the two marks
- * are sevens. Cover the window and the letters are a fragment of a line with
- * no scale and nothing to be measured against.
+ * Both tests pass. Cover the letters and a plotted day is plainly there.
+ * Glance at it and the ZZ is a full knockout with the ground showing through.
  *
- * Zs as letters, deliberately. An app that reads sleep must not be caught
- * drawing sleeping Zs, so there is no face here at all.
+ * Zs as letters, not eyes: a health app that reads sleep must never draw a
+ * sleeping face.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -27,37 +24,17 @@ interface Props {
 }
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.hozz;
-
-// The board renders this component eight times on one page; a shared clip id
-// would silently clip the wrong instance.
 const uid = `h07-${Math.random().toString(36).slice(2, 9)}`;
 
-// 40 : 23 — a readout window, not a rounded square.
-const WIN = { x: 4, y: 12.5, w: 40, h: 23, r: 4.8 };
+const BASE = 42; // the axis the day is measured from
+// One calm undulation: up, down to its resting dip at x=26, and up again.
+const TRACE = 'M0 15C4 15 8 9 14 9C20 9 20 17 26 17C32 17 34 11 40 11C44 11 45 13.5 48 13.5';
 
-const BAR = 2.6; // the trace's weight wherever it is at rest
-const REST = 26.4; // top edge of the resting line
-
-// The letter's height is not chosen: it is the distance from the top of the
-// excursion down to the line the trace rests on, whose underside closes it.
-const Z = {
-  y: 15.6,
-  w: 10.4,
-  h: REST + BAR - 15.6,
-  bar: BAR,
-  diag: 4.6, // the fall back to rest is the fast part, so it carries the mass
-  cap: 'angled' as const,
-};
-const zLeft = 12.4;
-const zRight = 25.2; // 2.4 of gap; the pair spans 12.4–35.6, centred on 24
-
-// `angled` shears the bottom-right terminal, so the line has to resume from
-// the sheared corner or a hairline of ground shows between the two.
-const shear = ((Z.w - Z.diag) * Z.bar) / (Z.h - 2 * Z.bar);
-const resume = zRight + Z.w - shear;
-
-// Seven of them, so the base reads as a scale and not as a row of teeth.
-const TICKS = [9, 14, 19, 24, 29, 34, 39];
+const Z = { y: 19.5, w: 14.5, h: 19, bar: 4.2, diag: 7.6, cap: 'angled' as const };
+// 14.5 + 3 + 14.5 = 32, running 8 to 40, centred on 24 and tucked under the
+// dip, which comes down to within 1.4 of the top of the second Z.
+const zLeft = 8;
+const zRight = 25.5;
 ---
 
 <svg
@@ -70,46 +47,16 @@ const TICKS = [9, 14, 19, 24, 29, 34, 39];
   aria-label={`${app.name} mark`}
 >
   <defs>
-    <clipPath id={uid}>
-      <rect x={WIN.x} y={WIN.y} width={WIN.w} height={WIN.h} rx={WIN.r} />
-    </clipPath>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
+      <path d={zPath({ ...Z, x: zRight })} fill="#000" />
+    </mask>
   </defs>
 
-  <rect
-    x={WIN.x}
-    y={WIN.y}
-    width={WIN.w}
-    height={WIN.h}
-    rx={WIN.r}
-    fill={app.deep}
-  />
-
-  <g clip-path={`url(#${uid})`}>
-    {
-      TICKS.map((x) => (
-        <rect x={x - 0.55} y="31.2" width="1.1" height="1.6" fill={app.hue} />
-      ))
-    }
-
-    {/* One trace, one weight, one colour. It runs past both edges: the window
-        is a view onto a signal that was already going. The only break is the
-        letter gap, which is where the trace is up in the second excursion. */}
-    <g fill={app.light}>
-      <rect x="1" y={REST} width={zLeft - 1} height={BAR} />
-      <rect x={resume} y={REST} width={47 - resume} height={BAR} />
-      <path d={zPath({ ...Z, x: zLeft })} />
-      <path d={zPath({ ...Z, x: zRight })} />
-    </g>
+  <g mask={`url(#${uid})`}>
+    <path d={`${TRACE}L48 ${BASE}L0 ${BASE}Z`} fill={app.hue} />
+    {/* The line itself, drawn on its own edge, so the chart reads as plotted. */}
+    <path d={TRACE} stroke={app.deep} stroke-width="2.2" fill="none" />
   </g>
-
-  <rect
-    x={WIN.x + 0.55}
-    y={WIN.y + 0.55}
-    width={WIN.w - 1.1}
-    height={WIN.h - 1.1}
-    rx={WIN.r - 0.55}
-    stroke={app.hue}
-    stroke-width="1.1"
-    opacity={ground === 'dark' ? 0.95 : 0.45}
-  />
 </svg>

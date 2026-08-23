@@ -1,20 +1,22 @@
 ---
 /**
- * tw09 · Sticker — an emote as the thing you slap on somebody's chat.
+ * tw09 · Sticker — one emote, die-cut, printed a hair off register.
  *
- * Emotes are traded and installed like stickers, so the object is a physical
- * die-cut one: printed face on top, pale backing under it, cut to the outline
- * with the loose keyline a die leaves, peeled up at one corner where somebody
- * has started lifting it off the sheet.
+ * Three facts about how a sticker is made and nothing else: the pale margin a
+ * cutter leaves, the colour laid slightly out of register, and the cut itself.
+ * Cover the letters and a die-cut sticker is plainly there.
  *
- * The letters are the die-cut. The eyes and the grin are punched clean through
- * the printed layer, so what fills them is the backing the sticker is made of —
- * the same pale board that shows all the way round its edge. Take the sticker
- * away and there is nothing for the Zs to be cut from; take the Zs away and the
- * sticker is a blank.
+ * The dependency: **the cutter leaves the same pale margin inside the letters
+ * as it leaves around the sticker.** One blade, one offset, everywhere — so the
+ * ribbon of backing showing inside each Z is exactly the ribbon showing at the
+ * rim, and neither can change without the other. It is one number, KERF, used
+ * in both places: it strokes the backing outward at the rim and it holds the
+ * backing back inward at the letters.
  *
- * The peel is not decoration either: it is what proves there are two layers,
- * which is the only reason the letters can be a hole rather than a fill.
+ * The cut goes right through, so the core of each letter is bare ground and the
+ * tonal separation is total. At small sizes the margin falls below a pixel and
+ * the letters simply become a clean knockout, which is the correct way for it
+ * to fail.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -25,31 +27,22 @@ interface Props {
 }
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.twozz;
-
 const uid = `tw09-${Math.random().toString(36).slice(2, 9)}`;
 
-// Taller than wide, narrow at the crown, full in the jaw — an emote crop, and
-// deliberately not the wide head of tw07 or the squashed one of tw08.
-const STICKER =
-  'M10 25.5C10 16 16.3 8.5 24 8.5C31.7 8.5 38 16 38 25.5C38 33.4 31.7 39 24 39C16.3 39 10 33.4 10 25.5Z';
+const KERF = 0.9; // the margin the blade leaves, at the rim and in the letters
 
-// The corner somebody has begun to lift, folded back on itself. Its underside
-// is in shade, which is the cheapest possible proof that the sticker has a back.
-const FLAP =
-  'M33.8 32.6C35.9 34.2 36.4 36.4 35.2 38.3C32.6 39.2 29.5 38.9 27.3 37.9Z';
+const DIE =
+  'M8 25.5C8 14.5 15 6.5 24 6.5C33 6.5 40 14.5 40 25.5C40 34.8 33 41.5 24 41.5C15 41.5 8 34.8 8 25.5Z';
 
-// diag 4.2 on bar 2.3: the turn is nearly twice the line, which no typeface does.
-const Z = { y: 15.6, w: 7.6, h: 8.4, bar: 2.3, diag: 4.2, cap: 'angled' as const };
-const zLeft = 15.5;
-const zRight = 24.9; // 1.8 of gap; the pair spans 15.5–32.5, centred on 24
+const Z = { y: 15, w: 10, h: 12, bar: 3, diag: 5.3, cap: 'angled' as const };
+const zLeft = 11.5;
+const zRight = 26.5;
 
-// Top lip climbing 1.3 units to the right, bowl slung under it: a lopsided open
-// grin. A symmetrical arc here would be a smiley, and a smiley is not a reaction.
-const GRIN = 'M16.6 28.2L31.6 26.9C31.9 33 28.5 36.3 24.1 36.1C19.6 35.9 16.3 33 16.6 28.2Z';
+const GRIN =
+  'M13.6 31.8L34.6 30.4C35 36.8 30.4 40.1 24 39.9C18.2 39.7 13.2 36.8 13.6 31.8Z';
 
-// A die leaves an even margin all the way round, which a scaled outline does
-// not — so the backing is the same path worn as a fat stroke.
-const KEYLINE = 3.2;
+const cuts = [zPath({ ...Z, x: zLeft }), zPath({ ...Z, x: zRight }), GRIN];
+const backing = ground === 'dark' ? app.light : app.light;
 ---
 
 <svg
@@ -62,34 +55,39 @@ const KEYLINE = 3.2;
   aria-label={`${app.name} mark`}
 >
   <defs>
-    {/* Everything past the fold line has been lifted off the surface. */}
-    <mask id={`${uid}c`}>
+    {/* The print: cut to the letter exactly. */}
+    <mask id={`${uid}p`}>
       <rect x="-20" y="-20" width="88" height="88" fill="#fff" />
-      <path d="M33.8 32.6L48 48L27.3 37.9Z" fill="#000" />
+      {cuts.map((d) => <path d={d} fill="#000" />)}
     </mask>
-
-    {/* The die-cut itself. */}
-    <mask id={`${uid}f`}>
+    {/* The backing: same cut, held back by KERF/2 — the same margin the blade
+        leaves outside, restored here by stroking the hole shut. */}
+    <mask id={`${uid}b`}>
       <rect x="-20" y="-20" width="88" height="88" fill="#fff" />
-      <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
-      <path d={zPath({ ...Z, x: zRight })} fill="#000" />
-      <path d={GRIN} fill="#000" />
+      {cuts.map((d) => (
+        <path
+          d={d}
+          fill="#000"
+          stroke="#fff"
+          stroke-width={KERF}
+          stroke-linejoin="round"
+        />
+      ))}
     </mask>
   </defs>
 
-  <g transform="rotate(-7 24 24)">
-    <g mask={`url(#${uid}c)`}>
+  <g transform="rotate(-8 24 24)">
+    <g mask={`url(#${uid}b)`}>
       <path
-        d={STICKER}
-        fill={app.light}
-        stroke={app.light}
-        stroke-width={KEYLINE}
+        d={DIE}
+        fill={backing}
+        stroke={backing}
+        stroke-width={KERF}
         stroke-linejoin="round"
       />
-      <g mask={`url(#${uid}f)`}>
-        <path d={STICKER} fill={app.hue} />
-      </g>
     </g>
-    <path d={FLAP} fill={app.deep} />
+    <g mask={`url(#${uid}p)`}>
+      <path d={DIE} fill={app.hue} transform="translate(-0.4 -0.5)" />
+    </g>
   </g>
 </svg>

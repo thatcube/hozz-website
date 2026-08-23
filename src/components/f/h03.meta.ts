@@ -1,12 +1,12 @@
 export default {
   n: 'h03',
-  name: 'Measure',
+  name: 'Cask',
   app: 'hozz',
-  object: 'Domed tank, ruled shell',
-  move: 'weave',
+  object: 'A hooped barrel',
+  move: 'substitution',
   reading: 'letters',
-  sentence: 'The ZZ is the swerve in the tank\u2019s ruling, from one graduation to the level.',
+  sentence: 'The ZZ is the pair of hoops, punched through and joined.',
   idea:
-    'A tank ruled with graduation lines, because the only question you ask a tank is how much is in it. Two of the lines misbehave: the ruling thickens, drops away on the diagonal, crosses the line below and lands on the surface of the contents, then picks up again either side as if nothing happened. Erase the scale and there are no letters; erase the letters and the scale has a gap in it.',
-  palette: ['#12b39a', '#08574b', '#82e5d3'],
+    'Each bar is one hoop \u2014 same centre line, swollen half a unit either side so a sliver of stave frames it. The letters are holes in the only parts holding the staves together, and each hoop runs on dark either side of them. Slide a hoop and its bar slides with it. The bulge supplies the room: a barrel is the one vessel whose widest point is its middle, which is where the diagonals fall.',
+  palette: ['#12b39a', '#08574b'],
 };

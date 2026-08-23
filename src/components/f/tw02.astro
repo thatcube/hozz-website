@@ -1,17 +1,16 @@
 ---
 /**
- * tw02 · Crease — the bubble's bottom edge turned up.
+ * tw02 · Overlap — two bubbles, and the ZZ cut out of where they cross.
  *
- * One sheet, creased once near the bottom, so the last few units of it are the
- * back of the sheet rather than the front. That single bend does three jobs:
- * it is the fold, it is the mouth — the crease is bowed, so it grins — and it
- * is where the tail comes from, which means the tail is the folded part of the
- * bubble arriving somewhere rather than a stub applied to a corner.
+ * One dependency: **the overlap is the field the letters live in.** The pair is
+ * exactly as wide as the band the two bubbles share and sits centred in it, so
+ * pull the bubbles apart and the letters have nowhere to be; push them together
+ * and the pair is squeezed. The letters are not in either bubble — they are in
+ * the conversation, which is the app.
  *
- * The letters are cut through the front of the sheet only. The fold is in front
- * of them, so the outer ends of their lower bars tuck behind it. That is where
- * the depth comes from: a bend, not a highlight. Nothing here was added to the
- * shipped bubble — one edge was turned.
+ * Three shapes: two bubbles in the same purple, and their intersection one step
+ * darker. The letters knock through all of it to the ground, so they carry the
+ * full tonal separation at 24px.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -22,28 +21,49 @@ interface Props {
 }
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.twozz;
-
 const uid = `tw02-${Math.random().toString(36).slice(2, 9)}`;
-const maskId = `${uid}-m`;
-const clipId = `${uid}-c`;
+const clipId = `${uid}-b`;
 
-/** Body 40 × 28. */
-const BODY =
-  'M15 5H33A11 11 0 0 1 44 16V22A11 11 0 0 1 33 33H15A11 11 0 0 1 4 22V16A11 11 0 0 1 15 5Z';
+/** Said first: 4–34 by 7–29, tail down to the left. */
+const SAID = [
+  'M10 7',
+  'H28',
+  'A6 6 0 0 1 34 13',
+  'V23',
+  'A6 6 0 0 1 28 29',
+  'H15.5',
+  'L7 35.8',
+  'L11 29',
+  'H10',
+  'A6 6 0 0 1 4 23',
+  'V13',
+  'A6 6 0 0 1 10 7',
+  'Z',
+].join(' ');
 
-/**
- * The crease: 24.4 at the sides, 28.4 at the centre. A 4-unit bow, which is a
- * mouth; the flat version of this line was a horizon and read as nothing.
- */
-const FOLD = 'M0 24.4Q24 28.4 48 24.4V48H0Z';
+/** Answered: 14–44 by 13–35, tail down to the right. */
+const BACK = [
+  'M20 13',
+  'H38',
+  'A6 6 0 0 1 44 19',
+  'V29',
+  'A6 6 0 0 1 38 35',
+  'L41 41.8',
+  'L33.5 35',
+  'H20',
+  'A6 6 0 0 1 14 29',
+  'V19',
+  'A6 6 0 0 1 20 13',
+  'Z',
+].join(' ');
 
-/** The fold arriving. Straight edges, because folded paper has straight edges. */
-const TAIL = 'M11.4 28.6L6 42.8L21 30.4Z';
+/** The shared band is 14–34 by 13–29. The pair spans 15–33: one unit inside it
+ *  either side, so the overlap is visibly what sizes the letters. */
+const Z = { y: 15.5, w: 8, h: 11, bar: 2.7, diag: 4.9, cap: 'flat' as const };
+const zLeft = 15;
+const zRight = 25;
 
-const Z = { y: 12.2, w: 10.6, h: 14.4, bar: 3.1, diag: 5.3, cap: 'angled' as const };
-const zLeft = 12.8;
-const zRight = 25.8; // the pair spans 12.8–36.4; the crease crosses it at 25.9
-const foldFill = ground === 'dark' ? app.light : app.deep;
+const crossFill = ground === 'dark' ? app.light : app.deep;
 ---
 
 <svg
@@ -56,24 +76,22 @@ const foldFill = ground === 'dark' ? app.light : app.deep;
   aria-label={`${app.name} mark`}
 >
   <defs>
-    <mask id={maskId}>
+    <mask id={uid}>
       <rect width="48" height="48" fill="#fff" />
       <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
       <path d={zPath({ ...Z, x: zRight })} fill="#000" />
     </mask>
     <clipPath id={clipId}>
-      <path d={BODY} />
+      <path d={BACK} />
     </clipPath>
   </defs>
 
-  {/* Front of the sheet, with the letters cut out of it. */}
-  <g mask={`url(#${maskId})`}>
-    <path d={BODY} fill={app.hue} />
-  </g>
-
-  {/* The back of the sheet: in front of the letters, and running on as the tail. */}
-  <path d={TAIL} fill={foldFill} />
-  <g clip-path={`url(#${clipId})`}>
-    <path d={FOLD} fill={foldFill} />
+  <g mask={`url(#${uid})`}>
+    <path d={BACK} fill={app.hue} />
+    <path d={SAID} fill={app.hue} />
+    {/* One shading step, and it is the concept: the two of them at once. */}
+    <g clip-path={`url(#${clipId})`}>
+      <path d={SAID} fill={crossFill} />
+    </g>
   </g>
 </svg>

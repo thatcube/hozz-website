@@ -1,17 +1,12 @@
 ---
 /**
- * m02 · Sheen — a disc turned into the light.
+ * m02 · Sheen — a record with one sweep of light across it.
  *
- * One raking highlight lies across the face. The grooves that spell the suffix
- * are cut across it, and a cut across a specular band scatters instead of
- * reflecting — so the letters are the part of the sweep that does not come
- * back. They exist only inside the highlight: the sheen's two edges shave the
- * top and bottom off both bars, so the letters are exactly as much of a Z as
- * the light is willing to show. Their outer ends are taken by the rim.
- *
- * Tilt the mark and the sheen moves; the letters move with it, because they are
- * not on the disc, they are in the light on it. Slanted off the horizontal, at
- * this size, they read as a wordmark rather than a pair of eyes.
+ * The dependency, and it is h00's in a different material: **the letters are
+ * cut only where the light is.** The knockout is clipped to the sweep, so each
+ * Z exists exactly as far as the highlight reaches and its corners are still
+ * pink where the light has run out. Narrow the sweep and the letters lose
+ * their corners; take the light away and there is nothing cut at all.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -22,29 +17,17 @@ interface Props {
 }
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.mozz;
-
 const uid = `m02-${Math.random().toString(36).slice(2, 9)}`;
 
-const C = 24;
-const SURF = 18.6;
-const RAKE = -19; // the angle the light comes in at
+const R = 19;
+const RAKE = -14; // the angle the light comes in at
+const SHEEN = { rx: 24, ry: 11.4 };
 
-// The sheen. 15.6 deep, and the letters are 16.6 tall on purpose.
-const BAND = { y: 16.2, h: 15.6 };
-
-const Z = {
-  y: 15.7,
-  w: 15.5,
-  h: 16.6,
-  bar: 2.9,
-  diag: 5.2, // near twice the bar — nothing in a typeface is cut like this
-  cap: 'flat' as const,
-};
-const zLeft = 6.7;
-const zRight = 25.8; // the pair spans 6.7 → 41.3, centred on 24
-
-// A record's edge lip catches less light on a dark ground, so it needs less.
-const LIP = ground === 'dark' ? 1.2 : 1.5;
+// 15 + 6 + 15 = 36, running 6 to 42, well inside the disc: the rim has no part
+// in this one, the light does all the cutting.
+const Z = { y: 15, w: 15, h: 18, bar: 3.2, diag: 6, cap: 'angled' as const };
+const zLeft = 6;
+const zRight = 27;
 ---
 
 <svg
@@ -58,35 +41,39 @@ const LIP = ground === 'dark' ? 1.2 : 1.5;
 >
   <defs>
     <clipPath id={`${uid}-disc`}>
-      <circle cx={C} cy={C} r={SURF} />
+      <circle cx="24" cy="24" r={R} />
     </clipPath>
-    <clipPath id={`${uid}-band`}>
-      <rect x="-14" y={BAND.y} width="76" height={BAND.h} />
+    <clipPath id={`${uid}-sheen`}>
+      <ellipse
+        cx="24"
+        cy="24"
+        rx={SHEEN.rx}
+        ry={SHEEN.ry}
+        transform={`rotate(${RAKE} 24 24)`}
+      />
     </clipPath>
-    <mask id={`${uid}-hole`} maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48">
+    <mask id={uid}>
       <rect width="48" height="48" fill="#fff" />
-      <circle cx={C} cy={C} r="1.7" fill="#000" />
+      {/* The only place a letter can be cut. */}
+      <g clip-path={`url(#${uid}-sheen)`}>
+        <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
+        <path d={zPath({ ...Z, x: zRight })} fill="#000" />
+      </g>
+      <circle cx="24" cy="24" r="2" fill="#000" />
     </mask>
   </defs>
 
-  <g mask={`url(#${uid}-hole)`}>
-    <circle cx={C} cy={C} r="20" fill={app.hue} />
-    <circle
-      cx={C}
-      cy={C}
-      r={20 - LIP / 2}
-      fill="none"
-      stroke={app.deep}
-      stroke-width={LIP}
-    />
-
-    <g transform={`rotate(${RAKE} ${C} ${C})`} clip-path={`url(#${uid}-disc)`}>
-      <rect x="-14" y={BAND.y} width="76" height={BAND.h} fill={app.light} />
-      {/* Clipped to the sheen: no highlight, no letter. */}
-      <g clip-path={`url(#${uid}-band)`}>
-        <path d={zPath({ ...Z, x: zLeft })} fill={app.deep} />
-        <path d={zPath({ ...Z, x: zRight })} fill={app.deep} />
-      </g>
+  <g mask={`url(#${uid})`}>
+    <circle cx="24" cy="24" r={R} fill={app.hue} />
+    <g clip-path={`url(#${uid}-disc)`}>
+      <ellipse
+        cx="24"
+        cy="24"
+        rx={SHEEN.rx}
+        ry={SHEEN.ry}
+        transform={`rotate(${RAKE} 24 24)`}
+        fill={app.light}
+      />
     </g>
   </g>
 </svg>

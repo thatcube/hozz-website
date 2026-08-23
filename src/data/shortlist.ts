@@ -52,8 +52,12 @@ export const SHORTLIST: Pick[] = [
     why: 'The safe option: the shipped bubble, drawn cleanly, with the smile kept.',
   },
   {
-    slug: 'h09',
-    why: 'A tag with a perforated edge. Reads as something you keep, and avoids the file-icon trap the other record concepts fell into.',
+    slug: 'h07',
+    why: 'The fill line is a wave rather than a rule, so the vessel reads as holding something that moves. The letters sit in the fill, not on the glass.',
+  },
+  {
+    slug: 'h03',
+    why: 'A barrel where each hoop is one bar of the letters — slide a hoop and its bar goes with it. The swell at the middle is what gives the diagonals their room.',
   },
 ];
 

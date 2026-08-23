@@ -1,0 +1,16 @@
+127.0.0.1 - - [23/Aug/2026 16:01:06] "GET /f/ HTTP/1.1" 200 -
+127.0.0.1 - - [23/Aug/2026 16:01:06] "GET /_astro/f.j-wm4-KM.css HTTP/1.1" 200 -
+127.0.0.1 - - [23/Aug/2026 16:01:06] "GET /fonts/switzer-400.woff2 HTTP/1.1" 200 -
+127.0.0.1 - - [23/Aug/2026 16:01:06] "GET /fonts/switzer-700.woff2 HTTP/1.1" 200 -
+127.0.0.1 - - [23/Aug/2026 16:01:06] "GET /fonts/ibm-plex-mono-400.woff2 HTTP/1.1" 200 -
+127.0.0.1 - - [23/Aug/2026 16:01:07] "GET /f/ HTTP/1.1" 200 -
+127.0.0.1 - - [23/Aug/2026 16:01:21] "GET /f/ HTTP/1.1" 200 -
+127.0.0.1 - - [23/Aug/2026 16:01:21] "GET /_astro/f.j-wm4-KM.css HTTP/1.1" 200 -
+127.0.0.1 - - [23/Aug/2026 16:01:21] "GET /fonts/switzer-400.woff2 HTTP/1.1" 200 -
+127.0.0.1 - - [23/Aug/2026 16:01:21] "GET /fonts/switzer-700.woff2 HTTP/1.1" 200 -
+127.0.0.1 - - [23/Aug/2026 16:01:21] "GET /fonts/ibm-plex-mono-400.woff2 HTTP/1.1" 200 -
+127.0.0.1 - - [23/Aug/2026 16:01:22] "GET /f/ HTTP/1.1" 200 -
+127.0.0.1 - - [23/Aug/2026 16:01:22] "GET /_astro/f.j-wm4-KM.css HTTP/1.1" 200 -
+127.0.0.1 - - [23/Aug/2026 16:01:22] "GET /fonts/switzer-400.woff2 HTTP/1.1" 200 -
+127.0.0.1 - - [23/Aug/2026 16:01:22] "GET /fonts/switzer-700.woff2 HTTP/1.1" 200 -
+127.0.0.1 - - [23/Aug/2026 16:01:22] "GET /fonts/ibm-plex-mono-400.woff2 HTTP/1.1" 200 -

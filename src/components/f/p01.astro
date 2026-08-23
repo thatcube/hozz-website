@@ -1,17 +1,17 @@
 ---
 /**
- * p01 · Fold — a screen creased down the middle, and a picture creased with it.
+ * p01 · Scope — a screen with a scope picture on it, so the masking has closed
+ * in from the top and the bottom.
  *
- * The object is a concave panel: two facets meeting at a fold that sits further
- * away than the ends, so the outer edges are the tall ones and the silhouette
- * pinches at the waist. No bezel, no foot, no stand — a sheet with a bend in it.
+ * The one structural dependency: **the picture is the letters' field, and its
+ * aspect is their aspect.** The Zs are the exemplar's letter put through the
+ * same anamorphic squeeze the picture is — width and letterspacing multiplied
+ * by 1.35, bar and height untouched, which is why they are wide letters with
+ * ordinary weight. Open the masking back up to 16:9 and they snap back to p00's.
  *
- * There is one Z on each facet and each lies in that facet's plane, so they
- * lean in opposite directions. The picture continues across the fold, which
- * means the two letters actually overlap in the middle — the lit crease passes
- * in front of them and is the only reason they read as two. Flatten the screen
- * and the opposite leans are nonsense; take the letters away and the fold has
- * nothing to break.
+ * Cover the letters and a set playing a widescreen film is plainly there.
+ * Glance at it and you read ZZ: the letters are a full knockout, no fill of
+ * their own, the ground straight through.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -22,24 +22,35 @@ interface Props {
 }
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.plozz;
-
-// Rendered eight times on one page; a shared clip id clips the wrong mark.
 const uid = `p01-${Math.random().toString(36).slice(2, 9)}`;
 
-// Ends 23.6 tall, fold 20 — a sixteen-nine sheet with a bend in it.
-const SHELL =
-  'M4 11.6Q4 10.2 5.4 10.33L24 12V32L5.4 33.67Q4 33.8 4 32.4Z' +
-  'M44 11.6Q44 10.2 42.6 10.33L24 12V32L42.6 33.67Q44 33.8 44 32.4Z';
-const RIGHT_FACET = 'M24 12L44 10.2V33.8L24 32Z';
+const PANEL = { x: 4, y: 12.75, w: 40, h: 22.5, r: 2.6 }; // 16:9
+const BEZEL = 1.2; // a hairline of set, so the picture never becomes the outline
+const PIC = {
+  x: PANEL.x + BEZEL,
+  y: PANEL.y + BEZEL,
+  w: PANEL.w - BEZEL * 2,
+  h: PANEL.h - BEZEL * 2,
+};
+// 37.6 wide at 2.39 leaves a picture 15.73 deep, so the masking is 2.19 each side.
+const MATTE = (PIC.h - PIC.w / 2.39) / 2;
 
-// diag 6.6 against bar 3.2 — the diagonal is more than double the bars, and
-// 5.8 of run against 9 of drop keeps it steep enough to read small.
-const Z = { y: 13.4, w: 14, h: 16.2, bar: 3.4, diag: 7.2, cap: 'angled' as const };
+const H = 12;
+const K = H / 9.4; // the exemplar's letter, scaled
+const SQ = 1.35; // and squeezed, like the picture it is cut from
 
-// The facets slope 1.8 units over 20, which is 5.1 degrees. Each letter takes
-// its own facet's slope, about its own centre.
-const leanL = 'translate(17.4 21.5) skewY(5.1) translate(-17.4 -21.5)';
-const leanR = 'translate(30.6 21.5) skewY(-5.1) translate(-30.6 -21.5)';
+const Z = {
+  y: 24 - H / 2,
+  w: 8.8 * K * SQ,
+  h: H,
+  bar: 2.7 * K,
+  diag: 4.8 * K * SQ,
+  cap: 'angled' as const,
+};
+const GAP = 2 * K * SQ; // the letterspacing stretches with the letters
+const PAIR = Z.w * 2 + GAP;
+const LX = 24 - PAIR / 2;
+const RX = LX + Z.w + GAP;
 ---
 
 <svg
@@ -52,31 +63,29 @@ const leanR = 'translate(30.6 21.5) skewY(-5.1) translate(-30.6 -21.5)';
   aria-label={`${app.name} mark`}
 >
   <defs>
-    <clipPath id={uid}>
-      <path d={SHELL} />
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: LX })} fill="#000" />
+      <path d={zPath({ ...Z, x: RX })} fill="#000" />
+    </mask>
+    <clipPath id={`${uid}-p`}>
+      <rect x={PIC.x} y={PIC.y} width={PIC.w} height={PIC.h} rx={PANEL.r - BEZEL} />
     </clipPath>
   </defs>
 
-  {/* Hung, so the only thing under it is its own shadow. */}
-  <rect
-    x="16"
-    y="35.6"
-    width="16"
-    height="1.2"
-    rx="0.6"
-    fill={app.deep}
-    opacity={ground === 'dark' ? 0.5 : 0.3}
-  />
-
-  <g clip-path={`url(#${uid})`}>
-    <path d={SHELL} fill={app.hue} />
-    {/* The far facet turns away from the light. Depth, from the geometry. */}
-    <path d={RIGHT_FACET} fill={app.deep} opacity="0.22" />
-
-    <path d={zPath({ ...Z, x: 10.4 })} fill={app.deep} transform={leanL} />
-    <path d={zPath({ ...Z, x: 23.6 })} fill={app.deep} transform={leanR} />
-
-    {/* The crease, in front of both. The letters overlap behind it. */}
-    <rect x="23.1" y="12" width="1.8" height="20" fill={app.light} />
+  <g mask={`url(#${uid})`}>
+    <rect
+      x={PANEL.x}
+      y={PANEL.y}
+      width={PANEL.w}
+      height={PANEL.h}
+      rx={PANEL.r}
+      fill={app.hue}
+    />
+    {/* The masking, closed in to scope. */}
+    <g clip-path={`url(#${uid}-p)`} fill={app.deep}>
+      <rect x={PIC.x} y={PIC.y} width={PIC.w} height={MATTE} />
+      <rect x={PIC.x} y={PIC.y + PIC.h - MATTE} width={PIC.w} height={MATTE} />
+    </g>
   </g>
 </svg>

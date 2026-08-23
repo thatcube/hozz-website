@@ -1,20 +1,19 @@
 ---
 /**
- * tw08 · Howl — a head mid-laugh, eyes squeezed shut.
+ * tw08 · Crease — a face folded by a laugh, the squint pressed into it.
  *
- * An emote is a reaction, and the loudest reaction there is folds the eyes
- * away: laugh hard enough and the eye stops being a shape and becomes a
- * crease. That crease *is* the Z here — not a letter laid over a face but the
- * fold the face makes while doing the one thing it exists to do.
+ * Not a hole. When you laugh hard the eyes squeeze shut and the skin folds, and
+ * a fold is a thing you read by light: dark where the skin turns away, bright
+ * along the lip where it turns back. Every stroke of both Zs and of the open
+ * mouth obeys one light, from one number.
  *
- * The head is squashed wider than it is tall and tipped back, and the creases
- * take their measure from it: their length is the skull's own chord at brow
- * height, so both top bars run past the box on `open` caps and are cut off by
- * the head's edge. The head decides where the letters stop.
- *
- * The mouth is the whole lower half of the face, open, upper teeth showing.
- * Two Zs with no mouth read as asleep; this one could not be asleep if it
- * tried.
+ * The dependency: **the crease sets the skull.** The fold is what flattens the
+ * top of the head, so the brow is not a chosen curve — it is parked a fixed
+ * BROW above the squint (HEAD.top = Z.y - BROW). Raise the letters and the
+ * skull cap rises with them; lower them and the head grows a forehead it should
+ * not have. And the light: LIFT is used once and every lit lip in the face is
+ * that far below its own shadow, letters and mouth alike, so the whole face is
+ * folded by the same light rather than the letters being decorated separately.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -25,24 +24,28 @@ interface Props {
 }
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.twozz;
-
 const uid = `tw08-${Math.random().toString(36).slice(2, 9)}`;
 
-// 33 across by 28 down. Laughter squashes a head, and the creases inherit it:
-// bar 2.3 against diag 4.2, so the fold's turn carries nearly twice its own line.
-// Each crease is set wider than the skull at brow height, so the head's own
-// contour is what decides where the letter stops.
-const HEAD =
-  'M7.5 25C7.5 17.2 14.4 12 24.4 12C34.4 12 40.5 17.6 40.5 26.4C40.5 34.8 34 40 24 40C14 40 7.5 34.4 7.5 25Z';
+const Z = { y: 13.6, w: 10, h: 12.8, bar: 3.2, diag: 5.7, cap: 'angled' as const };
+const zLeft = 9.4;
+const zRight = 28.6;
 
-const Z = { y: 14.8, w: 9.8, h: 9.4, bar: 2.3, diag: 4.2, cap: 'angled' as const };
-const zLeft = 10;
-const zRight = 28.2; // 8.4 of clear cheek; both outer ends land past the skull and are trimmed
+const BROW = 3.9; // skin left above a fold — the only thing setting the skull cap
+const LIFT = 1.1; // one light, one distance from shadow to lit lip
 
-// The howl. Its floor sits a unit and a half inside the jaw, which is what
-// makes the face look like it is barely containing the noise.
+const HEAD = { x: 8, w: 32, top: Z.y - BROW, jaw: 26.4, chin: 41.6 };
+const xr = HEAD.x + HEAD.w;
+
+const SKULL =
+  `M${HEAD.x} ${HEAD.top + 2.2}C${HEAD.x} ${HEAD.top + 1} ${HEAD.x + 1} ${HEAD.top} ${HEAD.x + 2.4} ${HEAD.top}` +
+  `L${xr - 2.4} ${HEAD.top}C${xr - 1} ${HEAD.top} ${xr} ${HEAD.top + 1} ${xr} ${HEAD.top + 2.2}` +
+  `L${xr} ${HEAD.jaw}C${xr} ${HEAD.jaw + 9.2} ${xr - 7.2} ${HEAD.chin} 24 ${HEAD.chin}` +
+  `C${HEAD.x + 7.2} ${HEAD.chin} ${HEAD.x} ${HEAD.jaw + 9.2} ${HEAD.x} ${HEAD.jaw}Z`;
+
 const MOUTH =
-  'M13.6 28.2C18.5 26.6 30.5 26.4 34.8 28C34.4 34.6 30 38.6 24 38.6C17.6 38.6 14 34.4 13.6 28.2Z';
+  'M12.6 30.8C18 28.8 30.2 28.6 35.2 30.4C34.8 36.2 30 39.4 24 39.4C17.8 39.4 13 35.8 12.6 30.8Z';
+
+const folds = [zPath({ ...Z, x: zLeft }), zPath({ ...Z, x: zRight }), MOUTH];
 ---
 
 <svg
@@ -55,24 +58,18 @@ const MOUTH =
   aria-label={`${app.name} mark`}
 >
   <defs>
-    <clipPath id={`${uid}h`}>
-      <path d={HEAD} />
-    </clipPath>
-    {/* The teeth are trimmed by the mouth, so the lip line is always the mouth's. */}
-    <clipPath id={`${uid}m`}>
-      <path d={MOUTH} />
+    <clipPath id={uid}>
+      <path d={SKULL} />
     </clipPath>
   </defs>
 
-  <g transform="rotate(-9 24 26)">
-    <path d={HEAD} fill={app.hue} />
-    <path d={MOUTH} fill={app.deep} />
-    <g clip-path={`url(#${uid}m)`}>
-      <rect x="13" y="25.6" width="23" height="3.4" fill={app.light} />
-    </g>
-    <g clip-path={`url(#${uid}h)`}>
-      <path d={zPath({ ...Z, x: zLeft })} fill={app.deep} />
-      <path d={zPath({ ...Z, x: zRight })} fill={app.deep} />
+  <g transform="rotate(-4 24 25)">
+    <path d={SKULL} fill={ground === 'dark' ? app.hue : app.hue} />
+    <g clip-path={`url(#${uid})`}>
+      <g transform={`translate(0 ${LIFT})`}>
+        {folds.map((d) => <path d={d} fill={app.light} />)}
+      </g>
+      {folds.map((d) => <path d={d} fill={app.deep} />)}
     </g>
   </g>
 </svg>

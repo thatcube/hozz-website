@@ -1,12 +1,12 @@
 export default {
   n: 'p03',
-  name: 'Turn',
+  name: 'Batten',
   app: 'plozz',
-  object: 'Thin panel, seen from the side',
+  object: 'A screen, part way out of its roll',
   move: 'continuation',
   reading: 'letters',
-  sentence: 'The ZZ is the picture carried round the corner of the screen.',
+  sentence: 'The ZZ is the length of sheet a screen has been unrolled.',
   idea:
-    'A bezel-less panel standing at an angle, thin enough that its picture runs off the front and keeps going over the near edge onto the lit sliver of side. The corner is a hard fold, so the letter crossing it bends there \u2014 its left end climbs onto another plane in another tone. Straighten the panel and there is nothing left to bend over.',
-  palette: ['#00a4dc', '#00506d', '#7fd6f5'],
+    'The case is the cap line. The sheet is down exactly one line, so the letters hang straight off the underside of the roll with no gap \u2014 the case draws their tops and the drop sets their height. Let it down further and the letters grow with it.',
+  palette: ['#00a4dc', '#00506d'],
 };

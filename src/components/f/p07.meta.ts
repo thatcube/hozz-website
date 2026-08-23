@@ -1,12 +1,12 @@
 export default {
   n: 'p07',
-  name: 'Iris',
+  name: 'Throw',
   app: 'plozz',
-  object: 'Projector lens, blades closed',
-  move: 'aperture',
-  reading: 'eyes',
-  sentence: 'The ZZ is the opening the blades left in the lens.',
+  object: 'Lamp in a dark room, and its shaft',
+  move: 'occlusion',
+  sentence: 'The ZZ is the missing light of the shaft.',
+  reading: 'letters',
   idea:
-    'A six-blade plate closed over a burning lamp until the only gap left is the shape of two Zs — so the letters are pure light, with no fill of their own. The vertices sit on the lamp, so the slivers between the blade flats and the rim are the blades themselves, and the seams run out of the vertices to the barrel. The plate sits a little high, and the fat crescent of spill under its bottom flat is the mouth.',
+    'A body, an emitter, a shaft: three shapes, no hardware. The letters have no fill of their own — they are light that did not arrive, so they cannot exist without the shaft behind them. The near letter sits where the shaft has not finished opening, so the shaft edge takes a slanted chamfer off the near ends of its bars; the far letter, out where the beam is wide, is whole. Both stay joined and both are a clean knockout against the beam.',
   palette: ['#00a4dc', '#00506d', '#7fd6f5'],
 };

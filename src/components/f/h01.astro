@@ -1,20 +1,19 @@
 ---
 /**
- * h01 · Manifold — one feed in, two tanks, and the ZZ is what settles in them.
+ * h01 · Struck — a bottle with the ZZ pressed into its wall.
  *
- * A single port at the top runs into a header pipe, which drops through two
- * short down-pipes into two standing tanks. Inside each tank the contents are
- * not a plain block: the surface runs across, folds down, and returns along the
- * floor, so the Z *is* what is being kept. Both of its bars are cut off flat by
- * the tank walls — `cap: 'open'`, then clipped to the tank interior — which is
- * why the letter cannot be lifted out. Its terminals belong to the vessel.
+ * The dependency: **a vessel is the only thing in this family with a wall.**
+ * A screen, a disc and a bubble have surfaces; a bottle has thickness, and a
+ * thing with thickness can be struck. So the letters are given no colour of
+ * their own — they are the glass, sunk, dark because the recess is in shade
+ * and edged below where the lower lip of the groove turns up to the light.
+ * Press them flat and the bottle is blank; there is nothing lying on it.
  *
- * One feed arriving at two tanks standing at the same level is the whole Hozz
- * argument in a picture: one export, more than one destination, both of them
- * yours, and you can see how much is in each.
+ * Not a knockout: no ground shows through, so the mark is the same object in
+ * the same light on paper and on black.
  *
- * Reading: letters. The pair sits low under a tall headspace, inside two
- * separate containers, so it reads as contents rather than as a face.
+ * Two shapes — a lip and a necked body — and the panel between the shoulder
+ * and the foot is exactly what the strike has to fit.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -25,32 +24,16 @@ interface Props {
 }
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.hozz;
-
-// Rendered eight times on one board; a shared clip id would clip the wrong one.
 const uid = `h01-${Math.random().toString(36).slice(2, 9)}`;
 
-const TANK = { y: 15.4, w: 14.8, h: 27.6, r: 3.2 };
-const tL = 7.6;
-const tR = 25.6;
+const BODY =
+  'M19.2 9.2H28.8V16.2C33.6 17.8 38.6 19.6 38.6 23.4V36.6A4.4 4.4 0 0 1 34.2 41H13.8A4.4 4.4 0 0 1 9.4 36.6V23.4C9.4 19.6 14.4 17.8 19.2 16.2Z';
 
-// Walls 1.1, floor at 41.9. The interiors are what the letters are clipped to.
-const IN = { y: 16.5, w: 12.6, bottom: 41.9 };
-const inL = 8.7;
-const inR = 26.7;
-
-// Fill at 27.4, floor at 41.9. diag 5.2 against bar 3.2 — the fold is heavier
-// than the surface, which is the cheapest way to stop looking like type.
-const FILL = 27.4;
-const Z = {
-  y: FILL,
-  w: IN.w,
-  h: IN.bottom - FILL,
-  bar: 3.2,
-  diag: 5.2,
-  cap: 'open' as const,
-};
-
-const weld = ground === 'dark' ? 0.8 : 0.6;
+const Z = { y: 25.4, w: 9.8, h: 12.2, bar: 3.2, diag: 5.6, cap: 'angled' as const };
+const GAP = 2.2; // letterspace only — it is not a feature of the bottle
+const zLeft = 24 - (Z.w * 2 + GAP) / 2;
+const zRight = zLeft + Z.w + GAP;
+const LIP = 1.1; // the lit underside of the groove, and the depth of the strike
 ---
 
 <svg
@@ -63,42 +46,19 @@ const weld = ground === 'dark' ? 0.8 : 0.6;
   aria-label={`${app.name} mark`}
 >
   <defs>
-    <clipPath id={`${uid}-c`}>
-      <rect x={inL} y={IN.y} width={IN.w} height={IN.bottom - IN.y} />
-      <rect x={inR} y={IN.y} width={IN.w} height={IN.bottom - IN.y} />
+    <clipPath id={`${uid}-wall`}>
+      <path d={BODY} />
     </clipPath>
   </defs>
 
-  {/* One flanged port in, the header that carries it, two drops out. */}
-  <rect x="20.6" y="4.2" width="6.8" height="1.8" rx="0.9" fill={app.deep} />
-  <rect x="22.6" y="6" width="2.8" height="3" fill={app.deep} />
-  <rect x="6" y="8.6" width="36" height="4.2" rx="2.1" fill={app.deep} />
-  <rect x="13.2" y="12.6" width="3.6" height="3.4" fill={app.deep} />
-  <rect x="31.2" y="12.6" width="3.6" height="3.4" fill={app.deep} />
+  <rect x="17.4" y="5.6" width="13.2" height="3.8" rx="1.5" fill={app.deep} />
+  <path d={BODY} fill={app.hue} />
 
-  <rect
-    x={tL}
-    y={TANK.y}
-    width={TANK.w}
-    height={TANK.h}
-    rx={TANK.r}
-    fill={app.hue}
-  />
-  <rect
-    x={tR}
-    y={TANK.y}
-    width={TANK.w}
-    height={TANK.h}
-    rx={TANK.r}
-    fill={app.hue}
-  />
-
-  <g clip-path={`url(#${uid}-c)`}>
-    <path d={zPath({ ...Z, x: inL })} fill={app.light} />
-    <path d={zPath({ ...Z, x: inR })} fill={app.light} />
+  {/* The strike. Clipped to the wall, because a groove cannot leave the glass. */}
+  <g clip-path={`url(#${uid}-wall)`}>
+    <path d={zPath({ ...Z, x: zLeft, y: Z.y + LIP })} fill={app.light} />
+    <path d={zPath({ ...Z, x: zRight, y: Z.y + LIP })} fill={app.light} />
+    <path d={zPath({ ...Z, x: zLeft })} fill={app.deep} />
+    <path d={zPath({ ...Z, x: zRight })} fill={app.deep} />
   </g>
-
-  {/* The seam where each tank is closed. */}
-  <rect x={tL} y="16" width={TANK.w} height="1" fill={app.deep} opacity={weld} />
-  <rect x={tR} y="16" width={TANK.w} height="1" fill={app.deep} opacity={weld} />
 </svg>

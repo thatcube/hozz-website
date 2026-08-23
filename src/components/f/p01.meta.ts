@@ -1,12 +1,12 @@
 export default {
   n: 'p01',
-  name: 'Fold',
+  name: 'Scope',
   app: 'plozz',
-  object: 'Creased panel, no bezel',
-  move: 'occlusion',
+  object: 'A set, masked down to scope',
+  move: 'aperture',
   reading: 'letters',
-  sentence: 'The ZZ is the picture broken across the fold of the screen.',
+  sentence: 'The ZZ is the cut through the picture of a screen masked down to scope.',
   idea:
-    'A concave panel with no bezel and no stand: two facets meeting at a fold set further back than the ends, so the waist pinches. One Z lies in each facet and takes that facet\u2019s lean, and because the picture runs on across the fold the letters overlap in the middle \u2014 the lit crease passes in front of them and is the only thing making them read as two.',
-  palette: ['#00a4dc', '#00506d', '#7fd6f5'],
+    'The picture is the letters\u2019 field and its aspect is their aspect: the exemplar\u2019s Z put through the same anamorphic squeeze the film is, width and letterspacing times 1.35, bar and height untouched. Open the masking back to 16:9 and they would snap back to p00\u2019s proportions.',
+  palette: ['#00a4dc', '#00506d'],
 };

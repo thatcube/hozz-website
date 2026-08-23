@@ -1,19 +1,18 @@
 ---
 /**
- * tw01 · Unbroken — the bubble redrawn as one continuous edge.
+ * tw01 · Spout — a bubble, and the ZZ cut clean through it.
  *
- * Every previous pass at this mark added something: a keyline, a pip, a
- * gradient, a highlight. This one changes the only thing that was never
- * changed — the outline. The bottom edge does not stop and hand over to a tail;
- * it leans out of the corner and keeps going, and the tail's back edge is the
- * left side of the bubble arriving early. The corner radii are deliberately
- * unequal — generous at the top and right, nearly square at the bottom left —
- * which is what a bubble drawn by hand does and what a rounded rectangle with a
- * spike stuck on never does.
+ * One dependency, and it is the only thing holding the concept up: **the tail
+ * is the gap between the two Zs.** The bubble's single defining feature — the
+ * thing that makes it a bubble rather than a rounded box — starts exactly where
+ * the left Z ends and finishes exactly where the right Z begins, so the pair
+ * sets the letterspacing and the letterspacing sets the tail. Slide the letters
+ * apart and the tail widens with them; close them up and the bubble loses its
+ * point.
  *
- * One purple, one hole colour, nothing else. The letters and the mouth are the
- * bubble's entire interior: fill them in and there is no bubble left, only a
- * blob.
+ * That is the whole object: one outline, one fill, no highlight, no keyline.
+ * The corner radius is generous at the top and tight at the bottom, which is
+ * how a bubble is drawn by hand and where its character comes from.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -24,37 +23,34 @@ interface Props {
 }
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.twozz;
-
 const uid = `tw01-${Math.random().toString(36).slice(2, 9)}`;
-const maskId = `${uid}-m`;
 
-/**
- * Body 40 × 27 at x4–44, y5–32. Radii 13 / 13 / 13 / 4: the mark is soft
- * everywhere except where it speaks. The two cubics are the tail — the first is
- * the bottom edge carrying on past the corner, the second is it coming back.
- */
+/** 13.4 + 7 + 13.4 = 33.8, running 7.1 to 40.9, centred on 24. Flat caps, so
+ *  the channel between the pair is a true vertical 7 units wide. */
+const Z = { y: 12, w: 13.4, h: 17, bar: 3.6, diag: 6.2, cap: 'flat' as const };
+const zLeft = 7.1;
+const zRight = 27.5;
+
+const gapL = zLeft + Z.w; // 20.5
+const gapR = zRight; //      27.5
+
+/** Body 4–44 by 8–34, soft over the top, firm underneath, and the tail hung
+ *  off the bottom edge across exactly the width of the gap. */
 const BODY = [
-  'M17 5',
-  'H31',
-  'A13 13 0 0 1 44 18',
-  'V19',
-  'A13 13 0 0 1 31 32',
-  'H17',
-  'C13.6 33.9 10.6 37.2 7.2 41.4',
-  'C9.8 36 10.6 33.5 9.8 32',
-  'H8',
-  'A4 4 0 0 1 4 28',
-  'V18',
-  'A13 13 0 0 1 17 5',
+  'M13 8',
+  'H35',
+  'A9 9 0 0 1 44 17',
+  'V29',
+  'A5 5 0 0 1 39 34',
+  `H${gapR}`,
+  'L24 41.6',
+  `L${gapL} 34`,
+  'H9',
+  'A5 5 0 0 1 4 29',
+  'V17',
+  'A9 9 0 0 1 13 8',
   'Z',
 ].join(' ');
-
-const Z = { y: 8.6, w: 10.6, h: 12.6, bar: 3.1, diag: 5.3, cap: 'angled' as const };
-const zLeft = 12.2;
-const zRight = 24.8; // pair spans 12.2–35.4, centred on the body
-
-/** The mouth. Stroked, so it is a slit in the surface rather than a shape on it. */
-const SMILE = 'M19.2 24.2Q24 28.4 28.8 24.2';
 ---
 
 <svg
@@ -67,19 +63,12 @@ const SMILE = 'M19.2 24.2Q24 28.4 28.8 24.2';
   aria-label={`${app.name} mark`}
 >
   <defs>
-    <mask id={maskId}>
+    <mask id={uid}>
       <rect width="48" height="48" fill="#fff" />
       <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
       <path d={zPath({ ...Z, x: zRight })} fill="#000" />
-      <path
-        d={SMILE}
-        fill="none"
-        stroke="#000"
-        stroke-width="2.6"
-        stroke-linecap="round"
-      />
     </mask>
   </defs>
 
-  <path d={BODY} fill={app.hue} mask={`url(#${maskId})`} />
+  <path d={BODY} fill={app.hue} mask={`url(#${uid})`} />
 </svg>

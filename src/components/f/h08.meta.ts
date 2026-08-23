@@ -1,12 +1,12 @@
 export default {
   n: 'h08',
-  name: 'Plot',
+  name: 'Scored',
   app: 'hozz',
-  object: 'Graduated axis, one line',
-  move: 'weave',
+  object: 'A field of record, scored at two levels',
+  move: 'continuation',
   reading: 'letters',
-  sentence: 'The ZZ is the departure of the trace from the base line of the axis.',
+  sentence: 'The ZZ is the fold between the two scored levels of the record.',
   idea:
-    'A value axis with its graduations and the line the readings are measured from, with the trace lying along that line and leaving it exactly twice — so the axis itself is the bottom bar of both letters and cannot be taken away from them. It is the instrument rather than the dashboard, which is the right register for an app that measures and never scores.',
-  palette: ['#12b39a', '#08574b', '#82e5d3'],
+    'The two scores are the letters\u2019 bars: the upper level is both top bars, the lower level is both bottom bars, and each runs on past the pair to the edge of the tile. Only the two falls are added. Move the levels and the letters change with them; take the levels away and two diagonals are all that is left.',
+  palette: ['#12b39a', '#08574b'],
 };

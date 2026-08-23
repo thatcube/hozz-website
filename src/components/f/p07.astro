@@ -1,16 +1,13 @@
 ---
 /**
- * p07 · Iris — a projector lens seen down the barrel.
+ * p07 · Throw — a lamp at the back of a dark room and the shaft it throws.
  *
- * A six-blade plate closed down over the lamp. The opening is the ZZ: the
- * letters have no fill of their own, they are the shape of the gap the blades
- * left, and the light behind the plate is what you see through them. Close the
- * blades and the letters stop existing; take the letters away and the lens has
- * no aperture at all.
- *
- * The plate sits slightly high in the barrel, so the light left under its
- * bottom flat is far fatter than the sliver above it. That crescent is the
- * mouth — the Zs sit above it as eyes, and the mark does not read as asleep.
+ * Three shapes: a body, an emitter, a shaft. The letters have no fill — they
+ * are light that did not arrive. The near letter sits where the shaft has not
+ * finished opening, so the shaft's own converging edge takes a slanted chamfer
+ * off the near ends of its bars; the far letter, out where the shaft is wide,
+ * is whole. Both stay joined. Take the shaft away and there is nothing left
+ * for the letters to be missing from.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -21,43 +18,29 @@ interface Props {
 }
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.plozz;
-
-// Unique per instance: the board renders this eight times on one page and a
-// duplicated mask id would silently apply the wrong mask.
 const uid = `p07-${Math.random().toString(36).slice(2, 9)}`;
 
-const CX = 24;
-const CY = 24;
-const R_BARREL = 20.6;
-const R_LAMP = 17.2;
+const AXIS = 24;
+const X_LENS = 2;
+const X_WALL = 46.6;
+const HALF = 2.2;
+const SPREAD = 0.42;
+const half = (x: number) => HALF + SPREAD * (x - X_LENS);
 
-// The blade plate: six blades, so a hexagon, pointed left and right to give the
-// widest possible opening. Its vertices sit on the lamp, so the six lens-shaped
-// slivers of light left between its flats and the lamp's edge are what you see
-// of the blades. Lifted, so the sliver under the bottom flat is the fat one.
-const BLADE_CY = CY - 1.9;
-const verts = Array.from({ length: 6 }, (_, i) => {
-  const a = (Math.PI / 3) * i;
-  return [CX + R_LAMP * Math.cos(a), BLADE_CY + R_LAMP * Math.sin(a)] as const;
-});
-const blade = 'M' + verts.map(([x, y]) => `${x.toFixed(3)} ${y.toFixed(3)}`).join('L') + 'Z';
+const shaft =
+  `M${X_LENS} ${AXIS - half(X_LENS)}L${X_WALL} ${AXIS - half(X_WALL)}` +
+  `L${X_WALL} ${AXIS + half(X_WALL)}L${X_LENS} ${AXIS + half(X_LENS)}Z`;
 
-// Where one blade laps the next: six seams, running out of the vertices to the
-// rim. Six, on the vertices — not a ring of knurling, which read as a bottle cap.
-const seams = verts
-  .map(([x, y]) => {
-    const dx = x - CX;
-    const dy = y - CY;
-    const k = 20.3 / Math.hypot(dx, dy);
-    return `M${x.toFixed(3)} ${y.toFixed(3)}L${(CX + dx * k).toFixed(3)} ${(CY + dy * k).toFixed(3)}`;
-  })
-  .join('');
-
-// diag is more than twice bar: the opening is wide across its throat and thin
-// at the lips, which is what a closing blade leaves and a typeface never does.
-const Z = { y: BLADE_CY - 5.2, w: 11, h: 10.4, bar: 2.8, diag: 6.1, cap: 'angled' as const };
-const zLeft = 12.3;
-const zRight = 24.7;
+const Z = {
+  y: 16.5,
+  w: 14,
+  h: 15,
+  bar: 4.2,
+  diag: 7.9,
+  cap: 'flat' as const,
+};
+const zNear = 11.5;
+const zFar = 27.3;
 ---
 
 <svg
@@ -72,20 +55,20 @@ const zRight = 24.7;
   <defs>
     <mask id={uid}>
       <rect width="48" height="48" fill="#fff" />
-      <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
-      <path d={zPath({ ...Z, x: zRight })} fill="#000" />
+      <path d={zPath({ ...Z, x: zNear })} fill="#000" />
+      <path d={zPath({ ...Z, x: zFar })} fill="#000" />
     </mask>
   </defs>
 
-  <circle cx={CX} cy={CY} r={R_BARREL} fill={app.hue} />
+  <path d={shaft} fill={app.hue} mask={`url(#${uid})`} />
 
-  {/* The lamp. Everything the letters show is this. */}
-  <circle cx={CX} cy={CY} r={R_LAMP} fill={app.light} />
-
-  {/* The blades, punched. */}
-  <path d={blade} fill={app.deep} mask={`url(#${uid})`} />
-
-  <g stroke={app.deep} stroke-width="1.4" opacity={ground === 'dark' ? 0.66 : 0.55}>
-    <path d={seams} />
-  </g>
+  <rect x="0.6" y="18.6" width="6.8" height="10.8" rx="2.6" fill={app.deep} />
+  <rect
+    x="5"
+    y="21.4"
+    width="2.8"
+    height="5.2"
+    rx="1.4"
+    fill={ground === 'dark' ? app.light : app.light}
+  />
 </svg>

@@ -2,11 +2,11 @@ export default {
   n: 'tw07',
   name: 'Spam',
   app: 'twozz',
-  object: 'One emote, pasted thrice',
+  object: 'One emote tile, and the copy behind it',
   move: 'aperture',
   reading: 'eyes',
-  sentence: 'The ZZ is the eye drilled through every copy of the spammed emote.',
+  sentence: 'The ZZ is the hole bored through the emote and its copy.',
   idea:
-    'Nobody posts one emote — the same face pasted down the column is what a Twitch chat actually looks like, so the object here is the repeat, not the face. The eyes and the open grin are cut clean through all three registered copies, and each copy steps along the same diagonal the letter turns on, so the direction of the spam and the stroke of the Z are one line.',
-  palette: ['#8f52f6', '#c9a9fb', '#3d1d75'],
+    'The second card is offset along the Z\u2019s own diagonal \u2014 (w \u2212 diag) across by (h \u2212 2\u00b7bar) up \u2014 so the direction the spam travels and the stroke the letter turns on are one line, computed from the letter rather than typed. Change the Z and the stack moves with it. Cover the letters and two stacked cards remain; glance at it and the ZZ is unmistakable.',
+  palette: ['#8f52f6', '#c9a9fb'],
 };

@@ -1,12 +1,12 @@
 export default {
   n: 'm03',
-  name: 'Stack',
+  name: 'Rake',
   app: 'mozz',
-  object: 'Three records, staggered pile',
+  object: 'A record turned away',
   move: 'aperture',
   reading: 'letters',
-  sentence: 'The ZZ is the slot cut through the pile.',
+  sentence: 'The ZZ is the slot in the record, turned with it.',
   idea:
-    'Three discs dropped one on the next, each up and right of the last, so the pile shows a dark crescent, a lit one, then the record on top. The suffix is one slot cut clean through all three, which is why the letters carry the stack’s tonal steps across their own bars and why the rims take the two ends the pile cannot reach.',
-  palette: ['#e0243f', '#f58a99', '#6d0f1e'],
+    'The cut lies in the record’s surface, so the turn squashes it by exactly the 0.72 it squashes the rim by — the proof is the spindle, which is an oval for the same reason. Stand the letters upright and the record would have to stand up with them. The crescent underneath is the record’s thickness, and it is the only shading in the mark.',
+  palette: ['#e0243f', '#6d0f1e', '#f58a99'],
 };

@@ -1,12 +1,12 @@
 export default {
   n: 'm09',
-  name: 'Spool',
+  name: 'Thread',
   app: 'mozz',
-  object: 'Two reels, deck plate, head slot',
-  move: 'substitution',
-  reading: 'eyes',
-  sentence: 'The ZZ is the web that spans the open face of each reel.',
+  object: 'Two spools, one tape',
+  move: 'continuation',
+  sentence: 'The ZZ is the threaded run of the tape between the spools.',
+  reading: 'letters',
   idea:
-    'An open reel is a rim with a hole in it, so a web has to carry the hub across to the rim — and here that web is a single Z per reel, starting at the rim, crossing the hub and dying back into the rim, both bars severed by it because a structural member ends where it meets what it holds. Take the rim away and the Z has nothing to span. The head slot in the deck plate is the mouth: the one part of a tape machine whose whole job is listening.',
+    'Supply spool high on the left, take-up spool low on the right, and every inch of tape between them is the ZZ — it leaves the first hub, folds, folds back, and winds onto the second. Both letters end inside a spool, so the run cannot be pulled off them. Reading is letters, not eyes: the hubs are on a diagonal, so there is no pair to mistake for a face. Three shapes, two fills.',
   palette: ['#e0243f', '#6d0f1e', '#f58a99'],
 };

@@ -1,21 +1,23 @@
 ---
 /**
- * h08 · Plot — an axis, and the line it holds.
+ * h08 · Scored — a field of record, scored at two levels.
  *
- * The object is the frame every measurement is drawn in: a value axis standing
- * on the left with its graduations, and the line the readings are plotted
- * against running away to the right. No panel, no plate — a plot is a frame,
- * not a box, and Hozz should look like the quiet instrument rather than the
- * dashboard.
+ * The object is a run of measurement that fills the tile and passes off every
+ * edge, because the body was doing this before the app looked. Two levels are
+ * scored clean through it — an upper limit and a resting level — and they are
+ * the only marks on it.
  *
- * The trace *is* that bottom line. It lies along it for most of the run and
- * leaves it exactly twice, and each excursion closes on the line again, so the
- * axis is the bottom bar of both letters. Cover the letters and a graduated
- * axis remains, which is a deliberate thing. Cover the axis and the letters
- * lose the stroke that finished them — two sevens hanging over nothing.
+ * The move that ties the letters to it: **the two scores are the letters'
+ * bars**. The upper score is both top bars and the lower score is both bottom
+ * bars, and each runs on past the pair to the edge of the tile, so the ZZ is
+ * the length of the record where the two levels fold into one another. Only
+ * the two falls are added. Shift the levels and the letters change height with
+ * them; take them away and there is nothing left but two diagonals.
  *
- * Zs as letters. No face, and none is wanted: a health app that reads sleep
- * cannot afford a pair of sleeping eyes.
+ * Scores and letters are one continuous knockout, so the ground shows through
+ * both and the pair keeps full tonal separation down to 24px.
+ *
+ * Zs as letters, not eyes: no face on a health mark.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -26,30 +28,25 @@ interface Props {
 }
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.hozz;
+const uid = `h08-${Math.random().toString(36).slice(2, 9)}`;
 
-const dark = ground === 'dark';
-const frame = dark ? app.hue : app.deep; // the instrument
-const trace = dark ? app.light : app.hue; // the reading, always the brighter
-
-const BAR = 2.4;
-const BASE = 31.6; // top edge of the line everything is measured from
-
-const AXIS = { x: 6.6, y: 11, w: BAR, h: BASE + BAR - 11 };
+const BAR = 3.2;
+const TOP = 15; // the upper level, and therefore both top bars
+const FLOOR = 29.6; // the resting level, and therefore both bottom bars
 
 const Z = {
-  y: 20.4,
-  w: 10.6,
-  h: BASE + BAR - 20.4,
+  y: TOP,
+  w: 13.6,
+  h: FLOOR + BAR - TOP,
   bar: BAR,
-  diag: 4.6, // 4.6 across at 56° is 3.8 of real weight against a 2.4 bar
-  cap: 'angled' as const,
+  diag: 5.4,
+  cap: 'flat' as const,
 };
-const zLeft = 13.4;
-const zRight = 26.4; // 2.4 of gap; the pair sits to the right of the axis
-
-// Graduations: three on the value axis, four along the run.
-const VALUES = [13.6, 19.2, 24.8];
-const TIMES = [16.6, 23.2, 29.8, 36.4];
+// 13.6 + 3 + 13.6 = 30.2, running 8.9 to 39.1, centred on 24. The scores stop
+// at the letter gap, or the pair would read as a pair of sevens.
+const zLeft = 8.9;
+const zRight = 25.5;
+const zMid = zLeft + Z.w;
 ---
 
 <svg
@@ -61,24 +58,23 @@ const TIMES = [16.6, 23.2, 29.8, 36.4];
   role="img"
   aria-label={`${app.name} mark`}
 >
-  <g fill={frame}>
-    <rect x={AXIS.x} y={AXIS.y} width={AXIS.w} height={AXIS.h} rx="0.6" />
-    {
-      VALUES.map((y) => (
-        <rect x={AXIS.x + AXIS.w} y={y} width="2.7" height="1.5" rx="0.4" />
-      ))
-    }
-    {
-      TIMES.map((x) => (
-        <rect x={x} y={BASE + BAR} width="1.5" height="2.4" rx="0.4" />
-      ))
-    }
-  </g>
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <g fill="#000">
+        <rect x="0" y={TOP} width={zMid} height={BAR} />
+        <rect x={zRight} y={TOP} width={48 - zRight} height={BAR} />
+        <rect x="0" y={FLOOR} width={zMid} height={BAR} />
+        <rect x={zRight} y={FLOOR} width={48 - zRight} height={BAR} />
+        <path d={zPath({ ...Z, x: zLeft })} />
+        <path d={zPath({ ...Z, x: zRight })} />
+      </g>
+    </mask>
+  </defs>
 
-  <g fill={trace}>
-    {/* The base line runs from the axis out past the right margin. */}
-    <rect x={AXIS.x} y={BASE} width={41.4 - AXIS.x} height={BAR} />
-    <path d={zPath({ ...Z, x: zLeft })} />
-    <path d={zPath({ ...Z, x: zRight })} />
+  <g mask={`url(#${uid})`}>
+    <rect width="48" height="48" fill={app.hue} />
+    {/* One shading step: the record below the resting level, held darker. */}
+    <rect x="0" y={FLOOR} width="48" height={48 - FLOOR} fill={app.deep} />
   </g>
 </svg>

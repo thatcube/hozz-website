@@ -1,12 +1,12 @@
 export default {
   n: 'h07',
-  name: 'Resting',
+  name: 'Trace',
   app: 'hozz',
-  object: 'Readout strip, one trace',
-  move: 'weave',
+  object: 'A day plotted, with the area under it filled',
+  move: 'aperture',
   reading: 'letters',
-  sentence: 'The ZZ is the excursion of the trace from its resting line.',
+  sentence: 'The ZZ is the space cut out from under the trace of the day.',
   idea:
-    'A wide dark window with a single line crossing it, flat and quiet at both edges, which leaves rest exactly twice and falls back — and the resting line itself is the bottom bar of both letters, so covering it turns the Zs into sevens. Hozz measures rather than coaches, so the calm state is the subject and the two beats are the only event.',
-  palette: ['#12b39a', '#08574b', '#82e5d3'],
+    'The plotted line is the lid of the letters: they are cut from the area beneath it and nowhere else, and the trace comes down to its resting dip right on top of the second Z. Flatten the day and they would be cropped away with the fill.',
+  palette: ['#12b39a', '#08574b'],
 };

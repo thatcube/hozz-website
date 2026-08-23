@@ -1,17 +1,15 @@
 ---
 /**
- * m08 · Cans — over-ear headphones, worn round the neck.
+ * m08 · Slack — a pair of earbuds after a pocket.
  *
- * A closed-back cup is a sealed drum, and a sealed drum will not breathe, so
- * every real one has a port cut through the shell. Here that port is the Z: its
- * two bars run out past the driver face and are severed by the cup's rim, which
- * means the letter has no outline of its own — the circle finishes it. Move the
- * cup and the Z is cut differently; remove the cup and there is nothing left to
- * cut.
+ * One cable, drawn once and never lifted. It leaves the left bud, folds into a
+ * Z, turns straight back into a second Z, and the leftover length falls away
+ * underneath and ends at the other bud. The two Zs are two folds in the same
+ * run, joined by the same piece of cable that made them, so neither can be
+ * moved without the other. The bars are the cable lying flat and the diagonals
+ * are the cable crossing the fall, which is why the two weights differ.
  *
- * The lead slung between the two cups is the mouth, and it is drawn at the sag
- * it takes when the headphones are round your neck rather than on your head —
- * which is where they are when you are walking, and where the downloads matter.
+ * Three shapes: two buds and one cable. The slack is the mouth.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -23,26 +21,22 @@ interface Props {
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.mozz;
 
-const uid = `m08-${Math.random().toString(36).slice(2, 9)}`;
+// bar 2.6 against diag 4.2.
+const Z = { y: 12.9, h: 11.5, w: 13.5, bar: 2.6, diag: 4.2 };
+const ZX = [9.6, 28];
 
-const CUP = { cy: 26.8, r: 7.7, cx: [13.6, 34.4] };
-const FACE = 6.15;
+const TOP_Y = Z.y + Z.bar / 2;
+const FOOT_Y = Z.y + Z.h - Z.bar / 2;
+const HEAD = { x: ZX[0], y: TOP_Y };
+const TAIL = { x: 13.6, y: 30.6 };
+const BUD = 3.5;
 
-// The band comes over the top and down the outer side of each cup, which is
-// where a real one meets the yoke — not a hoop balanced on top of two circles.
-const BAND = 'M7.6 24.6A16.7 16.7 0 0 1 40.4 24.6';
-
-// The sag of a lead when the cups are hanging at your collarbone.
-const LEAD = 'M12.4 31.4Q24 44.2 35.6 31.4';
-
-const Z = {
-  y: CUP.cy - 4.05,
-  w: 9.6,
-  h: 8.1,
-  bar: 1.88,
-  diag: 3.15,
-  cap: 'open' as const,
-};
+// The turn between the two folds, and the slack left over after the second.
+const FOLD = `M${ZX[0] + Z.w} ${FOOT_Y}C26.2 22.4 25 15.4 ${ZX[1]} ${TOP_Y}`;
+const SLACK =
+  `M${ZX[1] + Z.w} ${FOOT_Y}` +
+  `C41.5 31 33 37.5 23 36.5` +
+  `C18.4 36 15 33.6 ${TAIL.x} ${TAIL.y}`;
 ---
 
 <svg
@@ -54,36 +48,25 @@ const Z = {
   role="img"
   aria-label={`${app.name} mark`}
 >
-  <defs>
-    {
-      CUP.cx.map((cx, i) => (
-        <clipPath id={`${uid}-f${i}`}>
-          <circle cx={cx} cy={CUP.cy} r={FACE} />
-        </clipPath>
-      ))
-    }
-  </defs>
-
-  {/* Band and lead go down first so the cups cover where they enter. */}
-  <path d={BAND} stroke={app.hue} stroke-width="3" stroke-linecap="round" fill="none" />
   <path
-    d={LEAD}
+    d={FOLD}
     stroke={app.hue}
-    stroke-width="2.3"
+    stroke-width={Z.bar * 0.62}
     stroke-linecap="round"
     fill="none"
-    opacity={ground === 'dark' ? 0.95 : 1}
   />
-
+  <path
+    d={SLACK}
+    stroke={app.hue}
+    stroke-width={Z.bar}
+    stroke-linecap="round"
+    fill="none"
+  />
+  {ZX.map((zx) => <path d={zPath({ ...Z, x: zx })} fill={app.hue} />)}
+  {[HEAD, TAIL].map((p) => <circle cx={p.x} cy={p.y} r={BUD} fill={app.hue} />)}
   {
-    CUP.cx.map((cx, i) => (
-      <>
-        <circle cx={cx} cy={CUP.cy} r={CUP.r} fill={app.hue} />
-        <circle cx={cx} cy={CUP.cy} r={FACE} fill={app.deep} />
-        <g clip-path={`url(#${uid}-f${i})`}>
-          <path d={zPath({ ...Z, x: cx - Z.w / 2 })} fill={app.light} />
-        </g>
-      </>
+    [HEAD, TAIL].map((p) => (
+      <circle cx={p.x} cy={p.y} r={BUD * 0.4} fill={app.deep} />
     ))
   }
 </svg>

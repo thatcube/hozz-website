@@ -1,12 +1,12 @@
 export default {
   n: 'm01',
-  name: 'Groove',
+  name: 'Rim',
   app: 'mozz',
-  object: 'Record, cut and spinning',
-  move: 'weave',
+  object: 'A record, cut wider than itself',
+  move: 'silhouette',
   reading: 'letters',
-  sentence: 'The ZZ is the swerve of the groove.',
+  sentence: 'The ZZ is the cut across the record, ended by its rim.',
   idea:
-    'Every line on this disc is one cut groove; most keep their circle, two leave it, walk a Z and hand back to the arc they came from — which is why each letter opens with a curve. All four bar-ends sit on one groove circle, so the pair is inscribed rather than placed, and the spindle takes the gap the letters leave.',
+    'The pair is drawn wider than the disc, so all four bar ends fall outside it and the rim is what cuts them: the outline is notched four times and no terminal in the mark is drawn by hand. Narrow the record and the letters lose their ends. The spindle is smaller than the gap, because the spacing is not its job here.',
   palette: ['#e0243f', '#6d0f1e'],
 };

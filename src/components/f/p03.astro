@@ -1,14 +1,20 @@
 ---
 /**
- * p03 · Turn — a screen seen from the side, and a picture that goes round it.
+ * p03 · Thin — a wall panel seen from just below, so a sliver of its underside
+ * shows and splays toward you.
  *
- * The object is an ultra-thin panel standing at an angle to us. Because it has
- * no bezel, its picture runs right off the front and continues over the near
- * edge onto the sliver of side we can see — the edge-lit wrap a panel this thin
- * can do. That corner is a hard fold, so the letter that crosses it bends: its
- * left end climbs away from us on a different plane, in a different tone.
+ * The one structural dependency: **the panel's thickness is the bottom bar.**
+ * A screen's defining modern property is how thin it is, so that is the
+ * measurement the letters are made from. The picture wraps the bottom edge, and
+ * so does the ZZ: each diagonal runs down the lit face and stops dead on the
+ * corner, and the foot continues onto the underside, foreshortened to exactly
+ * the depth of the panel. That is where the stroke contrast comes from — the
+ * top bar is 4.59 because the letter chose it, the bottom bar is 3.6 because
+ * the object did. Make the panel thicker and every foot gets heavier.
  *
- * Straighten the panel and the bend has nothing to bend over.
+ * Not a knockout. The letters are the picture, so they are drawn in the set's
+ * own dark, and they change colour where they cross the corner because the
+ * underside is not facing the light.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -19,25 +25,31 @@ interface Props {
 }
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.plozz;
-
 const uid = `p03-${Math.random().toString(36).slice(2, 9)}`;
-const faceId = `${uid}-face`;
-const edgeId = `${uid}-edge`;
 
-// The panel, turned 4.5 degrees. Everything below lives in this one plane.
-const TURN = 'translate(24 22) skewY(4.5) translate(-24 -22)';
+const CORNER = 29.2; // where the lit face turns under
+const DEPTH = 3.6; // and how thin the panel is
+const FACE = { x: 5, y: 13, w: 38, r: 2.6 };
+const UNDER = `M5 ${CORNER}L43 ${CORNER}L44.8 ${CORNER + DEPTH}L3.2 ${
+  CORNER + DEPTH
+}Z`;
 
-// The picture, foreshortened by the turn, and 3.8 of side face folded back off
-// its near corner at x = 14.9.
-const FACE = { x: 14.9, y: 14.6, w: 22, h: 15 };
-const EDGE = 'M14.9 14.6L11.1 13.1V28.1L14.9 29.6Z';
-// The side plane rises 1.5 over 3.8, which is 21.5 degrees off the front.
-const FOLD = 'translate(14.9 22) skewY(21.5) translate(-14.9 -22)';
+const H = 16;
+const BAR = 0.287 * H;
+const Z = {
+  y: CORNER - H + BAR, // the foot starts exactly at the corner
+  w: 0.936 * H,
+  h: H,
+  bar: BAR,
+  diag: 0.511 * H,
+  cap: 'angled' as const,
+};
+const GAP = 0.213 * H;
+const LX = 24 - Z.w - GAP / 2;
+const RX = 24 + GAP / 2;
 
-// diag 5.4 against bar 2.3 — the wedge is more than twice the bars.
-const Z = { y: 16.8, w: 10.2, h: 10.4, bar: 2.3, diag: 5.4, cap: 'flat' as const };
-const zL = zPath({ ...Z, x: 12.6 }); // starts behind the corner, on the side
-const zR = zPath({ ...Z, x: 24.7 });
+// The underside is foreshortened to the panel's depth, and the feet with it.
+const SQUASH = `translate(0 ${CORNER}) scale(1 ${DEPTH / BAR}) translate(0 ${-CORNER})`;
 ---
 
 <svg
@@ -50,43 +62,41 @@ const zR = zPath({ ...Z, x: 24.7 });
   aria-label={`${app.name} mark`}
 >
   <defs>
-    <clipPath id={faceId} transform={TURN}>
-      <rect x={FACE.x} y={FACE.y} width={FACE.w} height={FACE.h} rx="1.2" />
+    <clipPath id={`${uid}-f`}>
+      <rect
+        x={FACE.x}
+        y={FACE.y}
+        width={FACE.w}
+        height={CORNER - FACE.y}
+        rx={FACE.r}
+      />
     </clipPath>
-    <clipPath id={edgeId} transform={TURN}>
-      <path d={EDGE} />
+    <clipPath id={`${uid}-u`}>
+      <path d={UNDER} />
     </clipPath>
   </defs>
 
-  <g transform={TURN}>
-    <rect
-      x="18"
-      y="31.6"
-      width="16"
-      height="1.2"
-      rx="0.6"
-      fill={app.deep}
-      opacity={ground === 'dark' ? 0.5 : 0.3}
-    />
-    {/* The near edge, lit, because it is the only part turned toward the room. */}
-    <path d={EDGE} fill={app.light} />
-    <rect x={FACE.x} y={FACE.y} width={FACE.w} height={FACE.h} rx="1.2" fill={app.hue} />
+  <rect
+    x={FACE.x}
+    y={FACE.y}
+    width={FACE.w}
+    height={CORNER - FACE.y + FACE.r}
+    rx={FACE.r}
+    fill={app.hue}
+  />
+  <path d={UNDER} fill={app.deep} />
+
+  {/* The picture, on the face. */}
+  <g clip-path={`url(#${uid}-f)`} fill={app.deep}>
+    <path d={zPath({ ...Z, x: LX })} />
+    <path d={zPath({ ...Z, x: RX })} />
   </g>
 
-  {/* The picture, on the front. */}
-  <g clip-path={`url(#${faceId})`} fill={app.deep}>
-    <g transform={TURN}>
-      <path d={zL} />
-      <path d={zR} />
-    </g>
-  </g>
-
-  {/* And the same picture carrying on round the corner, tipped onto the side. */}
-  <g clip-path={`url(#${edgeId})`} fill={app.deep}>
-    <g transform={TURN}>
-      <g transform={FOLD}>
-        <path d={zL} />
-      </g>
+  {/* And the same picture, carrying on round the corner. */}
+  <g clip-path={`url(#${uid}-u)`} fill={app.light}>
+    <g transform={SQUASH}>
+      <path d={zPath({ ...Z, x: LX })} />
+      <path d={zPath({ ...Z, x: RX })} />
     </g>
   </g>
 </svg>

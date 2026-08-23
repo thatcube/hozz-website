@@ -1,20 +1,15 @@
 ---
 /**
- * m07 · Window — a compact cassette, seen through its two hub windows.
+ * m07 · Window — a cassette, and the tape you can see through it.
  *
- * The shell is closed, so the only tape you can see is the span each window
- * frames. That span has been pulled slack and has folded back on itself, which
- * is what a ribbon does, and a ribbon folded twice is a Z. Between the two
- * windows the tape runs behind the shell, which is the reason there are two
- * separate Zs here and not one long zigzag — the object is what separates them.
+ * The tape fills the opening completely — it is taller than the window and
+ * exactly as wide, so the window crops the ribbon's top and bottom edges and
+ * both outer ends butt against its sides. There is no margin for the letters to
+ * sit in; the opening is the letters. The bars are the ribbon lying flat and
+ * the diagonals are the same ribbon crossing the span, which is why the two
+ * weights differ.
  *
- * The letters have no edge of their own. Every bar runs straight out into the
- * window's rim and is cut off by it, so the shape of each terminal is the
- * window's shape. Take the cassette away and both Zs lose both ends of both
- * bars.
- *
- * The mouth is the head opening in the bottom edge: the notch the playback head
- * reaches through, and the only place a closed cassette is genuinely open.
+ * Four shapes: shell, window, tape, head slot.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -26,34 +21,19 @@ interface Props {
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.mozz;
 
-// Unique per instance: the board renders this component eight times on one page
-// and a duplicated clip id would silently clip the wrong shape.
 const uid = `m07-${Math.random().toString(36).slice(2, 9)}`;
 
-// 40 : 26 is 1.54. A Compact Cassette shell is 100 : 64, or 1.5625.
-const SHELL = { x: 4, y: 11, w: 40, h: 26, r: 3.2 };
+// 40 : 25.6 is 1.5625 — a Compact Cassette is 100 x 64.
+const SHELL = { x: 4, y: 11.2, w: 40, h: 25.6, r: 3 };
+const WIN = { x: 8, y: 15.6, w: 32, h: 13.6, r: 1.6 };
 
-// The recessed well the windows are sunk into — the step that stops this being
-// a rounded rectangle with two holes in it.
-const WELL = { x: 8.6, y: 14.4, w: 30.8, h: 14.4, r: 2.2 };
+// bar 3.2 against diag 4.4. The tape is taller than the opening and exactly
+// as wide, so the window crops its top and bottom edges and stops its ends.
+const Z = { y: 15, h: 14.8, w: 14.5, bar: 3.2, diag: 4.4 };
+const ZX = [8, 25.5];
 
-const R = 6.2;
-const CY = 21.6;
-const CX = [17, 31];
-
-// bar 2 against diag 3.4. The diagonal carries seventy per cent more mass than
-// the bars, which is the thing a typeface would never do.
-const Z = { y: 17.4, w: 9.8, h: 8.4, bar: 2, diag: 3.4, cap: 'open' as const };
-
-// The head opening. 11 wide against the shell's 40, under the gap between the
-// windows.
-const SLOT = { x: 18.5, y: 31.4, w: 11, h: 3.4, r: 1.7 };
-
-const b = SHELL.y + SHELL.h;
-const shade =
-  `M${SHELL.x} ${b - 3}H${SHELL.x + SHELL.w}V${b - SHELL.r}` +
-  `A${SHELL.r} ${SHELL.r} 0 0 1 ${SHELL.x + SHELL.w - SHELL.r} ${b}` +
-  `H${SHELL.x + SHELL.r}A${SHELL.r} ${SHELL.r} 0 0 1 ${SHELL.x} ${b - SHELL.r}Z`;
+// The head opening breaks the bottom edge rather than floating above it.
+const SLOT = { x: 15.2, y: 33.2, w: 17.6, h: 3.6, r: 1.8 };
 ---
 
 <svg
@@ -66,13 +46,9 @@ const shade =
   aria-label={`${app.name} mark`}
 >
   <defs>
-    {
-      CX.map((cx, i) => (
-        <clipPath id={`${uid}-${i}`}>
-          <circle cx={cx} cy={CY} r={R} />
-        </clipPath>
-      ))
-    }
+    <clipPath id={`${uid}-w`}>
+      <rect x={WIN.x} y={WIN.y} width={WIN.w} height={WIN.h} rx={WIN.r} />
+    </clipPath>
   </defs>
 
   <rect
@@ -83,27 +59,17 @@ const shade =
     rx={SHELL.r}
     fill={app.hue}
   />
-  <path d={shade} fill={app.deep} opacity={ground === 'dark' ? 0.36 : 0.28} />
-
   <rect
-    x={WELL.x}
-    y={WELL.y}
-    width={WELL.w}
-    height={WELL.h}
-    rx={WELL.r}
+    x={WIN.x}
+    y={WIN.y}
+    width={WIN.w}
+    height={WIN.h}
+    rx={WIN.r}
     fill={app.deep}
   />
-
-  {CX.map((cx) => <circle cx={cx} cy={CY} r={R} fill={app.light} />)}
-
-  {
-    CX.map((cx, i) => (
-      <g clip-path={`url(#${uid}-${i})`}>
-        <path d={zPath({ ...Z, x: cx - Z.w / 2 })} fill={app.deep} />
-      </g>
-    ))
-  }
-
+  <g clip-path={`url(#${uid}-w)`}>
+    {ZX.map((zx) => <path d={zPath({ ...Z, x: zx })} fill={app.light} />)}
+  </g>
   <rect
     x={SLOT.x}
     y={SLOT.y}
@@ -111,5 +77,6 @@ const shade =
     height={SLOT.h}
     rx={SLOT.r}
     fill={app.deep}
+    opacity={ground === 'dark' ? 1 : 0.92}
   />
 </svg>

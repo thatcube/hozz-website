@@ -1,17 +1,16 @@
 ---
 /**
- * h03 · Measure — a domed tank, and the ZZ is a swerve in its ruling.
+ * h03 · Cask — a barrel, and the ZZ punched out of its two hoops.
  *
- * The tank is ruled, because the only question anyone asks a tank is how much
- * is in it. Two of the graduations misbehave: the line at 21.5 thickens and
- * drops away on the diagonal, cuts through the line below it, and lands on the
- * surface of the contents — then the ruling picks up again either side as if
- * nothing had happened. Erase the scale and there are no letters. Erase the
- * letters and the scale has two holes in it.
+ * The dependency: **each bar is one hoop.** Same centre line, and the bar is
+ * the hoop swollen by half a unit either side so a sliver of stave frames it,
+ * which is what keeps the letters separated on a dark ground. The letters are
+ * holes in the only parts that hold a barrel together, and each hoop runs on
+ * dark either side of them. Slide a hoop and its bar slides with it.
  *
- * Reading: letters — the pair is embedded in a ruled band, not floated on a
- * face. Should anyone read them as eyes anyway, the bright level line directly
- * beneath them is a mouth, so the mark cannot fall into the asleep trap.
+ * Four shapes: two chimes, the bulged body, the pair of hoops. The bulge does
+ * the rest — a barrel is the one vessel whose widest point is its middle, which
+ * is where the diagonals live, so the letters get their room from the swell.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -22,29 +21,26 @@ interface Props {
 }
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.hozz;
-
 const uid = `h03-${Math.random().toString(36).slice(2, 9)}`;
 
-// Dome on top, barrel below, flat base: a pressure vessel, not a box.
-const SHELL =
-  'M8 20.5A16 10 0 0 1 40 20.5V39.5A3.2 3.2 0 0 1 36.8 42.7H11.2A3.2 3.2 0 0 1 8 39.5Z';
-// Everything inside is clipped to the shell itself, so each graduation is
-// exactly as long as the vessel is wide at that height — which is what makes
-// the top one shorten into the dome, and what makes the ruling run past the
-// letters to both walls.
-const RULE = { x: 8, w: 32, t: 1 };
-const TOP = 21.5;
-const FILL = 34;
+const BARREL = 'M15 8.5C6.5 15.5 6.5 32.5 15 39.5H33C41.5 32.5 41.5 15.5 33 8.5Z';
 
-// bar 3.4 against diag 5.4, over a 1-unit line: the graduation thickens more
-// than three times over, and then the fold is heavier still.
-// Flat caps, because every other line on the scale ends flat too.
-const Z = { y: TOP, w: 10.6, h: FILL - TOP, bar: 3.4, diag: 5.4, cap: 'flat' as const };
-const zL = 12;
-const zR = 25.4;
+const HOOP = 2.4;
+const BAR = 3.4; // the hoop, swollen just enough to hold an edge of stave
+const HOOPS = [17, 29];
 
-// The plain ruling sits back a step so the two that misbehave carry the mark.
-const rule = ground === 'dark' ? 0.9 : 0.76;
+// h is set by the gap between the hoops; bar is set by their thickness.
+const Z = {
+  y: HOOPS[0] - (BAR - HOOP) / 2,
+  w: 10.6,
+  h: HOOPS[1] - HOOPS[0] + BAR,
+  bar: BAR,
+  diag: 6,
+  cap: 'angled' as const,
+};
+// 10.6 + 2.4 + 10.6 = 23.6, running 12.2 to 35.8, centred on 24.
+const zLeft = 12.2;
+const zRight = 25.2;
 ---
 
 <svg
@@ -57,27 +53,24 @@ const rule = ground === 'dark' ? 0.9 : 0.76;
   aria-label={`${app.name} mark`}
 >
   <defs>
-    <clipPath id={`${uid}-c`}>
-      <path d={SHELL} />
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
+      <path d={zPath({ ...Z, x: zRight })} fill="#000" />
+    </mask>
+    <clipPath id={`${uid}-b`}>
+      <path d={BARREL} />
     </clipPath>
   </defs>
 
-  {/* Filler port on the crown, then the shell. */}
-  <rect x="20.4" y="4.6" width="7.2" height="1.9" rx="0.9" fill={app.hue} />
-  <rect x="22.2" y="6.5" width="3.6" height="5" fill={app.hue} />
-  <path d={SHELL} fill={app.hue} />
-
-  <g clip-path={`url(#${uid}-c)`}>
-    {/* The scale. The letters grow out of the second line and cross the third. */}
-    <rect x={RULE.x} y="15.4" width={RULE.w} height={RULE.t} fill={app.deep} opacity={rule} />
-    <rect x={RULE.x} y={TOP} width={RULE.w} height={RULE.t} fill={app.deep} opacity={rule} />
-    <rect x={RULE.x} y="27.6" width={RULE.w} height={RULE.t} fill={app.deep} opacity={rule} />
-
-    <path d={zPath({ ...Z, x: zL })} fill={app.deep} />
-    <path d={zPath({ ...Z, x: zR })} fill={app.deep} />
-
-    {/* The level itself, and the contents below it. */}
-    <rect x={RULE.x} y={FILL} width={RULE.w} height="1.6" fill={app.light} />
-    <rect x={RULE.x} y={FILL + 1.6} width={RULE.w} height="9" fill={app.deep} />
+  <g mask={`url(#${uid})`}>
+    <g fill={app.deep}>
+      <rect x="13.6" y="6" width="20.8" height="2.9" rx="1.15" />
+      <rect x="13.6" y="39.1" width="20.8" height="2.9" rx="1.15" />
+    </g>
+    <path d={BARREL} fill={app.hue} />
+    <g clip-path={`url(#${uid}-b)`} fill={app.deep}>
+      {HOOPS.map((y) => <rect x="4" y={y} width="40" height={HOOP} />)}
+    </g>
   </g>
 </svg>
