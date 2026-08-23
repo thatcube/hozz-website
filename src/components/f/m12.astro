@@ -2,8 +2,8 @@
 /**
  * m12 · Repeat Tab
  *
- * A double bar opens into one broad repeat tab. The Z pair is a clean knockout
- * through that working tab, using the exemplar's figure-ground logic directly.
+ * A double bar opens into a repeat tab with a front face and a folded side.
+ * The second knockout Z crosses that corner, tying its placement to the depth.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -15,7 +15,7 @@ interface Props {
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.mozz;
 const uid = `m12-${Math.random().toString(36).slice(2, 9)}`;
-const Z = { y: 15, w: 10.5, h: 14, bar: 3.2, diag: 5.8, cap: 'angled' as const };
+const Z = { y: 15, w: 11, h: 14, bar: 3.2, diag: 5.8, cap: 'angled' as const };
 ---
 
 <svg
@@ -30,17 +30,19 @@ const Z = { y: 15, w: 10.5, h: 14, bar: 3.2, diag: 5.8, cap: 'angled' as const }
   <defs>
     <mask id={uid}>
       <rect width="48" height="48" fill="#fff" />
-      <path d={zPath({ ...Z, x: 15 })} fill="#000" />
-      <path d={zPath({ ...Z, x: 29.5 })} fill="#000" />
-      <circle cx="27.5" cy="19.5" r="1.35" fill="#000" />
-      <circle cx="27.5" cy="26.5" r="1.35" fill="#000" />
+      <path d={zPath({ ...Z, x: 16 })} fill="#000" />
+      <path d={zPath({ ...Z, x: 29 })} fill="#000" />
+      <circle cx="14.2" cy="19.5" r="1.35" fill="#000" />
+      <circle cx="14.2" cy="26.5" r="1.35" fill="#000" />
     </mask>
   </defs>
 
-  <path
-    d="M4 6H8V42H4ZM9.5 6H13.5V10H39.5C42.3 10 44 11.7 44 14.5V31.5C44 34.3 42.3 36 39.5 36H13.5V42H9.5Z"
-    fill={app.hue}
-    mask={`url(#${uid})`}
-  />
-  <path d="M9.5 36H13.5V42H9.5ZM4 36H8V42H4Z" fill={app.deep} opacity="0.72" />
+  <g mask={`url(#${uid})`}>
+    <path
+      d="M4 6H8V42H4ZM9.5 6H13.5V10H36.5V36H13.5V42H9.5Z"
+      fill={app.hue}
+    />
+    <path d="M36.5 10L44 14V32L36.5 36Z" fill={app.deep} />
+    <path d="M9.5 36H13.5V42H9.5ZM4 36H8V42H4Z" fill={app.deep} opacity="0.72" />
+  </g>
 </svg>

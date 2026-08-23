@@ -29,13 +29,15 @@ const app = APP_BY_KEY.twozz;
 const uid = `tw08-${Math.random().toString(36).slice(2, 9)}`;
 
 // 33 across by 28 down. Laughter squashes a head, and the creases inherit it:
-// bar 2.0 against diag 3.9, so the fold's turn carries twice its own line.
+// bar 2.3 against diag 4.2, so the fold's turn carries nearly twice its own line.
+// Each crease is set wider than the skull at brow height, so the head's own
+// contour is what decides where the letter stops.
 const HEAD =
   'M7.5 25C7.5 17.2 14.4 12 24.4 12C34.4 12 40.5 17.6 40.5 26.4C40.5 34.8 34 40 24 40C14 40 7.5 34.4 7.5 25Z';
 
-const Z = { y: 16.6, w: 9.6, h: 7.4, bar: 2, diag: 3.9, cap: 'open' as const };
-const zLeft = 11.3;
-const zRight = 27.1; // the two boxes run 9.5–22.7 and 25.3–38.5; the brow trims both
+const Z = { y: 14.8, w: 9.8, h: 9.4, bar: 2.3, diag: 4.2, cap: 'angled' as const };
+const zLeft = 10;
+const zRight = 28.2; // 8.4 of clear cheek; both outer ends land past the skull and are trimmed
 
 // The howl. Its floor sits a unit and a half inside the jaw, which is what
 // makes the face look like it is barely containing the noise.

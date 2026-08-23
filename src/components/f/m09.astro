@@ -1,0 +1,105 @@
+---
+/**
+ * m09 · Spool — a tape transport: two reels turning above a deck plate.
+ *
+ * An open reel is a rim with nothing in it, so something has to hold the hub to
+ * the rim. On a real spool that is the web — the spokes cast across the open
+ * face. Here the web is a single Z per reel: it starts at the rim, crosses the
+ * hub, and ends at the rim again, and both bars are cut off by the rim because
+ * they are structural members that die into it. Take the rim away and the web
+ * has nothing to span; take the web away and the reel falls apart.
+ *
+ * The head slot in the deck plate below is the mouth — the gap the tape is
+ * pulled across so it can be read. It is the one part of a tape machine that
+ * exists purely to listen.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.mozz;
+
+const uid = `m09-${Math.random().toString(36).slice(2, 9)}`;
+
+const REEL = { cy: 20, r: 8.6, hole: 6.2, cx: [13.8, 34.2] };
+
+// Web bars overshoot the open face by 1.75, so the rim severs them.
+const Z = {
+  y: REEL.cy - 4.3,
+  w: 10,
+  h: 8.6,
+  bar: 1.95,
+  diag: 3.3,
+  cap: 'open' as const,
+};
+
+// The reels stand on the plate, tangent to it, the way spools sit on a deck.
+const DECK = { x: 4, y: 28.6, w: 40, h: 8.4, r: 2.8 };
+const SLOT = { x: 16, y: 31.2, w: 16, h: 3.2, r: 1.6 };
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    {
+      REEL.cx.map((cx, i) => (
+        <clipPath id={`${uid}-r${i}`}>
+          <circle cx={cx} cy={REEL.cy} r={REEL.hole} />
+        </clipPath>
+      ))
+    }
+    <clipPath id={`${uid}-d`}>
+      <rect x={DECK.x} y={DECK.y} width={DECK.w} height={DECK.h} rx={DECK.r} />
+    </clipPath>
+  </defs>
+
+  <rect
+    x={DECK.x}
+    y={DECK.y}
+    width={DECK.w}
+    height={DECK.h}
+    rx={DECK.r}
+    fill={app.hue}
+  />
+  <g clip-path={`url(#${uid}-d)`}>
+    <rect
+      x={DECK.x}
+      y={DECK.y + DECK.h - 2.4}
+      width={DECK.w}
+      height="2.4"
+      fill={app.deep}
+      opacity={ground === 'dark' ? 0.34 : 0.26}
+    />
+  </g>
+  <rect
+    x={SLOT.x}
+    y={SLOT.y}
+    width={SLOT.w}
+    height={SLOT.h}
+    rx={SLOT.r}
+    fill={app.deep}
+  />
+
+  {
+    REEL.cx.map((cx, i) => (
+      <>
+        <circle cx={cx} cy={REEL.cy} r={REEL.r} fill={app.hue} />
+        <circle cx={cx} cy={REEL.cy} r={REEL.hole} fill={app.deep} />
+        <g clip-path={`url(#${uid}-r${i})`}>
+          <path d={zPath({ ...Z, x: cx - Z.w / 2 })} fill={app.light} />
+        </g>
+      </>
+    ))
+  }
+</svg>

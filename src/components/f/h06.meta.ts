@@ -3,10 +3,10 @@ export default {
   name: 'Transfer Gate',
   app: 'hozz',
   object: 'Single-leaf transfer gate',
-  move: 'aperture',
+  move: 'substitution',
   reading: 'letters',
-  sentence: 'The ZZ is the openwork spaced by the gate’s central stile.',
+  sentence: 'The ZZ is the anti-sag bracing of the transfer gate.',
   idea:
-    'The solid central stile is exactly the gap between the two knockout Zs, so it sets their spacing without dividing the leaf into panels. The gate turns exporting into a legible threshold rather than another box-and-arrow symbol.',
-  palette: ['#12b39a', '#08574b', '#82e5d3'],
+    'Each heavy Z diagonal follows the gate’s load path from the lower hinge side toward the upper latch, so reversing the stroke would make the structure mechanically wrong. The gate turns exporting into a legible threshold rather than another box-and-arrow symbol.',
+  palette: ['#12b39a', '#08574b'],
 };

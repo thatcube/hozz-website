@@ -1,17 +1,19 @@
 ---
 /**
- * h02 · Seal — a clamped preserving jar, and the ZZ is the part you see through.
+ * h02 · Seam — a clamped preserving jar whose two working lines are the letters.
  *
- * The jar is filled to a little over a third. Above the contents the glass is
- * empty, and empty glass is transparent: the ZZ is punched clean through the
- * headspace, so whatever is behind the mark comes through it. Cover the jar and
- * the letters stop existing, because they have no fill of their own — they are
- * the absence of anything to look at. Their top bars run up under the gasket
- * ring, which is drawn last and hides the join, so the pair hangs off the seal.
+ * A jar that keeps something has exactly two lines that matter: the seal seam
+ * under the clamp, and the surface of what is inside. Both run wall to wall.
+ * Here they are also the bars of the ZZ — each letter's top bar sits in the
+ * seam and is the seam, lit; each letter's bottom bar sits on the surface and is
+ * the surface, lit; and a diagonal falls from one to the other. Take the jar away and both
+ * horizontals go with it; the letters have nothing left to be made of.
  *
- * Reading: eyes. The mouth is the meniscus — water in glass rides up the walls
- * and dips in the middle, which is a smile drawn by physics rather than by a
- * cartoonist. It is also the fill line, the one number this app is about.
+ * Reading: letters. The pair is far too wide and too tall to be eyes, and the
+ * contents sit under them as a solid mass, so there is no sleeping face here.
+ *
+ * The diagonal is 6.2 against a 3.6 bar — nearly twice the mass, which no
+ * typeface would do, and the reason this cannot have come from one.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -20,30 +22,29 @@ interface Props {
   size?: number;
   ground?: 'light' | 'dark';
 }
+
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.hozz;
 
+// The board puts eight of these on one page. Shared ids would silently make
+// every instance use the first one's clip.
 const uid = `h02-${Math.random().toString(36).slice(2, 9)}`;
 
-// Straight neck, shoulders flaring to full width by 18, then straight sides.
+// Shouldered jar: a straight neck that flares out to full width by the belly.
+// Not a rounded square — the shoulder is what makes it read as glass.
 const SHELL =
-  'M9.6 11.4H38.4C40.1 13.4 41 15.7 41 18V39.3A4.2 4.2 0 0 1 36.8 43.5H11.2A4.2 4.2 0 0 1 7 39.3V18C7 15.7 7.9 13.4 9.6 11.4Z';
-// Interior: 1.5 of glass all round.
-const IN = { x: 8.5, y: 13, w: 31, h: 29, r: 3.2 };
+  'M10.6 10.2H37.4C39.6 12.6 41 15.2 41 18.2V39.4A3.6 3.6 0 0 1 37.4 43H10.6A3.6 3.6 0 0 1 7 39.4V18.2C7 15.2 8.4 12.6 10.6 10.2Z';
 
-// Surface at the walls, and the control point that pulls the middle down.
-const SURF = 28.4;
-const DIP = 34.8;
+const SEAM = 15.8; // top of the seal band
+const FILL = 32; // surface of the contents
 
-// 11.4 wide, 13 tall, 3.2 gap. The diagonal is nearly twice the bar, and
-// `angled` shears the terminals parallel to it so the letter knits to itself.
-const Z = { y: 12, w: 11.4, h: 13, bar: 3, diag: 5.4, cap: 'angled' as const };
-const zL = 11;
-const zR = 25.6;
+// Bars land exactly in the seam and exactly on the surface, so the letters are
+// dimensioned by the jar rather than the other way round.
+const Z = { y: SEAM, w: 12.4, h: FILL - SEAM, bar: 3.6, diag: 6.2, cap: 'flat' as const };
+const zL = 9.8;
+const zR = 25.8;
 
-// The apertures show the page through them; the gasket has to hold its own
-// against whichever page that is.
-const ring = ground === 'dark' ? 0.92 : 1;
+const lid = ground === 'dark' ? 1 : 0.92;
 ---
 
 <svg
@@ -53,48 +54,29 @@ const ring = ground === 'dark' ? 0.92 : 1;
   fill="none"
   xmlns="http://www.w3.org/2000/svg"
   role="img"
-  aria-label={`${app.name} mark`}
+  aria-label="Hozz"
 >
   <defs>
-    <mask id={`${uid}-m`}>
-      <rect width="48" height="48" fill="#fff" />
-      <path d={zPath({ ...Z, x: zL })} fill="#000" />
-      <path d={zPath({ ...Z, x: zR })} fill="#000" />
-    </mask>
-    <clipPath id={`${uid}-c`}>
-      <rect x={IN.x} y={IN.y} width={IN.w} height={IN.h} rx={IN.r} />
+    <clipPath id={`${uid}-jar`}>
+      <path d={SHELL} />
     </clipPath>
   </defs>
 
-  <g mask={`url(#${uid}-m)`}>
-    {/* Lid plate seated on the rim, then the jar. */}
-    <rect x="12.5" y="4.5" width="23" height="3.5" rx="1.4" fill={app.hue} />
-    <rect x="10" y="8" width="28" height="2.6" rx="1" fill={app.hue} />
-    <path d={SHELL} fill={app.hue} />
+  <!-- clamp and lid -->
+  <g fill={app.deep} opacity={lid}>
+    <rect x="14.2" y="4.2" width="19.6" height="3.2" rx="1.1" />
+    <rect x="11.2" y="7.4" width="25.6" height="2.8" rx="1.2" />
   </g>
 
-  {/* What is kept, and the meniscus riding up the glass at both walls. */}
-  <g clip-path={`url(#${uid}-c)`}>
-    <path
-      d={`M${IN.x} ${SURF}Q24 ${DIP} ${IN.x + IN.w} ${SURF}V42H${IN.x}Z`}
-      fill={app.deep}
-    />
-    <path
-      d={`M${IN.x} ${SURF}Q24 ${DIP} ${IN.x + IN.w} ${SURF}`}
-      stroke={app.light}
-      stroke-width="1.7"
-      fill="none"
-    />
-  </g>
+  <path d={SHELL} fill={app.hue} />
 
-  {/* Gasket last: proud of the jar on both sides, and it caps the letters. */}
-  <rect
-    x="8"
-    y="10.4"
-    width="32"
-    height="2"
-    rx="1"
-    fill={app.light}
-    opacity={ring}
-  />
+  <g clip-path={`url(#${uid}-jar)`}>
+    <!-- the seal seam, continuous wall to wall, and the contents below it -->
+    <rect x="6" y={SEAM + 0.7} width="36" height="2.2" fill={app.deep} />
+    <rect x="6" y={FILL} width="36" height="12" fill={app.deep} />
+
+    <!-- the same seam and the same surface, lit where they become letters -->
+    <path d={zPath({ ...Z, x: zL })} fill={app.light} />
+    <path d={zPath({ ...Z, x: zR })} fill={app.light} />
+  </g>
 </svg>

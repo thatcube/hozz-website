@@ -3,10 +3,10 @@ export default {
   name: 'Index Punch',
   app: 'hozz',
   object: 'Single tabbed record card',
-  move: 'aperture',
+  move: 'silhouette',
   reading: 'letters',
-  sentence: 'The ZZ is the indexing punch, spaced by the filing tab.',
+  sentence: 'The ZZ is the paired cut in the card’s filing edge.',
   idea:
-    'The six-unit filing tab is exactly the six-unit gap between the two Zs, so the card fixes their letterspacing and the pair cannot move without the tab going wrong. The letters are full apertures with no printed detail.',
+    'The filing edge is the top edge of both apertures: move the letters down and they become generic holes instead of the stepped profile of a card ready to file. The offset tab remains the object’s only other feature.',
   palette: ['#12b39a', '#82e5d3'],
 };

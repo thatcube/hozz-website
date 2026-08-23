@@ -1,21 +1,22 @@
 ---
 /**
- * h07 · Resting — a readout strip, and one line living in it.
+ * h07 · Resting — a readout window, and one line living in it.
  *
- * The object is a window onto a signal: a wide, dark strip with a resting line
- * running clean through it, entering at the left edge and leaving at the right.
- * The line is the flat, quiet state — which is what Hozz is about. It does not
- * coach and it does not score; it takes a measurement that already exists.
+ * The object is a window onto a signal already running: a wide dark strip with
+ * a time scale ticked along its base and a single trace crossing it, entering
+ * at one edge and leaving at the other. The trace is flat for most of the
+ * window, because that is what a resting body looks like, and because Hozz
+ * does not coach or score — it takes a measurement that already exists.
  *
- * Twice, the trace leaves that rest, holds, and falls back. Those two
- * excursions are the Zs — and they are only Zs because the resting line closes
- * them: the line is the bottom bar of both letters. Cover the line and the two
- * marks become sevens. Cover the letters and the strip still reads, still has
- * a baseline crossing it. Neither survives alone.
+ * Twice the trace leaves rest, holds, and falls back. Those excursions are the
+ * Zs, and they are only Zs because the resting line closes them: the line is
+ * the bottom bar of both letters, at the same weight and the same colour, and
+ * it keeps running to both edges afterwards. Cover the line and the two marks
+ * are sevens. Cover the window and the letters are a fragment of a line with
+ * no scale and nothing to be measured against.
  *
- * Zs as letters, deliberately. A sleeping face on a health app that measures
- * sleep would be a genuinely confusing double meaning, so there is no face
- * here at all.
+ * Zs as letters, deliberately. An app that reads sleep must not be caught
+ * drawing sleeping Zs, so there is no face here at all.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -31,24 +32,32 @@ const app = APP_BY_KEY.hozz;
 // would silently clip the wrong instance.
 const uid = `h07-${Math.random().toString(36).slice(2, 9)}`;
 
-// 40 : 22 is 1.82 — a readout window, not a rounded square.
-const WIN = { x: 4, y: 13, w: 40, h: 22, r: 4.6 };
+// 40 : 23 — a readout window, not a rounded square.
+const WIN = { x: 4, y: 12.5, w: 40, h: 23, r: 4.8 };
 
-const BAR = 2.6; // the trace's own weight, everywhere it is at rest
-const REST = 28; // top edge of the resting line
+const BAR = 2.6; // the trace's weight wherever it is at rest
+const REST = 26.4; // top edge of the resting line
 
-// The letter's height is set by where the trace rests: its bottom bar *is* the
-// resting line, so h is measured from the top of the excursion down to it.
+// The letter's height is not chosen: it is the distance from the top of the
+// excursion down to the line the trace rests on, whose underside closes it.
 const Z = {
-  y: 17.2,
-  w: 10.6,
-  h: REST + BAR - 17.2,
+  y: 15.6,
+  w: 10.4,
+  h: REST + BAR - 15.6,
   bar: BAR,
-  diag: 4.6, // heavier than the bars: the fall back to rest is the fast part
+  diag: 4.6, // the fall back to rest is the fast part, so it carries the mass
   cap: 'angled' as const,
 };
-const zLeft = 12.1;
-const zRight = 25.3; // 2.6 of gap; the pair spans 12.1–35.9, centred on 24
+const zLeft = 12.4;
+const zRight = 25.2; // 2.4 of gap; the pair spans 12.4–35.6, centred on 24
+
+// `angled` shears the bottom-right terminal, so the line has to resume from
+// the sheared corner or a hairline of ground shows between the two.
+const shear = ((Z.w - Z.diag) * Z.bar) / (Z.h - 2 * Z.bar);
+const resume = zRight + Z.w - shear;
+
+// Seven of them, so the base reads as a scale and not as a row of teeth.
+const TICKS = [9, 14, 19, 24, 29, 34, 39];
 ---
 
 <svg
@@ -76,14 +85,23 @@ const zRight = 25.3; // 2.6 of gap; the pair spans 12.1–35.9, centred on 24
   />
 
   <g clip-path={`url(#${uid})`}>
-    {/* The resting line runs past both edges: the window is a view onto a
-        signal that was already running and keeps running. */}
-    <rect x="1" y={REST} width="46" height={BAR} fill={app.hue} />
-    <path d={zPath({ ...Z, x: zLeft })} fill={app.light} />
-    <path d={zPath({ ...Z, x: zRight })} fill={app.light} />
+    {
+      TICKS.map((x) => (
+        <rect x={x - 0.55} y="31.2" width="1.1" height="1.6" fill={app.hue} />
+      ))
+    }
+
+    {/* One trace, one weight, one colour. It runs past both edges: the window
+        is a view onto a signal that was already going. The only break is the
+        letter gap, which is where the trace is up in the second excursion. */}
+    <g fill={app.light}>
+      <rect x="1" y={REST} width={zLeft - 1} height={BAR} />
+      <rect x={resume} y={REST} width={47 - resume} height={BAR} />
+      <path d={zPath({ ...Z, x: zLeft })} />
+      <path d={zPath({ ...Z, x: zRight })} />
+    </g>
   </g>
 
-  {/* A lit edge, so the strip keeps a silhouette on a dark ground. */}
   <rect
     x={WIN.x + 0.55}
     y={WIN.y + 0.55}
@@ -92,6 +110,6 @@ const zRight = 25.3; // 2.6 of gap; the pair spans 12.1–35.9, centred on 24
     rx={WIN.r - 0.55}
     stroke={app.hue}
     stroke-width="1.1"
-    opacity={ground === 'dark' ? 0.9 : 0.5}
+    opacity={ground === 'dark' ? 0.95 : 0.45}
   />
 </svg>

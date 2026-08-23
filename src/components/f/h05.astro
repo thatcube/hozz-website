@@ -2,8 +2,8 @@
 /**
  * h05 · Crossing
  *
- * One broad arch bridge. Its clean ZZ knockout is the open trusswork across
- * the upper span, with no pins, rails, or separate letter compartments.
+ * A bridge in two fills. The Z top bars are the deck edge; their bottom bars
+ * meet the arch springline, so the diagonals are the span's trusswork.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -14,9 +14,9 @@ interface Props {
 }
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.hozz;
-const uid = `h05-${Math.random().toString(36).slice(2, 9)}`;
 
-const Z = { y: 13, w: 12, h: 14, bar: 3, diag: 6, cap: 'angled' as const };
+const Z = { y: 10, w: 12, h: 20, bar: 3.5, diag: 6.5, cap: 'angled' as const };
+const truss = `${zPath({ ...Z, x: 9.5 })}${zPath({ ...Z, x: 26.5 })}`;
 ---
 
 <svg
@@ -29,20 +29,10 @@ const Z = { y: 13, w: 12, h: 14, bar: 3, diag: 6, cap: 'angled' as const };
   aria-label={`${app.name} mark`}
   data-ground={ground}
 >
-  <defs>
-    <mask id={uid}>
-      <rect width="48" height="48" fill="#fff" />
-      <path d={zPath({ ...Z, x: 9.5 })} fill="#000" />
-      <path d={zPath({ ...Z, x: 26.5 })} fill="#000" />
-    </mask>
-  </defs>
-
-  <g mask={`url(#${uid})`}>
-    <path
-      d="M4 10H44V42H4ZM12 42C13 31 18 24.5 24 24.5C30 24.5 35 31 36 42Z"
-      fill={app.hue}
-      fill-rule="evenodd"
-    />
-    <rect x="4" y="10" width="40" height="2.2" fill={app.light} />
-  </g>
+  <path
+    d="M4 10H44V42H4ZM12 42C13 34 18 30 24 30C30 30 35 34 36 42Z"
+    fill={app.hue}
+    fill-rule="evenodd"
+  />
+  <path d={truss} fill={app.deep} />
 </svg>

@@ -1,20 +1,20 @@
 ---
 /**
- * h09 · Field — a plot field with the trace cut out of it.
+ * h09 · Field — the trace is the hole, not the ink.
  *
- * The object is the field a measurement is drawn in: a landscape card standing
- * on its own axis strip, with the time scale ticked along the base. The signal
- * is not drawn on top of it. It is punched through it, so what shows in the
- * trace is whatever is behind the mark — paper, or the dark.
+ * The object is a plot field: a landscape card with a graduated value rail
+ * down its left side, the way a chart carries its scale. The signal is not
+ * drawn on the field. It is punched clean through it, starting at the rail and
+ * running out towards the right margin, so what shows inside the trace is
+ * whatever is behind the mark — paper, or the dark. That is the literal claim
+ * Hozz makes: the readings are not the app's, and nothing here holds them.
  *
- * The rule the trace holds runs the full width of the field and is the top bar
- * of both letters; the two dips below it are the diagonals and the floors.
- * Cover the letters and a ticked, empty plot field remains. Cover the field and
- * the letters stop existing, because they have no fill of their own — they are
- * the absence of it.
+ * The resting line is the same cut as the letters, and it is the bottom bar of
+ * both of them. Cover the letters and a graduated field remains. Cover the
+ * field and the letters stop existing altogether, because they have no fill of
+ * their own — they are the absence of it.
  *
- * Zs as letters. No face: a health app that reads sleep must not be caught
- * drawing sleeping Zs.
+ * Zs as letters. No face: an app that reads sleep must not draw sleeping Zs.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -31,23 +31,23 @@ const clipId = `${uid}-c`;
 
 // 40 : 26 is 1.54 — a plot field, wider than it is tall.
 const CARD = { x: 4, y: 11, w: 40, h: 26, r: 5 };
-const AXIS = 33; // top of the axis strip
+const RAIL = 10.6; // right edge of the value rail
 
-const RULE = 17.5; // top edge of the line the trace holds
 const BAR = 3;
+const REST = 28.6;
 
 const Z = {
-  y: RULE,
-  w: 11.6,
-  h: 13.5,
+  y: 17.4,
+  w: 11.8,
+  h: REST + BAR - 17.4,
   bar: BAR,
-  diag: 4.6, // heavier than the bar, and it falls at 47°
+  diag: 4.8, // 4.8 across at 50° is 3.7 of real weight against a 3 bar
   cap: 'angled' as const,
 };
-const zLeft = 11.1;
-const zRight = 25.3; // 2.6 of gap; the pair spans 11.1–36.9, centred on 24
+const zLeft = 13.2;
+const zRight = 27.2; // 2.2 of gap; the pair sits clear of the rail
 
-const TICKS = [8.4, 13.6, 18.8, 24, 29.2, 34.4, 39.6];
+const VALUES = [15.4, 20.2, 25];
 ---
 
 <svg
@@ -61,18 +61,13 @@ const TICKS = [8.4, 13.6, 18.8, 24, 29.2, 34.4, 39.6];
 >
   <defs>
     <clipPath id={clipId}>
-      <rect
-        x={CARD.x}
-        y={CARD.y}
-        width={CARD.w}
-        height={CARD.h}
-        rx={CARD.r}
-      />
+      <rect x={CARD.x} y={CARD.y} width={CARD.w} height={CARD.h} rx={CARD.r} />
     </clipPath>
     <mask id={uid}>
       <rect width="48" height="48" fill="#fff" />
-      {/* The rule runs past both edges: a field is a view onto a longer run. */}
-      <rect x="1" y={RULE} width="46" height={BAR} fill="#000" />
+      {/* The cut starts inside the rail and stops short of the right edge, so
+          the field stays one piece rather than two. */}
+      <rect x="7.4" y={REST} width="33.8" height={BAR} rx="0.4" fill="#000" />
       <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
       <path d={zPath({ ...Z, x: zRight })} fill="#000" />
     </mask>
@@ -90,14 +85,14 @@ const TICKS = [8.4, 13.6, 18.8, 24, 29.2, 34.4, 39.6];
     <g clip-path={`url(#${clipId})`}>
       <rect
         x={CARD.x}
-        y={AXIS}
-        width={CARD.w}
-        height={CARD.y + CARD.h - AXIS}
+        y={CARD.y}
+        width={RAIL - CARD.x}
+        height={CARD.h}
         fill={app.deep}
       />
       {
-        TICKS.map((x) => (
-          <rect x={x - 0.65} y="34.4" width="1.3" height="2.6" fill={app.hue} />
+        VALUES.map((y) => (
+          <rect x="6.2" y={y} width="2.8" height="1.4" rx="0.4" fill={app.hue} />
         ))
       }
     </g>

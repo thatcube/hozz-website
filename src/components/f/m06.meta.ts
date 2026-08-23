@@ -3,10 +3,10 @@ export default {
   name: 'Fill front',
   app: 'mozz',
   object: 'Single arched level gauge',
-  move: 'aperture',
+  move: 'silhouette',
   reading: 'letters',
-  sentence: 'The ZZ is the space cut out of the active level in the audio gauge.',
+  sentence: 'The ZZ is the stepped silhouette of the audio gauge’s active level.',
   idea:
-    'The letters exist only inside the active fill: lower the level and they are cropped; empty the gauge and they disappear. The clear arch above the level keeps the object reading as a gauge holding signal.',
+    'The gauge’s peak line supplies the bottom bar of both Zs, so moving the line or lifting the pair away breaks the measured silhouette. The arch remains one shared field with no ticks or compartments.',
   palette: ['#e0243f', '#6d0f1e'],
 };

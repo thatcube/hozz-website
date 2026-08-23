@@ -1,12 +1,12 @@
 export default {
   n: 'p12',
-  name: 'Creased Folder',
+  name: 'Case Press',
   app: 'plozz',
-  object: 'Tabbed folder, folded front',
+  object: 'Portrait media case, spine',
   move: 'relief',
   reading: 'letters',
-  sentence: 'The ZZ is the crease pressed into the folder flap.',
+  sentence: 'The ZZ is the relief pressed into the media case.',
   idea:
-    'The heavy diagonal of each drawn Z is the depressed fold plane, while its thinner bars are the crease returns. The folder’s material explains the stroke contrast instead of using a second aperture.',
+    'The case’s five-unit spine width sets the five-unit diagonal mass of both drawn Zs, while their bars remain 2.6 units. The packaging therefore determines the stroke contrast instead of merely containing a mark.',
   palette: ['#00a4dc', '#00506d'],
 };

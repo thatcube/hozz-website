@@ -33,21 +33,23 @@ const uid = `tw09-${Math.random().toString(36).slice(2, 9)}`;
 const STICKER =
   'M10 25.5C10 16 16.3 8.5 24 8.5C31.7 8.5 38 16 38 25.5C38 33.4 31.7 39 24 39C16.3 39 10 33.4 10 25.5Z';
 
-// The corner somebody has begun to lift, flipped back over its own fold line.
+// The corner somebody has begun to lift, folded back on itself. Its underside
+// is in shade, which is the cheapest possible proof that the sticker has a back.
 const FLAP =
-  'M34.6 32.4C37.4 34.4 37.8 37.2 36.2 39.2C33 40.4 29.8 40.2 27.5 38.6Z';
+  'M33.8 32.6C35.9 34.2 36.4 36.4 35.2 38.3C32.6 39.2 29.5 38.9 27.3 37.9Z';
 
 // diag 4.2 on bar 2.3: the turn is nearly twice the line, which no typeface does.
-const Z = { y: 16.4, w: 7.6, h: 8.4, bar: 2.3, diag: 4.2, cap: 'angled' as const };
+const Z = { y: 15.6, w: 7.6, h: 8.4, bar: 2.3, diag: 4.2, cap: 'angled' as const };
 const zLeft = 15.5;
 const zRight = 24.9; // 1.8 of gap; the pair spans 15.5–32.5, centred on 24
 
-// Flat top lip, deep bowl: an emote grinning with its mouth open, not a smile.
-const GRIN = 'M15.6 27.4L32.4 27.4C32.4 34.4 28.6 37.6 24 37.6C19.4 37.6 15.6 34.4 15.6 27.4Z';
+// Top lip climbing 1.3 units to the right, bowl slung under it: a lopsided open
+// grin. A symmetrical arc here would be a smiley, and a smiley is not a reaction.
+const GRIN = 'M16.6 28.2L31.6 26.9C31.9 33 28.5 36.3 24.1 36.1C19.6 35.9 16.3 33 16.6 28.2Z';
 
-// The 1.6-unit die-cut margin, as a scale about each shape's own centre.
-const CUT_MARGIN = 'translate(24 23.75) scale(1.114 1.105) translate(-24 -23.75)';
-const FLAP_MARGIN = 'translate(32.5 36.3) scale(1.135 1.135) translate(-32.5 -36.3)';
+// A die leaves an even margin all the way round, which a scaled outline does
+// not — so the backing is the same path worn as a fat stroke.
+const KEYLINE = 3.2;
 ---
 
 <svg
@@ -63,7 +65,7 @@ const FLAP_MARGIN = 'translate(32.5 36.3) scale(1.135 1.135) translate(-32.5 -36
     {/* Everything past the fold line has been lifted off the surface. */}
     <mask id={`${uid}c`}>
       <rect x="-20" y="-20" width="88" height="88" fill="#fff" />
-      <path d="M34.6 32.4L48 48L27.5 38.6Z" fill="#000" />
+      <path d="M33.8 32.6L48 48L27.3 37.9Z" fill="#000" />
     </mask>
 
     {/* The die-cut itself. */}
@@ -77,12 +79,17 @@ const FLAP_MARGIN = 'translate(32.5 36.3) scale(1.135 1.135) translate(-32.5 -36
 
   <g transform="rotate(-7 24 24)">
     <g mask={`url(#${uid}c)`}>
-      <path d={STICKER} transform={CUT_MARGIN} fill={app.light} />
+      <path
+        d={STICKER}
+        fill={app.light}
+        stroke={app.light}
+        stroke-width={KEYLINE}
+        stroke-linejoin="round"
+      />
       <g mask={`url(#${uid}f)`}>
         <path d={STICKER} fill={app.hue} />
       </g>
     </g>
-    <path d={FLAP} transform={FLAP_MARGIN} fill={app.light} />
     <path d={FLAP} fill={app.deep} />
   </g>
 </svg>

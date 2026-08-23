@@ -1,17 +1,16 @@
 ---
 /**
- * p03 · Matte — the shape a widescreen film makes inside a 16:9 screen.
+ * p03 · Turn — a screen seen from the side, and a picture that goes round it.
  *
- * No zPath here on purpose. The letters are built out of the screen's own
- * geometry: the two horizontals are the mattes — the dead bands top and bottom
- * that appear whenever a 2.4:1 picture is played on a 16:9 panel — and the two
- * diagonals are wipes cutting between shots. The bars therefore run the full
- * width of the glass, edge to edge, because that is what a matte does. They are
- * not letter-width. They are screen-width, and the two Zs share them.
+ * The object is an ultra-thin panel standing at an angle to us. Because it has
+ * no bezel, its picture runs right off the front and continues over the near
+ * edge onto the sliver of side we can see — the edge-lit wrap a panel this thin
+ * can do. That corner is a hard fold, so the letter that crosses it bends: its
+ * left end climbs away from us on a different plane, in a different tone.
  *
- * So the letters cannot be lifted: detached from the panel the bars have no
- * reason to be that long, and the panel without them is not showing a film.
+ * Straighten the panel and the bend has nothing to bend over.
  */
+import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
 
 interface Props {
@@ -22,19 +21,23 @@ const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.plozz;
 
 const uid = `p03-${Math.random().toString(36).slice(2, 9)}`;
+const faceId = `${uid}-face`;
+const edgeId = `${uid}-edge`;
 
-// 40 : 22.5 — 16:9 exactly, which is the whole reason the mattes exist.
-const P = { x: 4, y: 10.5, w: 40, h: 22.5, r: 2 };
+// The panel, turned 4.5 degrees. Everything below lives in this one plane.
+const TURN = 'translate(24 22) skewY(4.5) translate(-24 -22)';
 
-const EDGE = 11.6; // underside of the lit top edge of the glass
-const MATTE = 4.95; // both mattes, equal: these are the bars
-const TOP = EDGE + MATTE; // 16.55 — where the picture starts
-const BOT = P.y + P.h - MATTE; // 28.05 — where it stops
+// The picture, foreshortened by the turn, and 3.8 of side face folded back off
+// its near corner at x = 14.9.
+const FACE = { x: 14.9, y: 14.6, w: 22, h: 15 };
+const EDGE = 'M14.9 14.6L11.1 13.1V28.1L14.9 29.6Z';
+// The side plane rises 1.5 over 3.8, which is 21.5 degrees off the front.
+const FOLD = 'translate(14.9 22) skewY(21.5) translate(-14.9 -22)';
 
-// The wipes. 6.4 across against bars of 4.95, and steep — 8.2 of run against
-// 11.5 of drop — so each one closes a letter instead of striping the picture.
-const wipe = (xl: number) =>
-  `M${xl + 14.6 - 6.4} ${TOP}L${xl + 14.6} ${TOP}L${xl + 6.4} ${BOT}L${xl} ${BOT}Z`;
+// diag 5.4 against bar 2.3 — the wedge is more than twice the bars.
+const Z = { y: 16.8, w: 10.2, h: 10.4, bar: 2.3, diag: 5.4, cap: 'flat' as const };
+const zL = zPath({ ...Z, x: 12.6 }); // starts behind the corner, on the side
+const zR = zPath({ ...Z, x: 24.7 });
 ---
 
 <svg
@@ -47,34 +50,43 @@ const wipe = (xl: number) =>
   aria-label={`${app.name} mark`}
 >
   <defs>
-    <clipPath id={uid}>
-      <rect x={P.x} y={P.y} width={P.w} height={P.h} rx={P.r} />
+    <clipPath id={faceId} transform={TURN}>
+      <rect x={FACE.x} y={FACE.y} width={FACE.w} height={FACE.h} rx="1.2" />
+    </clipPath>
+    <clipPath id={edgeId} transform={TURN}>
+      <path d={EDGE} />
     </clipPath>
   </defs>
 
-  {/* Hung on a wall, so the only thing under it is its own shadow. */}
-  <rect
-    x="13"
-    y="34"
-    width="22"
-    height="1.3"
-    rx="0.65"
-    fill={app.deep}
-    opacity={ground === 'dark' ? 0.5 : 0.3}
-  />
+  <g transform={TURN}>
+    <rect
+      x="18"
+      y="31.6"
+      width="16"
+      height="1.2"
+      rx="0.6"
+      fill={app.deep}
+      opacity={ground === 'dark' ? 0.5 : 0.3}
+    />
+    {/* The near edge, lit, because it is the only part turned toward the room. */}
+    <path d={EDGE} fill={app.light} />
+    <rect x={FACE.x} y={FACE.y} width={FACE.w} height={FACE.h} rx="1.2" fill={app.hue} />
+  </g>
 
-  <g clip-path={`url(#${uid})`}>
-    {/* The lit top edge of the glass — the whole of the chassis you ever see. */}
-    <rect x={P.x} y={P.y} width={P.w} height={P.h} fill={app.light} />
-    <rect x={P.x} y={EDGE} width={P.w} height={P.h - (EDGE - P.y)} fill={app.hue} />
+  {/* The picture, on the front. */}
+  <g clip-path={`url(#${faceId})`} fill={app.deep}>
+    <g transform={TURN}>
+      <path d={zL} />
+      <path d={zR} />
+    </g>
+  </g>
 
-    {/* The mattes. Full width, because the picture is wider than the panel is tall. */}
-    <rect x={P.x} y={EDGE} width={P.w} height={MATTE} fill={app.deep} />
-    <rect x={P.x} y={BOT} width={P.w} height={MATTE} fill={app.deep} />
-
-    {/* The wipes, which turn two bars into two letters. The pair sits 9.4–38.6,
-        so 5.4 of bar overhangs at each end — that overhang is the point. */}
-    <path d={wipe(9.4)} fill={app.deep} />
-    <path d={wipe(24)} fill={app.deep} />
+  {/* And the same picture carrying on round the corner, tipped onto the side. */}
+  <g clip-path={`url(#${edgeId})`} fill={app.deep}>
+    <g transform={TURN}>
+      <g transform={FOLD}>
+        <path d={zL} />
+      </g>
+    </g>
   </g>
 </svg>

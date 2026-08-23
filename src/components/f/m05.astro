@@ -1,11 +1,11 @@
 ---
 /**
- * m05 · Resonant bell
+ * m05 · Fork tines
  *
- * A single struck bell carries the pair as clean openings through its vibrating
- * body. The letters use the ground itself, exactly as the reference panel does.
+ * The lower bar of each drawn Z continues directly into a shoulder of one
+ * tuning-fork yoke. The letters are therefore the fork's vibrating tines, not a
+ * knockout placed in a body.
  */
-import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
 
 interface Props {
@@ -14,15 +14,6 @@ interface Props {
 }
 const { size = 96 } = Astro.props as Props;
 const app = APP_BY_KEY.mozz;
-const uid = `m05-${Math.random().toString(36).slice(2, 9)}`;
-const Z = {
-  y: 13.5,
-  w: 12.5,
-  h: 14.5,
-  bar: 2.8,
-  diag: 5.2,
-  cap: 'angled' as const,
-};
 ---
 
 <svg
@@ -32,25 +23,14 @@ const Z = {
   fill="none"
   xmlns="http://www.w3.org/2000/svg"
   role="img"
-  aria-label={`${app.name} struck bell mark`}
+  aria-label={`${app.name} tuning fork mark`}
 >
-  <defs>
-    <mask id={uid}>
-      <rect width="48" height="48" fill="#fff" />
-      <path d={zPath({ ...Z, x: 10.5 })} fill="#000" />
-      <path d={zPath({ ...Z, x: 25 })} fill="#000" />
-    </mask>
-  </defs>
-
-  <g mask={`url(#${uid})`}>
-    <path
-      d="M24 4C14 4 9 11 9 21V30L5 37H43L39 30V21C39 11 34 4 24 4Z"
-      fill={app.hue}
-    />
-    <path
-      d="M5 37H43L39.5 31.5H8.5L5 37ZM23 27.5H25V39H23V27.5Z"
-      fill={app.deep}
-    />
-  </g>
-  <circle cx="24" cy="40" r="3" fill={app.deep} />
+  <path
+    d="M6.5 6.5H21V9.9H6.5V6.5ZM21 9.9L12.7 22.1H6.5L14.8 9.9H21ZM27 6.5H41.5V9.9H27V6.5ZM41.5 9.9L33.2 22.1H27L35.3 9.9H41.5Z"
+    fill={app.hue}
+  />
+  <path
+    d="M6.5 22.1H21V25.5H12V28C12 33 16 36 22 36H26C32 36 36 33 36 28V25.5H27V22.1H41.5V28C41.5 36.5 35 41 27 41H26.5V45H21.5V41H21C13 41 6.5 36.5 6.5 28V22.1Z"
+    fill={app.hue}
+  />
 </svg>

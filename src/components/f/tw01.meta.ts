@@ -1,12 +1,12 @@
 export default {
   n: 'tw01',
-  name: 'Fold',
+  name: 'Unbroken',
   app: 'twozz',
-  object: 'Bubble folded from one sheet',
+  object: 'Bubble whose bottom edge becomes the tail',
   move: 'aperture',
   reading: 'eyes',
-  sentence: 'The ZZ is the only room inside the bubble.',
+  sentence: 'The ZZ is the entire interior of the bubble.',
   idea:
-    'The tail is a hooked fold that leaves the body on a tangent rather than a stub stuck to a corner, and its darker underside runs on as a rim along the bottom, so tail and body are visibly the same sheet. The letters and the smile are the bubble\u2019s interior, cut with one knife: the only thing this bubble holds is what it says.',
-  palette: ['#8f52f6', '#3d1d75'],
+    'Ten attempts at this mark added something and all of them lost. This one changes the outline instead: the bottom edge leans out of the corner and keeps going as the tail rather than handing over to a spike, and the corner radii are unequal \u2014 13 at the top and right, 4 at the bottom left \u2014 so the shape reads as drawn rather than as a rounded rectangle plus an appendage. One fill, no second plane, no keyline: the letters and the mouth are the only interior the bubble has.',
+  palette: ['#8f52f6'],
 };

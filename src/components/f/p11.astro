@@ -35,6 +35,10 @@ const Z = { y: 16, w: 14, h: 18, bar: 3.2, diag: 6.2, cap: 'angled' as const };
     </mask>
   </defs>
 
-  <path d="M5 34V13H16V9H29V14H43V34Z" fill={app.hue} mask={`url(#${uid})`} />
+  <path
+    d="M5 13H16V34H5ZM18 9H29V34H18ZM31 14H43V34H31ZM5 15H43V34H5Z"
+    fill={app.hue}
+    mask={`url(#${uid})`}
+  />
   <path d="M3.5 34H44.5V41H3.5Z" fill={app.deep} />
 </svg>

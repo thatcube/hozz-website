@@ -10,8 +10,9 @@
  * markup can leak into this page's bundle.
  */
 import '../styles/sketch-base.css';
-import { APPS } from '../data/brand';
+import { APPS, APP_BY_KEY } from '../data/brand';
 import { SITE } from '../data/site';
+import { SHORTLIST } from '../data/shortlist';
 
 const mods = import.meta.glob('../components/f/*.astro', { eager: true }) as Record<
   string,
@@ -48,6 +49,11 @@ const groups = APPS.map((app) => ({
 
 const orphans = items.filter((i) => !APPS.some((a) => a.key === i.meta.app));
 const total = items.length;
+
+const picks = SHORTLIST.map((p) => {
+  const item = items.find((i) => i.slug === p.slug);
+  return item ? { ...item, why: p.why, app: APP_BY_KEY[item.meta.app as never] } : null;
+}).filter(Boolean) as Array<(typeof items)[number] & { why: string; app: (typeof APPS)[number] }>;
 ---
 
 <!doctype html>
@@ -92,6 +98,45 @@ const total = items.length;
     </header>
 
     <main>
+      {
+        picks.length > 0 && (
+          <section class="short">
+            <div class="short-head">
+              <h2>Start here</h2>
+              <p>
+                Fifty marks is more than anyone can judge, and a page that shows
+                them all as equals is a pile rather than a board. These are the
+                ones worth looking at first — picked by rendering every concept
+                and looking at it, not from what the agents claimed about their
+                own work.
+              </p>
+            </div>
+            <div class="short-grid">
+              {picks.map(({ slug, Comp, meta, why, app }) => (
+                <figure class="pick" style={`--hue:${app.hue};--deep:${app.deep}`}>
+                  <div class="pick-art">
+                    <div class="pick-ground pick-ground--light">
+                      <Comp size={72} ground="light" />
+                    </div>
+                    <div class="pick-ground pick-ground--dark">
+                      <Comp size={72} ground="dark" />
+                    </div>
+                  </div>
+                  <figcaption>
+                    <p class="pick-n">
+                      <span class="slug">{meta.n ?? slug}</span>
+                      <strong>{meta.name ?? slug}</strong>
+                      <span class="pick-app">{app.name}</span>
+                    </p>
+                    <p class="pick-why">{why}</p>
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </section>
+        )
+      }
+
       {
         total === 0 && (
           <p class="empty">
@@ -195,6 +240,77 @@ const total = items.length;
     </main>
 
     <style>
+      .short {
+        margin: 0 0 4rem;
+        padding-bottom: 2.5rem;
+        border-bottom: 1px solid var(--rule, #e6e6e6);
+      }
+      .short-head {
+        max-width: 38rem;
+        margin-bottom: 1.75rem;
+      }
+      .short-head h2 {
+        margin: 0 0 0.5rem;
+      }
+      .short-head p {
+        margin: 0;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        opacity: 0.75;
+      }
+      .short-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+        gap: 1.25rem;
+      }
+      .pick {
+        margin: 0;
+        padding: 0.9rem;
+        border: 1px solid var(--rule, #e6e6e6);
+        border-radius: 14px;
+      }
+      .pick-art {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 0.8rem;
+      }
+      .pick-ground {
+        display: grid;
+        place-items: center;
+        padding: 1.1rem 0;
+      }
+      .pick-ground--light {
+        background: #fbfbfa;
+        box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.06);
+      }
+      .pick-ground--dark {
+        background: #16181c;
+      }
+      .pick-n {
+        display: flex;
+        align-items: baseline;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+        margin: 0 0 0.35rem;
+      }
+      .pick-n strong {
+        font-size: 1.15rem;
+      }
+      .pick-app {
+        margin-left: auto;
+        font-family: var(--mono, ui-monospace, monospace);
+        font-size: 0.7rem;
+        color: var(--deep);
+      }
+      .pick-why {
+        margin: 0;
+        font-size: 0.9rem;
+        line-height: 1.55;
+        opacity: 0.8;
+      }
+
       .jump {
         display: flex;
         flex-wrap: wrap;

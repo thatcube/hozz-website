@@ -1,9 +1,9 @@
 ---
 /**
- * p12 · Creased Folder
+ * p12 · Case Press
  *
- * A simple tabbed folder with the ZZ pressed into its front flap. The heavy
- * diagonals are the depressed fold planes; the thin bars are their returns.
+ * A portrait media case with one visible spine. The pressed ZZ takes its heavy
+ * diagonal directly from the spine width, so the packaging sets its contrast.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -14,7 +14,7 @@ interface Props {
 }
 const { size = 96 } = Astro.props as Props;
 const app = APP_BY_KEY.plozz;
-const Z = { y: 21, w: 13, h: 14, bar: 2.7, diag: 6.4, cap: 'angled' as const };
+const Z = { y: 17, w: 10.5, h: 16, bar: 2.6, diag: 5, cap: 'angled' as const };
 ---
 
 <svg
@@ -24,12 +24,12 @@ const Z = { y: 21, w: 13, h: 14, bar: 2.7, diag: 6.4, cap: 'angled' as const };
   fill="none"
   xmlns="http://www.w3.org/2000/svg"
   role="img"
-  aria-label={`${app.name} creased-folder mark`}
+  aria-label={`${app.name} pressed-media-case mark`}
 >
-  <path d="M5 10H18L22 14H43V41H5Z" fill={app.deep} />
-  <path d="M5 18H43V41H5Z" fill={app.hue} />
+  <path d="M7 7H13V42H7Z" fill={app.deep} />
+  <path d="M13 7H41V42H13Z" fill={app.hue} />
   <path
-    d={`${zPath({ ...Z, x: 8 })}${zPath({ ...Z, x: 27 })}`}
+    d={`${zPath({ ...Z, x: 15 })}${zPath({ ...Z, x: 28.5 })}`}
     fill={app.deep}
     opacity="0.72"
   />

@@ -1,19 +1,21 @@
 ---
 /**
- * h08 · Loop — a day's cycle, drawn as one ribbon.
+ * h08 · Plot — an axis, and the line it holds.
  *
- * The object is a loop: the round of a day, the rhythm a body keeps whether or
- * not anything is recording it. It is one band of constant width, and it is
- * open at the top — a cycle that has not closed yet.
+ * The object is the frame every measurement is drawn in: a value axis standing
+ * on the left with its graduations, and the line the readings are plotted
+ * against running away to the right. No panel, no plate — a plot is a frame,
+ * not a box, and Hozz should look like the quiet instrument rather than the
+ * dashboard.
  *
- * The gap is not empty. The band's two ends fold across it, and the two folds
- * are the Zs. Nothing was placed here: the letters are the same ribbon, the
- * same 3.4 units wide, and their diagonal is 4.7 wide only because a constant
- * band crossing at 46° measures wider horizontally. Cover the letters and the
- * loop is a broken ring with two ends reaching at nothing. Cover the loop and
- * the letters have tails that go nowhere.
+ * The trace *is* that bottom line. It lies along it for most of the run and
+ * leaves it exactly twice, and each excursion closes on the line again, so the
+ * axis is the bottom bar of both letters. Cover the letters and a graduated
+ * axis remains, which is a deliberate thing. Cover the axis and the letters
+ * lose the stroke that finished them — two sevens hanging over nothing.
  *
- * Zs as letters. There is no face, and no mouth is needed.
+ * Zs as letters. No face, and none is wanted: a health app that reads sleep
+ * cannot afford a pair of sleeping eyes.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -25,26 +27,29 @@ interface Props {
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.hozz;
 
-const uid = `h08-${Math.random().toString(36).slice(2, 9)}`;
+const dark = ground === 'dark';
+const frame = dark ? app.hue : app.deep; // the instrument
+const trace = dark ? app.light : app.hue; // the reading, always the brighter
 
-const BAND = 3.4;
-// The arc runs from 158° round the bottom to 22°, leaving the top open.
-const END_L = { x: 9.165, y: 19.206 };
-const END_R = { x: 38.835, y: 19.206 };
-const RING = `M${END_L.x} ${END_L.y}A16 16 0 1 0 ${END_R.x} ${END_R.y}`;
+const BAR = 2.4;
+const BASE = 31.6; // top edge of the line everything is measured from
 
-// The letters pick up exactly where the band stops: their bottom bars are
-// centred on the band's centreline, and they span the gap end to end.
+const AXIS = { x: 6.6, y: 11, w: BAR, h: BASE + BAR - 11 };
+
 const Z = {
-  y: 5.1,
-  w: 13.3,
-  h: 15.806,
-  bar: BAND,
-  diag: 4.7,
-  cap: 'flat' as const,
+  y: 20.4,
+  w: 10.6,
+  h: BASE + BAR - 20.4,
+  bar: BAR,
+  diag: 4.6, // 4.6 across at 56° is 3.8 of real weight against a 2.4 bar
+  cap: 'angled' as const,
 };
-const zLeft = END_L.x;
-const zRight = 25.535; // 3.07 of gap; the pair ends exactly on the right end
+const zLeft = 13.4;
+const zRight = 26.4; // 2.4 of gap; the pair sits to the right of the axis
+
+// Graduations: three on the value axis, four along the run.
+const VALUES = [13.6, 19.2, 24.8];
+const TIMES = [16.6, 23.2, 29.8, 36.4];
 ---
 
 <svg
@@ -56,36 +61,24 @@ const zRight = 25.535; // 3.07 of gap; the pair ends exactly on the right end
   role="img"
   aria-label={`${app.name} mark`}
 >
-  <defs>
-    {/* The folds sit over the band's ends; this keeps the joint from showing
-        a seam where the two shapes meet at an angle. */}
-    <mask id={uid}>
-      <rect width="48" height="48" fill="#fff" />
-      <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
-      <path d={zPath({ ...Z, x: zRight })} fill="#000" />
-    </mask>
-  </defs>
-
-  <g mask={`url(#${uid})`}>
-    <path
-      d={RING}
-      stroke={app.hue}
-      stroke-width={BAND}
-      stroke-linecap="round"
-      fill="none"
-    />
+  <g fill={frame}>
+    <rect x={AXIS.x} y={AXIS.y} width={AXIS.w} height={AXIS.h} rx="0.6" />
+    {
+      VALUES.map((y) => (
+        <rect x={AXIS.x + AXIS.w} y={y} width="2.7" height="1.5" rx="0.4" />
+      ))
+    }
+    {
+      TIMES.map((x) => (
+        <rect x={x} y={BASE + BAR} width="1.5" height="2.4" rx="0.4" />
+      ))
+    }
   </g>
 
-  <path d={zPath({ ...Z, x: zLeft })} fill={app.hue} />
-  <path d={zPath({ ...Z, x: zRight })} fill={app.hue} />
-
-  {/* One step of shade under each fold, so the ribbon has a near side. */}
-  <g fill={ground === 'dark' ? app.deep : app.deep} opacity="0.55">
-    <path
-      d={`M${zLeft} ${Z.y + Z.h}h${Z.w - 2.4}l-1.5 1.15h-${Z.w - 2.4}Z`}
-    />
-    <path
-      d={`M${zRight} ${Z.y + Z.h}h${Z.w - 2.4}l-1.5 1.15h-${Z.w - 2.4}Z`}
-    />
+  <g fill={trace}>
+    {/* The base line runs from the axis out past the right margin. */}
+    <rect x={AXIS.x} y={BASE} width={41.4 - AXIS.x} height={BAR} />
+    <path d={zPath({ ...Z, x: zLeft })} />
+    <path d={zPath({ ...Z, x: zRight })} />
   </g>
 </svg>
