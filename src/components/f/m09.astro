@@ -27,8 +27,8 @@ const uid = `m09-${Math.random().toString(36).slice(2, 9)}`;
 const DISC = { cx: 28, cy: 20, r: 16.5 };
 const SLEEVE = { x: 5.5, y: 13.5, w: 34, h: 29, r: 2.5 };
 
-// The open edge. The letters hang 1.7 below it — one card's thickness.
-const MOUTH = { x: 8.5, y: 18.2, w: 28, h: 1.7, r: 0.85 };
+// The open edge. The letters hang straight off it — one continuous cut.
+const MOUTH = { x: 7.6, y: 20.45, w: 30.8, h: 1.15, r: 0.575 };
 
 const Z = { y: 21.6, w: 12.4, h: 13.8, bar: 3.1, diag: 5, cap: 'angled' as const };
 // 12.4 + 3.3 + 12.4 = 28.1, running 8.5 to 36.6, centred on the card at 22.5.

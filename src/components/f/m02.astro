@@ -29,9 +29,10 @@ const SHEEN = { rx: 24, ry: 11.4 };
 
 // 15 + 6 + 15 = 36, running 6 to 42, well inside the disc: the rim has no part
 // in this one, the light does all the cutting.
-const Z = { y: 15, w: 15, h: 18, bar: 3.2, diag: 6, cap: 'angled' as const };
-const zLeft = 6;
-const zRight = 27;
+const GAP = 7; // wider than the hole on purpose: the spacing is not its job
+const Z = { y: 15, w: 14, h: 18, bar: 3.2, diag: 6, cap: 'angled' as const };
+const zLeft = 24 - GAP / 2 - Z.w;
+const zRight = 24 + GAP / 2;
 ---
 
 <svg
@@ -58,7 +59,7 @@ const zRight = 27;
     </clipPath>
     <mask id={uid}>
       <rect width="48" height="48" fill="#fff" />
-      <circle cx="24" cy="24" r="2" fill="#000" />
+      <circle cx="24" cy="24" r="1.6" fill="#000" />
     </mask>
   </defs>
 

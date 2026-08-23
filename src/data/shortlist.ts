@@ -28,8 +28,8 @@ export const SHORTLIST: Pick[] = [
     why: 'The face repeats as a receding echo — what a chat looks like when one emote gets spammed. No other app in the family could use this.',
   },
   {
-    slug: 'tw14',
-    why: 'The cleanest of the emote set. Nothing but a head and a grin, and it holds at 24px better than any of them.',
+    slug: 'tw13',
+    why: 'The repeat is the mark rather than decoration behind it: the face is bored once through a pile of three, so the letters belong to no single copy. The step and the fade are both taken from the Z\u2019s own diagonal.',
   },
   {
     slug: 'h00',
