@@ -1,23 +1,33 @@
 ---
 /**
- * The family face, rendered.
+ * The family face, placed and centred.
  *
- * Every Hozz concept puts this on top of its own container. It takes a colour
- * and nothing else — there is no scale, skew, radius or shape prop, because
- * there is no version of this face that is allowed to differ.
+ * It centres on whatever point you give it, so the job is to pass the
+ * container's *optical* middle — the middle of the screen, of the disc, of the
+ * card — not the middle of the 32-box. Plozz's face sits at (16, 18) because
+ * that is the middle of its screen, not of its TV.
+ *
+ * Choose the smile to suit how much room there is: `wide` when the container is
+ * open, `compact` when it has detail to protect (Plozz does this), `small` when
+ * it is tight. The eyes never change — they are the family signature.
+ *
+ * There is deliberately no scale, skew or rotate. A concept places and sizes
+ * the face; it cannot redraw it.
  */
-import { FACE_PATHS } from '../../data/mark';
+import { facePaths, type Smile } from '../../data/mark';
 
 interface Props {
-  /** Face colour. Dark on light grounds, white on saturated ones. */
+  cx?: number;
+  cy?: number;
+  smile?: Smile;
+  gap?: number;
   fill?: string;
-  /** Optional opacity, for concepts where the face sits under glass. */
   opacity?: number | string;
 }
 
-const { fill = '#000', opacity } = Astro.props;
+const { cx = 16, cy = 16, smile = 'wide', gap = 2, fill = '#000', opacity } = Astro.props;
 ---
 
 <g fill={fill} opacity={opacity} shape-rendering="crispEdges">
-  {FACE_PATHS.map((d) => <path d={d} />)}
+  {facePaths({ cx, cy, smile, gap }).map((d) => <path d={d} />)}
 </g>

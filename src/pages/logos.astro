@@ -12,7 +12,7 @@
  */
 import '../styles/sketch-base.css';
 import { SITE } from '../data/site';
-import { FACE_PATHS } from '../data/mark';
+import { facePaths } from '../data/mark';
 
 const mods = import.meta.glob('../components/mark/logos/*.astro', { eager: true }) as Record<
   string,
@@ -23,13 +23,17 @@ const metas = import.meta.glob('../components/mark/logos/*.meta.ts', { eager: tr
   { default?: { n?: string; name?: string; idea?: string; ground?: string; palette?: string[] } }
 >;
 
-const items = Object.entries(mods)
+const all = Object.entries(mods)
   .map(([path, mod]) => {
     const slug = path.split('/').pop()!.replace('.astro', '');
     const meta = metas[path.replace('.astro', '.meta.ts')]?.default ?? {};
     return { slug, Comp: mod.default, meta };
   })
   .sort((a, b) => a.slug.localeCompare(b.slug));
+
+/* Hozz marks are cNN; the Twozz/Strozz refresh lives alongside as tNN. */
+const items = all.filter((i) => i.slug.startsWith('c'));
+const twozz = all.filter((i) => i.slug.startsWith('t'));
 
 const SIZES = [96, 48, 28, 16];
 ---
@@ -70,12 +74,14 @@ const SIZES = [96, 48, 28, 16];
               </>
             ))
           }
-          <g fill="#14161a">{FACE_PATHS.map((d) => <path d={d} />)}</g>
+          <g fill="#14161a">{facePaths({ cx: 16, cy: 16 }).map((d) => <path d={d} />)}</g>
         </svg>
         <figcaption>
-          The fixed face, on its grid. Ten pixels wide, ten tall, centred on
-          x&nbsp;15.5 — a half-pixel left of true centre, exactly as the
-          siblings have it.
+          The eyes are the fixed part — two 4-wide Zs, identical in all three
+          siblings. The face is ten pixels across, so its centre is x&nbsp;16,
+          and it is centred on its container's optical middle rather than on
+          the 32-box. The smile comes in three widths; Plozz already uses the
+          middle one because its mark is busy.
         </figcaption>
       </figure>
     </header>
@@ -119,6 +125,45 @@ const SIZES = [96, 48, 28, 16];
         })
       }
       {items.length === 0 && <p class="empty">No concepts yet.</p>}
+
+      {
+        twozz.length > 0 && (
+          <>
+            <header class="band">
+              <h2>Twozz — a little more character</h2>
+              <p>
+                The shipped mark is a purple speech bubble with the family face.
+                It works, but it says “chat” and nothing about live streams or
+                emotes. These keep the purple, because the audience is Twitch,
+                and try to give it something to remember.
+              </p>
+            </header>
+            {twozz.map((it) => {
+              const C = it.Comp;
+              const m = it.meta;
+              return (
+                <section class="card" id={it.slug}>
+                  <div class="meta">
+                    <p class="tag"><b>{m.n ?? it.slug}</b><span>{m.name ?? 'Untitled'}</span></p>
+                    {m.idea && <p class="idea">{m.idea}</p>}
+                    {m.palette && (
+                      <ul class="pal">{m.palette.map((c) => (<li><i style={`background:${c}`} />{c}</li>))}</ul>
+                    )}
+                  </div>
+                  <div class="grounds">
+                    <div class="ground ground--light">
+                      {SIZES.map((s) => (<span class="slot"><C size={s} /><em>{s}</em></span>))}
+                    </div>
+                    <div class="ground ground--dark">
+                      {SIZES.map((s) => (<span class="slot"><C size={s} /><em>{s}</em></span>))}
+                    </div>
+                  </div>
+                </section>
+              );
+            })}
+          </>
+        )
+      }
     </main>
 
     <footer class="end">
@@ -209,6 +254,23 @@ const SIZES = [96, 48, 28, 16];
     padding-bottom: 4rem;
   }
 
+  .band {
+    padding-block: clamp(1.5rem, 4vw, 2.5rem) 0;
+  }
+
+  .band h2 {
+    font-size: clamp(1.4rem, 1rem + 1.6vw, 2rem);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+  }
+
+  .band p {
+    margin-top: 0.7rem;
+    max-width: 58ch;
+    line-height: 1.55;
+    color: #4d525a;
+  }
+
   .card {
     display: grid;
     gap: 1.25rem;
@@ -223,7 +285,24 @@ const SIZES = [96, 48, 28, 16];
   }
 
   @media (min-width: 940px) {
-    .card {
+    .band {
+    padding-block: clamp(1.5rem, 4vw, 2.5rem) 0;
+  }
+
+  .band h2 {
+    font-size: clamp(1.4rem, 1rem + 1.6vw, 2rem);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+  }
+
+  .band p {
+    margin-top: 0.7rem;
+    max-width: 58ch;
+    line-height: 1.55;
+    color: #4d525a;
+  }
+
+  .card {
       grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
       gap: 2.25rem;
       align-items: center;

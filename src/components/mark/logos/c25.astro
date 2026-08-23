@@ -1,0 +1,50 @@
+---
+/**
+ * 25 · Tag
+ *
+ * The label you tie to the thing you are keeping: a chamfered kraft tag with a
+ * real punched hole and an ochre header rule. The hole is a knockout, so it
+ * reads as a hole on paper and on ink.
+ *
+ * The face is centred on the label field below the rule (16, 21), not on the
+ * whole tag — the hole and the header are chrome.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import Face from '../Face.astro';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Hozz — Tag">
+  <path d="M11 3h10v1h-10z" fill="#e9dcc0" />
+  <path d="M10 4h4v1h-4z" fill="#e9dcc0" />
+  <path d="M18 4h4v1h-4z" fill="#e9dcc0" />
+  <path d="M9 5h4v1h-4z" fill="#e9dcc0" />
+  <path d="M19 5h4v1h-4z" fill="#e9dcc0" />
+  <path d="M8 6h5v1h-5z" fill="#e9dcc0" />
+  <path d="M19 6h5v1h-5z" fill="#e9dcc0" />
+  <path d="M7 7h6v1h-6z" fill="#e9dcc0" />
+  <path d="M19 7h6v1h-6z" fill="#e9dcc0" />
+  <path d="M7 8h7v1h-7z" fill="#e9dcc0" />
+  <path d="M18 8h7v1h-7z" fill="#e9dcc0" />
+  <path d="M7 9h18v20h-18z" fill="#e9dcc0" />
+  <path d="M7 10h18v2h-18z" fill="#c07f28" />
+  <path d="M11 2h10v1h-10z" fill="#33302a" />
+  <path d="M10 3h1v1h-1z" fill="#33302a" />
+  <path d="M21 3h1v1h-1z" fill="#33302a" />
+  <path d="M9 4h1v1h-1z" fill="#33302a" />
+  <path d="M22 4h1v1h-1z" fill="#33302a" />
+  <path d="M8 5h1v1h-1z" fill="#33302a" />
+  <path d="M23 5h1v1h-1z" fill="#33302a" />
+  <path d="M7 6h1v1h-1z" fill="#33302a" />
+  <path d="M24 6h1v1h-1z" fill="#33302a" />
+  <path d="M6 7h1v22h-1z" fill="#33302a" />
+  <path d="M25 7h1v22h-1z" fill="#33302a" />
+  <path d="M6 29h20v1h-20z" fill="#33302a" />
+  <path d="M14 4h4v1h-4z" fill="#33302a" />
+  <path d="M13 5h1v3h-1z" fill="#33302a" />
+  <path d="M18 5h1v3h-1z" fill="#33302a" />
+  <path d="M14 8h4v1h-4z" fill="#33302a" />
+  <Face cx={16} cy={21} smile="compact" fill="#33302a" />
+</MarkFrame>

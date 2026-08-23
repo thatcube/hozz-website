@@ -2,8 +2,9 @@
 /**
  * 17 · First Light
  *
- * A day beginning in quiet horizontal steps: indigo gives way to dusk rose,
- * then a broad pale horizon holds the face before evening gathers below.
+ * A day beginning quietly: indigo gives way to dusk, then a broad dawn band
+ * steps up to the right and holds the face. The card fills the 28 safe area and
+ * the face is centred on the pale band, not on the box.
  */
 import MarkFrame from '../MarkFrame.astro';
 import Face from '../Face.astro';
@@ -13,11 +14,10 @@ const { size = 128 } = Astro.props;
 ---
 
 <MarkFrame size={size} title="Hozz — First Light">
-  <path d="M12 3h8v1h-8zM9 4h14v1H9zM7 5h18v1H7zM6 6h20v2H6zM5 8h22v18H5zM6 26h20v1H6zM8 27h16v1H8zM11 28h10v1H11z" fill="#27304d" />
-  <path d="M8 5h16v1H8zM7 6h18v2H7zM6 8h20v3H6z" fill="#4e5878" />
-  <path d="M6 11h20v2H6z" fill="#b66f7a" />
-  <path d="M6 13h20v10H6z" fill="#f0d8a6" />
-  <path d="M6 23h20v2H6zM7 25h18v1H7z" fill="#9a5868" />
-  <path d="M7 22h18v1H7z" fill="#b66f7a" />
-  <Face fill="#27304d" />
+  <path d="M22 9h8v1h-8zM15 10h15v1h-15zM9 11h21v1h-21zM2 12h28v1h-28zM2 13h28v1h-28zM2 14h28v1h-28zM2 15h28v1h-28zM2 16h28v1h-28zM2 17h28v1h-28zM2 18h28v1h-28zM2 19h28v1h-28zM2 20h28v1h-28zM2 21h28v1h-28zM2 22h28v1h-28zM2 23h28v1h-28zM2 24h28v1h-28zM2 25h28v1h-28z" fill="#f0d8a6" />
+  <path d="M3 26h26v1h-26zM4 27h24v1h-24z" fill="#9a5868" />
+  <path d="M22 4h6v1h-6zM15 5h14v1h-14zM9 6h21v1h-21zM2 7h20v1h-20zM2 8h13v1h-13zM2 9h7v1h-7z" fill="#4e5878" />
+  <path d="M22 7h8v1h-8zM15 8h15v1h-15zM9 9h13v1h-13zM2 10h13v1h-13zM2 11h7v1h-7z" fill="#b66f7a" />
+  <path d="M6 2h20v1h-20zM5 3h22v1h-22zM4 4h18v1h-18zM3 5h12v1h-12zM2 6h7v1h-7zM5 28h22v1h-22zM6 29h20v1h-20z" fill="#27304d" />
+  <Face cx={16} cy={18} smile="wide" fill="#27304d" />
 </MarkFrame>

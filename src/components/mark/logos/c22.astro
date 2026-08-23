@@ -1,0 +1,36 @@
+---
+/**
+ * 22 · Sheaf
+ *
+ * Not one page — a cascade of three, stepping down and left, so the mark says
+ * *years of it* rather than *a document*. Depth is three flat sheets and two
+ * ink edges, no shading.
+ *
+ * The face is centred on the front sheet (13, 18), not on the 32-box, exactly
+ * as Plozz centres on the screen rather than the TV.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import Face from '../Face.astro';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Hozz — Sheaf">
+  <path d="M9 3h20v22h-20z" fill="#cfc9bb" />
+  <path d="M8 2h22v1h-22z" fill="#403c34" />
+  <path d="M8 3h1v22h-1z" fill="#403c34" />
+  <path d="M29 3h1v22h-1z" fill="#403c34" />
+  <path d="M8 25h22v1h-22z" fill="#403c34" />
+  <path d="M6 5h20v22h-20z" fill="#e8d7ae" />
+  <path d="M5 4h22v1h-22z" fill="#403c34" />
+  <path d="M5 5h1v22h-1z" fill="#403c34" />
+  <path d="M26 5h1v22h-1z" fill="#403c34" />
+  <path d="M5 27h22v1h-22z" fill="#403c34" />
+  <path d="M3 7h20v22h-20z" fill="#f9f6ef" />
+  <path d="M2 6h22v1h-22z" fill="#403c34" />
+  <path d="M2 7h1v22h-1z" fill="#403c34" />
+  <path d="M23 7h1v22h-1z" fill="#403c34" />
+  <path d="M2 29h22v1h-22z" fill="#403c34" />
+  <Face cx={13} cy={18} smile="wide" fill="#403c34" />
+</MarkFrame>
