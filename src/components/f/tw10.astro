@@ -1,0 +1,43 @@
+---
+/**
+ * tw10 · Linked lines
+ *
+ * A live-chat transcript made from avatar pips and a few heavy message lines.
+ * The middle two messages are not labels laid over that transcript: their own
+ * top and bottom lines join into the two Zs.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.twozz;
+
+const Z = { y: 14, w: 12.5, h: 13, bar: 3.2, diag: 6.1, cap: 'angled' as const };
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} linked live-chat lines mark`}
+>
+  <circle cx="6.5" cy="7.5" r="3" fill={app.deep} />
+  <rect x="11.5" y="4.5" width="27" height="6" rx="3" fill={app.hue} />
+
+  <circle cx="6.5" cy="17" r="3" fill={app.light} />
+  <path d={zPath({ ...Z, x: 11.5 })} fill={app.light} />
+  <path d={zPath({ ...Z, x: 26 })} fill={app.light} />
+
+  <circle cx="6.5" cy="34" r="3" fill={app.deep} />
+  <rect x="11.5" y="31" width="31" height="6" rx="3" fill={app.hue} />
+
+  <circle cx="6.5" cy="42" r="3" fill={app.light} />
+  <rect x="11.5" y="39" width="21" height="6" rx="3" fill={app.hue} />
+</svg>

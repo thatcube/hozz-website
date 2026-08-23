@@ -1,0 +1,45 @@
+---
+/**
+ * p12 · Index Sleeve
+ *
+ * Three portrait media sleeves fan apart. The front sleeve has two die-cut
+ * indexing windows, so the lighter sleeve behind supplies the ZZ colour.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.plozz;
+const uid = `p12-${Math.random().toString(36).slice(2, 9)}`;
+
+const Z = { y: 15.2, w: 12.2, h: 13, bar: 2.05, diag: 5.4, cap: 'open' as const };
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} media-sleeve mark`}
+>
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: 8.6 })} fill="#000" />
+      <path d={zPath({ ...Z, x: 25.2 })} fill="#000" />
+    </mask>
+  </defs>
+
+  <path d="M7.2 7.7L34.8 4L40.4 39.8L12.8 43.5Z" fill={app.deep} />
+  <path d="M11.4 4.5L40.2 8.7L35.1 43.5L6.3 39.3Z" fill={app.light} />
+  <g mask={`url(#${uid})`}>
+    <path d="M10 7H38V41H10L7 38V10Z" fill={app.hue} />
+    <path d="M10 36.8H38V41H10L7 38V35.8Z" fill={app.deep} />
+  </g>
+</svg>

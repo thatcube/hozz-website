@@ -1,0 +1,63 @@
+---
+/**
+ * h06 · Open Gate
+ *
+ * Two gate leaves are built as Z-braced frames. Their horizontal strokes are
+ * the working rails and their heavy diagonals stop the open leaves from racking.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.hozz;
+const uid = `h06-${Math.random().toString(36).slice(2, 9)}`;
+
+const Z = { y: 14.2, w: 13.2, h: 20.6, bar: 3, diag: 5.7, cap: 'angled' as const };
+const panels = [
+  { x: 8, clip: `${uid}-left` },
+  { x: 26.8, clip: `${uid}-right` },
+];
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+  data-ground={ground}
+>
+  <defs>
+    <clipPath id={`${uid}-left`}>
+      <path d="M8 13H21.6L20.6 36H8Z" />
+    </clipPath>
+    <clipPath id={`${uid}-right`}>
+      <path d="M26.4 13H40V36H27.4Z" />
+    </clipPath>
+  </defs>
+
+  <rect x="4.3" y="9" width="4.2" height="31" rx="1.2" fill={app.deep} />
+  <rect x="39.5" y="9" width="4.2" height="31" rx="1.2" fill={app.deep} />
+  <rect x="3.4" y="8" width="6" height="3.2" rx="1.1" fill={app.light} />
+  <rect x="38.6" y="8" width="6" height="3.2" rx="1.1" fill={app.light} />
+
+  {panels.map(({ x, clip }) => (
+    <g clip-path={`url(#${clip})`}>
+      <rect x={x} y="13" width="13.2" height="23" fill={app.light} opacity="0.24" />
+      <rect x={x} y="13" width="2.5" height="23" fill={app.deep} />
+      <rect x={x + 10.7} y="13" width="2.5" height="23" fill={app.deep} />
+      <path d={zPath({ ...Z, x })} fill={app.hue} />
+    </g>
+  ))}
+
+  <circle cx="8.2" cy="17.2" r="1.15" fill={app.light} />
+  <circle cx="8.2" cy="31.8" r="1.15" fill={app.light} />
+  <circle cx="39.8" cy="17.2" r="1.15" fill={app.light} />
+  <circle cx="39.8" cy="31.8" r="1.15" fill={app.light} />
+</svg>

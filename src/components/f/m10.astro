@@ -1,0 +1,62 @@
+---
+/**
+ * m10 · Staff Weave
+ *
+ * Five rules make the object before the letters arrive. Two of those rules
+ * thicken, leave the grid as heavy diagonals, and settle back into the staff.
+ */
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.mozz;
+const ink = ground === 'dark' ? app.light : app.deep;
+
+const rules = [12, 18, 24, 30, 36];
+const zStarts = [8.5, 26.5];
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} staff weave mark`}
+>
+  <g stroke={ink} stroke-linecap="round">
+    {
+      rules.map((y) => (
+        <path
+          d={`M5 ${y}H43`}
+          stroke-width="1.35"
+          opacity={y === 18 || y === 30 ? 0.78 : 0.58}
+        />
+      ))
+    }
+    <path d="M5 11V37M43 11V37" stroke-width="2.1" />
+  </g>
+
+  <g stroke-linecap="square" stroke-linejoin="bevel">
+    {
+      zStarts.map((x) => (
+        <g>
+          <path
+            d={`M${x} 18H${x + 13}M${x} 30H${x + 13}`}
+            stroke={ink}
+            stroke-width="2.7"
+          />
+          <path
+            d={`M${x + 12.2} 18L${x + 0.8} 30`}
+            stroke={app.hue}
+            stroke-width="4.8"
+          />
+        </g>
+      ))
+    }
+  </g>
+</svg>

@@ -1,0 +1,52 @@
+---
+/**
+ * h05 · Own Bank
+ *
+ * A bridge between two banks. Its ZZ is absent material: two truss openings
+ * punched through the girder, so the crossing and letters cannot be separated.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.hozz;
+const uid = `h05-${Math.random().toString(36).slice(2, 9)}`;
+
+const Z = { y: 18.8, w: 10.4, h: 10.7, bar: 2.15, diag: 4.65, cap: 'angled' as const };
+const zLeft = 10.2;
+const zRight = 27.4;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+  data-ground={ground}
+>
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
+      <path d={zPath({ ...Z, x: zRight })} fill="#000" />
+    </mask>
+  </defs>
+
+  <path d="M10 29H15L14 41H8L10 29Z" fill={app.deep} />
+  <path d="M33 29H38L40 41H34L33 29Z" fill={app.deep} />
+
+  <g mask={`url(#${uid})`}>
+    <path d="M7 16H41V25L37.5 32H10.5L7 25Z" fill={app.hue} />
+    <path d="M9 28H39L37.5 32H10.5Z" fill={app.deep} opacity="0.52" />
+  </g>
+
+  <rect x="4" y="13" width="40" height="4.5" rx="1.4" fill={app.deep} />
+  <rect x="5.4" y="13" width="37.2" height="1.7" rx=".8" fill={app.light} />
+</svg>

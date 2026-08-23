@@ -1,0 +1,76 @@
+---
+/**
+ * m06 · Peak ladder
+ *
+ * Two physical level meters use a regular ladder of horizontal cells. Selected
+ * cells widen and step through that native texture to form the Zs, so this is a
+ * meter state rather than a waveform floating without an instrument.
+ */
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.mozz;
+const groundFill = ground === 'dark' ? '#16181c' : '#fbfbfa';
+
+const meters = [8.7, 27.3];
+const rows = [14, 17, 20, 23, 26, 29];
+const steps = [
+  { x: 7.7, y: 16.6, w: 4.1 },
+  { x: 5.2, y: 19.6, w: 4.5 },
+  { x: 2.7, y: 22.6, w: 4.5 },
+  { x: 0.2, y: 25.6, w: 4.1 },
+];
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} twin level meter mark`}
+>
+  <rect x="3.5" y="7.5" width="41" height="33" rx="4.2" fill={app.deep} />
+  {
+    meters.map((x) => (
+      <>
+        <rect
+          x={x - 1.7}
+          y="11"
+          width="15.2"
+          height="25.2"
+          rx="2.2"
+          fill={groundFill}
+          stroke={app.hue}
+          stroke-width="1"
+        />
+        {rows.map((y) => (
+          <rect x={x} y={y} width="11.8" height="1.25" rx="0.625" fill={app.hue} opacity="0.3" />
+        ))}
+
+        <rect x={x} y="13.75" width="11.8" height="1.65" rx="0.825" fill={app.light} />
+        {steps.map((step) => (
+          <rect
+            x={x + step.x}
+            y={step.y}
+            width={step.w}
+            height="2.7"
+            rx="1.1"
+            fill={app.light}
+          />
+        ))}
+        <rect x={x} y="28.85" width="11.8" height="1.65" rx="0.825" fill={app.light} />
+      </>
+    ))
+  }
+  <circle cx="6.2" cy="10.2" r="0.9" fill={app.hue} />
+  <circle cx="41.8" cy="10.2" r="0.9" fill={app.hue} />
+  <circle cx="6.2" cy="37.8" r="0.9" fill={app.hue} />
+  <circle cx="41.8" cy="37.8" r="0.9" fill={app.hue} />
+  <rect x="18.3" y="37.35" width="11.4" height="1.25" rx="0.625" fill={app.hue} />
+</svg>

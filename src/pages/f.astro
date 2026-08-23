@@ -1,0 +1,380 @@
+---
+/**
+ * The family board, round three.
+ *
+ * Grouped by app, because the whole point of this round is that each app gets
+ * its own object. A page that mixed them would hide exactly the thing being
+ * judged. Auto-discovers `src/components/f/*.astro` so any number of agents can
+ * work in parallel without a shared import list — and derives all label text
+ * from the `.meta.ts` siblings, never from the components, so no concept's
+ * markup can leak into this page's bundle.
+ */
+import '../styles/sketch-base.css';
+import { APPS } from '../data/brand';
+import { SITE } from '../data/site';
+
+const mods = import.meta.glob('../components/f/*.astro', { eager: true }) as Record<
+  string,
+  { default: any }
+>;
+type Meta = {
+  n?: string;
+  name?: string;
+  app?: string;
+  object?: string;
+  move?: string;
+  reading?: string;
+  sentence?: string;
+  idea?: string;
+  palette?: string[];
+};
+const metas = import.meta.glob('../components/f/*.meta.ts', { eager: true }) as Record<
+  string,
+  { default?: Meta }
+>;
+
+const items = Object.entries(mods)
+  .map(([path, mod]) => {
+    const slug = path.split('/').pop()!.replace('.astro', '');
+    const meta = metas[path.replace('.astro', '.meta.ts')]?.default ?? {};
+    return { slug, Comp: mod.default, meta };
+  })
+  .sort((a, b) => a.slug.localeCompare(b.slug));
+
+const groups = APPS.map((app) => ({
+  app,
+  items: items.filter((i) => (i.meta.app ?? '') === app.key),
+})).filter((g) => g.items.length > 0);
+
+const orphans = items.filter((i) => !APPS.some((a) => a.key === i.meta.app));
+const total = items.length;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Objects · zz family</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href={`${SITE}/f/`} />
+  </head>
+  <body>
+    <header class="top">
+      <p class="eyebrow">Plozz · Mozz · Twozz · Hozz</p>
+      <h1>Each app gets its own object.</h1>
+      <p class="lede">
+        The last two rounds drew a ZZ and tinted it four ways. That is why every
+        direction looked the same — there was nothing in them but the letters.
+        The shipped marks already prove the structure: same face, three
+        completely different objects. A television, a disc, a speech bubble.
+      </p>
+      <p class="lede lede--fine">
+        So this round designs the object first and then finds the ZZ already
+        inside it — cut out of the screen, worn into the groove, folded into the
+        seam. Each concept says in one line what the ZZ <em>is</em>. If it could
+        be lifted off and dropped on a different shape, it failed.
+        <a href="/logos/">The pixel marks are here</a>, and
+        <a href="/id/">the five survivors of round two are here</a>.
+      </p>
+      {
+        total > 0 && (
+          <nav class="jump">
+            {groups.map((g) => (
+              <a href={`#${g.app.key}`}>
+                {g.app.name} <span>{g.items.length}</span>
+              </a>
+            ))}
+          </nav>
+        )
+      }
+    </header>
+
+    <main>
+      {
+        total === 0 && (
+          <p class="empty">
+            Nothing built yet. Concepts appear here as they land.
+          </p>
+        )
+      }
+
+      {
+        groups.map((g) => (
+          <section class="app" id={g.app.key} style={`--hue:${g.app.hue};--deep:${g.app.deep}`}>
+            <div class="app-head">
+              <h2>{g.app.name}</h2>
+              <p class="what">{g.app.what}</p>
+              <p class="motif">{g.app.motif}</p>
+            </div>
+
+            <div class="grid">
+              {g.items.map(({ slug, Comp, meta }) => (
+                <figure class="card">
+                  <figcaption class="meta">
+                    <p class="n">
+                      <span class="slug">{meta.n ?? slug}</span>
+                      <strong>{meta.name ?? slug}</strong>
+                    </p>
+                    {meta.sentence && <p class="sentence">{meta.sentence}</p>}
+                    {meta.idea && <p class="idea">{meta.idea}</p>}
+                    <p class="tags">
+                      {meta.object && <span class="tag">{meta.object}</span>}
+                      {meta.move && <span class="tag tag--move">{meta.move}</span>}
+                      {meta.reading && (
+                        <span class="tag tag--read">Zs as {meta.reading}</span>
+                      )}
+                    </p>
+                    {meta.palette && (
+                      <p class="swatches">
+                        {meta.palette.map((c) => (
+                          <span class="sw" style={`--c:${c}`} title={c} />
+                        ))}
+                      </p>
+                    )}
+                  </figcaption>
+
+                  <div class="rows">
+                    <div class="row row--light">
+                      {[96, 48, 40, 24].map((s) => (
+                        <div class="cell">
+                          <Comp size={s} ground="light" />
+                          <span class="px">{s}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div class="row row--dark">
+                      {[96, 48, 40, 24].map((s) => (
+                        <div class="cell">
+                          <Comp size={s} ground="dark" />
+                          <span class="px">{s}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </figure>
+              ))}
+            </div>
+          </section>
+        ))
+      }
+
+      {
+        orphans.length > 0 && (
+          <section class="app" id="unsorted">
+            <div class="app-head">
+              <h2>Unsorted</h2>
+              <p class="what">No app declared in the meta file.</p>
+            </div>
+            <div class="grid">
+              {orphans.map(({ slug, Comp, meta }) => (
+                <figure class="card">
+                  <figcaption class="meta">
+                    <p class="n">
+                      <span class="slug">{meta.n ?? slug}</span>
+                      <strong>{meta.name ?? slug}</strong>
+                    </p>
+                  </figcaption>
+                  <div class="rows">
+                    <div class="row row--light">
+                      {[96, 48, 40, 24].map((s) => (
+                        <div class="cell">
+                          <Comp size={s} ground="light" />
+                          <span class="px">{s}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </figure>
+              ))}
+            </div>
+          </section>
+        )
+      }
+    </main>
+
+    <style>
+      .jump {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 1.5rem;
+      }
+      .jump a {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 0.4rem;
+        padding: 0.35rem 0.7rem;
+        border: 1px solid var(--rule, #e2e2e2);
+        border-radius: 999px;
+        font-size: 0.9rem;
+        text-decoration: none;
+        color: inherit;
+      }
+      .jump a span {
+        font-family: var(--mono, ui-monospace, monospace);
+        font-size: 0.7rem;
+        opacity: 0.55;
+      }
+      .jump a:hover {
+        border-color: currentColor;
+      }
+
+      .empty {
+        max-width: 34rem;
+        margin: 4rem auto;
+        text-align: center;
+        opacity: 0.6;
+      }
+
+      .app {
+        margin: 4.5rem 0;
+      }
+      .app-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 0.4rem 1rem;
+        padding-bottom: 0.85rem;
+        margin-bottom: 1.5rem;
+        border-bottom: 2px solid var(--hue);
+      }
+      .app-head h2 {
+        margin: 0;
+        color: var(--deep);
+      }
+      .what {
+        margin: 0;
+        font-size: 0.9rem;
+      }
+      .motif {
+        margin: 0;
+        font-size: 0.7rem;
+        font-family: var(--mono, ui-monospace, monospace);
+        opacity: 0.5;
+      }
+
+      .grid {
+        display: grid;
+        gap: 1.25rem;
+      }
+
+      .card {
+        display: grid;
+        grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+        gap: 1.5rem;
+        align-items: start;
+        margin: 0;
+        padding: 1.25rem;
+        border: 1px solid var(--rule, #e6e6e6);
+        border-radius: 14px;
+      }
+
+      .meta {
+        min-width: 0;
+      }
+      .n {
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+        margin: 0 0 0.4rem;
+      }
+      .slug {
+        font-family: var(--mono, ui-monospace, monospace);
+        font-size: 0.7rem;
+        opacity: 0.45;
+      }
+      .n strong {
+        font-size: 1.15rem;
+      }
+      .sentence {
+        margin: 0 0 0.5rem;
+        font-size: 0.9rem;
+        font-style: italic;
+        color: var(--deep);
+      }
+      .idea {
+        margin: 0 0 0.7rem;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        opacity: 0.75;
+      }
+      .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+        margin: 0 0 0.6rem;
+      }
+      .tag {
+        padding: 0.15rem 0.5rem;
+        border: 1px solid var(--rule, #e6e6e6);
+        border-radius: 999px;
+        font-size: 0.7rem;
+        font-family: var(--mono, ui-monospace, monospace);
+      }
+      .tag--move {
+        border-color: var(--hue);
+        color: var(--deep);
+      }
+      .tag--read {
+        opacity: 0.6;
+      }
+      .swatches {
+        display: flex;
+        gap: 0.3rem;
+        margin: 0;
+      }
+      .sw {
+        width: 0.9rem;
+        height: 0.9rem;
+        border-radius: 4px;
+        background: var(--c);
+        box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.12);
+      }
+
+      .rows {
+        display: grid;
+        gap: 0.6rem;
+        min-width: 0;
+      }
+      .row {
+        display: flex;
+        align-items: flex-end;
+        gap: 1.1rem;
+        padding: 1rem 1.15rem;
+        border-radius: 10px;
+        overflow-x: auto;
+      }
+      .row--light {
+        background: #fbfbfa;
+        box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.06);
+      }
+      .row--dark {
+        background: #16181c;
+      }
+      .cell {
+        display: grid;
+        justify-items: center;
+        gap: 0.35rem;
+        flex: 0 0 auto;
+      }
+      .px {
+        font-family: var(--mono, ui-monospace, monospace);
+        font-size: 0.7rem;
+        opacity: 0.45;
+      }
+      .row--dark .px {
+        color: #fff;
+        opacity: 0.4;
+      }
+
+      @media (max-width: 900px) {
+        .card {
+          grid-template-columns: 1fr;
+          gap: 1rem;
+        }
+      }
+    </style>
+  </body>
+</html>

@@ -1,0 +1,93 @@
+---
+/**
+ * p00 · Panel — the reference exemplar for round three.
+ *
+ * A flat screen with almost no bezel, standing on a slim foot. The ZZ is not
+ * drawn on the screen; it is punched *through* it, so whatever is behind the
+ * mark shows through the letters. Cover the letters and a television is still
+ * there. Cover the television and the letters stop existing, because they have
+ * no fill of their own — they are absence.
+ *
+ * The mouth is the speaker slot, punched the same way. That is the point of
+ * keeping a face here: it does not have to be the shipped pixel smile, it just
+ * has to be part of the object.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.plozz;
+
+// A unique id per instance, because this component is rendered many times on
+// one page and a duplicated mask id would silently apply the wrong mask.
+const uid = `p00-${Math.random().toString(36).slice(2, 9)}`;
+
+const PANEL = { x: 4, y: 9, w: 40, h: 23, r: 3 };
+
+// 40 : 23 is 1.74 — a real panel proportion, not a rounded square.
+const Z = { y: 13.6, w: 8.8, h: 9.4, bar: 2.7, diag: 4.8, cap: 'angled' as const };
+const zLeft = 14.2;
+const zRight = 25; // 2 units of gap; the pair spans 14.2–33.8, centred on 24
+
+// The face sits on the middle of the screen, not the middle of the 48-box:
+// the Zs run 13.6–23 and the slot ends at 27.1, so the face centres on 20.35 —
+// within a fifth of a unit of the panel's own centre at 20.5.
+const MOUTH = { x: 19.5, y: 25.4, w: 9, h: 1.7, r: 0.85 };
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
+      <path d={zPath({ ...Z, x: zRight })} fill="#000" />
+      <rect
+        x={MOUTH.x}
+        y={MOUTH.y}
+        width={MOUTH.w}
+        height={MOUTH.h}
+        rx={MOUTH.r}
+        fill="#000"
+      />
+    </mask>
+  </defs>
+
+  {/* The foot is outside the mask — nothing is punched through it. */}
+  <rect x="22.5" y="30" width="3" height="6.6" fill={app.deep} />
+  <rect x="16" y="36.4" width="16" height="2.1" rx="1" fill={app.deep} />
+
+  <g mask={`url(#${uid})`}>
+    <rect
+      x={PANEL.x}
+      y={PANEL.y}
+      width={PANEL.w}
+      height={PANEL.h}
+      rx={PANEL.r}
+      fill={app.hue}
+    />
+    {/* One step of shade along the lower edge, so the panel has a thickness. */}
+    <path
+      d={`M${PANEL.x} ${PANEL.y + PANEL.h - 3}H${PANEL.x + PANEL.w}V${
+        PANEL.y + PANEL.h - PANEL.r
+      }A${PANEL.r} ${PANEL.r} 0 0 1 ${PANEL.x + PANEL.w - PANEL.r} ${
+        PANEL.y + PANEL.h
+      }H${PANEL.x + PANEL.r}A${PANEL.r} ${PANEL.r} 0 0 1 ${PANEL.x} ${
+        PANEL.y + PANEL.h - PANEL.r
+      }Z`}
+      fill={ground === 'dark' ? app.deep : app.deep}
+      opacity="0.55"
+    />
+  </g>
+</svg>

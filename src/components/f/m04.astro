@@ -1,0 +1,78 @@
+---
+/**
+ * m04 · Cone fold
+ *
+ * Two drivers share one compact speaker cabinet. Each pale Z is not a badge
+ * placed over a cone: it is the cone's folded diaphragm, and its open terminals
+ * only become letterforms because the circular surround clips them.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.mozz;
+const uid = `m04-${Math.random().toString(36).slice(2, 9)}`;
+
+const drivers = [
+  { cx: 14.2, clip: `${uid}-left`, x: 7.4 },
+  { cx: 33.8, clip: `${uid}-right`, x: 27 },
+];
+const Z = {
+  y: 18,
+  w: 13.6,
+  h: 12,
+  bar: 2.7,
+  diag: 5.2,
+  cap: 'open' as const,
+};
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} twin speaker cone mark`}
+>
+  <defs>
+    {
+      drivers.map((driver) => (
+        <clipPath id={driver.clip}>
+          <circle cx={driver.cx} cy="24" r="6.9" />
+        </clipPath>
+      ))
+    }
+  </defs>
+
+  <rect
+    x="3.5"
+    y="11.5"
+    width="41"
+    height="25"
+    rx="5.2"
+    fill={app.deep}
+    stroke={ground === 'dark' ? app.light : app.deep}
+    stroke-width="0.8"
+    stroke-opacity={ground === 'dark' ? 0.34 : 1}
+  />
+  {
+    drivers.map((driver) => (
+      <>
+        <circle cx={driver.cx} cy="24" r="9.2" fill={app.hue} />
+        <circle cx={driver.cx} cy="24" r="6.9" fill={app.deep} />
+        <path
+          d={zPath({ ...Z, x: driver.x })}
+          fill={app.light}
+          clip-path={`url(#${driver.clip})`}
+        />
+      </>
+    ))
+  }
+  <rect x="19.2" y="33.2" width="9.6" height="1.35" rx="0.675" fill={app.hue} />
+</svg>

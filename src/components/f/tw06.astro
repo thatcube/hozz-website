@@ -1,0 +1,60 @@
+---
+/**
+ * tw06 · Signal fan
+ *
+ * Two broadcast ribs leave one live point, kink into stacked Z paths, and end
+ * beside advancing wavefronts. The letters are therefore the signal itself.
+ */
+import { zSpine } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.twozz;
+
+const upperCore = zSpine({ x: 12, y: 11, w: 14, h: 9 }).replace(/^M/, 'L');
+const lowerCore = zSpine({ x: 12, y: 28, w: 14, h: 9 }).replace(/^M/, 'L');
+const upperSignal = `M7.5 21.4Q9.2 14.5 12 11${upperCore}Q30 19.2 34.5 17`;
+const lowerSignal = `M7.5 26.6Q9.2 33.5 12 28${lowerCore}Q30 28.8 34.5 31`;
+const edge = ground === 'dark' ? app.light : app.deep;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} live signal mark`}
+>
+  {/* Each complete path begins at the live point and travels toward a wavefront. */}
+  <path
+    d={upperSignal}
+    stroke={app.hue}
+    stroke-width="3.3"
+    stroke-linecap="round"
+    stroke-linejoin="bevel"
+  />
+  <path
+    d={lowerSignal}
+    stroke={app.hue}
+    stroke-width="3.3"
+    stroke-linecap="round"
+    stroke-linejoin="bevel"
+  />
+
+  <circle cx="6.5" cy="24" r="4" fill={app.deep} />
+  <circle cx="6.5" cy="24" r="2.15" fill={app.light} />
+  <path
+    d="M35.5 14.5Q42 24 35.5 33.5M39.5 10.5Q48 24 39.5 37.5"
+    stroke={edge}
+    stroke-width="2.5"
+    stroke-linecap="round"
+  />
+  <circle cx="34.5" cy="17" r="2.1" fill={app.light} />
+  <circle cx="34.5" cy="31" r="2.1" fill={app.light} />
+</svg>

@@ -1,0 +1,71 @@
+---
+/**
+ * m05 · Tension frame
+ *
+ * Two continuous strings are laced through four bridge pins apiece. Their
+ * tensioned routes make the Zs; the straight neighboring courses and rigid
+ * frame keep the paths legible as vibrating strings rather than free waveforms.
+ */
+import { zSpine } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.mozz;
+const groundFill = ground === 'dark' ? '#16181c' : '#fbfbfa';
+
+const courses = [
+  { x: 10, w: 11 },
+  { x: 27, w: 11 },
+];
+const pinYs = [18, 30];
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} tensioned string mark`}
+>
+  <path d="M7 8.5H41L45 39.5H3L7 8.5Z" fill={app.deep} />
+  <path d="M9 12H39L41.5 35.5H6.5L9 12Z" fill={groundFill} />
+  <path d="M8.8 13H10.8L9 35.5H6.8L8.8 13Z" fill={app.hue} />
+  <path d="M37.2 13H39.2L41.2 35.5H39L37.2 13Z" fill={app.hue} />
+  <path d="M23.1 12H24.9L26.2 35.5H21.8L23.1 12Z" fill={app.hue} />
+
+  {
+    courses.map((course) => (
+      <>
+        <path
+          d={`M${course.x - 1} 15.2H${course.x + course.w + 1}M${
+            course.x - 1
+          } 32.3H${course.x + course.w + 1}`}
+          stroke={app.hue}
+          stroke-width="1"
+          stroke-linecap="round"
+          opacity="0.62"
+        />
+        <path
+          d={zSpine({ x: course.x, y: 18, w: course.w, h: 11.5 })}
+          stroke={app.light}
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+        {pinYs.map((y) => (
+          <>
+            <circle cx={course.x} cy={y} r="1.8" fill={app.hue} />
+            <circle cx={course.x + course.w} cy={y} r="1.8" fill={app.hue} />
+          </>
+        ))}
+      </>
+    ))
+  }
+  <rect x="18.3" y="37.1" width="11.4" height="1.25" rx="0.625" fill={app.hue} />
+</svg>

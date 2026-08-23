@@ -1,0 +1,40 @@
+---
+/**
+ * tw12 · Message weave
+ *
+ * A fast live-chat feed is reduced to five broad, ragged lines. In the middle,
+ * two adjacent lines leave the horizontal rhythm, travel diagonally, and rejoin
+ * it as ZZ. The letters are a deviation in the transcript's own texture.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.twozz;
+
+const Z = { y: 13.5, w: 12.5, h: 14, bar: 3.3, diag: 6.4, cap: 'angled' as const };
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} woven live-chat lines mark`}
+>
+  <rect x="5" y="4" width="31" height="5.5" rx="2.75" fill={app.deep} />
+  <rect x="12" y="31" width="31" height="5.5" rx="2.75" fill={app.light} />
+  <rect x="5" y="39" width="25" height="5.5" rx="2.75" fill={app.deep} />
+
+  <path d={zPath({ ...Z, x: 10 })} fill={app.hue} />
+  <path d={zPath({ ...Z, x: 25.5 })} fill={app.hue} />
+
+  <circle cx="5.5" cy="16.25" r="2.75" fill={app.light} />
+  <circle cx="42.5" cy="24.75" r="2.75" fill={app.light} />
+</svg>
