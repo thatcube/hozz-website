@@ -8,15 +8,23 @@ cover it. So none of these four is painted. A depth map is counted first —
 The ramp therefore falls out of the geometry, and the deepest overlap, which is
 the calmest part of the form, is where the face goes.
 
-Three things the rejected marks got wrong, all fixed here by assertion:
+*Every petal is a canonical circle, translated.* Not one radius test appears in
+this file. Petals come from `circles.circle(...)` — the profile lifted off the
+shipped Mozz mark — and are moved by whole-pixel offsets, so all n petals are
+byte-identical to each other, as they plainly are in the reference images. The
+earlier pass rasterised `x² + y² <= r²` at a different radius per mark and got a
+different-looking circle every time; several came out octagonal.
 
-*Protrusions.* A pixel disc widens by six or more in a row near its cap, which
-reads as a spur. Every silhouette here is trimmed top-down and bottom-up so no
-row is more than two wider than its neighbour above. The trim is applied about
-x=16, so it cannot break the mirror.
+*The shoulder steps four, and that is correct.* Mozz's own profile opens
+8, 12, 16 — two four-pixel steps — so an earlier rule of mine that clamped every
+row to at most two wider than the row above it was flattening the corners into an
+octagon. That clamp is gone. `circles.check` is the authority now: a silhouette
+must be symmetric about x=16 and free of spurs, where a spur is a row wider than
+both its neighbours. `monotone()` below enforces exactly that and nothing more,
+so the four-steps survive.
 
-*Symmetry.* The depth map is counted for the left half and mirrored into the
-right, so every layer is symmetric about x=16 by construction, not by luck.
+*Symmetry.* Petal offsets are whole pixels in ± pairs and the canonical circle is
+symmetric about x=16, so every layer mirrors by construction, not by luck.
 
 *Centring.* The face is placed from the measured (height, offset) table, never
 computed, and both the air inside the field it sits on and the air inside the
@@ -34,6 +42,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tools'))
 
 from shade import keyline, to_paths, is_slab  # noqa: E402
+from circles import circle, check as circle_check  # noqa: E402
 
 OUT = ROOT / 'src/components/mark/logos'
 GRID = 32
@@ -53,51 +62,40 @@ FACE_W = {'lg': 10, 'md': 8, 'sm': 7}
 # geometry
 # --------------------------------------------------------------------------- #
 
-def mirror(s):
-    """Complete a left-half set into a full mirror-symmetric one."""
-    return {(x, y) for x, y in s} | {(31 - x, y) for x, y in s}
+def petal(size, dx=0, dy=0, top=2):
+    """A canonical circle moved by whole pixels. The only source of round shapes
+    in this file."""
+    return {(x + dx, y + dy) for x, y in circle(size, top)}
 
 
-def disc(cx, cy, r):
-    rr = r * r
-    return {(x, y) for x in range(GRID) for y in range(GRID)
-            if (x + 0.5 - cx) ** 2 + (y + 0.5 - cy) ** 2 <= rr}
+def erode(shape):
+    """Peel one pixel off every edge, four-connected."""
+    return {(x, y) for x, y in shape
+            if {(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)} <= shape}
 
 
-def annulus(cx, cy, r, t):
-    ri = max(r - t, 0.0)
-    rr, rri = r * r, ri * ri
-    return {(x, y) for x in range(GRID) for y in range(GRID)
-            if rri < (x + 0.5 - cx) ** 2 + (y + 0.5 - cy) ** 2 <= rr}
+def outline(shape, t=1):
+    """The outer `t` pixels of a shape. Derived from the canonical circle by
+    erosion, so a petal ring keeps the circle's profile instead of needing a
+    second radius."""
+    inner = shape
+    for _ in range(t):
+        inner = erode(inner)
+    return shape - inner
 
 
-def petal_centres(n, cy, dist, phase=-90.0):
-    """n points on a ring. Rounded so the pair at ±angle mirrors exactly."""
+def petal_offsets(n, dist, phase=-90.0):
+    """n whole-pixel offsets on a ring. Rounded, then forced into exact ±
+    pairs so the rosette mirrors about x=16 with no float slop."""
     out = []
     for i in range(n):
         a = math.radians(phase + i * 360.0 / n)
-        out.append((CX + round(dist * math.cos(a), 6), cy + round(dist * math.sin(a), 6)))
+        dx, dy = round(dist * math.cos(a)), round(dist * math.sin(a))
+        out.append((dx, dy))
+    have = set(out)
+    for dx, dy in out:
+        assert (-dx, dy) in have, f'offsets not mirror-paired: {out}'
     return out
-
-
-def depth_map(n, cy, dist, r, phase=-90.0, ring=None):
-    """{(x, y): how many petals cover it}. Counted on the left half and
-    mirrored, so the map is symmetric about x=16 by construction."""
-    half = {}
-    for (px, py) in petal_centres(n, cy, dist, phase):
-        pet = disc(px, py, r) if ring is None else annulus(px, py, r, ring)
-        for (x, y) in pet:
-            if x <= 15:
-                half[(x, y)] = half.get((x, y), 0) + 1
-            else:
-                # count the mirrored pixel instead; the arrangement is
-                # left-right symmetric, so the two agree.
-                pass
-    full = {}
-    for (x, y), v in half.items():
-        full[(x, y)] = v
-        full[(31 - x, y)] = v
-    return full
 
 
 def rows_of(s):
@@ -113,34 +111,67 @@ def widths(s):
 
 def fill_rows(body):
     """Close every row into one run. A union of circles can leave a row split
-    into two feet with paper showing between them; that reads as a defect, and
-    filling min..max cannot break the mirror."""
+    into two feet with paper showing between them; filling min..max cannot
+    break the mirror."""
     return {(x, y) for y, xs in rows_of(body).items()
             for x in range(xs[0], xs[-1] + 1)}
 
 
-def trim_profile(body):
-    """Trim rows, symmetrically about x=16, until no row is more than two
-    wider than the row above or below it. This is what kills the spurs a bare
-    pixel circle grows at its cap."""
+def monotone(body):
+    """Remove local maxima in row width — the only defect `circles.check` names.
+
+    The widths are cut down to the largest profile that rises to one peak and
+    falls away again. That deletes a bulge without inflating anything, and it
+    leaves the four-pixel shoulder steps of the canonical circle untouched.
+    Rows are rebuilt as centred runs about x=16, so the mirror survives.
+    """
     body = fill_rows(body)
     w = widths(body)
     ys = sorted(w)
-    for _ in range(4):
-        for y in ys[1:]:
-            if y - 1 in w:
-                w[y] = min(w[y], w[y - 1] + 2)
-        for y in reversed(ys[:-1]):
-            if y + 1 in w:
-                w[y] = min(w[y], w[y + 1] + 2)
+    peak = max(range(len(ys)), key=lambda i: (w[ys[i]], -abs(i - len(ys) // 2)))
+    v = dict(w)
+    for i in range(peak - 1, -1, -1):
+        v[ys[i]] = min(v[ys[i]], v[ys[i + 1]])
+    for i in range(peak + 1, len(ys)):
+        v[ys[i]] = min(v[ys[i]], v[ys[i - 1]])
     out = set()
     for y in ys:
-        if w[y] < 2:
+        if v[y] < 2:
             continue
-        half = w[y] / 2.0
+        half = v[y] / 2.0
         lo, hi = int(CX - half), int(CX + half) - 1
         out |= {(x, y) for x in range(lo, hi + 1)}
     return out
+
+
+def depth_map(n, dist, size, phase=-90.0, top=2, ring=None):
+    """depth[p] = how many petals cover p. Petals are identical translated
+    canonical circles; a ring petal is that circle's outline."""
+    dep = {}
+    for dx, dy in petal_offsets(n, dist, phase):
+        pet = petal(size, dx, dy, top)
+        if ring:
+            pet = outline(pet, ring)
+        for q in pet:
+            dep[q] = dep.get(q, 0) + 1
+    return dep
+
+
+def profile_faults(body):
+    """Rows wider than both neighbours — `circles.check`'s definition."""
+    w = widths(body)
+    ys = sorted(w)
+    return [(ys[i], w[ys[i - 1]], w[ys[i]], w[ys[i + 1]])
+            for i in range(1, len(ys) - 1)
+            if w[ys[i]] > w[ys[i - 1]] and w[ys[i]] > w[ys[i + 1]]]
+
+
+def count_faults(body):
+    r = rows_of(body)
+    ys = sorted(r)
+    return [(ys[i], len(r[ys[i - 1]]), len(r[ys[i]]), len(r[ys[i + 1]]))
+            for i in range(1, len(ys) - 1)
+            if len(r[ys[i]]) > len(r[ys[i - 1]]) and len(r[ys[i]]) > len(r[ys[i + 1]])]
 
 
 def split_rows(body):
@@ -149,22 +180,10 @@ def split_rows(body):
             if xs[-1] - xs[0] + 1 != len(xs)]
 
 
-def profile_faults(body):
+def max_step(body):
     w = widths(body)
     ys = sorted(w)
-    return ([(ys[i], w[ys[i - 1]], w[ys[i]]) for i in range(1, len(ys))
-             if ys[i] == ys[i - 1] + 1 and w[ys[i]] - w[ys[i - 1]] > 2]
-            + [(ys[i], w[ys[i + 1]], w[ys[i]]) for i in range(len(ys) - 1)
-               if ys[i] + 1 == ys[i + 1] and w[ys[i]] - w[ys[i + 1]] > 2])
-
-
-def count_faults(body):
-    r = rows_of(body)
-    ys = sorted(r)
-    return ([(ys[i], len(r[ys[i - 1]]), len(r[ys[i]])) for i in range(1, len(ys))
-             if ys[i] == ys[i - 1] + 1 and len(r[ys[i]]) - len(r[ys[i - 1]]) > 2]
-            + [(ys[i], len(r[ys[i + 1]]), len(r[ys[i]])) for i in range(len(ys) - 1)
-               if ys[i] + 1 == ys[i + 1] and len(r[ys[i]]) - len(r[ys[i + 1]]) > 2])
+    return max((w[ys[i]] - w[ys[i - 1]] for i in range(1, len(ys))), default=0)
 
 
 def symmetric(s):
