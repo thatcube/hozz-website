@@ -2,11 +2,11 @@
 /**
  * m01 · Rim — a record, cut wider than itself.
  *
- * The dependency: **the disc's edge is what ends every bar.** The pair is drawn
- * wider than the record, so all four bar ends fall outside it and are taken by
- * the rim — the silhouette is notched four times and no terminal in the mark is
- * drawn by hand. Narrow the record and the letters lose their ends; widen it
- * and the notches close.
+ * The dependency: **the rim is the shape of every bar end.** The pair is drawn
+ * wider than the record and the cut is clipped to the disc, so all four bar
+ * ends are arcs — a terminal no straight tool could make, and one that only a
+ * circle of this radius produces. Change the record's size and every end
+ * changes with it. Nothing about the ends is drawn by hand.
  *
  * The spindle is deliberately smaller than the gap here: the spacing is not its
  * job in this one.
@@ -26,8 +26,9 @@ const R = 19; // disc spans 5–43
 const GAP = 7;
 
 // 17 + 7 + 17 = 41, running 3.5 to 44.5 across a disc that runs 5 to 43, so
-// every bar end is over the edge. `cap` is moot: the ends are never on screen.
-const Z = { y: 14, w: 17, h: 20, bar: 3.4, diag: 6.4, cap: 'flat' as const };
+// every bar end is past the edge and gets returned as an arc. `cap` is moot:
+// the drawn terminals are never on screen.
+const Z = { y: 15, w: 17, h: 18, bar: 3.4, diag: 6.4, cap: 'flat' as const };
 const zLeft = 24 - GAP / 2 - Z.w;
 const zRight = 24 + GAP / 2;
 ---
@@ -42,10 +43,17 @@ const zRight = 24 + GAP / 2;
   aria-label={`${app.name} mark`}
 >
   <defs>
+    <clipPath id={`${uid}-disc`}>
+      <circle cx="24" cy="24" r={R} />
+    </clipPath>
     <mask id={uid}>
       <rect width="48" height="48" fill="#fff" />
-      <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
-      <path d={zPath({ ...Z, x: zRight })} fill="#000" />
+      {/* Clipped to the disc, so the outline stays whole and the rim returns
+          each bar end as an arc. */}
+      <g clip-path={`url(#${uid}-disc)`}>
+        <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
+        <path d={zPath({ ...Z, x: zRight })} fill="#000" />
+      </g>
       <circle cx="24" cy="24" r="2" fill="#000" />
     </mask>
   </defs>

@@ -5,8 +5,8 @@ export default {
   object: 'A record with light across it',
   move: 'reflection',
   reading: 'letters',
-  sentence: 'The ZZ is the space cut out of the light lying across the record.',
+  sentence: 'The ZZ is the shadow inside the sweep of light across the record.',
   idea:
-    'The knockout is clipped to the sweep of light, so each Z exists exactly as far as the highlight reaches and its corners are still pink where the light has run out. Narrow the sweep and the letters lose their corners; take the light away and there is nothing cut at all. The rim has no part in this one.',
-  palette: ['#e0243f', '#f58a99'],
+    'The letters are clipped to the sweep of light, so each Z reaches exactly as far as the highlight does and stops where the light runs out. Narrow the sweep and they lose their corners; take the light away and there is no letter left. Deliberately not a knockout: white through pink is 2.2:1 and would wash out, where deep on light is 5.2:1 and holds at 24px. The rim has no part in this one.',
+  palette: ['#e0243f', '#f58a99', '#6d0f1e'],
 };

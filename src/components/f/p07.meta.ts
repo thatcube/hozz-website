@@ -7,6 +7,6 @@ export default {
   sentence: 'The ZZ is the missing light of the shaft.',
   reading: 'letters',
   idea:
-    'A body, an emitter, a shaft: three shapes, no hardware. The letters have no fill of their own — they are light that did not arrive, so they cannot exist without the shaft behind them. The near letter sits where the shaft has not finished opening, so the shaft edge takes a slanted chamfer off the near ends of its bars; the far letter, out where the beam is wide, is whole. Both stay joined and both are a clean knockout against the beam.',
+    'The shaft is the only field the letters have. They carry no fill — they are light that did not arrive — so the beam is what they are made of, and where it has not finished opening its edge takes a slanted chamfer off the near letter. Slide the pair toward the lamp and the beam cuts it away; slide it past the wall and there is nothing left to be missing from. A body, an emitter, a shaft: three shapes, no hardware.',
   palette: ['#00a4dc', '#00506d', '#7fd6f5'],
 };

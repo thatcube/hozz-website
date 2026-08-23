@@ -7,6 +7,6 @@ export default {
   reading: 'eyes',
   sentence: 'The ZZ is the pair of cuts that turns the corner of the bubble.',
   idea:
-    'The bubble has a front face and a side face meeting at a vertical fold. The letters are cut through the object rather than printed on it, so the right-hand Z runs into the fold and is foreshortened by exactly the amount the side face is \u2014 the shape bends the letter, the letter proves the shape. A cut slot serves as the mouth so the pair cannot read as a sleeper.',
+    'The fold is the second Z\u2019s middle: the letter is cut through the object rather than printed on it, so it crosses the corner and its far end is compressed by exactly the amount the side face is. Move the fold and the letter bends somewhere else; flatten the bubble and the letter has no reason to bend at all. A cut slot serves as the mouth so the pair cannot read as a sleeper.',
   palette: ['#8f52f6', '#3d1d75'],
 };

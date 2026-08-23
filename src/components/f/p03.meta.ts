@@ -1,12 +1,12 @@
 export default {
   n: 'p03',
-  name: 'Batten',
+  name: 'Thin',
   app: 'plozz',
-  object: 'A screen, part way out of its roll',
-  move: 'continuation',
+  object: 'A wall panel, seen from below',
+  move: 'relief',
   reading: 'letters',
-  sentence: 'The ZZ is the length of sheet a screen has been unrolled.',
+  sentence: 'The ZZ is the picture of a screen thin enough to show its underside.',
   idea:
-    'The case is the cap line. The sheet is down exactly one line, so the letters hang straight off the underside of the roll with no gap \u2014 the case draws their tops and the drop sets their height. Let it down further and the letters grow with it.',
-  palette: ['#00a4dc', '#00506d'],
+    'Not a knockout. The panel\u2019s thickness is the bottom bar: each diagonal runs down the lit face, stops dead at the corner, and the foot carries on over the bright chamfer, foreshortened to exactly the depth of the set. That is where the stroke contrast comes from \u2014 the top bar is the letter\u2019s, the bottom bar is the object\u2019s. Make the panel thicker and every foot gets heavier.',
+  palette: ['#00a4dc', '#00506d', '#7fd6f5'],
 };

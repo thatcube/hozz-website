@@ -28,12 +28,13 @@ const ZX = [9.5, 26.5];
 const TOP_Y = Z.y + Z.bar / 2;
 const FOOT_Y = Z.y + Z.h - Z.bar / 2;
 
-// Both loose ends of the ribbon land on a hub: the supply and the take-up.
+// Both loose ends of the ribbon land on a hub: the supply and the take-up. They
+// stay small deliberately — at full spool size they read as letters themselves.
 const HUBS = [
   { x: ZX[0], y: TOP_Y },
   { x: ZX[1] + Z.w, y: FOOT_Y },
 ];
-const HUB = { r: 5, core: 2 };
+const HUB = { r: 3.6, core: 1.45 };
 
 const FOLD = `M${ZX[0] + Z.w} ${FOOT_Y}C25.9 27.9 24.5 20.3 ${ZX[1]} ${TOP_Y}`;
 ---

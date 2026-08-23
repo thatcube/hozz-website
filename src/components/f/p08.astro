@@ -1,14 +1,14 @@
 ---
 /**
- * p08 · Iris — a lens wide open in the dark, and the light it lets through.
+ * p08 · Under — a door shut on a lit room, with the light getting out below it.
  *
- * The dependency: **the opening sets the pair's width.** The two letters are
- * inscribed in the iris. They swell to fill it at its widest, and the blades
- * cut the outer corner off every bar on the blade's own slant, so the dark of
- * the barrel floods into the ends. Narrow the hole and the letters are eaten;
- * shrink the pair and it rattles around inside. They are one measurement.
- *
- * Two shapes, two fills. The letters are a full knockout of the light.
+ * The dependency is the direction of the light, not a crop. The only light in
+ * this mark comes from the strip under the door, so everything it touches is
+ * caught along its underside: the raised panel carries the same pale tone on
+ * the bottom edge of every stroke, and nowhere else. Put the light anywhere
+ * else — above, or behind — and the whole letter shades the other way. The
+ * panel is not knocked out of the door; it stands off it, and the light beneath
+ * is what makes it visible at all.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -21,15 +21,14 @@ const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.plozz;
 const uid = `p08-${Math.random().toString(36).slice(2, 9)}`;
 
-// Six blades, opened to a hexagon 36 across and 31.2 high, inside the barrel.
-const R_BARREL = 21.5;
-const iris = 'M42 24L33 8.41H15L6 24L15 39.59H33Z';
+const DOOR = { x: 7, y: 2, w: 34, h: 38 };
+const LIFT = 1.2; // how far the panel stands off the door
 
-// 14.2 + 1.6 + 14.2 = 30, running 9 to 39. At the top and bottom of the bars
-// the blades are only 27.9 apart, so each outer corner loses 1.04 on the slant.
-const Z = { y: 17, w: 14.2, h: 14, bar: 3.9, diag: 7.4, cap: 'flat' as const };
-const zLeft = 9;
+// 13.2 + 1.6 + 13.2 = 28, running 10 to 38 inside a door 34 wide.
+const Z = { y: 14, w: 13.2, h: 14, bar: 3.9, diag: 7.1, cap: 'flat' as const };
+const zLeft = 10;
 const zRight = 24.8;
+const lit = ground === 'dark' ? app.light : app.light;
 ---
 
 <svg
@@ -41,19 +40,23 @@ const zRight = 24.8;
   role="img"
   aria-label={`${app.name} mark`}
 >
-  <defs>
-    <mask id={uid}>
-      <rect width="48" height="48" fill="#fff" />
-      <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
-      <path d={zPath({ ...Z, x: zRight })} fill="#000" />
-    </mask>
-  </defs>
+  <g id={uid}>
+    <rect
+      x={DOOR.x}
+      y={DOOR.y}
+      width={DOOR.w}
+      height={DOOR.h}
+      rx="2"
+      fill={app.deep}
+    />
 
-  <circle
-    cx="24"
-    cy="24"
-    r={R_BARREL}
-    fill={ground === 'dark' ? app.deep : app.deep}
-  />
-  <path d={iris} fill={app.hue} mask={`url(#${uid})`} />
+    {/* The same light, caught on the underside of every stroke. */}
+    <path d={zPath({ ...Z, y: Z.y + LIFT, x: zLeft })} fill={lit} />
+    <path d={zPath({ ...Z, y: Z.y + LIFT, x: zRight })} fill={lit} />
+    <path d={zPath({ ...Z, x: zLeft })} fill={app.hue} />
+    <path d={zPath({ ...Z, x: zRight })} fill={app.hue} />
+
+    {/* Where it gets out. */}
+    <rect x="4" y="41" width="40" height="2.8" rx="1.4" fill={lit} />
+  </g>
 </svg>

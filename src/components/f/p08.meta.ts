@@ -1,12 +1,12 @@
 export default {
   n: 'p08',
-  name: 'Iris',
+  name: 'Under',
   app: 'plozz',
-  object: 'A lens wide open in the dark',
-  move: 'aperture',
-  sentence: "The ZZ is the shape cut out of the aperture's light.",
+  object: 'A shut door with the light getting out below it',
+  move: 'relief',
+  sentence: 'The ZZ is the raised panel of the door.',
   reading: 'letters',
   idea:
-    "The opening sets the pair's width. The two letters are inscribed in the aperture: they swell to touch it at its widest and its curve cuts back the corners of every bar, where the dark of the barrel floods into the ends. Narrow the hole and the letters get eaten; shrink the pair and it rattles inside. They are one measurement, so neither can be changed alone.",
+    'No knockout here. The panel stands off the face of the door, and the only light in the mark is the strip escaping underneath, so every stroke is caught along its bottom edge in that same pale tone and nowhere else. Move the light and the whole letter shades the other way; take the strip away and there is nothing to find the relief. The letters keep clean tonal separation from the door, so they read at a glance even though they are not cut out of it.',
   palette: ['#00a4dc', '#00506d', '#7fd6f5'],
 };

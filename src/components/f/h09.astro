@@ -1,27 +1,24 @@
 ---
 /**
- * h09 · Resting — one trace, running at rest.
+ * h09 · Fold — one tape of the record, folded twice at each letter.
  *
- * The object is a single continuous trace: it enters at the left edge, settles
- * onto its resting line, and leaves at the right edge on the same level it
- * came in at. Nothing else is drawn — no strip, no frame, no grid. A calm
- * signal, because Hozz measures and never scores.
+ * The object is a tape: it enters at the left edge on its resting level and
+ * leaves at the right edge on the same level, and it has the one thing a plate
+ * or a disc or a jar does not — **an underside**.
  *
- * The move: **the resting line is the letters' bottom bar.** The trace does
- * not stop for the pair and the pair is not laid over the trace — the line
- * lifts off its own level, folds twice, and comes back down to it, so the two
- * bottom bars and the two tails are one unbroken run at one height. Raise the
- * resting level and the letters rise with it; take the trace away and there
- * are no letters at all.
+ * The move: the tape folds back on itself, and the fold is the letter. Where
+ * it turns, you see the underside instead of the face, so **the diagonal of
+ * each Z is the back of the tape** — which is also why the diagonal is heavier
+ * than the bars, because a tape crossing at an angle covers more ground than
+ * one running flat. The creases are mitred, as a real fold is. Flatten the
+ * tape and both letters go with it; there is no letter here that is not a
+ * turn in the material.
  *
- * The run breaks between the Zs, as a real excursion does, or the pair would
- * close up and read as a pair of sevens. The fold is heavier than the run,
- * which is what a stroke of constant width does when it crosses at an angle —
- * never a typeface.
+ * The Z is built from the tape's own geometry, not from a typeface: three
+ * faces per letter, joined along the two creases.
  *
  * Zs as letters, not eyes: no face on a health mark.
  */
-import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
 
 interface Props {
@@ -31,24 +28,35 @@ interface Props {
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.hozz;
 
-const BAR = 3.4;
-const REST = 32; // the resting level: the centre line of both bottom bars
+const T = 4; // the tape's width, and therefore the bar
+const W = 13.5;
+const H = 19;
+const D = 6.6; // what the tape covers crossing at an angle: heavier than T
+const Y = 14.5;
+const REST = Y + H - T; // the level the tape runs at, entering and leaving
+const x1 = 8.6;
+const x2 = 25.1;
+const xEnd = x2 + W;
 
-const Z = {
-  y: REST - 20 + BAR / 2,
-  w: 13.2,
-  h: 20,
-  bar: BAR,
-  diag: 5.6,
-  cap: 'flat' as const,
-};
-const zLeft = 9;
-const zRight = 25.2;
-const zEnd = zRight + Z.w;
+const pt = (x: number, y: number) => `${x},${y}`;
+// The face: the tape seen from the front, running flat.
+const faceTop = (X: number) =>
+  [pt(X, Y), pt(X + W, Y), pt(X + W - D, Y + T), pt(X, Y + T)].join(' ');
+const faceBottom = (X: number) =>
+  [pt(X + D, REST), pt(X + W, REST), pt(X + W, Y + H), pt(X, Y + H)].join(' ');
+// The underside: everything past the two creases.
+const back = (X: number) =>
+  [
+    pt(X + W - D, Y + T),
+    pt(X + W, Y),
+    pt(X + W, Y + T),
+    pt(X + D, REST),
+    pt(X, Y + H),
+    pt(X, REST),
+  ].join(' ');
 
-// The run is dead level either side of the pair: it is at rest, and it holds
-// the same height it hands to the bottom bars.
-const runY = REST - BAR / 2;
+const face = ground === 'dark' ? app.light : app.hue;
+const under = ground === 'dark' ? app.hue : app.deep;
 ---
 
 <svg
@@ -60,12 +68,16 @@ const runY = REST - BAR / 2;
   role="img"
   aria-label={`${app.name} mark`}
 >
-  <g fill={app.hue}>
-    <path d={zPath({ ...Z, x: zLeft })} />
-    <path d={zPath({ ...Z, x: zRight })} />
+  <g fill={under}>
+    <polygon points={back(x1)} />
+    <polygon points={back(x2)} />
   </g>
-  <g fill={app.hue}>
-    <rect x="0" y={runY} width={zLeft} height={BAR} />
-    <rect x={zEnd} y={runY} width={48 - zEnd} height={BAR} />
+  <g fill={face}>
+    <rect x="0" y={REST} width={x1} height={T} />
+    <rect x={xEnd} y={REST} width={48 - xEnd} height={T} />
+    <polygon points={faceTop(x1)} />
+    <polygon points={faceBottom(x1)} />
+    <polygon points={faceTop(x2)} />
+    <polygon points={faceBottom(x2)} />
   </g>
 </svg>

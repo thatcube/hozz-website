@@ -7,6 +7,9 @@
  * 0.72 the rim does — the proof is the spindle, which is an oval for the same
  * reason. Stand the letters upright and the record would have to stand up with
  * them.
+ *
+ * The cut is confined to the top face, so the record's outline stays whole:
+ * cover the letters and an unbroken oval with a thickness under it is left.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -23,22 +26,23 @@ const CY = 22.4;
 const RX = 19;
 const K = 0.72; // what the turn takes out of every vertical
 const RY = RX * K;
-const EDGE = 3.4; // the record's thickness, the one shading step
+const EDGE = 1.8; // the record's thickness, the one shading step
 // In shadow against paper, catching the light against black; either way it is
 // what stops the lens reading as a flat hoop.
 const EDGE_FILL = ground === 'dark' ? app.light : app.deep;
 
 // Drawn upright at 20 tall, then squashed with the surface it is cut into.
+const GAP = 5;
 const Z = {
-  y: CY - 10 / K,
-  w: 15,
-  h: 20 / K,
-  bar: 3.4 / K,
-  diag: 6.4, // horizontal, so the turn leaves it alone
+  y: CY - 8 / K,
+  w: 11,
+  h: 16 / K,
+  bar: 3 / K,
+  diag: 5.4, // horizontal, so the turn leaves it alone
   cap: 'angled' as const,
 };
-const zLeft = 6;
-const zRight = 27;
+const zLeft = 24 - GAP / 2 - Z.w;
+const zRight = 24 + GAP / 2;
 const squash = `translate(0 ${CY}) scale(1 ${K}) translate(0 ${-CY})`;
 ---
 
@@ -52,9 +56,13 @@ const squash = `translate(0 ${CY}) scale(1 ${K}) translate(0 ${-CY})`;
   aria-label={`${app.name} mark`}
 >
   <defs>
+    <clipPath id={`${uid}-face`}>
+      <ellipse cx="24" cy={CY} rx={RX} ry={RY} />
+    </clipPath>
     <mask id={uid}>
       <rect width="48" height="48" fill="#fff" />
-      <g transform={squash}>
+      {/* Cut into the surface only, so the rim survives it. */}
+      <g clip-path={`url(#${uid}-face)`} transform={squash}>
         <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
         <path d={zPath({ ...Z, x: zRight })} fill="#000" />
       </g>

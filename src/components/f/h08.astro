@@ -1,21 +1,20 @@
 ---
 /**
- * h08 · Scored — a field of record, scored at two levels.
+ * h08 · Groove — a plate of the record, cut at two levels.
  *
- * The object is a run of measurement that fills the tile and passes off every
- * edge, because the body was doing this before the app looked. Two levels are
- * scored clean through it — an upper limit and a resting level — and they are
- * the only marks on it.
+ * The object is a plain plate that runs off every edge, with two grooves cut
+ * into it: an upper limit and a resting level. Nothing else is on it.
  *
- * The move that ties the letters to it: **the two scores are the letters'
- * bars**. The upper score is both top bars and the lower score is both bottom
- * bars, and each runs on past the pair to the edge of the tile, so the ZZ is
- * the length of the record where the two levels fold into one another. Only
- * the two falls are added. Shift the levels and the letters change height with
- * them; take them away and there is nothing left but two diagonals.
+ * The move is relief, not a knockout. The grooves are pressed into the plate —
+ * dark in the recess, with the light catching the surface just below each cut —
+ * and **the letters are the passage where the two grooves fold into one
+ * another**. The upper groove is both top bars, the lower groove is both
+ * bottom bars, and each carries on past the pair to the edge of the plate.
+ * Only the two falls are cut. Move a groove and the letters change height with
+ * it; fill the grooves and there is nothing left to read.
  *
- * Scores and letters are one continuous knockout, so the ground shows through
- * both and the pair keeps full tonal separation down to 24px.
+ * The grooves break between the Zs, as a cut that has turned must, or the pair
+ * would close up and read as a pair of sevens.
  *
  * Zs as letters, not eyes: no face on a health mark.
  */
@@ -28,11 +27,11 @@ interface Props {
 }
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.hozz;
-const uid = `h08-${Math.random().toString(36).slice(2, 9)}`;
 
 const BAR = 3.2;
-const TOP = 15; // the upper level, and therefore both top bars
-const FLOOR = 29.6; // the resting level, and therefore both bottom bars
+const TOP = 15;
+const FLOOR = 29.6;
+const LIP = 1.1; // how far the lit surface shows below each cut
 
 const Z = {
   y: TOP,
@@ -42,11 +41,13 @@ const Z = {
   diag: 5.4,
   cap: 'flat' as const,
 };
-// 13.6 + 3 + 13.6 = 30.2, running 8.9 to 39.1, centred on 24. The scores stop
-// at the letter gap, or the pair would read as a pair of sevens.
 const zLeft = 8.9;
 const zRight = 25.5;
 const zMid = zLeft + Z.w;
+
+const plate = app.hue;
+const cut = app.deep;
+const lit = app.light;
 ---
 
 <svg
@@ -58,23 +59,22 @@ const zMid = zLeft + Z.w;
   role="img"
   aria-label={`${app.name} mark`}
 >
-  <defs>
-    <mask id={uid}>
-      <rect width="48" height="48" fill="#fff" />
-      <g fill="#000">
-        <rect x="0" y={TOP} width={zMid} height={BAR} />
-        <rect x={zRight} y={TOP} width={48 - zRight} height={BAR} />
-        <rect x="0" y={FLOOR} width={zMid} height={BAR} />
-        <rect x={zRight} y={FLOOR} width={48 - zRight} height={BAR} />
-        <path d={zPath({ ...Z, x: zLeft })} />
-        <path d={zPath({ ...Z, x: zRight })} />
-      </g>
-    </mask>
-  </defs>
-
-  <g mask={`url(#${uid})`}>
-    <rect width="48" height="48" fill={app.hue} />
-    {/* One shading step: the record below the resting level, held darker. */}
-    <rect x="0" y={FLOOR} width="48" height={48 - FLOOR} fill={app.deep} />
+  <rect width="48" height="48" fill={plate} />
+  {/* The lit surface just below each cut, then the cut itself. */}
+  <g fill={lit} transform={`translate(0 ${LIP})`}>
+    <rect x="0" y={TOP} width={zMid} height={BAR} />
+    <rect x={zRight} y={TOP} width={48 - zRight} height={BAR} />
+    <rect x="0" y={FLOOR} width={zMid} height={BAR} />
+    <rect x={zRight} y={FLOOR} width={48 - zRight} height={BAR} />
+    <path d={zPath({ ...Z, x: zLeft })} />
+    <path d={zPath({ ...Z, x: zRight })} />
+  </g>
+  <g fill={cut}>
+    <rect x="0" y={TOP} width={zMid} height={BAR} />
+    <rect x={zRight} y={TOP} width={48 - zRight} height={BAR} />
+    <rect x="0" y={FLOOR} width={zMid} height={BAR} />
+    <rect x={zRight} y={FLOOR} width={48 - zRight} height={BAR} />
+    <path d={zPath({ ...Z, x: zLeft })} />
+    <path d={zPath({ ...Z, x: zRight })} />
   </g>
 </svg>

@@ -31,12 +31,13 @@ const HEAD = { x: ZX[0], y: TOP_Y };
 const TAIL = { x: 13.6, y: 30.6 };
 const BUD = 3.5;
 
-// The turn between the two folds, and the slack left over after the second.
+// The turn between the two folds. The slack leaves from *under* the second Z's
+// foot, not from its corner, so that corner stays sharp and the letter reads.
 const FOLD = `M${ZX[0] + Z.w} ${FOOT_Y}C26.2 22.4 25 15.4 ${ZX[1]} ${TOP_Y}`;
 const SLACK =
-  `M${ZX[1] + Z.w} ${FOOT_Y}` +
-  `C41.5 31 33 37.5 23 36.5` +
-  `C18.4 36 15 33.6 ${TAIL.x} ${TAIL.y}`;
+  `M35.4 ${FOOT_Y + 0.6}` +
+  `C36.2 31.4 30.4 36.6 22.4 36.2` +
+  `C18.2 36 15 33.4 ${TAIL.x} ${TAIL.y}`;
 ---
 
 <svg

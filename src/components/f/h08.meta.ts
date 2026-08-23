@@ -1,12 +1,12 @@
 export default {
   n: 'h08',
-  name: 'Scored',
+  name: 'Groove',
   app: 'hozz',
-  object: 'A field of record, scored at two levels',
-  move: 'continuation',
+  object: 'A plate of the record, cut at two levels',
+  move: 'relief',
   reading: 'letters',
-  sentence: 'The ZZ is the fold between the two scored levels of the record.',
+  sentence: 'The ZZ is the passage where the two grooves of the plate fold into one another.',
   idea:
-    'The two scores are the letters\u2019 bars: the upper level is both top bars, the lower level is both bottom bars, and each runs on past the pair to the edge of the tile. Only the two falls are added. Move the levels and the letters change with them; take the levels away and two diagonals are all that is left.',
-  palette: ['#12b39a', '#08574b'],
+    'Pressed in, not punched out: the upper groove is both top bars, the lower groove is both bottom bars, and each carries on past the pair to the edge of the plate. Only the two falls are cut. Move a groove and the letters change height with it.',
+  palette: ['#12b39a', '#08574b', '#82e5d3'],
 };

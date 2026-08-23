@@ -3,7 +3,7 @@ const { chromium } = pw;
 import fs from 'node:fs';
 
 const PORT = '4733';
-const slugs = ['p07', 'p08', 'p09', 'm00', 'p00'];
+const slugs = ['p07', 'p08', 'p09', 'm00'];
 
 const b = await chromium.launch();
 const p = await b.newPage({ viewport: { width: 1500, height: 1200 }, deviceScaleFactor: 1 });

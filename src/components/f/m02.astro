@@ -2,11 +2,15 @@
 /**
  * m02 · Sheen — a record with one sweep of light across it.
  *
- * The dependency, and it is h00's in a different material: **the letters are
- * cut only where the light is.** The knockout is clipped to the sweep, so each
- * Z exists exactly as far as the highlight reaches and its corners are still
- * pink where the light has run out. Narrow the sweep and the letters lose
- * their corners; take the light away and there is nothing cut at all.
+ * The dependency, and it is h00's in a different material: **the letters exist
+ * only where the light is.** They are clipped to the sweep, so each Z reaches
+ * exactly as far as the highlight does and simply stops where the light runs
+ * out. Narrow the sweep and the letters lose their corners; take the light away
+ * and there is no letter left at all.
+ *
+ * Not a knockout, and on purpose: white through pink is 2.2:1 and the letters
+ * would wash out. Deep on light is 5.2:1, the strongest pair in the palette,
+ * and the only one that holds at 24px against a highlight.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -54,11 +58,6 @@ const zRight = 27;
     </clipPath>
     <mask id={uid}>
       <rect width="48" height="48" fill="#fff" />
-      {/* The only place a letter can be cut. */}
-      <g clip-path={`url(#${uid}-sheen)`}>
-        <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
-        <path d={zPath({ ...Z, x: zRight })} fill="#000" />
-      </g>
       <circle cx="24" cy="24" r="2" fill="#000" />
     </mask>
   </defs>
@@ -74,6 +73,11 @@ const zRight = 27;
         transform={`rotate(${RAKE} 24 24)`}
         fill={app.light}
       />
+      {/* The only place a letter can exist. */}
+      <g clip-path={`url(#${uid}-sheen)`}>
+        <path d={zPath({ ...Z, x: zLeft })} fill={app.deep} />
+        <path d={zPath({ ...Z, x: zRight })} fill={app.deep} />
+      </g>
     </g>
   </g>
 </svg>

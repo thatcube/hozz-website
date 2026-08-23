@@ -1,12 +1,12 @@
 export default {
   n: 'h09',
-  name: 'Resting',
+  name: 'Fold',
   app: 'hozz',
-  object: 'One trace, running at rest',
+  object: 'One tape of the record, running at rest',
   move: 'weave',
   reading: 'letters',
-  sentence: 'The ZZ is the fold the trace makes above its own resting line.',
+  sentence: 'The ZZ is the pair of folds the tape makes without leaving its level.',
   idea:
-    'The resting line is the letters\u2019 bottom bar. One run enters at the left edge, folds twice, and leaves at the right on the same level \u2014 the tails and the two bottom bars are one height, so the letters cannot be lifted off without the trace losing its level.',
-  palette: ['#12b39a'],
+    'A tape has an underside. Where it turns back on itself you see the back instead of the face, so the diagonal of each Z is the underside of the tape \u2014 and that is why the diagonal is heavier than the bars. The creases are mitred, as a real fold is. Flatten the tape and both letters go with it.',
+  palette: ['#12b39a', '#08574b'],
 };

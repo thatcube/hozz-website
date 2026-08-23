@@ -1,0 +1,13 @@
+import { chromium } from '/Users/brandon/Development/amazon-subscription-canceller/node_modules/playwright/index.mjs';
+const SLUGS=['tw07','tw08','tw13','tw14','tw15'];
+const SIZES=[96,48,40,28];
+const b=await chromium.launch();
+const p=await b.newPage({viewport:{width:1100,height:900},deviceScaleFactor:3});
+await p.goto('http://localhost:4733/f/',{waitUntil:'networkidle'});
+const svgs=await p.evaluate((sl)=>{const o={};for(const f of document.querySelectorAll('figure.card')){const s=f.querySelector('.slug')?.textContent?.trim();if(sl.includes(s))o[s]={light:f.querySelector('.row--light svg').outerHTML,dark:f.querySelector('.row--dark svg').outerHTML};}return o;},SLUGS);
+console.log('found:',Object.keys(svgs).join(','));
+const at=(h,n)=>h.replace(/width="\d+"/,`width="${n}"`).replace(/height="\d+"/,`height="${n}"`);
+const row=(s,g)=>`<div style="background:${g==='dark'?'#16181c':'#fbfbfa'};color:${g==='dark'?'#ddd':'#333'};padding:12px 16px;display:flex;align-items:flex-end;gap:24px"><div style="font:12px monospace;width:40px">${s}</div>${SIZES.map(n=>`<div style="display:flex;flex-direction:column;align-items:center;gap:3px"><div style="width:${n}px;height:${n}px">${at(svgs[s][g],n)}</div><div style="font:9px monospace;opacity:.4">${n}</div></div>`).join('')}</div>`;
+await p.setContent(`<body style="margin:0">${SLUGS.filter(s=>svgs[s]).map(s=>row(s,'light')+row(s,'dark')).join('<div style="height:4px"></div>')}</body>`);
+await p.screenshot({path:'.scratch-t-emote/ladder.png',fullPage:true});
+await b.close();

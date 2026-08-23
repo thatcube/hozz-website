@@ -24,15 +24,15 @@ const app = APP_BY_KEY.twozz;
 const uid = `tw02-${Math.random().toString(36).slice(2, 9)}`;
 const clipId = `${uid}-b`;
 
-/** Said first: 4–34 by 7–29, tail down to the left. */
+/** Said first: 4–35 by 7–29, tail down to the left. */
 const SAID = [
   'M10 7',
-  'H28',
-  'A6 6 0 0 1 34 13',
+  'H29',
+  'A6 6 0 0 1 35 13',
   'V23',
-  'A6 6 0 0 1 28 29',
-  'H15.5',
-  'L7 35.8',
+  'A6 6 0 0 1 29 29',
+  'H16.5',
+  'L7.5 35.6',
   'L11 29',
   'H10',
   'A6 6 0 0 1 4 23',
@@ -41,27 +41,28 @@ const SAID = [
   'Z',
 ].join(' ');
 
-/** Answered: 14–44 by 13–35, tail down to the right. */
+/** Answered: 13–44 by 13–35, tail down to the right. */
 const BACK = [
-  'M20 13',
+  'M19 13',
   'H38',
   'A6 6 0 0 1 44 19',
   'V29',
   'A6 6 0 0 1 38 35',
-  'L41 41.8',
-  'L33.5 35',
-  'H20',
-  'A6 6 0 0 1 14 29',
+  'L41.5 41.6',
+  'L32.5 35',
+  'H19',
+  'A6 6 0 0 1 13 29',
   'V19',
-  'A6 6 0 0 1 20 13',
+  'A6 6 0 0 1 19 13',
   'Z',
 ].join(' ');
 
-/** The shared band is 14–34 by 13–29. The pair spans 15–33: one unit inside it
- *  either side, so the overlap is visibly what sizes the letters. */
-const Z = { y: 15.5, w: 8, h: 11, bar: 2.7, diag: 4.9, cap: 'flat' as const };
-const zLeft = 15;
-const zRight = 25;
+/** The shared band is 13–35 by 13–29. The pair spans 14.2–33.8 and 15–27:
+ *  filling it to within a couple of units all round, so the overlap is visibly
+ *  what sizes the letters. */
+const Z = { y: 15, w: 8.7, h: 12, bar: 3, diag: 5.3, cap: 'flat' as const };
+const zLeft = 14.2;
+const zRight = 25.1;
 
 const crossFill = ground === 'dark' ? app.light : app.deep;
 ---

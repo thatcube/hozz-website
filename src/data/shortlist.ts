@@ -16,12 +16,20 @@ export interface Pick {
 
 export const SHORTLIST: Pick[] = [
   {
-    slug: 'tw07',
-    why: 'The best thing on the board. The face repeats as a receding echo, which is what a chat looks like when one emote gets spammed — no other app in the family could use this.',
+    slug: 'tw08',
+    why: 'The best thing on the board. A head tilted mid-laugh with the mouth wide open — the only mark in the whole set that has an actual expression, and expression is what a chat app is for.',
   },
   {
-    slug: 'tw08',
-    why: 'The same idea held to a single face. An emote reacts rather than sits there, and this is the only mark in the set with a real expression.',
+    slug: 'tw15',
+    why: 'The head is not a circle, which is where the character came from. A jaw with real corners, and the grin cut straight out of it.',
+  },
+  {
+    slug: 'tw07',
+    why: 'The face repeats as a receding echo — what a chat looks like when one emote gets spammed. No other app in the family could use this.',
+  },
+  {
+    slug: 'tw14',
+    why: 'The cleanest of the emote set. Nothing but a head and a grin, and it holds at 24px better than any of them.',
   },
   {
     slug: 'h00',
