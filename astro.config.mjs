@@ -10,7 +10,7 @@ export default defineConfig({
       // The variations and sketches are for review, not for search results. They
       // already carry noindex; keeping them out of the sitemap stops the site
       // from advertising work that is still being decided.
-      filter: (page) => !/\/(v2|directions|sketch)\//.test(page),
+      filter: (page) => !/\/(v2|directions|sketch|lab|lab2)\//.test(page),
     }),
     icon(),
   ],

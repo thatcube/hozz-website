@@ -1,0 +1,169 @@
+---
+/**
+ * 01 — Orbit
+ *
+ * Chips drift on two counter-rotating tracks around the thing you own.
+ *
+ * The radius is the track box's own half-height rather than a length, so the
+ * figure scales with whatever column it is dropped into and cannot outgrow it.
+ * Each chip counter-turns at the parent's rate so its label stays upright,
+ * which is what keeps this reading as data rather than as a spinning graphic.
+ */
+import { CHIPS } from '../../data/chips';
+
+const outer = CHIPS.slice(0, 8);
+const inner = CHIPS.slice(8, 13);
+---
+
+<div class="orbit" role="img" aria-label="Health data types circling a copy you own">
+  <div class="track track--out">
+    {
+      outer.map((c, i) => (
+        <span class="slot" style={`--a: ${(360 / outer.length) * i}deg`}>
+          <span class="holder">
+            <span class="chip" style={`--hue: var(--h-${c.cat})`}>
+              <i aria-hidden="true" />
+              {c.name}
+            </span>
+          </span>
+        </span>
+      ))
+    }
+  </div>
+
+  <div class="track track--in">
+    {
+      inner.map((c, i) => (
+        <span class="slot" style={`--a: ${(360 / inner.length) * i}deg`}>
+          <span class="holder">
+            <span class="chip chip--sm" style={`--hue: var(--h-${c.cat})`}>
+              <i aria-hidden="true" />
+              {c.name}
+            </span>
+          </span>
+        </span>
+      ))
+    }
+  </div>
+
+  <div class="core">
+    <span class="core-k">A copy</span>
+    <span class="core-t">somewhere you own</span>
+  </div>
+</div>
+
+<style>
+  .orbit {
+    position: relative;
+    inline-size: 100%;
+    max-inline-size: 34rem;
+    aspect-ratio: 1;
+    margin-inline: auto;
+    display: grid;
+    place-items: center;
+  }
+
+  /* Inset sets the radius: half the track box. That ties the figure to its own
+     box rather than to a length, so it cannot outgrow the column it is in. */
+  .track {
+    position: absolute;
+  }
+
+  .track--out {
+    inset: 16%;
+    animation: turn 96s linear infinite;
+  }
+
+  .track--in {
+    inset: 27%;
+    animation: turn 74s linear infinite reverse;
+  }
+
+  .slot {
+    position: absolute;
+    inset: 0;
+    transform: rotate(var(--a));
+  }
+
+  .holder {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 50%;
+    transform: translate(-50%, -50%) rotate(calc(var(--a) * -1));
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    white-space: nowrap;
+    padding: 0.32rem 0.68rem 0.32rem 0.56rem;
+    border-radius: 999px;
+    border: 1px solid #e2e4e8;
+    background: #fff;
+    font-size: clamp(0.625rem, 0.42rem + 0.5vw, 0.8125rem);
+    font-weight: 500;
+    letter-spacing: -0.012em;
+    color: #23262b;
+    animation: turn 96s linear infinite reverse;
+  }
+
+  .track--in .chip {
+    animation: turn 74s linear infinite;
+  }
+
+  .chip--sm {
+    font-size: clamp(0.5625rem, 0.4rem + 0.42vw, 0.75rem);
+    padding: 0.26rem 0.58rem 0.26rem 0.48rem;
+  }
+
+  .chip i {
+    inline-size: 7px;
+    block-size: 7px;
+    border-radius: 50%;
+    background: var(--hue);
+    flex: none;
+  }
+
+  .core {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 0.1rem;
+    justify-items: center;
+    text-align: center;
+    padding: 0.75rem 1.15rem;
+    border-radius: 14px;
+    background: #fff;
+    border: 1px solid #e2e4e8;
+  }
+
+  .core-k {
+    font-size: clamp(0.8125rem, 0.6rem + 0.5vw, 1rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: #14161a;
+  }
+
+  .core-t {
+    font-family: var(--mono);
+    font-size: clamp(0.5rem, 0.4rem + 0.25vw, 0.625rem);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: #6a6f77;
+  }
+
+  @keyframes turn {
+    to {
+      rotate: 360deg;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Stopped, the arrangement still says the same thing. */
+    .track,
+    .chip {
+      animation: none;
+    }
+  }
+</style>

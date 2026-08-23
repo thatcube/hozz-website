@@ -1,0 +1,330 @@
+---
+/**
+ * orb01 — One track, one file.
+ *
+ * The middle is the artefact you actually walk away with: a sheet of paper with
+ * a dog-ear and a real name, `export.ndjson`, sitting perfectly still. Around it
+ * a single hairline circle, ticked like a dial, drawn as a real line so the
+ * orbit reads as a track rather than as things floating. Eight types ride it at
+ * one steady speed, evenly spaced, clockwise, one revolution every two minutes.
+ *
+ * Everything scales from the figure's own box: the track is an SVG in viewBox
+ * units, the chip radius is half the chip layer's box, and every length inside
+ * is in `cqw` off the container. Nothing is a fixed rem radius, so it cannot
+ * outgrow the column it is dropped into.
+ */
+import { CHIPS } from '../../../data/chips';
+
+const pick = [
+  'heartRate',
+  'stepCount',
+  'sleepAnalysis',
+  'oxygenSaturation',
+  'bodyMass',
+  'walkingSpeed',
+  'dietaryProtein',
+  'bloodGlucose',
+];
+const ring = pick.map((id) => CHIPS.find((c) => c.id === id)!);
+
+/* The dial. 36 marks, longer ones at the quarters; the chips sit at eighths, so
+   they are forever crossing marks they do not line up with — which is what makes
+   a slow, constant speed readable at all. */
+const R = 60;
+const C = 100;
+const ticks = Array.from({ length: 36 }, (_, i) => {
+  const major = i % 9 === 0;
+  const len = major ? 6.5 : 3;
+  const a = ((i * 10 - 90) * Math.PI) / 180;
+  return {
+    major,
+    x1: C + Math.cos(a) * R,
+    y1: C + Math.sin(a) * R,
+    x2: C + Math.cos(a) * (R - len),
+    y2: C + Math.sin(a) * (R - len),
+  };
+});
+
+/* Direction of travel, marked once, off the eighths so it never sits under a
+   chip when the figure is stopped. A small solid marker laid on the track. */
+const wa = (22.5 * Math.PI) / 180;
+const wp = { x: C + Math.cos(wa) * R, y: C + Math.sin(wa) * R };
+const wd = { x: -Math.sin(wa), y: Math.cos(wa) };
+const wn = { x: Math.cos(wa), y: Math.sin(wa) };
+const at = (f: number, g: number) =>
+  `${(wp.x + wd.x * f + wn.x * g).toFixed(2)} ${(wp.y + wd.y * f + wn.y * g).toFixed(2)}`;
+const way = `M ${at(3.8, 0)} L ${at(-2, 2.2)} L ${at(-2, -2.2)} Z`;
+
+/* Records in the file. Decorative rules, not text — the widths vary the way
+   NDJSON lines do, one object per line. */
+const rows = [
+  { cat: 'heart', w: 64 },
+  { cat: 'activity', w: 92 },
+  { cat: 'sleep', w: 74 },
+  { cat: 'respiratory', w: 88 },
+  { cat: 'body', w: 70 },
+];
+
+const label =
+  'Eight Apple Health types — heart rate, steps, sleep, blood oxygen, weight, walking speed, protein and blood glucose — circling one file named export.ndjson at rest in the middle.';
+---
+
+<div class="orb01" role="img" aria-label={label}>
+  <svg class="dial" viewBox="0 0 200 200" aria-hidden="true">
+    <circle class="path" cx={C} cy={C} r={R} />
+    {
+      ticks.map((t) => (
+        <line
+          class={t.major ? 'tick tick--major' : 'tick'}
+          x1={t.x1}
+          y1={t.y1}
+          x2={t.x2}
+          y2={t.y2}
+        />
+      ))
+    }
+    <path class="way" d={way} />
+  </svg>
+
+  <div class="ring">
+    {
+      ring.map((c, i) => (
+        <span class="slot" style={`--a: ${(360 / ring.length) * i}deg`}>
+          <span class="hold">
+            <span class="chip" style={`--hue: var(--h-${c.cat})`}>
+              <i aria-hidden="true" />
+              {c.name}
+            </span>
+          </span>
+        </span>
+      ))
+    }
+  </div>
+
+  <div class="doc">
+    <svg class="sheet" viewBox="0 0 100 126" aria-hidden="true">
+      <path class="page" d="M4 4 H70 L96 30 V122 H4 Z" />
+      <path class="fold" d="M70 4 V30 H96" />
+    </svg>
+    <div class="face">
+      <ul class="rows" aria-hidden="true">
+        {
+          rows.map((r) => (
+            <li style={`--hue: var(--h-${r.cat}); --w: ${r.w}%`}>
+              <i />
+              <b />
+            </li>
+          ))
+        }
+      </ul>
+      <span class="rule" aria-hidden="true"></span>
+      <p class="fname">{'export\u200B.ndjson'}</p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .orb01 {
+    container-type: inline-size;
+    position: relative;
+    inline-size: 100%;
+    max-inline-size: 30rem;
+    aspect-ratio: 1;
+    margin-inline: auto;
+    display: grid;
+    place-items: center;
+  }
+
+  /* The track. A real line, drawn once, and it never moves. */
+  .dial {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    overflow: visible;
+    fill: none;
+  }
+
+  .path {
+    stroke: #d4d9e0;
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .tick {
+    stroke: #dfe3e9;
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .tick--major {
+    stroke: #b8bec7;
+  }
+
+  /* Direction of travel, marked once at the top of the dial. */
+  .way {
+    fill: #b0b7c0;
+    stroke: none;
+  }
+
+  /* Radius is half this box, so it is tied to the figure and not to a length. */
+  .ring {
+    position: absolute;
+    inset: 20%;
+    animation: turn 120s linear infinite;
+  }
+
+  .slot {
+    position: absolute;
+    inset: 0;
+    transform: rotate(var(--a));
+  }
+
+  /* Undo the station angle so the label reads level, then the chip's own
+     counter-turn holds it level for the rest of the revolution. */
+  .hold {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 50%;
+    transform: translate(-50%, -50%) rotate(calc(var(--a) * -1));
+  }
+
+  /* Each chip straddles the line, so the track threads through it. */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.36em;
+    white-space: nowrap;
+    padding: 0.34em 0.68em;
+    border-radius: 999px;
+    border: 1px solid #e1e5ea;
+    background: #fff;
+    font-family: var(--sans);
+    font-size: clamp(0.5rem, 3.1cqw, 0.8125rem);
+    font-weight: 500;
+    line-height: 1.25;
+    letter-spacing: -0.012em;
+    color: #23262b;
+    animation: turn 120s linear infinite reverse;
+  }
+
+  .chip i {
+    inline-size: 0.5em;
+    block-size: 0.5em;
+    border-radius: 50%;
+    background: var(--hue);
+    flex: none;
+  }
+
+  /* The file. At rest, and the only thing here that never turns. */
+  .doc {
+    position: relative;
+    inline-size: clamp(2.75rem, 24cqw, 7.25rem);
+    aspect-ratio: 100 / 126;
+  }
+
+  .sheet {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+  }
+
+  .page {
+    fill: #fff;
+    stroke: #d3d8df;
+    stroke-width: 1;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .fold {
+    fill: none;
+    stroke: #d3d8df;
+    stroke-width: 1;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .face {
+    position: absolute;
+    inset: 15% 10% 11% 10%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 6%;
+  }
+
+  .fname {
+    margin: 0;
+    font-family: var(--mono);
+    font-size: clamp(0.5rem, 2.4cqw, 0.6875rem);
+    line-height: 1.28;
+    letter-spacing: -0.03em;
+    color: #14161a;
+    overflow-wrap: break-word;
+  }
+
+  .rule {
+    display: block;
+    block-size: 1px;
+    background: #e6e9ee;
+  }
+
+  .rows {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    font-size: clamp(0.4375rem, 2.25cqw, 0.6875rem);
+  }
+
+  .rows li {
+    display: flex;
+    align-items: center;
+    gap: 0.45em;
+    inline-size: var(--w);
+  }
+
+  .rows i {
+    inline-size: 0.42em;
+    block-size: 0.42em;
+    border-radius: 50%;
+    background: var(--hue);
+    flex: none;
+  }
+
+  .rows b {
+    block-size: 1px;
+    flex: 1;
+    background: #e2e5ea;
+  }
+
+  /* Small boxes: the labels are the fixed cost, so buy the track room back out
+     of the chips' padding rather than the radius. */
+  @container (max-width: 22rem) {
+    .chip {
+      padding: 0.28em 0.52em;
+      gap: 0.3em;
+      letter-spacing: -0.022em;
+    }
+  }
+
+  @keyframes turn {
+    to {
+      rotate: 360deg;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Stopped on the frame it starts on: eight types, evenly spaced, one file.
+       Nothing is hidden — the sentence is the arrangement, not the movement. */
+    .ring,
+    .chip {
+      animation: none;
+    }
+  }
+</style>

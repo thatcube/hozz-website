@@ -1,0 +1,164 @@
+---
+/**
+ * 02 — Rings to fan
+ *
+ * The rings close, the way Apple's do. Then they break: records leave along
+ * dotted paths into the four things you own. The first half is what you are
+ * shown; the second half is what you can actually do with it.
+ *
+ * These are deliberately not Move/Exercise/Stand — three arcs in our own hues,
+ * standing for the data, not for Apple's marks.
+ */
+const TARGETS = [
+  { label: 'A file', sub: 'NDJSON', y: 26 },
+  { label: 'Your Mac', sub: ':54330', y: 76 },
+  { label: 'A dashboard', sub: 'Metrics', y: 126 },
+  { label: 'An assistant', sub: 'MCP', y: 176 },
+];
+---
+
+<div class="fan" role="img" aria-label="Three rings close, then records travel out to a file, your Mac, a dashboard and an assistant">
+  <svg viewBox="0 0 520 220" preserveAspectRatio="xMidYMid meet">
+    <defs>
+      <path id="p0" d="M132 110 C 200 110, 220 26, 300 26" />
+      <path id="p1" d="M132 110 C 200 110, 226 76, 300 76" />
+      <path id="p2" d="M132 110 C 200 110, 226 126, 300 126" />
+      <path id="p3" d="M132 110 C 200 110, 220 176, 300 176" />
+    </defs>
+
+    <!-- The rings. Stroke-dashoffset closes each one in turn. -->
+    <g class="rings" transform="translate(72 110)">
+      <circle class="tr" r="52" />
+      <circle class="tr" r="38" />
+      <circle class="tr" r="24" />
+      <circle class="rg rg0" r="52" />
+      <circle class="rg rg1" r="38" />
+      <circle class="rg rg2" r="24" />
+    </g>
+
+    <!-- The routes out. -->
+    {[0, 1, 2, 3].map((i) => <use class="wire" href={`#p${i}`} />)}
+    {
+      [0, 1, 2, 3].map((i) => (
+        <circle class="pip" r="3.4" style={`--d: ${2.4 + i * 0.22}s`}>
+          <animateMotion dur="6.4s" begin={`${2.4 + i * 0.22}s`} repeatCount="indefinite" keyPoints="0;0;1;1" keyTimes="0;0.05;0.42;1" calcMode="linear">
+            <mpath href={`#p${i}`} />
+          </animateMotion>
+        </circle>
+      ))
+    }
+
+    {
+      TARGETS.map((t) => (
+        <g class="tgt" transform={`translate(300 ${t.y})`}>
+          <rect x="0" y="-14" width="150" height="28" rx="14" />
+          <text x="14" y="4">{t.label}</text>
+          <text class="sub" x="136" y="4" text-anchor="end">{t.sub}</text>
+        </g>
+      ))
+    }
+  </svg>
+</div>
+
+<style>
+  .fan svg {
+    inline-size: 100%;
+    block-size: auto;
+    overflow: visible;
+  }
+
+  .tr {
+    fill: none;
+    stroke: #e8eaee;
+    stroke-width: 10;
+  }
+
+  .rg {
+    fill: none;
+    stroke-width: 10;
+    stroke-linecap: round;
+    transform: rotate(-90deg);
+    transform-origin: 0 0;
+  }
+
+  .rg0 {
+    stroke: var(--h-heart);
+    stroke-dasharray: 326.7;
+    animation: close0 6.4s ease-in-out infinite;
+  }
+  .rg1 {
+    stroke: var(--h-nutrition);
+    stroke-dasharray: 238.8;
+    animation: close1 6.4s ease-in-out infinite;
+  }
+  .rg2 {
+    stroke: var(--h-respiratory);
+    stroke-dasharray: 150.8;
+    animation: close2 6.4s ease-in-out infinite;
+  }
+
+  /* Each ring closes, holds while the records leave, then resets. */
+  @keyframes close0 {
+    0%, 4% { stroke-dashoffset: 326.7; }
+    26%, 88% { stroke-dashoffset: 0; }
+    100% { stroke-dashoffset: 326.7; }
+  }
+  @keyframes close1 {
+    0%, 9% { stroke-dashoffset: 238.8; }
+    30%, 88% { stroke-dashoffset: 0; }
+    100% { stroke-dashoffset: 238.8; }
+  }
+  @keyframes close2 {
+    0%, 14% { stroke-dashoffset: 150.8; }
+    34%, 88% { stroke-dashoffset: 0; }
+    100% { stroke-dashoffset: 150.8; }
+  }
+
+  .wire {
+    fill: none;
+    stroke: #c6cad1;
+    stroke-width: 1;
+    stroke-dasharray: 2 4;
+    stroke-linecap: round;
+  }
+
+  .pip {
+    fill: var(--h-activity);
+  }
+
+  .tgt rect {
+    fill: #fff;
+    stroke: #e2e4e8;
+    stroke-width: 1;
+  }
+
+  .tgt text {
+    font-family: var(--sans);
+    font-size: 11.5px;
+    font-weight: 600;
+    fill: #22252a;
+    letter-spacing: -0.01em;
+  }
+
+  .tgt .sub {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    font-weight: 400;
+    fill: #6a6f77;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Rings resolve closed and the records park at their destinations, so the
+       still frame states the same thing the movement did. */
+    .rg {
+      animation: none;
+      stroke-dashoffset: 0;
+    }
+    .pip {
+      display: none;
+    }
+    .wire {
+      stroke-dasharray: 2 4;
+    }
+  }
+</style>

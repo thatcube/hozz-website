@@ -1,0 +1,381 @@
+---
+import { CHIPS } from '../../../data/chips';
+
+const orbiting = [CHIPS[0], CHIPS[2], CHIPS[4], CHIPS[5]];
+const tools = [
+  ['list_health_', 'types'],
+  ['summarise_', 'health_data'],
+  ['aggregate_', 'health_data'],
+  ['list_health_', 'samples'],
+];
+---
+
+<figure
+  class="reader-orbit"
+  role="img"
+  aria-label="Heart Rate, Steps, Sleep and Weight circle a read-only MCP document reader. Each data chip leaves a short fading trail. The reader can inspect health data with four tools, while writing is blocked."
+>
+  {
+    orbiting.map((chip, index) => {
+      const start = index * 90;
+      return (
+        <span
+          class="runner"
+          style={`--hue: var(--h-${chip.cat}); --start: ${start}deg; --end: ${start + 360}deg; --face-start: ${-start}deg; --face-end: ${-start - 360}deg`}
+          aria-hidden="true"
+        >
+          <span class="chip">
+            <i />
+            {chip.name}
+          </span>
+        </span>
+      );
+    })
+  }
+
+  <div class="reader">
+    <div class="reader-head">
+      <span class="status-dot" aria-hidden="true"></span>
+      <span>Your assistant · read-only MCP</span>
+    </div>
+
+    <div class="reading" aria-hidden="true">
+      <span class="sheet">
+        <i></i><i></i><i></i>
+      </span>
+      <span class="scan">
+        <i></i>
+      </span>
+      <span class="read-mark">READ</span>
+    </div>
+
+    <div class="permissions">
+      <span class="allowed">READ <b>✓</b></span>
+      <span class="blocked">WRITE <b>×</b></span>
+    </div>
+
+    <div class="tools">
+      {
+        tools.map(([first, second]) => (
+          <span class="tool" aria-label={`${first}${second}`}>
+            {first}<br />{second}
+          </span>
+        ))
+      }
+    </div>
+  </div>
+</figure>
+
+<style>
+  .reader-orbit {
+    position: relative;
+    inline-size: min(100%, 34rem);
+    aspect-ratio: 1;
+    margin: 0;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    isolation: isolate;
+    font-family: var(--sans);
+  }
+
+  .runner {
+    position: absolute;
+    inset: 14%;
+    border-radius: 50%;
+    transform: rotate(var(--start));
+    animation: sweep 52s linear infinite;
+  }
+
+  .runner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: conic-gradient(
+      transparent 0deg 321deg,
+      color-mix(in srgb, var(--hue) 8%, transparent) 321deg,
+      color-mix(in srgb, var(--hue) 48%, transparent) 344deg,
+      var(--hue) 359deg,
+      transparent 360deg
+    );
+    -webkit-mask: radial-gradient(
+      farthest-side,
+      transparent calc(100% - 2px),
+      #000 calc(100% - 1.25px),
+      #000 calc(100% - 0.25px),
+      transparent 100%
+    );
+    mask: radial-gradient(
+      farthest-side,
+      transparent calc(100% - 2px),
+      #000 calc(100% - 1.25px),
+      #000 calc(100% - 0.25px),
+      transparent 100%
+    );
+  }
+
+  .chip {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 50%;
+    z-index: 2;
+    transform: translate(-50%, -50%) rotate(var(--face-start));
+    animation: stay-upright 52s linear infinite;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-block-size: 1.7rem;
+    padding: 0.22rem 0.65rem 0.22rem 0.52rem;
+    border: 1px solid #dfe3e8;
+    border-radius: 999px;
+    background: #fff;
+    color: #24282e;
+    box-shadow: 0 2px 8px rgb(30 37 45 / 5%);
+    white-space: nowrap;
+    font-size: clamp(0.65rem, 0.55rem + 0.3vw, 0.78rem);
+    font-weight: 560;
+    letter-spacing: -0.015em;
+  }
+
+  .chip i {
+    inline-size: 0.43rem;
+    block-size: 0.43rem;
+    flex: none;
+    border-radius: 50%;
+    background: var(--hue);
+  }
+
+  .reader {
+    position: relative;
+    z-index: 3;
+    inline-size: 47%;
+    max-inline-size: 15.25rem;
+    padding: clamp(0.58rem, 2.2vw, 1rem);
+    border: 1px solid #d9dde3;
+    border-radius: 15px;
+    background:
+      linear-gradient(#fff, #fff) padding-box,
+      repeating-linear-gradient(135deg, #eef0f3 0 1px, transparent 1px 5px) border-box;
+    box-shadow: 0 12px 30px rgb(30 37 45 / 7%);
+    color: #181b20;
+  }
+
+  .reader-head {
+    display: flex;
+    align-items: center;
+    gap: 0.38rem;
+    padding-block-end: 0.48rem;
+    border-block-end: 1px solid #eceef1;
+    font-family: var(--mono);
+    font-size: clamp(0.46rem, 0.34rem + 0.35vw, 0.64rem);
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  .status-dot {
+    inline-size: 0.4rem;
+    block-size: 0.4rem;
+    border-radius: 50%;
+    background: var(--h-mind);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--h-mind) 12%, transparent);
+  }
+
+  .reading {
+    position: relative;
+    block-size: clamp(2.55rem, 9vw, 4rem);
+    margin-block: clamp(0.32rem, 1.2vw, 0.62rem);
+    display: grid;
+    grid-template-columns: 1fr 0.42fr 1fr;
+    align-items: center;
+  }
+
+  .sheet {
+    justify-self: end;
+    inline-size: clamp(1.7rem, 6.8vw, 3rem);
+    aspect-ratio: 1.15;
+    padding: 24% 18%;
+    border: 1px solid #cfd4da;
+    border-radius: 4px 0 0 4px;
+    background: #fafbfc;
+    display: grid;
+    align-content: center;
+    gap: 18%;
+  }
+
+  .sheet i {
+    display: block;
+    block-size: 1px;
+    background: #7a818b;
+  }
+
+  .sheet i:last-child {
+    inline-size: 64%;
+  }
+
+  .scan {
+    position: relative;
+    block-size: 76%;
+    border-inline: 1px solid #babfc7;
+  }
+
+  .scan::before,
+  .scan::after {
+    content: '';
+    position: absolute;
+    inset-inline: 22%;
+    block-size: 1px;
+    background: #babfc7;
+  }
+
+  .scan::before {
+    inset-block-start: 0;
+  }
+
+  .scan::after {
+    inset-block-end: 0;
+  }
+
+  .scan i {
+    position: absolute;
+    inset: 11% 42%;
+    background: var(--h-mind);
+    opacity: 0.75;
+  }
+
+  .read-mark {
+    justify-self: start;
+    padding-inline-start: 18%;
+    font-family: var(--mono);
+    font-size: clamp(0.48rem, 0.36rem + 0.4vw, 0.7rem);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: #343941;
+  }
+
+  .permissions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.3rem;
+    margin-block-end: clamp(0.38rem, 1.2vw, 0.62rem);
+    font-family: var(--mono);
+    font-size: clamp(0.43rem, 0.33rem + 0.3vw, 0.58rem);
+    letter-spacing: 0.05em;
+  }
+
+  .permissions span {
+    padding: 0.25rem 0.18rem;
+    border: 1px solid #dfe3e8;
+    border-radius: 999px;
+    text-align: center;
+  }
+
+  .allowed b {
+    color: #27714b;
+  }
+
+  .blocked {
+    color: #555c65;
+    background: repeating-linear-gradient(
+      135deg,
+      transparent 0 3px,
+      rgb(28 32 38 / 4%) 3px 4px
+    );
+  }
+
+  .blocked b {
+    color: #a13f47;
+  }
+
+  .tools {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.24rem;
+  }
+
+  .tool {
+    min-inline-size: 0;
+    padding: clamp(0.2rem, 0.7vw, 0.35rem);
+    border: 1px solid #e4e7eb;
+    border-radius: 5px;
+    background: #fafbfc;
+    color: #525963;
+    font-family: var(--mono);
+    font-size: clamp(0.38rem, 0.3rem + 0.25vw, 0.53rem);
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+  }
+
+  @keyframes sweep {
+    from {
+      transform: rotate(var(--start));
+    }
+    to {
+      transform: rotate(var(--end));
+    }
+  }
+
+  @keyframes stay-upright {
+    from {
+      transform: translate(-50%, -50%) rotate(var(--face-start));
+    }
+    to {
+      transform: translate(-50%, -50%) rotate(var(--face-end));
+    }
+  }
+
+  @media (max-width: 24rem) {
+    .reader {
+      inline-size: 52%;
+      padding: 0.4rem;
+    }
+
+    .reader-head {
+      padding-block-end: 0.26rem;
+      letter-spacing: 0.035em;
+    }
+
+    .reading {
+      block-size: 2.2rem;
+      margin-block: 0.2rem;
+    }
+
+    .permissions {
+      gap: 0.18rem;
+      margin-block-end: 0.25rem;
+    }
+
+    .permissions span {
+      padding-block: 0.16rem;
+    }
+
+    .tools {
+      gap: 0.12rem;
+    }
+
+    .tool {
+      padding: 0.12rem;
+      font-size: 0.4rem;
+      line-height: 1.15;
+    }
+
+    .chip {
+      gap: 0.28rem;
+      min-block-size: 1.5rem;
+      padding-inline: 0.44rem 0.5rem;
+      font-size: 0.6rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .runner,
+    .chip {
+      animation: none;
+    }
+
+    .runner::before {
+      opacity: 0.8;
+    }
+  }
+</style>

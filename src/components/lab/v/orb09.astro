@@ -1,0 +1,368 @@
+---
+/**
+ * orb09 — The year wheel
+ *
+ * Centre is time: a year counted out, not a reading. The path is a fine ring of
+ * 365 marks, one per day, so the track is the data rather than a guide for it.
+ * The wheel advances one mark at a time — `steps(365)` over 365 seconds, so a
+ * second is a day and a turn is a year — and the chips ride it like a movement
+ * rather than gliding like a carousel.
+ *
+ * Everything is derived from the figure's own box (percentage insets, viewBox
+ * units, `cqi`), so it cannot outgrow the column it is dropped into. Below
+ * ~28rem the day marks would mush into grey, so the ring drops to one mark per
+ * week and says so; below ~26rem three of the six riders stand down.
+ */
+import { CHIPS } from '../../../data/chips';
+
+const DAYS = 365;
+const pick = (id: string) => CHIPS.find((c) => c.id === id)!;
+
+/* Six riders, spaced evenly. The three at odd positions stand down on narrow
+   boxes, leaving three evenly spaced short labels that still clear the edge. */
+const RIDERS = [
+  pick('stepCount'),
+  pick('oxygenSaturation'),
+  pick('sleepAnalysis'),
+  pick('mindfulSession'),
+  pick('heartRate'),
+  pick('bodyMass'),
+];
+
+const r = (n: number) => Math.round(n * 100) / 100;
+
+const TICKS = Array.from({ length: DAYS }, (_, i) => {
+  const a = (i / DAYS) * Math.PI * 2 - Math.PI / 2;
+  const week = i % 7 === 0;
+  /* Every mark ends on the same outer circle, so the ring keeps a crisp edge;
+     the week marks reach further in, where the extra length reads as structure
+     rather than as a ragged fringe. */
+  const r0 = week ? 62.4 : 64.9;
+  const r1 = 68.6;
+  return {
+    week,
+    x1: r(100 + Math.cos(a) * r0),
+    y1: r(100 + Math.sin(a) * r0),
+    x2: r(100 + Math.cos(a) * r1),
+    y2: r(100 + Math.sin(a) * r1),
+  };
+});
+---
+
+<figure class="yr">
+  <div
+    class="dial"
+    role="img"
+    aria-label="A fine ring of 365 marks, one for each day of a year, turning one mark at a time. Health data types ride the ring around a centre reading 365 days."
+  >
+    <div class="rotor">
+      <svg class="ring" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+        <circle class="rim" cx="100" cy="100" r="71.4" vector-effect="non-scaling-stroke" />
+        <g class="ticks">
+          {
+            TICKS.map((t) => (
+              <line
+                class={t.week ? 'w' : 'd'}
+                x1={t.x1}
+                y1={t.y1}
+                x2={t.x2}
+                y2={t.y2}
+                vector-effect="non-scaling-stroke"
+              />
+            ))
+          }
+        </g>
+      </svg>
+
+      {
+        RIDERS.map((c, i) => (
+          <span class={`slot s${i}`} style={`--a: ${(360 / RIDERS.length) * i}deg`}>
+            <span class="hold">
+              <span class="chip" style={`--hue: var(--h-${c.cat})`}>
+                <i aria-hidden="true" />
+                {c.name}
+              </span>
+            </span>
+          </span>
+        ))
+      }
+    </div>
+
+    <div class="index" aria-hidden="true">
+      <span class="index-t">now</span>
+      <span class="index-b"></span>
+    </div>
+
+    <div class="core" aria-hidden="true">
+      <span class="num">365</span>
+      <span class="unit">days</span>
+      <span class="hr"></span>
+      <span class="span">one turn · one year</span>
+    </div>
+  </div>
+
+  <figcaption class="cap">
+    <span class="key">
+      <span class="kd">365 marks · one per day</span>
+      <span class="kw">one mark per week</span>
+    </span>
+    <span class="line">Not one reading. <i>A year of them.</i></span>
+  </figcaption>
+</figure>
+
+<style>
+  .yr {
+    container-type: inline-size;
+    inline-size: 100%;
+    max-inline-size: 32rem;
+    margin: 0;
+    display: grid;
+    justify-items: center;
+    gap: clamp(0.75rem, 2cqi, 1.25rem);
+  }
+
+  .dial {
+    position: relative;
+    inline-size: 100%;
+    aspect-ratio: 1;
+  }
+
+  /* The wheel. One mark per second, 365 marks, so a turn is a year. */
+  .rotor {
+    position: absolute;
+    inset: 0;
+    animation: step-turn 365s steps(365) infinite;
+  }
+
+  .ring {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    overflow: visible;
+  }
+
+  .rim {
+    fill: none;
+    stroke: #e9ebef;
+    stroke-width: 1;
+  }
+
+  .ticks line {
+    stroke-width: 1;
+    stroke-linecap: butt;
+  }
+
+  .ticks .d {
+    stroke: #ced4dc;
+    display: none;
+  }
+
+  .ticks .w {
+    stroke: #9ea6b0;
+  }
+
+  /* Radius is 33% of the box: the slot's inset, and 66 of 200 viewBox units. */
+  .slot {
+    position: absolute;
+    inset: 17%;
+    transform: rotate(var(--a));
+  }
+
+  .hold {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 50%;
+    transform: translate(-50%, -50%) rotate(calc(var(--a) * -1));
+  }
+
+  /* Counter-step, same 365 stops, so labels stay upright as the wheel clicks. */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    white-space: nowrap;
+    padding: 0.34em 0.72em 0.34em 0.6em;
+    border-radius: 999px;
+    border: 1px solid #e0e3e8;
+    background: #fff;
+    font-family: var(--sans);
+    font-size: clamp(0.5625rem, 0.36rem + 1.3cqi, 0.8125rem);
+    font-weight: 500;
+    letter-spacing: -0.012em;
+    line-height: 1.25;
+    color: #23262b;
+    animation: step-unturn 365s steps(365) infinite;
+  }
+
+  .chip i {
+    inline-size: 0.5em;
+    block-size: 0.5em;
+    border-radius: 50%;
+    background: var(--hue);
+    flex: none;
+  }
+
+  /* The still index the wheel turns under. */
+  .index {
+    position: absolute;
+    inset-inline-start: 50%;
+    inset-block-start: 4.2%;
+    transform: translateX(-50%);
+    display: grid;
+    justify-items: center;
+    gap: 0.3rem;
+  }
+
+  .index-t {
+    font-family: var(--mono);
+    font-size: clamp(0.5625rem, 0.32rem + 1.28cqi, 0.6875rem);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #5a606a;
+  }
+
+  .index-b {
+    inline-size: 1px;
+    block-size: 5.4cqi;
+    background: linear-gradient(#d3d8de, #676d76);
+  }
+
+  .core {
+    position: absolute;
+    inset: 33.5%;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid #e6e8ec;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: 0.1em;
+    text-align: center;
+  }
+
+  .num {
+    font-family: var(--sans);
+    font-size: clamp(1.25rem, 0.42rem + 4.6cqi, 2.5rem);
+    font-weight: 800;
+    letter-spacing: -0.045em;
+    line-height: 1;
+    color: #14161a;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .unit {
+    font-family: var(--sans);
+    font-size: clamp(0.5625rem, 0.4rem + 1cqi, 0.8125rem);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: #4a4f57;
+  }
+
+  .hr {
+    inline-size: 34%;
+    block-size: 1px;
+    background: #e6e8ec;
+    margin-block: 0.45em;
+  }
+
+  .span {
+    font-family: var(--mono);
+    font-size: clamp(0.5rem, 0.25rem + 1.2cqi, 0.625rem);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #5a606a;
+  }
+
+  .cap {
+    display: grid;
+    justify-items: center;
+    gap: 0.5rem;
+    text-align: center;
+    max-inline-size: 34ch;
+    /* The dial's box is square; the ring leaves spare air below it. Close the
+       gap so the caption belongs to the figure instead of floating under it. */
+    margin-block-start: -5cqi;
+  }
+
+  .key {
+    font-family: var(--mono);
+    font-size: clamp(0.5625rem, 0.3rem + 1.35cqi, 0.75rem);
+    letter-spacing: 0.05em;
+    color: #5a606a;
+  }
+
+  .kd {
+    display: none;
+  }
+
+  .line {
+    font-family: var(--sans);
+    font-size: clamp(0.75rem, 0.55rem + 1.05cqi, 0.9375rem);
+    line-height: 1.45;
+    letter-spacing: -0.014em;
+    color: #23262b;
+  }
+
+  .line i {
+    font-style: italic;
+    color: #14161a;
+  }
+
+  /* Wide enough for a mark a day without the ring turning to grey. */
+  @container (min-inline-size: 28rem) {
+    .ticks .d {
+      display: inline;
+    }
+
+    .kd {
+      display: inline;
+    }
+
+    .kw {
+      display: none;
+    }
+  }
+
+  /* Not enough arc for six labels: three, still evenly spaced. */
+  @container (max-inline-size: 26rem) {
+    .s1,
+    .s3,
+    .s5 {
+      display: none;
+    }
+  }
+
+  @container (max-inline-size: 21rem) {
+    .hr,
+    .span {
+      display: none;
+    }
+  }
+
+  @keyframes step-turn {
+    from {
+      rotate: 0deg;
+    }
+    to {
+      rotate: 360deg;
+    }
+  }
+
+  @keyframes step-unturn {
+    from {
+      rotate: 0deg;
+    }
+    to {
+      rotate: -360deg;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Stopped on day one. The ring still counts out the year. */
+    .rotor,
+    .chip {
+      animation: none;
+    }
+  }
+</style>

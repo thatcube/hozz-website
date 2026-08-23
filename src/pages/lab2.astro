@@ -1,0 +1,232 @@
+---
+/**
+ * Variant board.
+ *
+ * Auto-discovers every figure dropped into `src/components/lab/v/`, so twelve
+ * agents can work in parallel without a shared import list to collide on, and a
+ * missing file cannot break the build.
+ *
+ * Each figure ships an optional `<slug>.meta.ts` describing itself.
+ */
+import '../styles/sketch-base.css';
+import { SITE } from '../data/site';
+
+const mods = import.meta.glob('../components/lab/v/*.astro', { eager: true }) as Record<
+  string,
+  { default: any }
+>;
+const metas = import.meta.glob('../components/lab/v/*.meta.ts', { eager: true }) as Record<
+  string,
+  { default?: { title?: string; says?: string; note?: string; by?: string } }
+>;
+
+const items = Object.entries(mods)
+  .map(([path, mod]) => {
+    const slug = path.split('/').pop()!.replace('.astro', '');
+    const meta = metas[path.replace('.astro', '.meta.ts')]?.default ?? {};
+    return { slug, Comp: mod.default, meta };
+  })
+  .sort((a, b) => a.slug.localeCompare(b.slug));
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Variants · Hozz</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href={`${SITE}/lab2/`} />
+  </head>
+  <body>
+    <header class="top">
+      <p class="eyebrow">Hozz · working file</p>
+      <h1>{items.length} more figures.</h1>
+      <p class="lede">
+        A second pass, built in parallel by separate agents on separate models
+        from one brief. Variants on the ideas from the first lab, plus figures
+        nobody asked for. Pick what works; the rest gets deleted.
+      </p>
+      <p class="links">
+        <a href="/lab/">← First lab</a>
+        <a href="/directions/">Directions board</a>
+      </p>
+    </header>
+
+    <main>
+      {
+        items.map((it) => {
+          const C = it.Comp;
+          return (
+            <section class="fig" id={it.slug}>
+              <div class="meta">
+                <p class="tag">
+                  <b>{it.slug}</b>
+                  <span>{it.meta.title ?? 'Untitled'}</span>
+                </p>
+                {it.meta.says && <p class="says">{it.meta.says}</p>}
+                {it.meta.note && <p class="note">{it.meta.note}</p>}
+                {it.meta.by && <p class="by">{it.meta.by}</p>}
+              </div>
+              <div class="stage">
+                <C />
+              </div>
+            </section>
+          );
+        })
+      }
+      {
+        items.length === 0 && (
+          <p class="empty">No figures yet. Agents are still building.</p>
+        )
+      }
+    </main>
+  </body>
+</html>
+
+<style>
+  body {
+    background: #f4f5f7;
+    color: #14161a;
+    font-family: var(--sans);
+  }
+
+  .top {
+    width: min(100% - 2.5rem, 1120px);
+    margin-inline: auto;
+    padding-block: clamp(3rem, 7vw, 5rem) clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #6a6f77;
+    margin-bottom: 1rem;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 1.2rem + 3.2vw, 3.4rem);
+    font-weight: 800;
+    letter-spacing: -0.042em;
+    line-height: 1.02;
+  }
+
+  .lede {
+    margin-top: 1.1rem;
+    max-width: 58ch;
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    color: #4d525a;
+  }
+
+  .links {
+    margin-top: 1.4rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+  }
+
+  .links a {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #14161a;
+    text-decoration: none;
+    border-bottom: 2px solid #c6cad1;
+    padding-bottom: 2px;
+  }
+
+  .links a:hover {
+    border-bottom-color: #14161a;
+  }
+
+  main {
+    width: min(100% - 2.5rem, 1120px);
+    margin-inline: auto;
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 2.25rem);
+    padding-bottom: 5rem;
+  }
+
+  .fig {
+    display: grid;
+    gap: 1.5rem;
+    padding: clamp(1.5rem, 3.5vw, 2.5rem);
+    background: #fff;
+    border: 1px solid #e4e6ea;
+    border-radius: 18px;
+  }
+
+  /* Grid children default to min-content width, which would let a wide figure
+     push its whole card past the viewport. */
+  .fig > * {
+    min-inline-size: 0;
+  }
+
+  @media (min-width: 900px) {
+    .fig {
+      grid-template-columns: minmax(0, 16rem) minmax(0, 1fr);
+      gap: clamp(2rem, 4vw, 3.5rem);
+      align-items: center;
+    }
+  }
+
+  .tag {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  .tag b {
+    font-family: var(--mono);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #8a8f97;
+  }
+
+  .tag span {
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: -0.032em;
+  }
+
+  .says {
+    margin-top: 0.6rem;
+    font-size: 1rem;
+    line-height: 1.45;
+    color: #23262b;
+  }
+
+  .note {
+    margin-top: 0.6rem;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: #5c6169;
+  }
+
+  .by {
+    margin-top: 0.6rem;
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    color: #8a8f97;
+  }
+
+  .stage {
+    display: grid;
+    place-items: center;
+    min-block-size: 16rem;
+    padding: clamp(0.5rem, 2vw, 1.5rem);
+    border-radius: 14px;
+    background: #fafbfc;
+    overflow: hidden;
+  }
+
+  .empty {
+    padding: 4rem 0;
+    text-align: center;
+    color: #6a6f77;
+  }
+</style>

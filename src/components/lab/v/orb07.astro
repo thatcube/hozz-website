@@ -1,0 +1,452 @@
+---
+/**
+ * orb07 — Plan position
+ *
+ * The inversion: in an orbit the data moves and the viewer is still. Here the
+ * data is nailed down at fixed bearings and ranges, and the *instrument* turns.
+ * A single hairline sweeps out of the phone once every eighteen seconds and
+ * each type lights as it is read, then settles back.
+ *
+ * Sync without JavaScript: the arm and every chip share one duration, so a chip
+ * at bearing b only needs a negative animation-delay of (b/360 − peak − 1)·DUR
+ * for its bright frame to land exactly when the arm crosses it.
+ *
+ * Sizing: every radius is a percentage of the figure's own square box and the
+ * rings live in a 0–200 viewBox with non-scaling strokes, so the figure cannot
+ * outgrow its column. Below 380px the bearings switch to a set clustered on the
+ * vertical axis, because a pill is wide and a narrow column is not.
+ */
+import { CHIPS } from '../../../data/chips';
+
+/** Seconds for one revolution. Slow enough to read, not slow enough to stall. */
+const DUR = 18;
+/** Phase of the cycle at which the arm crosses a chip's bearing. */
+const PEAK = 0.045;
+
+/** Bearing (clockwise from north) and range ring, wide layout then narrow. */
+const PLACES = [
+  { id: 'headphoneAudioExposure', bw: 8, rw: 37, bn: 0, rn: 37 },
+  { id: 'heartRate', bw: 45, rw: 29, bn: 18, rn: 29 },
+  { id: 'stepCount', bw: 95, rw: 21, bn: 100, rn: 21 },
+  { id: 'bloodGlucose', bw: 145, rw: 29, bn: 160, rn: 29 },
+  { id: 'mindfulSession', bw: 190, rw: 37, bn: 180, rn: 37 },
+  { id: 'walkingSpeed', bw: 225, rw: 29, bn: 205, rn: 21 },
+  { id: 'bodyMass', bw: 268, rw: 21, bn: 288, rn: 21 },
+  { id: 'oxygenSaturation', bw: 328, rw: 29, bn: 335, rn: 21 },
+];
+
+const rad = (d: number) => (d * Math.PI) / 180;
+const round = (n: number) => Math.round(n * 100) / 100;
+
+const marks = PLACES.map((p) => {
+  const c = CHIPS.find((x) => x.id === p.id)!;
+  const at = (b: number, r: number) => ({
+    x: round(r * Math.sin(rad(b))),
+    y: round(-r * Math.cos(rad(b))),
+  });
+  const delay = (b: number) => round((b / 360 - PEAK - 1) * DUR * 1000) / 1000;
+  return {
+    ...c,
+    w: at(p.bw, p.rw),
+    n: at(p.bn, p.rn),
+    dw: delay(p.bw),
+    dn: delay(p.bn),
+  };
+});
+
+/** Bearing ticks just outside the outermost range ring. */
+const ticks = Array.from({ length: 12 }, (_, k) => {
+  const a = rad(k * 30);
+  const out = k % 3 === 0 ? 79.5 : 77.5;
+  return {
+    x1: round(100 + 74 * Math.sin(a)),
+    y1: round(100 - 74 * Math.cos(a)),
+    x2: round(100 + out * Math.sin(a)),
+    y2: round(100 - out * Math.cos(a)),
+    k,
+  };
+});
+
+const label =
+  'A plan-position display. Your iPhone sits at the centre, holding the records. ' +
+  marks.map((m) => m.name).join(', ') +
+  ' sit still on four faint range rings while a slow hairline sweep turns out of the phone and brightens each one as it passes.';
+---
+
+<figure class="pd" role="img" aria-label={label}>
+  <div class="plan" style={`--dur: ${DUR}s`}>
+    <svg class="grid" viewBox="0 0 200 200" aria-hidden="true">
+      <g fill="none" stroke="#e3e6eb" stroke-width="1" vector-effect="non-scaling-stroke">
+        <circle cx="100" cy="100" r="26"></circle>
+        <circle cx="100" cy="100" r="42"></circle>
+        <circle cx="100" cy="100" r="58"></circle>
+        <circle cx="100" cy="100" r="74" stroke="#d5d9e0"></circle>
+      </g>
+      <g stroke-width="1" stroke-linecap="butt" vector-effect="non-scaling-stroke">
+        {
+          ticks.map((t) => (
+            <line x1={t.x1} y1={t.y1} x2={t.x2} y2={t.y2} stroke={t.k % 3 === 0 ? '#c2c8d0' : '#d8dce2'} />
+          ))
+        }
+      </g>
+    </svg>
+
+    <div class="sweep" aria-hidden="true">
+      <span class="wedge"></span>
+      <span class="arm"></span>
+      <span class="tip"></span>
+    </div>
+
+    <div class="core" aria-hidden="true">
+      <svg class="phone" viewBox="0 0 24 48">
+        <rect x="0.5" y="0.5" width="23" height="47" rx="4.6" fill="#171a1f"></rect>
+        <rect x="9" y="3.4" width="6" height="1.1" rx="0.55" fill="#5e646d"></rect>
+        <g fill="#ffffff" opacity="0.24">
+          <rect x="4.6" y="10" width="14.8" height="1.5" rx="0.75"></rect>
+          <rect x="4.6" y="14.6" width="10.4" height="1.5" rx="0.75"></rect>
+          <rect x="4.6" y="19.2" width="13.6" height="1.5" rx="0.75"></rect>
+          <rect x="4.6" y="23.8" width="8.6" height="1.5" rx="0.75"></rect>
+          <rect x="4.6" y="28.4" width="12.4" height="1.5" rx="0.75"></rect>
+          <rect x="4.6" y="33" width="10" height="1.5" rx="0.75"></rect>
+        </g>
+      </svg>
+    </div>
+    <p class="corelab" aria-hidden="true">iPhone</p>
+
+    {
+      marks.map((m) => (
+        <span
+          class="mark"
+          style={`--xw:${m.w.x};--yw:${m.w.y};--xn:${m.n.x};--yn:${m.n.y};--dw:${m.dw}s;--dn:${m.dn}s;--hue:var(--h-${m.cat})`}
+        >
+          <span class="chip">
+            <i />
+            {m.name}
+          </span>
+        </span>
+      ))
+    }
+
+    <p class="readout" aria-hidden="true">
+      {marks.map((m) => <span style={`--dw:${m.dw}s;--dn:${m.dn}s`}>{m.id}</span>)}
+    </p>
+  </div>
+</figure>
+
+<style>
+  .pd {
+    margin: 0;
+    inline-size: 100%;
+    max-inline-size: 32rem;
+    container-type: inline-size;
+  }
+
+  .plan {
+    position: relative;
+    inline-size: 100%;
+    aspect-ratio: 1;
+  }
+
+  /* ---- the field: range rings and bearing ticks ---- */
+
+  .grid {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    overflow: visible;
+  }
+
+  /* ---- the instrument: one hairline that turns ---- */
+
+  .sweep {
+    position: absolute;
+    inset: 0;
+    animation: turn var(--dur) linear infinite;
+  }
+
+  .wedge {
+    position: absolute;
+    inset: 13%;
+    border-radius: 50%;
+    background: conic-gradient(
+      from -62deg at 50% 50%,
+      rgba(22, 26, 32, 0) 0deg,
+      rgba(22, 26, 32, 0.048) 58deg,
+      rgba(22, 26, 32, 0) 62deg
+    );
+    -webkit-mask-image: radial-gradient(closest-side, transparent 0 16%, #000 42% 84%, transparent 100%);
+    mask-image: radial-gradient(closest-side, transparent 0 16%, #000 42% 84%, transparent 100%);
+  }
+
+  .arm {
+    position: absolute;
+    inset-inline-start: 50%;
+    inset-block: 13% 50%;
+    inline-size: 1px;
+    margin-inline-start: -0.5px;
+    background: linear-gradient(
+      to bottom,
+      rgba(92, 99, 110, 0.62),
+      rgba(92, 99, 110, 0.42) 62%,
+      rgba(92, 99, 110, 0)
+    );
+  }
+
+  .tip {
+    position: absolute;
+    inset-inline-start: 50%;
+    inset-block-start: 13%;
+    inline-size: 5px;
+    block-size: 5px;
+    border-radius: 50%;
+    background: #7b828d;
+    translate: -50% -50%;
+  }
+
+  /* ---- the centre: the phone the records are on ---- */
+
+  .core {
+    position: absolute;
+    inset-inline-start: 50%;
+    inset-block-start: 50%;
+    inline-size: 6%;
+    translate: -50% -50%;
+    line-height: 0;
+  }
+
+  .phone {
+    inline-size: 100%;
+    block-size: auto;
+    filter: drop-shadow(0 1px 3px rgba(20, 22, 26, 0.16));
+  }
+
+  .corelab {
+    position: absolute;
+    inset-inline-start: 50%;
+    inset-block-start: 59%;
+    translate: -50% 0;
+    margin: 0;
+    padding: 0.1em 0.4em;
+    background: #fafbfc;
+    font-family: var(--mono);
+    font-size: clamp(0.5rem, 1.7cqw, 0.625rem);
+    letter-spacing: 0.02em;
+    color: #4d525a;
+    white-space: nowrap;
+  }
+
+  /* ---- the returns: chips, still, at fixed bearing and range ---- */
+
+  .mark {
+    --x: var(--xw);
+    --y: var(--yw);
+    --d: var(--dw);
+    position: absolute;
+    inset-inline-start: calc(50% + var(--x) * 1%);
+    inset-block-start: calc(50% + var(--y) * 1%);
+    translate: -50% -50%;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.36em;
+    white-space: nowrap;
+    padding: 0.3em 0.62em 0.3em 0.5em;
+    border-radius: 999px;
+    border: 1px solid #e2e5ea;
+    background: #fff;
+    font-size: clamp(0.5625rem, 2.45cqw, 0.75rem);
+    font-weight: 500;
+    letter-spacing: -0.012em;
+    line-height: 1.25;
+    color: #4f545c;
+    animation: ret var(--dur) linear infinite;
+    animation-delay: var(--d);
+  }
+
+  .chip i {
+    position: relative;
+    inline-size: 0.6em;
+    block-size: 0.6em;
+    border-radius: 50%;
+    background: var(--hue);
+    opacity: 0.34;
+    flex: none;
+    animation: dot var(--dur) linear infinite;
+    animation-delay: inherit;
+  }
+
+  .chip i::after {
+    content: '';
+    position: absolute;
+    inset: -1.5px;
+    border-radius: 50%;
+    border: 1px solid var(--hue);
+    opacity: 0;
+    animation: ripple var(--dur) linear infinite;
+    animation-delay: inherit;
+  }
+
+  /* ---- the reading: what the arm is over right now ---- */
+
+  .readout {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 0;
+    margin: 0;
+    block-size: 1.3em;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: clamp(0.5rem, 1.7cqw, 0.625rem);
+    color: #4d525a;
+  }
+
+  .readout span {
+    position: absolute;
+    inset-inline: 0;
+    opacity: 0;
+    animation: say var(--dur) linear infinite;
+    animation-delay: var(--dw);
+  }
+
+  @keyframes turn {
+    to {
+      rotate: 360deg;
+    }
+  }
+
+  @keyframes ret {
+    0%,
+    2.2% {
+      border-color: #e2e5ea;
+      color: #4f545c;
+      box-shadow: 0 0 0 0 rgba(20, 22, 26, 0);
+    }
+    4.5% {
+      border-color: #b4bac3;
+      color: #14161a;
+      box-shadow: 0 1px 8px 0 rgba(20, 22, 26, 0.11);
+    }
+    9% {
+      border-color: #c4cad2;
+      color: #1a1d22;
+      box-shadow: 0 1px 5px 0 rgba(20, 22, 26, 0.06);
+    }
+    23%,
+    100% {
+      border-color: #e2e5ea;
+      color: #4f545c;
+      box-shadow: 0 0 0 0 rgba(20, 22, 26, 0);
+    }
+  }
+
+  @keyframes dot {
+    0%,
+    2.2% {
+      opacity: 0.34;
+      scale: 1;
+    }
+    4.5% {
+      opacity: 1;
+      scale: 1.2;
+    }
+    23%,
+    100% {
+      opacity: 0.34;
+      scale: 1;
+    }
+  }
+
+  @keyframes ripple {
+    0%,
+    3.4% {
+      opacity: 0;
+      scale: 0.7;
+    }
+    5% {
+      opacity: 0.5;
+      scale: 1;
+    }
+    14%,
+    100% {
+      opacity: 0;
+      scale: 2.4;
+    }
+  }
+
+  @keyframes say {
+    0%,
+    2.6% {
+      opacity: 0;
+    }
+    4.5%,
+    10% {
+      opacity: 1;
+    }
+    12.5%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  /* A pill is wide. In a narrow column the returns move onto bearings clustered
+     near the vertical axis, where a label costs little horizontal room. */
+  @container (max-width: 380px) {
+    .mark {
+      --x: var(--xn);
+      --y: var(--yn);
+      --d: var(--dn);
+    }
+
+    .chip {
+      padding: 0.22em 0.55em 0.22em 0.44em;
+    }
+
+    .readout {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Stopped, the display still reads: every return present and legible, the
+       arm parked mid-sweep so it is plainly the thing that moves. */
+    /* Parked on the first bearing, so the arm and the readout still agree. */
+    .sweep {
+      animation: none;
+      rotate: 8deg;
+    }
+
+    .chip,
+    .chip i,
+    .chip i::after,
+    .readout span {
+      animation: none;
+    }
+
+    .chip {
+      border-color: #c4cad2;
+      color: #14161a;
+    }
+
+    .chip i {
+      opacity: 1;
+    }
+
+    .chip i::after {
+      opacity: 0;
+    }
+
+    .readout span:first-child {
+      opacity: 1;
+    }
+
+    /* The other readings are removed rather than faded — an invisible line that
+       still holds its box gets announced, and the parked arm only agrees with
+       one of them. */
+    .readout span:not(:first-child) {
+      display: none;
+    }
+  }
+</style>

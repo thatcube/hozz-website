@@ -1,0 +1,146 @@
+---
+/**
+ * 03 — Keep / Ask / Build
+ *
+ * The three-ring form, with the meaning replaced. These are not Move, Exercise
+ * and Stand — they are the three things you can do once a copy is yours, which
+ * is the argument the page is actually making. Each fills when the figure comes
+ * into view.
+ */
+const RINGS = [
+  { key: 'keep', label: 'Keep', body: 'A file you hold', cat: 'heart', r: 58, len: 364.4, pct: 1 },
+  { key: 'ask', label: 'Ask', body: 'Your own assistant reads it', cat: 'nutrition', r: 43, len: 270.2, pct: 1 },
+  { key: 'build', label: 'Build', body: 'Charts you make yourself', cat: 'respiratory', r: 28, len: 175.9, pct: 1 },
+];
+---
+
+<div class="kab">
+  <svg class="fig" viewBox="0 0 260 260" role="img" aria-label="Three rings labelled Keep, Ask and Build">
+    <g transform="translate(130 130)">
+      {RINGS.map((r) => <circle class="tr" r={r.r} />)}
+      {
+        RINGS.map((r, i) => (
+          <circle
+            class={`rg rg--${r.key}`}
+            r={r.r}
+            style={`--len: ${r.len}; --hue: var(--h-${r.cat}); --i: ${i}`}
+          />
+        ))
+      }
+    </g>
+  </svg>
+
+  <ol class="key">
+    {
+      RINGS.map((r) => (
+        <li style={`--hue: var(--h-${r.cat})`}>
+          <span class="dot" aria-hidden="true" />
+          <b>{r.label}</b>
+          <span>{r.body}</span>
+        </li>
+      ))
+    }
+  </ol>
+</div>
+
+<script>
+  /* The rings fill once, when you get to them. A loop would turn a statement
+     into wallpaper. */
+  const io = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.classList.add('is-on');
+          io.unobserve(e.target);
+        }
+      });
+    },
+    { threshold: 0.4 },
+  );
+  document.querySelectorAll('.kab .fig').forEach((el) => io.observe(el));
+</script>
+
+<style>
+  .kab {
+    display: grid;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: center;
+    justify-items: center;
+  }
+
+  @media (min-width: 620px) {
+    .kab {
+      grid-template-columns: minmax(0, 16rem) minmax(0, 1fr);
+      justify-items: start;
+    }
+  }
+
+  .fig {
+    inline-size: min(100%, 16rem);
+    block-size: auto;
+  }
+
+  .tr {
+    fill: none;
+    stroke: #e8eaee;
+    stroke-width: 11;
+  }
+
+  .rg {
+    fill: none;
+    stroke: var(--hue);
+    stroke-width: 11;
+    stroke-linecap: round;
+    stroke-dasharray: var(--len);
+    stroke-dashoffset: var(--len);
+    transform: rotate(-90deg);
+    transform-origin: 0 0;
+  }
+
+  .fig.is-on .rg {
+    stroke-dashoffset: calc(var(--len) * 0.06);
+    transition: stroke-dashoffset 1.15s cubic-bezier(0.22, 0.61, 0.36, 1);
+    transition-delay: calc(var(--i) * 0.16s);
+  }
+
+  .key {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .key li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.1rem 0.7rem;
+    align-items: baseline;
+  }
+
+  .dot {
+    grid-row: span 2;
+    align-self: center;
+    inline-size: 9px;
+    block-size: 9px;
+    border-radius: 50%;
+    background: var(--hue);
+  }
+
+  .key b {
+    font-size: 1.0625rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: #14161a;
+  }
+
+  .key span:not(.dot) {
+    grid-column: 2;
+    font-size: 0.9375rem;
+    color: #4d525a;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fig .rg {
+      stroke-dashoffset: calc(var(--len) * 0.06);
+      transition: none;
+    }
+  }
+</style>
