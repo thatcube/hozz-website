@@ -1,15 +1,15 @@
 ---
 /**
- * m08 · Slack — a pair of earbuds after a pocket.
+ * m08 · Bevel — a disc cartridge, shutter pulled back.
  *
- * One cable, drawn once and never lifted. It leaves the left bud, folds into a
- * Z, turns straight back into a second Z, and the leftover length falls away
- * underneath and ends at the other bud. The two Zs are two folds in the same
- * run, joined by the same piece of cable that made them, so neither can be
- * moved without the other. The bars are the cable lying flat and the diagonals
- * are the cable crossing the fall, which is why the two weights differ.
+ * The dependency: **the caddy's cut corner is the angle every terminal is cut
+ * on.** The bevel falls 7 across 13.5; the letters' shear is (w - diag) over
+ * (h - 2*bar), which is 5.6 over 10.8 — the same number. So the object's profile
+ * is what shears the ends of the bars, and the second Z runs its foot down the
+ * bevel a hairline away from it. Re-angle the corner and all eight terminals are
+ * wrong. A record has no corner and neither does a jar; this one does.
  *
- * Three shapes: two buds and one cable. The slack is the mouth.
+ * Two shapes: the bevelled body and the shutter forming its left wall.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -20,24 +20,17 @@ interface Props {
 }
 const { size = 96, ground = 'light' } = Astro.props as Props;
 const app = APP_BY_KEY.mozz;
+const uid = `m08-${Math.random().toString(36).slice(2, 9)}`;
 
-// bar 2.6 against diag 4.2.
-const Z = { y: 12.9, h: 11.5, w: 13.5, bar: 2.6, diag: 4.2 };
-const ZX = [9.6, 28];
+// The bevel runs 7 across and 13.5 down: exactly the letters' terminal shear.
+const BODY =
+  'M7 10.5 H41 A3 3 0 0 1 44 13.5 V24 L37 37.5 H7 A3 3 0 0 1 4 34.5 V13.5 A3 3 0 0 1 7 10.5 Z';
+// The shutter is the cartridge's own left wall, not a bar floating on the face.
+const SHUTTER = 'M7 10.5 H14.4 V37.5 H7 A3 3 0 0 1 4 34.5 V13.5 A3 3 0 0 1 7 10.5 Z';
 
-const TOP_Y = Z.y + Z.bar / 2;
-const FOOT_Y = Z.y + Z.h - Z.bar / 2;
-const HEAD = { x: ZX[0], y: TOP_Y };
-const TAIL = { x: 13.6, y: 30.6 };
-const BUD = 3.5;
-
-// The turn between the two folds. The slack leaves from *under* the second Z's
-// foot, not from its corner, so that corner stays sharp and the letter reads.
-const FOLD = `M${ZX[0] + Z.w} ${FOOT_Y}C26.2 22.4 25 15.4 ${ZX[1]} ${TOP_Y}`;
-const SLACK =
-  `M35.4 ${FOOT_Y + 0.6}` +
-  `C36.2 31.4 30.4 36.6 22.4 36.2` +
-  `C18.2 36 15 33.4 ${TAIL.x} ${TAIL.y}`;
+const Z = { y: 15.6, w: 10.4, h: 16.8, bar: 3, diag: 4.8, cap: 'angled' as const };
+// The second Z's angled foot sits 0.6 inside the bevel, running parallel to it.
+const ZX = [16, 30.2];
 ---
 
 <svg
@@ -49,25 +42,15 @@ const SLACK =
   role="img"
   aria-label={`${app.name} mark`}
 >
-  <path
-    d={FOLD}
-    stroke={app.hue}
-    stroke-width={Z.bar * 0.62}
-    stroke-linecap="round"
-    fill="none"
-  />
-  <path
-    d={SLACK}
-    stroke={app.hue}
-    stroke-width={Z.bar}
-    stroke-linecap="round"
-    fill="none"
-  />
-  {ZX.map((zx) => <path d={zPath({ ...Z, x: zx })} fill={app.hue} />)}
-  {[HEAD, TAIL].map((p) => <circle cx={p.x} cy={p.y} r={BUD} fill={app.hue} />)}
-  {
-    [HEAD, TAIL].map((p) => (
-      <circle cx={p.x} cy={p.y} r={BUD * 0.4} fill={app.deep} />
-    ))
-  }
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      {ZX.map((zx) => <path d={zPath({ ...Z, x: zx })} fill="#000" />)}
+    </mask>
+  </defs>
+
+  <g mask={`url(#${uid})`}>
+    <path d={BODY} fill={app.hue} />
+    <path d={SHUTTER} fill={app.deep} />
+  </g>
 </svg>

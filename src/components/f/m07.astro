@@ -9,7 +9,8 @@
  * the diagonals are the same ribbon crossing the span, which is why the two
  * weights differ.
  *
- * Four shapes: shell, window, tape, head slot.
+ * Three shapes plus one bite: shell, window, tape, and the head opening cut up
+ * into the bottom edge so the silhouette is not a plain rectangle.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -32,8 +33,8 @@ const WIN = { x: 8, y: 15.6, w: 32, h: 13.6, r: 1.6 };
 const Z = { y: 15, h: 14.8, w: 14, bar: 3.2, diag: 4.4 };
 const ZX = [8, 26];
 
-// The head opening breaks the bottom edge rather than floating above it.
-const SLOT = { x: 15.2, y: 33.2, w: 17.6, h: 3.6, r: 1.8 };
+// The head opening is cut clean out of the bottom edge, not printed on it.
+const SLOT = { x: 15.2, y: 32.6, w: 17.6, h: 5, r: 2.5 };
 ---
 
 <svg
@@ -49,7 +50,20 @@ const SLOT = { x: 15.2, y: 33.2, w: 17.6, h: 3.6, r: 1.8 };
     <clipPath id={`${uid}-w`}>
       <rect x={WIN.x} y={WIN.y} width={WIN.w} height={WIN.h} rx={WIN.r} />
     </clipPath>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <rect
+        x={SLOT.x}
+        y={SLOT.y}
+        width={SLOT.w}
+        height={SLOT.h}
+        rx={SLOT.r}
+        fill="#000"
+      />
+    </mask>
   </defs>
+
+  <g mask={`url(#${uid})`}>
 
   <rect
     x={SHELL.x}
@@ -70,13 +84,5 @@ const SLOT = { x: 15.2, y: 33.2, w: 17.6, h: 3.6, r: 1.8 };
   <g clip-path={`url(#${uid}-w)`}>
     {ZX.map((zx) => <path d={zPath({ ...Z, x: zx })} fill={app.light} />)}
   </g>
-  <rect
-    x={SLOT.x}
-    y={SLOT.y}
-    width={SLOT.w}
-    height={SLOT.h}
-    rx={SLOT.r}
-    fill={app.deep}
-    opacity={ground === 'dark' ? 1 : 0.92}
-  />
+  </g>
 </svg>

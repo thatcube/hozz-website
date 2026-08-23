@@ -7,9 +7,9 @@
  * rest of that same cut — it hangs directly off the opening, so moving the
  * mouth moves the letters and closing the sleeve would close them too.
  *
- * Everything visible is one hue and every light shape is a hole, so the letters
- * hold full tonal separation on either ground. Two shapes make the object: the
- * disc and the card. Nothing else.
+ * Everything visible is one hue and every pale shape is a hole, so the letters
+ * hold full tonal separation on either ground. Three shapes: the disc, one
+ * groove in its exposed rim, and the card.
  */
 import { zPath } from '../../data/zstroke';
 import { APP_BY_KEY } from '../../data/brand';
@@ -56,7 +56,8 @@ const ZX = [8.5, 24.2];
         rx={MOUTH.r}
         fill="#000"
       />
-      {/* The spindle is buried, so one groove in the exposed rim says record. */}
+      {/* The spindle is buried under the card; one groove in the exposed rim
+          carries the record instead. */}
     </mask>
   </defs>
 

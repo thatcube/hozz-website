@@ -7,6 +7,6 @@ export default {
   reading: 'letters',
   sentence: 'The ZZ is the rest of the cut that opens the sleeve.',
   idea:
-    'The sleeve is open along one line and the record is leaving through it. The ZZ hangs directly off that opening and is part of the same cut, so moving the mouth moves the letters and a closed sleeve would have neither. One hue, and every pale shape is a hole — including the spindle, which is the only mark that makes the disc a record.',
+    'The sleeve is slit along one line and the record is on its way out through it. The letters hang straight off that slit and are part of the same cut, so raising the opening raises them and a closed sleeve would have neither. One groove in the exposed rim is all it takes to make the disc a record. Three shapes, two fills.',
   palette: ['#e0243f', '#6d0f1e', '#f58a99'],
 };
