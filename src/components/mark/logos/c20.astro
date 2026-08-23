@@ -1,0 +1,22 @@
+---
+/**
+ * 20 · Aftercopy
+ *
+ * Three offset sheets make export literal without becoming an arrow: one safe
+ * copy remains present while its quiet afterimages travel outward.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import Face from '../Face.astro';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Hozz — Aftercopy">
+  <path d="M12 3h13v1h-13zM10 4h17v1h-17zM9 5h19v16H9zM10 21h17v1H10zM12 22h13v1H12z" fill="#394651" />
+  <path d="M9 6h13v1H9zM7 7h17v1H7zM6 8h19v16H6zM7 24h17v1H7zM9 25h13v1H9z" fill="#88a792" />
+  <path d="M8 9h13v1H8zM6 10h17v1H6zM5 11h19v16H5zM6 27h17v1H6zM8 28h13v1H8z" fill="#f0d9a2" />
+  <path d="M21 22h3v5h-3zM19 24h5v3h-5z" fill="#d58d70" />
+  <path d="M5 11h3v2H5zM5 13h2v11H5zM6 27h17v1H6z" fill="#394651" />
+  <Face fill="#30383b" />
+</MarkFrame>

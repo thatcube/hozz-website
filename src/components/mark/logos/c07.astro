@@ -1,0 +1,22 @@
+---
+/**
+ * 07 · Afterglow
+ *
+ * A pale core sends its light outward in four deliberate pixel steps. Small
+ * cardinal rays break the orb silhouette and make the emission unmistakable.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import Face from '../Face.astro';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Hozz — Afterglow">
+  <path d="M15 3h2v1h-2z M1 17h1v1h-1z M29 17h1v1h-1z M1 18h1v1h-1z M29 18h1v1h-1z M15 31h2v1h-2z" fill="#818c68" />
+  <path d="M13 5h5v1h-5z M10 6h11v1h-11z M9 7h13v1h-13z M7 8h17v1h-17z M6 9h19v1h-19z M6 10h19v1h-19z M5 11h21v1h-21z M4 12h23v1h-23z M4 13h23v1h-23z M4 14h23v1h-23z M3 15h25v1h-25z M3 16h25v1h-25z M3 17h25v1h-25z M3 18h25v1h-25z M3 19h25v1h-25z M4 20h23v1h-23z M4 21h23v1h-23z M4 22h23v1h-23z M5 23h21v1h-21z M6 24h19v1h-19z M6 25h19v1h-19z M7 26h17v1h-17z M9 27h13v1h-13z M10 28h11v1h-11z M13 29h5v1h-5z" fill="#555f44" />
+  <path d="M13 7h5v1h-5z M11 8h9v1h-9z M9 9h13v1h-13z M8 10h15v1h-15z M7 11h17v1h-17z M7 12h17v1h-17z M6 13h19v1h-19z M6 14h19v1h-19z M5 15h21v1h-21z M5 16h21v1h-21z M5 17h21v1h-21z M5 18h21v1h-21z M5 19h21v1h-21z M6 20h19v1h-19z M6 21h19v1h-19z M7 22h17v1h-17z M7 23h17v1h-17z M8 24h15v1h-15z M9 25h13v1h-13z M11 26h9v1h-9z M13 27h5v1h-5z" fill="#818c68" />
+  <path d="M14 9h3v1h-3z M11 10h9v1h-9z M10 11h11v1h-11z M9 12h13v1h-13z M8 13h15v1h-15z M8 14h15v1h-15z M8 15h15v1h-15z M7 16h17v1h-17z M7 17h17v1h-17z M7 18h17v1h-17z M8 19h15v1h-15z M8 20h15v1h-15z M8 21h15v1h-15z M9 22h13v1h-13z M10 23h11v1h-11z M11 24h9v1h-9z M14 25h3v1h-3z" fill="#b4bf8e" />
+  <path d="M13 11h5v1h-5z M11 12h9v1h-9z M10 13h11v1h-11z M10 14h11v1h-11z M9 15h13v1h-13z M9 16h13v1h-13z M9 17h13v1h-13z M9 18h13v1h-13z M9 19h13v1h-13z M10 20h11v1h-11z M10 21h11v1h-11z M11 22h9v1h-9z M13 23h5v1h-5z" fill="#eef0c8" />
+  <Face fill="#33382b" />
+</MarkFrame>

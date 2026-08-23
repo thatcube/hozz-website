@@ -1,0 +1,1537 @@
+---
+/**
+ * w03 · Nightkeep — the dark concept.
+ *
+ * Built on mark c06 and its palette. The darkness is an argument, not a style:
+ * Hozz does its work in the background, which in practice means overnight, and
+ * every honest limit of that — a locked phone cannot be read, iOS picks the
+ * moment, no progress fraction can be known — is a fact about night. One cool
+ * edge of light runs down every panel, the way the mark's orb keeps one lit rim.
+ */
+import Mark from '../../components/mark/logos/c06.astro';
+import {
+  SITE,
+  GITHUB_URL,
+  DONATE_URL,
+  LICENSE_URL,
+  NAV_LINKS,
+  CATEGORIES,
+  STREAM_LANES,
+  STEPS,
+  DESTINATIONS,
+  FORMATS,
+  DURABILITY,
+  COVERAGE_STATES,
+  MCP_TOOLS,
+  PROMISES,
+  WORKING,
+  NOT_YET,
+  FAQ,
+  SIBLINGS,
+} from '../../data/site';
+
+/**
+ * The category hues were chosen for a light page. On an indigo ground they have
+ * to be lifted toward the mark's palest tone or they fail contrast as text, so
+ * every accent here is the same hue, measured against the ground it lands on.
+ */
+const bytes = (hex: string) => hex.replace('#', '').match(/../g)!.map((x) => parseInt(x, 16));
+const lift = (hex: string, t = 0.44) => {
+  const to = bytes('#eef3f6');
+  return (
+    '#' +
+    bytes(hex)
+      .map((v, i) => Math.round(v + (to[i] - v) * t).toString(16).padStart(2, '0'))
+      .join('')
+  );
+};
+const HUE = Object.fromEntries(
+  CATEGORIES.map((c) => [c.key, { base: c.hue, night: lift(c.hue) }]),
+) as Record<string, { base: string; night: string }>;
+
+const title = 'Hozz — your Apple Health data, out of the phone by morning';
+const description =
+  'Hozz is a free, open-source iPhone app with a companion Mac app. It exports your Apple Health data in the background to destinations you own — your Mac, a folder, Home Assistant, InfluxDB, a URL or MQTT. No account, no server, no default destination.';
+
+const ld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'Hozz',
+    applicationCategory: 'HealthApplication',
+    operatingSystem: 'iOS, macOS',
+    description,
+    url: SITE,
+    codeRepository: GITHUB_URL,
+    license: LICENSE_URL,
+    isAccessibleForFree: true,
+    author: { '@type': 'Person', name: 'Brandon Moore' },
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    softwareVersion: 'early alpha',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'How do I export my Apple Health data?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Install Hozz, add a destination you own — your Mac, a folder, Home Assistant, InfluxDB, a web address or an MQTT broker — then choose which Health types to send and how often. Grant access when iOS asks. From then on new records go on their own, in the background, without you opening the app.',
+        },
+      },
+      ...FAQ.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    ],
+  },
+];
+
+/** The night bar under the hero: the rules of background export, as segments. */
+const NIGHT = [
+  { key: 'sleep', label: 'Asleep, phone locked', state: 'unavailable', note: 'Health is sealed while the phone is locked. The anchor does not move.' },
+  { key: 'body', label: 'Woken by iOS', state: 'allowed', note: 'The system grants a turn; new records go, and the anchor advances.' },
+  { key: 'mobility', label: 'Morning, in your hand', state: 'near hourly', note: 'Whatever waited clears. Nothing was skipped, because nothing was assumed.' },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0e1421" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href={`${SITE}/w/w03/`} />
+    <script type="application/ld+json" set:html={JSON.stringify(ld)} is:inline />
+    <style is:global>
+      @font-face {
+        font-family: 'Sentient';
+        src: url('/fonts/sentient-400.woff2') format('woff2');
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'Sentient';
+        src: url('/fonts/sentient-400-italic.woff2') format('woff2');
+        font-weight: 400;
+        font-style: italic;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'Sentient';
+        src: url('/fonts/sentient-500.woff2') format('woff2');
+        font-weight: 500;
+        font-style: normal;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'Sentient';
+        src: url('/fonts/sentient-500-italic.woff2') format('woff2');
+        font-weight: 500;
+        font-style: italic;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'General Sans';
+        src: url('/fonts/general-sans-400.woff2') format('woff2');
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'General Sans';
+        src: url('/fonts/general-sans-500.woff2') format('woff2');
+        font-weight: 500;
+        font-style: normal;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'General Sans';
+        src: url('/fonts/general-sans-600.woff2') format('woff2');
+        font-weight: 600;
+        font-style: normal;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'IBM Plex Mono';
+        src: url('/fonts/ibm-plex-mono-400.woff2') format('woff2');
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'IBM Plex Mono';
+        src: url('/fonts/ibm-plex-mono-500.woff2') format('woff2');
+        font-weight: 500;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      :root {
+        /* The mark's palette, deepened by one step for a full page of ground. */
+        --night: #0e1421;
+        --ground: #131a2b;
+        --raise: #1a2438;
+        --panel: #202c42;
+        --edge: #25334a;
+        --rim: #647e99;
+        --dim: #a7b9c9;
+        --pale: #cbd8e2;
+        --lit: #e6edf0;
+        --tint: #a7b9c9;
+        --tint-base: #647e99;
+
+        --serif: 'Sentient', Georgia, serif;
+        --sans: 'General Sans', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+        --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+        --gap: clamp(1rem, 2.4vw, 1.5rem);
+        --pad: clamp(1.25rem, 5vw, 4rem);
+        --band: clamp(4rem, 8vw, 7.5rem);
+        --wide: 1220px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        background: var(--night);
+        color: var(--pale);
+        font-family: var(--sans);
+        font-size: clamp(1rem, 0.96rem + 0.22vw, 1.125rem);
+        line-height: 1.62;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-family: var(--serif);
+        font-weight: 500;
+        color: var(--lit);
+        letter-spacing: -0.012em;
+        line-height: 1.08;
+        margin: 0;
+        text-wrap: balance;
+      }
+
+      h1 {
+        font-size: clamp(2.6rem, 1.5rem + 4.9vw, 5.5rem);
+      }
+      h2 {
+        font-size: clamp(1.85rem, 1.2rem + 2.5vw, 3.1rem);
+      }
+      h3 {
+        font-size: clamp(1.15rem, 1.05rem + 0.5vw, 1.4rem);
+        line-height: 1.2;
+      }
+
+      p {
+        margin: 0;
+      }
+
+      a {
+        color: var(--lit);
+        text-decoration-color: color-mix(in srgb, var(--tint) 55%, transparent);
+        text-underline-offset: 3px;
+      }
+      a:hover {
+        text-decoration-color: var(--tint);
+      }
+
+      :focus-visible {
+        outline: 2px solid #e6edf0;
+        outline-offset: 3px;
+        border-radius: 3px;
+      }
+
+      .wrap {
+        width: min(100% - (var(--pad) * 2), var(--wide));
+        margin-inline: auto;
+      }
+
+      .em {
+        font-style: italic;
+        color: var(--tint);
+      }
+
+      .mono {
+        font-family: var(--mono);
+        font-size: 0.82em;
+        letter-spacing: -0.01em;
+      }
+
+      .eyebrow {
+        font-family: var(--mono);
+        font-size: 0.74rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--dim);
+        display: flex;
+        align-items: flex-start;
+        gap: 0.6rem;
+        margin: 0 0 1.1rem;
+      }
+      .eyebrow::before {
+        content: '';
+        width: 7px;
+        height: 7px;
+        margin-top: 0.55em;
+        border-radius: 50%;
+        background: var(--tint);
+        box-shadow: 0 0 0 4px color-mix(in srgb, var(--tint) 16%, transparent);
+        flex: none;
+      }
+
+      /* ---- the lit edge: every panel keeps one rim in the light ---- */
+      .lit {
+        position: relative;
+        background: var(--raise);
+        border: 1px solid var(--edge);
+        border-radius: 14px;
+        overflow: hidden;
+      }
+      .lit::before {
+        content: '';
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 2px;
+        background: linear-gradient(
+          180deg,
+          color-mix(in srgb, var(--c, var(--tint)) 20%, transparent),
+          var(--c, var(--tint)) 30%,
+          color-mix(in srgb, var(--c, var(--tint)) 45%, transparent) 78%,
+          transparent
+        );
+      }
+
+      /* ---------- header ---------- */
+      .top {
+        position: sticky;
+        top: 0;
+        z-index: 30;
+        background: color-mix(in srgb, var(--night) 88%, transparent);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--edge);
+      }
+      .top .bar {
+        display: flex;
+        align-items: center;
+        gap: var(--gap);
+        padding-block: 0.85rem;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        text-decoration: none;
+        color: var(--lit);
+        font-family: var(--serif);
+        font-size: 1.3rem;
+        letter-spacing: 0.01em;
+      }
+      .nav {
+        margin-left: auto;
+        display: flex;
+        gap: 1.35rem;
+        align-items: center;
+      }
+      .nav a {
+        font-size: 0.92rem;
+        color: var(--dim);
+        text-decoration: none;
+      }
+      .nav a:hover {
+        color: var(--lit);
+      }
+      .nav .src {
+        color: var(--lit);
+        border: 1px solid var(--rim);
+        border-radius: 999px;
+        padding: 0.36rem 0.9rem;
+      }
+      .nav .src:hover {
+        border-color: var(--dim);
+        background: var(--raise);
+      }
+      @media (max-width: 800px) {
+        .nav a:not(.src) {
+          display: none;
+        }
+      }
+
+      /* ---------- hero ---------- */
+      .hero {
+        position: relative;
+        padding-block: clamp(3.5rem, 7vw, 7rem) clamp(2.5rem, 5vw, 4rem);
+        isolation: isolate;
+        overflow: hidden;
+      }
+      .moon {
+        position: absolute;
+        z-index: -1;
+        inset: -12vw -22vw auto auto;
+        width: min(74vw, 820px);
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background:
+          radial-gradient(circle at 42% 56%, #161f33 0 55%, #1d283d 62%, transparent 68%);
+        pointer-events: none;
+      }
+      /* One cool edge still catching light, aimed at the headline. */
+      .moon::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background: conic-gradient(
+          from 0deg,
+          transparent 0 152deg,
+          color-mix(in srgb, #647e99 70%, transparent) 178deg,
+          #a7b9c9 214deg,
+          color-mix(in srgb, #647e99 60%, transparent) 252deg,
+          transparent 276deg
+        );
+        -webkit-mask: radial-gradient(circle closest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+        mask: radial-gradient(circle closest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+      }
+      .star {
+        position: absolute;
+        z-index: -1;
+        top: clamp(2.5rem, 7vw, 6rem);
+        right: clamp(1.5rem, 14vw, 14rem);
+        width: 16px;
+        height: 16px;
+        background: var(--lit);
+        clip-path: polygon(50% 0, 58% 42%, 100% 50%, 58% 58%, 50% 100%, 42% 58%, 0 50%, 42% 42%);
+        opacity: 0.9;
+      }
+      .hero h1 {
+        max-width: 15ch;
+      }
+      .lede {
+        margin-top: 1.6rem;
+        max-width: 56ch;
+        font-size: clamp(1.1rem, 1rem + 0.6vw, 1.4rem);
+        line-height: 1.5;
+        color: var(--pale);
+      }
+      .sub {
+        margin-top: 1rem;
+        max-width: 54ch;
+        color: var(--dim);
+        font-size: 1rem;
+      }
+      .cta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 2.2rem;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.72rem 1.3rem;
+        border-radius: 999px;
+        font-weight: 500;
+        font-size: 0.98rem;
+        text-decoration: none;
+        border: 1px solid var(--rim);
+        color: var(--lit);
+      }
+      .btn.solid {
+        background: var(--lit);
+        color: #101725;
+        border-color: var(--lit);
+      }
+      .btn.solid:hover {
+        background: #fff;
+      }
+      .btn:hover {
+        background: var(--raise);
+      }
+      .btn.solid:hover {
+        background: #fff;
+      }
+
+      /* ---------- the stream ---------- */
+      .stream {
+        margin-top: clamp(2.5rem, 5vw, 4rem);
+        border-block: 1px solid var(--edge);
+        padding-block: 1.15rem;
+        display: grid;
+        gap: 0.55rem;
+        overflow: hidden;
+        -webkit-mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+        mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+      }
+      .lane {
+        display: flex;
+        gap: 0.55rem;
+        width: max-content;
+        animation: drift 82s linear infinite;
+      }
+      .lane:nth-child(2) {
+        animation-duration: 104s;
+        animation-direction: reverse;
+      }
+      .lane:nth-child(3) {
+        animation-duration: 93s;
+      }
+      .lane:nth-child(4) {
+        animation-duration: 118s;
+        animation-direction: reverse;
+      }
+      @keyframes drift {
+        from {
+          transform: translate3d(0, 0, 0);
+        }
+        to {
+          transform: translate3d(-50%, 0, 0);
+        }
+      }
+      .chip {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 0.5rem;
+        white-space: nowrap;
+        padding: 0.3rem 0.75rem;
+        border: 1px solid var(--edge);
+        border-radius: 999px;
+        background: var(--ground);
+        font-family: var(--mono);
+        font-size: 0.78rem;
+      }
+      .chip b {
+        font-weight: 500;
+        color: var(--c);
+      }
+      .chip span {
+        color: var(--dim);
+      }
+      .caption {
+        color: var(--dim);
+        font-size: 0.85rem;
+        margin-top: 0.9rem;
+      }
+
+      /* ---------- sections ---------- */
+      section {
+        padding-block: var(--band);
+        border-top: 1px solid var(--edge);
+        background: var(--wash, transparent);
+      }
+      .head {
+        max-width: 62ch;
+        margin-bottom: clamp(2rem, 4vw, 3.2rem);
+      }
+      .head p {
+        margin-top: 1.1rem;
+        color: var(--pale);
+        font-size: clamp(1.05rem, 1rem + 0.35vw, 1.2rem);
+      }
+
+      .grid {
+        display: grid;
+        gap: var(--gap);
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr));
+      }
+      @media (min-width: 900px) {
+        .grid.three {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+      }
+      .card {
+        padding: clamp(1.25rem, 2.4vw, 1.7rem);
+      }
+      .card h3 {
+        margin-bottom: 0.55rem;
+      }
+      .card p {
+        color: var(--pale);
+        font-size: 0.98rem;
+      }
+      .fact {
+        display: block;
+        margin-top: 1rem;
+        font-family: var(--mono);
+        font-size: 0.78rem;
+        color: var(--c, var(--dim));
+        overflow-wrap: anywhere;
+      }
+      .n {
+        font-family: var(--mono);
+        font-size: 0.76rem;
+        color: var(--dim);
+        display: block;
+        margin-bottom: 0.7rem;
+      }
+
+      /* ---------- night bar ---------- */
+      .nightbar {
+        list-style: none;
+        margin: 0 0 1rem;
+        padding: 0;
+        display: grid;
+        gap: 2px;
+        grid-template-columns: 1.1fr 1fr 1fr;
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      .nightbar li {
+        background: var(--raise);
+        padding: 1.05rem 1.15rem 1.15rem;
+        border-top: 3px solid var(--c);
+      }
+      .nightbar dfn {
+        font-family: var(--mono);
+        font-style: normal;
+        font-size: 0.74rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--c);
+        display: block;
+        margin-bottom: 0.5rem;
+      }
+      .nightbar b {
+        display: block;
+        color: var(--lit);
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+      }
+      .nightbar span {
+        color: var(--dim);
+        font-size: 0.9rem;
+        line-height: 1.45;
+      }
+      @media (max-width: 720px) {
+        .nightbar {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* ---------- steps ---------- */
+      .steps {
+        counter-reset: s;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: var(--gap);
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+      }
+      .steps li {
+        counter-increment: s;
+        padding: clamp(1.25rem, 2.4vw, 1.7rem) clamp(1.25rem, 2.4vw, 1.7rem) 3.4rem;
+      }
+      .steps li::after {
+        content: counter(s, decimal-leading-zero);
+        position: absolute;
+        bottom: 0.4rem;
+        right: 1.1rem;
+        font-family: var(--mono);
+        font-size: 2.9rem;
+        color: color-mix(in srgb, var(--c) 20%, transparent);
+        line-height: 1;
+      }
+
+      /* ---------- table ---------- */
+      .tablewrap {
+        overflow-x: auto;
+        max-width: 1000px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.96rem;
+        min-width: 560px;
+      }
+      caption {
+        text-align: left;
+        color: var(--dim);
+        font-size: 0.85rem;
+        padding-bottom: 0.9rem;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 0.9rem 1rem 0.9rem 0;
+        border-bottom: 1px solid var(--edge);
+        vertical-align: top;
+      }
+      thead th {
+        font-family: var(--mono);
+        font-weight: 500;
+        font-size: 0.74rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--dim);
+        border-bottom-color: var(--rim);
+      }
+      tbody th {
+        font-family: var(--serif);
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: var(--lit);
+        white-space: nowrap;
+      }
+      td {
+        color: var(--pale);
+      }
+      td.note {
+        color: var(--dim);
+      }
+      .lossy {
+        display: inline-block;
+        font-family: var(--mono);
+        font-size: 0.68rem;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        color: #ebb489;
+        border: 1px solid color-mix(in srgb, #ebb489 42%, transparent);
+        border-radius: 999px;
+        padding: 0.1rem 0.5rem;
+        margin-right: 0.5rem;
+        vertical-align: 1px;
+      }
+
+      /* A narrow screen gets the same table as blocks, never a cut-off column. */
+      @media (max-width: 700px) {
+        table {
+          min-width: 0;
+          display: block;
+        }
+        thead {
+          display: none;
+        }
+        caption {
+          display: block;
+          width: 100%;
+        }
+        tbody,
+        tbody tr,
+        tbody th,
+        tbody td {
+          display: block;
+          width: 100%;
+        }
+        tbody tr {
+          border-bottom: 1px solid var(--edge);
+          padding-block: 1.15rem;
+        }
+        tbody th,
+        tbody td {
+          border: 0;
+          padding: 0;
+          white-space: normal;
+        }
+        tbody th {
+          font-size: 1.25rem;
+          margin-bottom: 0.35rem;
+        }
+        tbody td::before {
+          content: attr(data-l);
+          display: block;
+          font-family: var(--mono);
+          font-size: 0.68rem;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          color: var(--dim);
+          margin: 0.6rem 0 0.15rem;
+        }
+      }
+
+      /* ---------- states ---------- */
+      .states {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 1px;
+        background: var(--edge);
+        border: 1px solid var(--edge);
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      .states li {
+        background: var(--raise);
+        padding: 1rem 1.2rem;
+        display: grid;
+        grid-template-columns: minmax(0, 14rem) 1fr;
+        gap: 0.4rem 1.5rem;
+        align-items: baseline;
+      }
+      .states code {
+        font-family: var(--mono);
+        font-size: 0.82rem;
+        color: var(--c);
+      }
+      .states span {
+        color: var(--pale);
+        font-size: 0.96rem;
+      }
+      @media (max-width: 640px) {
+        .states li {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* ---------- pull ---------- */
+      .pull {
+        font-family: var(--serif);
+        font-size: clamp(1.4rem, 1.1rem + 1.5vw, 2.15rem);
+        line-height: 1.24;
+        color: var(--lit);
+        max-width: 24ch;
+      }
+      .pull em {
+        color: var(--tint);
+      }
+      .split {
+        display: grid;
+        gap: clamp(2rem, 5vw, 4rem);
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+        align-items: start;
+      }
+      @media (max-width: 900px) {
+        .split {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .stat {
+        margin-top: 2rem;
+        padding: 1.4rem 1.6rem;
+      }
+      .stat b {
+        font-family: var(--serif);
+        font-size: clamp(2.4rem, 2rem + 2vw, 3.4rem);
+        font-weight: 500;
+        color: var(--lit);
+        display: block;
+        line-height: 1;
+      }
+      .stat span {
+        color: var(--dim);
+        font-size: 0.92rem;
+        display: block;
+        margin-top: 0.5rem;
+      }
+
+      .tools {
+        list-style: none;
+        margin: 1.5rem 0 0;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      .tools li {
+        font-family: var(--mono);
+        font-size: 0.78rem;
+        color: var(--pale);
+        border: 1px solid var(--edge);
+        border-radius: 999px;
+        padding: 0.32rem 0.8rem;
+        background: var(--ground);
+      }
+
+      .warn {
+        margin-top: 1.6rem;
+        padding: 1.2rem 1.4rem;
+        border: 1px solid color-mix(in srgb, #e4a19a 34%, transparent);
+        border-radius: 12px;
+        background: color-mix(in srgb, #e4a19a 7%, transparent);
+        color: var(--pale);
+        font-size: 0.98rem;
+      }
+      .warn b {
+        color: #e4a19a;
+        font-weight: 500;
+      }
+
+      /* ---------- promises ---------- */
+      .refuse {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: var(--gap) clamp(1.5rem, 3vw, 2.5rem);
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+      }
+      @media (min-width: 900px) {
+        .refuse {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+      }
+      .refuse li {
+        padding: 0.2rem 0 0.2rem 1.3rem;
+        background: none;
+        border: 0;
+        border-radius: 0;
+      }
+      .refuse li::before {
+        width: 2px;
+        top: 0;
+        bottom: 0;
+      }
+      .refuse b {
+        display: block;
+        font-family: var(--serif);
+        font-size: 1.2rem;
+        font-weight: 500;
+        color: var(--lit);
+        margin-bottom: 0.3rem;
+      }
+      .refuse span {
+        color: var(--dim);
+        font-size: 0.94rem;
+      }
+
+      /* ---------- status ---------- */
+      .cols {
+        display: grid;
+        gap: var(--gap);
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+      }
+      .ticks {
+        list-style: none;
+        margin: 1rem 0 0;
+        padding: 0;
+        display: grid;
+        gap: 0.6rem;
+      }
+      .ticks li {
+        position: relative;
+        padding-left: 1.7rem;
+        color: var(--pale);
+        font-size: 0.98rem;
+      }
+      .ticks li::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0.62em;
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        border: 1.5px solid var(--c);
+      }
+      .ticks.done li::before {
+        background: var(--c);
+      }
+
+      /* ---------- faq ---------- */
+      .faq {
+        display: grid;
+        gap: 0;
+        margin: 0;
+      }
+      .faq > div {
+        border-top: 1px solid var(--edge);
+        padding-block: 1.5rem;
+        display: grid;
+        gap: 0.5rem 3rem;
+        grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+      }
+      .faq dt {
+        font-family: var(--serif);
+        font-size: clamp(1.15rem, 1.05rem + 0.4vw, 1.35rem);
+        color: var(--lit);
+        line-height: 1.22;
+      }
+      .faq dd {
+        margin: 0;
+        color: var(--pale);
+        font-size: 0.99rem;
+      }
+      @media (max-width: 820px) {
+        .faq > div {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* ---------- footer ---------- */
+      footer {
+        border-top: 1px solid var(--edge);
+        padding-block: clamp(3rem, 6vw, 5rem) 3rem;
+        background: var(--ground);
+      }
+      .foot {
+        display: grid;
+        gap: 2.5rem;
+        grid-template-columns: minmax(0, 1.4fr) repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+      }
+      @media (max-width: 700px) {
+        .foot {
+          grid-template-columns: 1fr;
+        }
+      }
+      .foot h2 {
+        font-size: clamp(1.6rem, 1.3rem + 1.4vw, 2.4rem);
+      }
+      .foot ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 0.55rem;
+      }
+      .foot .lbl {
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--dim);
+        margin-bottom: 0.9rem;
+        display: block;
+      }
+      .foot a {
+        color: var(--pale);
+        font-size: 0.95rem;
+      }
+      .foot a:hover {
+        color: var(--lit);
+      }
+      .foot small {
+        display: block;
+        color: var(--dim);
+        font-size: 0.85rem;
+        line-height: 1.6;
+      }
+      .colophon {
+        margin-top: 3rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--edge);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 1.5rem;
+        align-items: center;
+        color: var(--dim);
+        font-size: 0.85rem;
+      }
+
+      .skip {
+        position: absolute;
+        left: -9999px;
+      }
+      .skip:focus {
+        left: 1rem;
+        top: 1rem;
+        z-index: 60;
+        position: fixed;
+        background: var(--lit);
+        color: #101725;
+        padding: 0.6rem 1rem;
+        border-radius: 8px;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        .lane {
+          animation: none;
+          width: 100%;
+          overflow: hidden;
+          flex-wrap: wrap;
+        }
+        /* The loop repeats each lane so it can wrap seamlessly; a still frame
+           only needs one copy, and no identifier is lost by dropping the rest. */
+        .chip.dup {
+          display: none;
+        }
+        .stream {
+          -webkit-mask-image: none;
+          mask-image: none;
+        }
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.001ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.001ms !important;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="top">
+      <div class="wrap bar">
+        <a class="brand" href="#main">
+          <Mark size={30} />
+          Hozz
+        </a>
+        <nav class="nav" aria-label="Primary">
+          {NAV_LINKS.map((l) => <a href={l.href}>{l.label}</a>)}
+          <a class="src" href={GITHUB_URL} rel="noopener">Source</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <div class="hero">
+        <div class="moon" aria-hidden="true"></div>
+        <div class="star" aria-hidden="true"></div>
+        <div class="wrap">
+          <p class="eyebrow">Free · open source · iPhone and Mac · early alpha</p>
+          <h1>Your health history, out of the phone <span class="em">by morning</span>.</h1>
+          <p class="lede">
+            Hozz exports your Apple Health data to somewhere you own — your Mac, a
+            folder, your own dashboard. It runs in the background, so most of the
+            work happens while you are asleep.
+          </p>
+          <p class="sub">
+            There is no account to make and no server of mine in the middle.
+            Nothing leaves the phone until you add a destination and confirm it.
+          </p>
+          <div class="cta">
+            <a class="btn solid" href="#export">How to export your Health data</a>
+            <a class="btn" href={GITHUB_URL} rel="noopener">Read the source</a>
+          </div>
+        </div>
+
+        <div class="wrap">
+          <div class="stream" aria-hidden="true">
+            {
+              STREAM_LANES.map((lane) => (
+                <div class="lane">
+                  {[...lane, ...lane, ...lane, ...lane].map((s, i) => (
+                    <span class={i < lane.length ? 'chip' : 'chip dup'} style={`--c:${HUE[s.category].night}`}>
+                      <b>{s.id}</b>
+                      <span>{s.sample}</span>
+                    </span>
+                  ))}
+                </div>
+              ))
+            }
+          </div>
+          <p class="caption">
+            Real HealthKit identifiers, so you can check the claim. The readings
+            beside them are examples, not anyone's data.
+          </p>
+        </div>
+      </div>
+
+      <!-- ---------------- the night shift ---------------- -->
+      <section id="night" style="--wash:#131a2b; --tint:#a7abdd; --tint-base:#7477CB">
+        <div class="wrap">
+          <div class="head">
+            <p class="eyebrow">The night shift</p>
+            <h2>What a night of background export actually looks like.</h2>
+            <p>
+              Background export is not a promise about a minute. iOS decides when
+              an app may wake, Health closes while your phone is locked, and no
+              honest app can dress that up. Here is exactly how a night goes.
+            </p>
+          </div>
+
+          <ul class="nightbar">
+            {
+              NIGHT.map((n) => (
+                <li style={`--c:${HUE[n.key].night}`}>
+                  <dfn>{n.state}</dfn>
+                  <b>{n.label}</b>
+                  <span>{n.note}</span>
+                </li>
+              ))
+            }
+          </ul>
+          <p class="caption">
+            How the system behaves — not a log of a real night. Most types land
+            near hourly, when iOS allows it.
+          </p>
+
+          <div class="split" style="margin-top: clamp(2.5rem, 5vw, 4rem)">
+            <p class="pull">
+              Interruption can repeat work. It <em>cannot</em> skip records.
+            </p>
+            <div class="grid">
+              <article class="lit card" style={`--c:${HUE.sleep.night}`}>
+                <span class="n">01</span>
+                <h3>A locked phone is a closed archive</h3>
+                <p>
+                  Health cannot be read while your phone is locked. Hozz reports
+                  that type as <span class="mono">unavailable</span> and tries
+                  again, rather than claiming a night it did not have.
+                </p>
+              </article>
+              <article class="lit card" style={`--c:${HUE.mind.night}`}>
+                <span class="n">02</span>
+                <h3>No progress percentage</h3>
+                <p>
+                  Health will not say how many records a type holds without
+                  reading all of them. So Hozz shows how many types are complete
+                  and how far back they reach — never a fraction it invented.
+                </p>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------------- how to export ---------------- -->
+      <section id="export" style="--wash:#0e1421; --tint:#e4a19a">
+        <div class="wrap">
+          <div class="head">
+            <p class="eyebrow">The answer</p>
+            <h2>How do I export my Apple Health data?</h2>
+            <p>
+              Apple's own export hands you one zip of XML, by hand, every time you
+              want it. Hozz does the opposite: you set a destination once, and new
+              records follow it from then on, on their own.
+            </p>
+          </div>
+
+          <ol class="steps">
+            {
+              STEPS.map((s) => (
+                <li class="lit" style={`--c:${HUE[s.category].night}`}>
+                  <h3>{s.title}</h3>
+                  <p>{s.body}</p>
+                </li>
+              ))
+            }
+          </ol>
+
+          <div class="split" style="margin-top: clamp(2.5rem, 5vw, 4rem)">
+            <p class="pull">
+              It reads far more than steps and <em>heart rate</em>.
+            </p>
+            <div>
+              <p style="color:var(--pale)">
+                ECG voltage waveforms, audiograms, workout routes, State of Mind
+                entries, medication doses and the six characteristics come out
+                too — alongside every everyday number. Deletions are carried as
+                tombstones, so your copy stays honest when Health changes its
+                mind.
+              </p>
+              <ul class="tools" style="margin-top:1.4rem">
+                {CATEGORIES.map((c) => <li style={`color:${HUE[c.key].night}`}>{c.label}</li>)}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------------- destinations ---------------- -->
+      <section id="destinations" style="--wash:#131a2b; --tint:#8fb9d7">
+        <div class="wrap">
+          <div class="head">
+            <p class="eyebrow">Six destinations</p>
+            <h2>Six places to send it, all of them yours.</h2>
+            <p>
+              Every destination is a place you already run. Each keeps its own
+              place in the queue, its own types and its own schedule — on arrival,
+              hourly, daily or manual.
+            </p>
+          </div>
+
+          <div class="grid three">
+            {
+              DESTINATIONS.map((d) => (
+                <article class="lit card" style={`--c:${HUE[d.category].night}`}>
+                  <h3>{d.title}</h3>
+                  <p>{d.body}</p>
+                  <span class="fact">{d.fact}</span>
+                </article>
+              ))
+            }
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------------- formats ---------------- -->
+      <section id="formats" style="--wash:#0e1421; --tint:#89c2c3">
+        <div class="wrap">
+          <div class="head">
+            <p class="eyebrow">What comes out</p>
+            <h2>Seven formats, and which of them lose something.</h2>
+            <p>
+              NDJSON is the default. SQLite is the one to keep: every row holds
+              its original record in <span class="mono">raw</span>, so nothing is
+              thrown away by the shape of the file.
+            </p>
+          </div>
+
+          <div class="tablewrap">
+            <table>
+              <caption>Formats Hozz writes, and what each one is for.</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Format</th>
+                  <th scope="col">Use it for</th>
+                  <th scope="col">Fidelity</th>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  FORMATS.map((f) => (
+                    <tr>
+                      <th scope="row">{f.name}</th>
+                      <td data-l="Use it for">{f.use}</td>
+                      <td class="note" data-l="Fidelity">
+                        {f.note.startsWith('Lossy') && <span class="lossy">Lossy</span>}
+                        {f.note.replace(/^Lossy — /, '')}
+                      </td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------------- trust / honesty ---------------- -->
+      <section id="honest" style="--wash:#131a2b; --tint:#a3c28f">
+        <div class="wrap">
+          <div class="head">
+            <p class="eyebrow">Why you can trust it</p>
+            <h2>Built to be interrupted.</h2>
+            <p>
+              A phone that exports overnight will be interrupted — by a reboot, a
+              dead battery, a network that goes away. Hozz is built so that
+              costs you time, never records.
+            </p>
+          </div>
+
+          <div class="grid">
+            {
+              DURABILITY.map((d, i) => (
+                <article class="lit card" style={`--c:${[HUE.mobility.night, HUE.respiratory.night, HUE.body.night, HUE.nutrition.night][i]}`}>
+                  <h3>{d.title}</h3>
+                  <p>{d.body}</p>
+                  <span class="fact">{d.fact}</span>
+                </article>
+              ))
+            }
+          </div>
+
+          <div class="split" style="margin-top: clamp(2.5rem, 5vw, 4rem)">
+            <div>
+              <h3 style="font-size:clamp(1.4rem,1.2rem+1vw,1.9rem)">
+                Apple will not tell an app why a type came back empty.
+              </h3>
+              <p style="margin-top:1rem;color:var(--pale)">
+                It cannot distinguish “you denied this” from “you have no data”.
+                A green tick there would be a guess, so Hozz prints the state it
+                actually knows.
+              </p>
+              <div class="lit stat" style={`--c:${HUE.mobility.night}`}>
+                <b>475</b>
+                <span>XCTest tests, in the open, on the repository you can read.</span>
+              </div>
+            </div>
+
+            <ul class="states">
+              {
+                COVERAGE_STATES.map((s) => (
+                  <li
+                    style={`--c:${
+                      s.tone === 'good'
+                        ? HUE.mobility.night
+                        : s.tone === 'bad'
+                          ? HUE.heart.night
+                          : s.tone === 'unknown'
+                            ? HUE.activity.night
+                            : '#a7b9c9'
+                    }`}
+                  >
+                    <code>{s.state}</code>
+                    <span>{s.body}</span>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------------- assistant ---------------- -->
+      <section id="assistant" style="--wash:#0e1421; --tint:#c1a9d9">
+        <div class="wrap">
+          <div class="split">
+            <div>
+              <p class="eyebrow">On your Mac</p>
+              <h2>Ask your own assistant.</h2>
+              <p style="margin-top:1.2rem;color:var(--pale)">
+                The Mac app ships a read-only MCP server over the database your
+                phone keeps current. A question costs a lookup, not a re-parse of
+                a stale XML export. It cannot change or delete anything.
+              </p>
+              <div class="warn">
+                <b>The caveat worth printing:</b> a cloud assistant may upload
+                whatever it reads. That is the assistant's behaviour, not Hozz's
+                — and it is the reason the server is read-only and local.
+              </div>
+            </div>
+            <div>
+              <span class="n">What it can be asked about</span>
+              <ul class="tools">
+                {MCP_TOOLS.map((t) => <li>{t}</li>)}
+              </ul>
+              <p class="caption" style="margin-top:1.2rem">
+                The exact tool list lives in the repository's{' '}
+                <span class="mono">docs/mcp.md</span>, because it moves.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------------- refusals ---------------- -->
+      <section id="promises" style="--wash:#131a2b; --tint:#e0a9c1">
+        <div class="wrap">
+          <div class="head">
+            <p class="eyebrow">Six refusals</p>
+            <h2>The list of things it will not do.</h2>
+          </div>
+          <ul class="refuse">
+            {
+              PROMISES.map((p) => (
+                <li class="lit" style={`--c:${HUE[p.category].night}`}>
+                  <b>{p.title}</b>
+                  <span>{p.body}</span>
+                </li>
+              ))
+            }
+          </ul>
+
+          <div class="warn" style="margin-top:2rem;max-width:70ch">
+            <b>And one more, forever:</b> Hozz will never write data back into
+            Apple Health. Health stamps every sample with the app that wrote it,
+            so a reading your Watch took in 2019 would return indistinguishable
+            from one Hozz invented — and HealthKit has no way to say “store this
+            unless it is already there”, so importing twice would silently double
+            everything.
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------------- status ---------------- -->
+      <section id="status" style="--wash:#0e1421; --tint:#ebb489">
+        <div class="wrap">
+          <div class="head">
+            <p class="eyebrow">Early alpha</p>
+            <h2>What works today, and what does not yet.</h2>
+          </div>
+
+          <div class="cols">
+            <div class="lit card" style={`--c:${HUE.mobility.night}`}>
+              <h3>Working today</h3>
+              <ul class="ticks done" style={`--c:${HUE.mobility.night}`}>
+                {WORKING.map((w) => <li>{w}</li>)}
+              </ul>
+            </div>
+            <div class="lit card" style={`--c:${HUE.activity.night}`}>
+              <h3>Not yet</h3>
+              <ul class="ticks" style={`--c:${HUE.activity.night}`}>
+                {NOT_YET.map((w) => <li>{w}</li>)}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------------- faq ---------------- -->
+      <section id="faq" style="--wash:#131a2b; --tint:#a7b9c9">
+        <div class="wrap">
+          <div class="head">
+            <p class="eyebrow">Straight answers</p>
+            <h2>Questions people actually ask.</h2>
+          </div>
+          <dl class="faq">
+            {
+              FAQ.map((f) => (
+                <div>
+                  <dt>{f.q}</dt>
+                  <dd>{f.a}</dd>
+                </div>
+              ))
+            }
+          </dl>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="wrap">
+        <div class="foot">
+          <div>
+            <Mark size={40} />
+            <h2 style="margin-top:1.2rem">Take your history back.</h2>
+            <p style="margin-top:1rem;color:var(--pale);max-width:34ch">
+              Free forever, GPL-3.0 with an App Store exception, written by one
+              person in the open.
+            </p>
+            <div class="cta" style="margin-top:1.6rem">
+              <a class="btn solid" href={GITHUB_URL} rel="noopener">Get it on GitHub</a>
+              <a class="btn" href={DONATE_URL} rel="noopener">Sponsor</a>
+            </div>
+          </div>
+
+          <div>
+            <span class="lbl">This page</span>
+            <ul>
+              {NAV_LINKS.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+              <li><a href="#formats">Formats</a></li>
+              <li><a href="#assistant">The assistant</a></li>
+              <li><a href="#faq">Questions</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <span class="lbl">The project</span>
+            <ul>
+              <li><a href={GITHUB_URL} rel="noopener">Source</a></li>
+              <li><a href={LICENSE_URL} rel="noopener">Licence</a></li>
+              <li><a href="/privacy/">Privacy</a></li>
+              <li><a href={DONATE_URL} rel="noopener">Sponsor</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <span class="lbl">Also by Brandon</span>
+            <ul>
+              {
+                SIBLINGS.map((s) => (
+                  <li>
+                    <a href={s.href} rel="noopener">{s.name}</a>
+                    <small>{s.body}</small>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+        </div>
+
+        <p class="colophon">
+          <span>© {new Date().getFullYear()} Brandon Moore</span>
+          <span>No analytics. No cookies. No third-party requests.</span>
+          <span class="mono">_hozz._tcp · :54330</span>
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

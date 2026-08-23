@@ -1,0 +1,364 @@
+---
+/**
+ * The logo gallery.
+ *
+ * Auto-discovers everything in `src/components/mark/logos/`, so concepts can be
+ * built in parallel without a shared import list to collide on, and a missing
+ * one cannot break the build.
+ *
+ * Every concept renders at four sizes against both a light and a dark ground,
+ * because a mark that only works at 128px on white is not a mark yet. The 16px
+ * column is the favicon test and it is where most of these will fail.
+ */
+import '../styles/sketch-base.css';
+import { SITE } from '../data/site';
+import { FACE_PATHS } from '../data/mark';
+
+const mods = import.meta.glob('../components/mark/logos/*.astro', { eager: true }) as Record<
+  string,
+  { default: any }
+>;
+const metas = import.meta.glob('../components/mark/logos/*.meta.ts', { eager: true }) as Record<
+  string,
+  { default?: { n?: string; name?: string; idea?: string; ground?: string; palette?: string[] } }
+>;
+
+const items = Object.entries(mods)
+  .map(([path, mod]) => {
+    const slug = path.split('/').pop()!.replace('.astro', '');
+    const meta = metas[path.replace('.astro', '.meta.ts')]?.default ?? {};
+    return { slug, Comp: mod.default, meta };
+  })
+  .sort((a, b) => a.slug.localeCompare(b.slug));
+
+const SIZES = [96, 48, 28, 16];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Logo concepts · Hozz</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href={`${SITE}/logos/`} />
+  </head>
+  <body>
+    <header class="top">
+      <p class="eyebrow">Hozz · working file</p>
+      <h1>{items.length} marks for the fourth sibling.</h1>
+      <p class="lede">
+        Plozz is a TV, Mozz is a disc, Twozz is a speech bubble. Hozz has to
+        belong to that family without shouting like it — quieter, more
+        translucent, more atmospheric. Every concept below competes on
+        silhouette, palette, depth and light.
+      </p>
+      <p class="lede lede--fine">
+        The face never competes. The <code>ZZ</code> eyes and the smile are
+        lifted pixel-for-pixel out of the shipped Plozz mark and imported from
+        one module, so no concept can drift from the family even by accident.
+      </p>
+
+      <figure class="proof">
+        <svg viewBox="0 0 32 32" width="120" height="120" shape-rendering="crispEdges" aria-hidden="true">
+          {
+            Array.from({ length: 32 }, (_, i) => (
+              <>
+                <line x1="0" y1={i} x2="32" y2={i} stroke="#e6e6ea" stroke-width="0.06" />
+                <line x1={i} y1="0" x2={i} y2="32" stroke="#e6e6ea" stroke-width="0.06" />
+              </>
+            ))
+          }
+          <g fill="#14161a">{FACE_PATHS.map((d) => <path d={d} />)}</g>
+        </svg>
+        <figcaption>
+          The fixed face, on its grid. Ten pixels wide, ten tall, centred on
+          x&nbsp;15.5 — a half-pixel left of true centre, exactly as the
+          siblings have it.
+        </figcaption>
+      </figure>
+    </header>
+
+    <main>
+      {
+        items.map((it) => {
+          const C = it.Comp;
+          const m = it.meta;
+          return (
+            <section class="card" id={it.slug}>
+              <div class="meta">
+                <p class="tag">
+                  <b>{m.n ?? it.slug}</b>
+                  <span>{m.name ?? 'Untitled'}</span>
+                </p>
+                {m.idea && <p class="idea">{m.idea}</p>}
+                {m.palette && (
+                  <ul class="pal">
+                    {m.palette.map((c) => (
+                      <li><i style={`background:${c}`} />{c}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
+              <div class="grounds">
+                <div class="ground ground--light">
+                  {SIZES.map((s) => (
+                    <span class="slot"><C size={s} /><em>{s}</em></span>
+                  ))}
+                </div>
+                <div class="ground ground--dark">
+                  {SIZES.map((s) => (
+                    <span class="slot"><C size={s} /><em>{s}</em></span>
+                  ))}
+                </div>
+              </div>
+            </section>
+          );
+        })
+      }
+      {items.length === 0 && <p class="empty">No concepts yet.</p>}
+    </main>
+
+    <footer class="end">
+      <a href="/directions/">Directions board</a>
+      <a href="/lab/">Visualisation lab</a>
+    </footer>
+  </body>
+</html>
+
+<style>
+  body {
+    background: #f4f5f7;
+    color: #14161a;
+    font-family: var(--sans);
+  }
+
+  .top {
+    width: min(100% - 2.5rem, 1180px);
+    margin-inline: auto;
+    padding-block: clamp(3rem, 7vw, 5rem) clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #6a6f77;
+    margin-bottom: 1rem;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 1.2rem + 3.2vw, 3.4rem);
+    font-weight: 800;
+    letter-spacing: -0.042em;
+    line-height: 1.02;
+  }
+
+  .lede {
+    margin-top: 1.1rem;
+    max-width: 60ch;
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    color: #4d525a;
+  }
+
+  .lede--fine {
+    font-size: 0.9375rem;
+  }
+
+  .lede code {
+    font-family: var(--mono);
+    font-size: 0.875em;
+    color: #23262b;
+  }
+
+  .proof {
+    margin: 2rem 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1.15rem;
+    background: #fff;
+    border: 1px solid #e4e6ea;
+    border-radius: 16px;
+    max-width: 44rem;
+  }
+
+  .proof svg {
+    background: #fff;
+    border-radius: 8px;
+    flex: none;
+  }
+
+  .proof figcaption {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: #5c6169;
+    max-width: 34ch;
+  }
+
+  main {
+    width: min(100% - 2.5rem, 1180px);
+    margin-inline: auto;
+    display: grid;
+    gap: 1.25rem;
+    padding-bottom: 4rem;
+  }
+
+  .card {
+    display: grid;
+    gap: 1.25rem;
+    padding: clamp(1.25rem, 3vw, 1.85rem);
+    background: #fff;
+    border: 1px solid #e4e6ea;
+    border-radius: 18px;
+  }
+
+  .card > * {
+    min-inline-size: 0;
+  }
+
+  @media (min-width: 940px) {
+    .card {
+      grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
+      gap: 2.25rem;
+      align-items: center;
+    }
+  }
+
+  .tag {
+    display: flex;
+    align-items: baseline;
+    gap: 0.55rem;
+  }
+
+  .tag b {
+    font-family: var(--mono);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #6b7079;
+  }
+
+  .tag span {
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: -0.032em;
+  }
+
+  .idea {
+    margin-top: 0.55rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: #5c6169;
+  }
+
+  .pal {
+    margin-top: 0.85rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    list-style: none;
+    padding: 0;
+  }
+
+  .pal li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.32rem;
+    font-family: var(--mono);
+    font-size: 0.625rem;
+    color: #5d626a;
+    border: 1px solid #e8eaee;
+    border-radius: 999px;
+    padding: 0.14rem 0.42rem 0.14rem 0.2rem;
+  }
+
+  .pal i {
+    inline-size: 11px;
+    block-size: 11px;
+    border-radius: 3px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+  }
+
+  .grounds {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  @media (min-width: 620px) {
+    .grounds {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .ground {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: clamp(0.75rem, 2vw, 1.5rem);
+    padding: 1.15rem 0.85rem 0.85rem;
+    border-radius: 14px;
+  }
+
+  .ground--light {
+    background: #fbfbfc;
+    border: 1px solid #eceef1;
+  }
+
+  .ground--dark {
+    background: #17181c;
+    border: 1px solid #17181c;
+  }
+
+  .slot {
+    display: grid;
+    justify-items: center;
+    gap: 0.4rem;
+  }
+
+  .slot em {
+    font-style: normal;
+    font-family: var(--mono);
+    font-size: 0.5625rem;
+    color: #6b7079;
+  }
+
+  .ground--dark .slot em {
+    color: #9298a1;
+  }
+
+  .empty {
+    padding: 4rem 0;
+    text-align: center;
+    color: #6a6f77;
+  }
+
+  .end {
+    width: min(100% - 2.5rem, 1180px);
+    margin: 0 auto 5rem;
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  .end a {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #14161a;
+    text-decoration: none;
+    border-bottom: 2px solid #c6cad1;
+    padding-bottom: 2px;
+  }
+
+  .end a:hover {
+    border-bottom-color: #14161a;
+  }
+
+  :focus-visible {
+    outline: 3px solid #0070e0;
+    outline-offset: 3px;
+  }
+</style>

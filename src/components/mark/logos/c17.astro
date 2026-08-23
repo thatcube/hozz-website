@@ -1,0 +1,23 @@
+---
+/**
+ * 17 · First Light
+ *
+ * A day beginning in quiet horizontal steps: indigo gives way to dusk rose,
+ * then a broad pale horizon holds the face before evening gathers below.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import Face from '../Face.astro';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Hozz — First Light">
+  <path d="M12 3h8v1h-8zM9 4h14v1H9zM7 5h18v1H7zM6 6h20v2H6zM5 8h22v18H5zM6 26h20v1H6zM8 27h16v1H8zM11 28h10v1H11z" fill="#27304d" />
+  <path d="M8 5h16v1H8zM7 6h18v2H7zM6 8h20v3H6z" fill="#4e5878" />
+  <path d="M6 11h20v2H6z" fill="#b66f7a" />
+  <path d="M6 13h20v10H6z" fill="#f0d8a6" />
+  <path d="M6 23h20v2H6zM7 25h18v1H7z" fill="#9a5868" />
+  <path d="M7 22h18v1H7z" fill="#b66f7a" />
+  <Face fill="#27304d" />
+</MarkFrame>

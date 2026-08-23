@@ -1,0 +1,23 @@
+---
+/**
+ * The family face, rendered.
+ *
+ * Every Hozz concept puts this on top of its own container. It takes a colour
+ * and nothing else — there is no scale, skew, radius or shape prop, because
+ * there is no version of this face that is allowed to differ.
+ */
+import { FACE_PATHS } from '../../data/mark';
+
+interface Props {
+  /** Face colour. Dark on light grounds, white on saturated ones. */
+  fill?: string;
+  /** Optional opacity, for concepts where the face sits under glass. */
+  opacity?: number | string;
+}
+
+const { fill = '#000', opacity } = Astro.props;
+---
+
+<g fill={fill} opacity={opacity} shape-rendering="crispEdges">
+  {FACE_PATHS.map((d) => <path d={d} />)}
+</g>

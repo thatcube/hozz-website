@@ -1,0 +1,23 @@
+---
+/**
+ * 11 · Catalog Card
+ *
+ * A tabbed archive card makes the exported copy feel tangible: filed because
+ * it belongs to you, and easy to find again without becoming a generic file.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import Face from '../Face.astro';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Hozz — Catalog Card">
+  <path d="M7 4h11v1h-11zM5 5h20v1h-20zM4 6h24v21h-24zM5 27h22v1h-22zM7 28h18v1h-18z" fill="#514638" />
+  <path d="M7 5h11v1h-11zM5 6h22v20h-22zM6 26h20v1h-20zM8 27h16v1h-16z" fill="#b89b68" />
+  <path d="M7 6h11v1h-11zM6 7h20v18h-20zM7 25h18v1h-18z" fill="#e5d4a9" />
+  <path d="M7 7h11v1h-11zM7 8h18v3h-18zM6 11h3v12h-3zM7 23h2v2h-2z" fill="#fff3d1" />
+  <path d="M10 10h12v1h-12z" fill="#b89b68" />
+  <path d="M7 10h2v2h-2z" fill="#514638" />
+  <Face fill="#514638" />
+</MarkFrame>

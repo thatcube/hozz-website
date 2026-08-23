@@ -1,0 +1,1547 @@
+---
+import Mark from '../../components/mark/logos/c17.astro';
+import {
+  SITE,
+  GITHUB_URL,
+  LICENSE_URL,
+  STEPS,
+  DESTINATIONS,
+  FORMATS,
+  DURABILITY,
+  COVERAGE_STATES,
+  MCP_TOOLS,
+  PROMISES,
+  WORKING,
+  NOT_YET,
+  FAQ,
+  STREAM_LANES,
+} from '../../data/site';
+
+const ld = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'SoftwareApplication',
+      name: 'Hozz',
+      url: SITE,
+      codeRepository: GITHUB_URL,
+      license: LICENSE_URL,
+      operatingSystem: ['iOS', 'macOS'],
+      applicationCategory: 'HealthApplication',
+      description: 'A free, open-source iPhone app with a companion Mac app that exports Apple Health data to destinations you own.',
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'USD',
+      },
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: FAQ.map(({ q, a }) => ({
+        '@type': 'Question',
+        name: q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: a,
+        },
+      })),
+    },
+  ],
+};
+
+const daySamples = STREAM_LANES[0].slice(0, 6);
+const testFact = WORKING.find((item) => item.includes('XCTest tests')) ?? '';
+const [testCount, ...testLabel] = testFact.split(' ');
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta
+      name="description"
+      content="Hozz exports Apple Health data from your iPhone to destinations you own — automatically, privately, and in open formats."
+    />
+    <meta name="theme-color" content="#27304d" />
+    <title>Hozz — Your health keeps time. You keep the record.</title>
+    <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+  </head>
+  <body>
+    <header class="site-head">
+      <a class="wordmark" href="#top" aria-label="Hozz, back to top">
+        <Mark size={28} />
+        <span>Hozz</span>
+      </a>
+      <nav aria-label="Primary navigation">
+        <a href="#export">How it works</a>
+        <a href="#destinations">Destinations</a>
+        <a href="#honest">Trust</a>
+        <a class="source-link" href={GITHUB_URL}>View source ↗</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero band band--night" aria-labelledby="hero-title">
+        <div class="time-stamp">
+          <span class="time">Dawn</span>
+          <span class="phase">A new record</span>
+        </div>
+        <div class="hero-copy">
+          <p class="eyebrow">Apple Health export, on your terms</p>
+          <h1 id="hero-title">Your health keeps time.<br /><em>You keep the record.</em></h1>
+          <p class="lede">
+            Hozz is a free, open-source iPhone app with a companion Mac app. It
+            sends your Apple Health history to places you own — and nowhere else.
+          </p>
+          <div class="hero-actions">
+            <a class="button button--light" href="#export">Follow the day</a>
+            <span class="alpha-note"><i></i> Early alpha · coverage is partial</span>
+          </div>
+        </div>
+        <div class="daybook" aria-label="Examples of Apple Health data Hozz can export">
+          <div class="daybook-head">
+            <span>Today’s health record</span>
+            <span>example identifiers</span>
+          </div>
+          <ul>
+            {daySamples.map((item, index) => (
+              <li>
+                <span class="tick">{String(index + 1).padStart(2, '0')}</span>
+                <code>{item.id}</code>
+                <span class="kept">kept</span>
+              </li>
+            ))}
+          </ul>
+          <p>Real HealthKit identifiers. No invented dashboard.</p>
+        </div>
+      </section>
+
+      <div class="horizon horizon--rose" aria-hidden="true"></div>
+
+      <section class="band band--gold" id="export" aria-labelledby="export-title">
+        <div class="time-stamp">
+          <span class="time">Morning</span>
+          <span class="phase">Set the route</span>
+        </div>
+        <div class="section-intro">
+          <p class="eyebrow">How to export Apple Health data</p>
+          <h2 id="export-title">Set it once. Let the day happen.</h2>
+          <p>
+            Add a destination in Hozz, choose the Health types you want, then
+            choose when to export. iOS controls the exact background timing;
+            most types land near hourly when the phone is unlocked.
+          </p>
+        </div>
+        <ol class="steps">
+          {STEPS.map((step, index) => (
+            <li>
+              <span class="step-number">{String(index + 1).padStart(2, '0')}</span>
+              <div>
+                <h3>{step.title}</h3>
+                <p>{step.body}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <aside class="answer">
+          <strong>The short answer</strong>
+          <p>
+            Hozz reads only the Health types you allow. Nothing leaves your
+            iPhone until you add a destination and confirm it.
+          </p>
+        </aside>
+      </section>
+
+      <section class="band band--paper" id="destinations" aria-labelledby="destinations-title">
+        <div class="time-stamp">
+          <span class="time">Late morning</span>
+          <span class="phase">Send it home</span>
+        </div>
+        <div class="section-intro split-title">
+          <div>
+            <p class="eyebrow">{DESTINATIONS.length} destinations</p>
+            <h2 id="destinations-title">Where your day can land.</h2>
+          </div>
+          <p>
+            There is no Hozz cloud and no default destination. Every route starts
+            with a place you chose.
+          </p>
+        </div>
+        <ul class="destinations">
+          {DESTINATIONS.map((destination, index) => (
+            <li>
+              <span class="destination-index">{String(index + 1).padStart(2, '0')}</span>
+              <h3>{destination.title}</h3>
+              <p>{destination.body}</p>
+              <code>{destination.fact}</code>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <div class="horizon horizon--midday" aria-hidden="true"></div>
+
+      <section class="band band--gold formats-section" aria-labelledby="formats-title">
+        <div class="time-stamp">
+          <span class="time">Midday</span>
+          <span class="phase">Make it useful</span>
+        </div>
+        <div class="section-intro split-title">
+          <div>
+            <p class="eyebrow">{FORMATS.length} open forms</p>
+            <h2 id="formats-title">A file you can still read years from now.</h2>
+          </div>
+          <p>
+            Archive every record, query it locally, or make a deliberately
+            smaller view for a dashboard or journal.
+          </p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Format</th>
+                <th scope="col">Best for</th>
+                <th scope="col">What it keeps</th>
+              </tr>
+            </thead>
+            <tbody>
+              {FORMATS.map((format) => (
+                <tr>
+                  <th scope="row">{format.name}</th>
+                  <td>{format.use}</td>
+                  <td class:list={{ warning: format.note.startsWith('Lossy') }}>{format.note}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="band band--indigo" id="honest" aria-labelledby="honest-title">
+        <div class="time-stamp">
+          <span class="time">Afternoon</span>
+          <span class="phase">Keep your place</span>
+        </div>
+        <div class="section-intro split-title">
+          <div>
+            <p class="eyebrow">Built to resume</p>
+            <h2 id="honest-title">If the day is interrupted, the record is not.</h2>
+          </div>
+          <p>
+            Hozz advances each Health type only after its records are safely
+            staged. An interruption can repeat work. It cannot skip records.
+          </p>
+        </div>
+        <ul class="durability">
+          {DURABILITY.map((item) => (
+            <li>
+              <code>{item.fact}</code>
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </li>
+          ))}
+        </ul>
+        <div class="honesty-ledger">
+          <div>
+            <p class="eyebrow">No false certainty</p>
+            <h3>Hozz reports only what Apple lets it know.</h3>
+            <p>
+              There is no invented progress percentage. Health will not reveal a
+              total without reading every record first.
+            </p>
+          </div>
+          <ul aria-label="Health data coverage states">
+            {COVERAGE_STATES.map((item) => (
+              <li>
+                <span class:list={['state-dot', `state-dot--${item.tone}`]}></span>
+                <strong>{item.state}</strong>
+                <span>{item.body}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <p class="test-count">
+          <strong>{testCount}</strong><span>{testLabel.join(' ')} guard the handoff.</span>
+        </p>
+      </section>
+
+      <div class="horizon horizon--dusk" aria-hidden="true"></div>
+
+      <section class="band band--rose dusk-section" aria-labelledby="privacy-title">
+        <div class="time-stamp">
+          <span class="time">Dusk</span>
+          <span class="phase">Nothing in between</span>
+        </div>
+        <div class="section-intro split-title">
+          <div>
+            <p class="eyebrow">Private by construction</p>
+            <h2 id="privacy-title">No one else needs to see your day.</h2>
+          </div>
+          <p>
+            Hozz has no account, hosted relay, analytics, advertising, or place
+            of its own to send your data.
+          </p>
+        </div>
+        <ul class="promises">
+          {PROMISES.map((promise) => (
+            <li>
+              <span aria-hidden="true">—</span>
+              <div>
+                <h3>{promise.title}</h3>
+                <p>{promise.body}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section class="band band--night assistant-section" aria-labelledby="assistant-title">
+        <div class="time-stamp">
+          <span class="time">Evening</span>
+          <span class="phase">Ask locally</span>
+        </div>
+        <div class="assistant-grid">
+          <div>
+            <p class="eyebrow">The read-only assistant</p>
+            <h2 id="assistant-title">Ask your archive. Keep it unchanged.</h2>
+            <p class="lede-small">
+              The companion Mac app includes a read-only MCP server. Your own
+              assistant can query the database Hozz keeps current, but it cannot
+              change or delete anything.
+            </p>
+            <aside class="caveat">
+              <strong>Know where the answer goes.</strong>
+              A cloud assistant may upload whatever it reads. That is the
+              assistant’s behaviour, not Hozz’s.
+            </aside>
+          </div>
+          <ul class="query-list">
+            {MCP_TOOLS.map((tool, index) => (
+              <li><span>{String(index + 1).padStart(2, '0')}</span>{tool}</li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <section class="band band--paper status-section" id="status" aria-labelledby="status-title">
+        <div class="time-stamp">
+          <span class="time">Night</span>
+          <span class="phase">An honest checkpoint</span>
+        </div>
+        <div class="section-intro">
+          <p class="eyebrow">Early alpha</p>
+          <h2 id="status-title">Working now. Still becoming.</h2>
+          <p>
+            Hozz works, and its coverage is partial. It is not in the App Store
+            yet. The source is open now.
+          </p>
+        </div>
+        <div class="status-columns">
+          <div>
+            <h3><span class="state-dot state-dot--good"></span>Working</h3>
+            <ul>
+              {WORKING.map((item) => <li>{item}</li>)}
+            </ul>
+          </div>
+          <div>
+            <h3><span class="state-dot state-dot--unknown"></span>Not yet</h3>
+            <ul>
+              {NOT_YET.map((item) => <li>{item}</li>)}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="band band--gold faq-section" aria-labelledby="faq-title">
+        <div class="time-stamp">
+          <span class="time">Any time</span>
+          <span class="phase">Straight answers</span>
+        </div>
+        <div class="section-intro">
+          <p class="eyebrow">Questions worth asking</p>
+          <h2 id="faq-title">Before you trust an app with Health.</h2>
+        </div>
+        <div class="faq-list">
+          {FAQ.map((item) => (
+            <details>
+              <summary>{item.q}<span aria-hidden="true">+</span></summary>
+              <p>{item.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      <section class="closing" aria-labelledby="closing-title">
+        <Mark size={64} />
+        <p class="eyebrow">The next day is yours too</p>
+        <h2 id="closing-title">Keep the history.<br /><em>Keep the choice.</em></h2>
+        <p>Free forever. Open source. Built by Brandon Moore.</p>
+        <a class="button button--dark" href={GITHUB_URL}>Read the source on GitHub ↗</a>
+      </section>
+    </main>
+
+    <footer>
+      <a class="wordmark" href="#top">
+        <Mark size={24} />
+        <span>Hozz</span>
+      </a>
+      <p>Apple Health export, without a middleman.</p>
+      <div>
+        <a href={GITHUB_URL}>Source</a>
+        <a href={LICENSE_URL}>GPL-3.0</a>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style>
+  @font-face {
+    font-family: 'Sentient';
+    src: url('/fonts/sentient-400.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Sentient';
+    src: url('/fonts/sentient-400-italic.woff2') format('woff2');
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'General Sans';
+    src: url('/fonts/general-sans-400.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'General Sans';
+    src: url('/fonts/general-sans-600.woff2') format('woff2');
+    font-weight: 600;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'IBM Plex Mono';
+    src: url('/fonts/ibm-plex-mono-400.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
+  }
+
+  :root {
+    --night: #27304d;
+    --indigo: #4e5878;
+    --rose-deep: #9a5868;
+    --rose: #b66f7a;
+    --gold: #f0d8a6;
+    --paper: #fff8e9;
+    --ink: #27304d;
+    --max: 1360px;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    background: var(--night);
+    color: var(--ink);
+    font-family: 'General Sans', sans-serif;
+    font-size: 1rem;
+    line-height: 1.55;
+    overflow-x: hidden;
+    text-rendering: optimizeLegibility;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  a:focus-visible,
+  summary:focus-visible {
+    outline: 3px solid currentColor;
+    outline-offset: 5px;
+  }
+
+  .site-head {
+    position: absolute;
+    z-index: 10;
+    inset: 0 0 auto;
+    width: min(100% - 48px, var(--max));
+    margin-inline: auto;
+    padding: 24px 0;
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgb(240 216 166 / 28%);
+  }
+
+  .wordmark {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  nav {
+    display: flex;
+    align-items: center;
+    gap: clamp(18px, 2.5vw, 38px);
+    font-size: 0.82rem;
+  }
+
+  nav a {
+    text-decoration: none;
+  }
+
+  nav a:not(.source-link):hover {
+    text-decoration: underline;
+    text-underline-offset: 5px;
+  }
+
+  .source-link {
+    border: 1px solid rgb(240 216 166 / 55%);
+    padding: 8px 13px;
+  }
+
+  .band {
+    position: relative;
+    padding:
+      clamp(90px, 10vw, 160px)
+      max(24px, calc((100vw - var(--max)) / 2));
+    display: grid;
+    grid-template-columns: minmax(108px, 0.18fr) minmax(0, 1fr);
+    column-gap: clamp(28px, 5vw, 88px);
+  }
+
+  .band > :not(.time-stamp) {
+    grid-column: 2;
+  }
+
+  .band--night {
+    color: var(--gold);
+    background: var(--night);
+  }
+
+  .band--indigo {
+    color: var(--paper);
+    background: var(--indigo);
+  }
+
+  .band--gold {
+    background: var(--gold);
+    color: var(--ink);
+  }
+
+  .band--paper {
+    background: var(--paper);
+    color: var(--ink);
+  }
+
+  .band--rose {
+    background: var(--rose-deep);
+    color: var(--paper);
+  }
+
+  .time-stamp {
+    grid-column: 1;
+    grid-row: 1 / span 8;
+    align-self: stretch;
+    border-right: 1px solid currentColor;
+    padding-right: clamp(14px, 2vw, 30px);
+  }
+
+  .time-stamp .time,
+  .time-stamp .phase {
+    display: block;
+    font-family: 'IBM Plex Mono', monospace;
+    text-transform: uppercase;
+  }
+
+  .time-stamp .time {
+    font-size: 0.74rem;
+    letter-spacing: 0.12em;
+  }
+
+  .time-stamp .phase {
+    margin-top: 9px;
+    font-size: 0.65rem;
+    line-height: 1.35;
+    letter-spacing: 0.06em;
+  }
+
+  .hero {
+    min-height: 860px;
+    padding-top: 170px;
+    padding-bottom: 130px;
+    grid-template-columns: minmax(108px, 0.18fr) minmax(0, 1.2fr) minmax(330px, 0.8fr);
+    align-items: center;
+  }
+
+  .hero > :not(.time-stamp) {
+    grid-column: auto;
+  }
+
+  .hero-copy {
+    max-width: 780px;
+  }
+
+  .eyebrow {
+    margin: 0 0 20px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-weight: 400;
+  }
+
+  h1,
+  h2 {
+    margin: 0;
+    font-family: 'Sentient', serif;
+    font-weight: 400;
+    letter-spacing: -0.045em;
+    line-height: 0.98;
+    text-wrap: balance;
+  }
+
+  h1 {
+    font-size: clamp(3.6rem, 6.8vw, 7.5rem);
+  }
+
+  h2 {
+    font-size: clamp(2.7rem, 5vw, 5.7rem);
+  }
+
+  h1 em {
+    color: var(--paper);
+    font-weight: 400;
+  }
+
+  .closing h2 em {
+    color: var(--night);
+  }
+
+  .lede {
+    max-width: 650px;
+    margin: 36px 0 0;
+    font-size: clamp(1.08rem, 1.4vw, 1.32rem);
+    line-height: 1.6;
+  }
+
+  .hero-actions {
+    margin-top: 38px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 48px;
+    padding: 12px 20px;
+    border: 1px solid currentColor;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .button:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 3px 3px 0 currentColor;
+  }
+
+  .button--light {
+    background: var(--gold);
+    color: var(--night);
+    border-color: var(--gold);
+  }
+
+  .button--dark {
+    background: var(--night);
+    color: var(--gold);
+    border-color: var(--night);
+  }
+
+  .alpha-note {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 0.82rem;
+  }
+
+  .alpha-note i {
+    width: 7px;
+    height: 7px;
+    background: var(--rose);
+    display: block;
+  }
+
+  .daybook {
+    width: 100%;
+    max-width: 440px;
+    border: 1px solid rgb(240 216 166 / 42%);
+    background: rgb(39 48 77 / 68%);
+  }
+
+  .daybook-head,
+  .daybook li {
+    display: grid;
+    align-items: center;
+  }
+
+  .daybook-head {
+    grid-template-columns: 1fr auto;
+    padding: 14px 16px;
+    border-bottom: 1px solid rgb(240 216 166 / 32%);
+    font-family: 'IBM Plex Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.62rem;
+  }
+
+  .daybook ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .daybook li {
+    grid-template-columns: 34px minmax(0, 1fr) auto;
+    min-height: 54px;
+    padding: 0 16px 0 0;
+    border-bottom: 1px solid rgb(240 216 166 / 18%);
+  }
+
+  .tick {
+    align-self: stretch;
+    display: grid;
+    place-items: center;
+    background: var(--rose-deep);
+    color: var(--paper);
+    font: 0.7rem 'IBM Plex Mono', monospace;
+  }
+
+  code,
+  .daybook code {
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .daybook code {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-left: 13px;
+    font-size: 0.72rem;
+    white-space: nowrap;
+  }
+
+  .kept {
+    color: var(--gold);
+    font: 0.62rem 'IBM Plex Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .daybook > p {
+    margin: 0;
+    padding: 13px 16px;
+    font-size: 0.7rem;
+  }
+
+  .horizon {
+    position: relative;
+    height: 58px;
+    z-index: 2;
+  }
+
+  .horizon::before,
+  .horizon::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+  }
+
+  .horizon--rose {
+    background: var(--rose);
+  }
+
+  .horizon--rose::before {
+    top: 0;
+    height: 18px;
+    background: var(--rose-deep);
+    inset-inline: 4%;
+  }
+
+  .horizon--rose::after {
+    bottom: 0;
+    height: 15px;
+    background: var(--gold);
+    inset-inline: 8%;
+  }
+
+  .horizon--midday {
+    height: 42px;
+    background: var(--rose);
+  }
+
+  .horizon--midday::before {
+    top: 0;
+    height: 13px;
+    background: var(--rose-deep);
+    inset-inline: 8%;
+  }
+
+  .horizon--midday::after {
+    bottom: 0;
+    height: 12px;
+    background: var(--gold);
+    inset-inline: 15%;
+  }
+
+  .horizon--dusk {
+    height: 48px;
+    background: var(--rose-deep);
+  }
+
+  .horizon--dusk::before {
+    top: 0;
+    height: 14px;
+    background: var(--rose);
+    inset-inline: 9%;
+  }
+
+  .horizon--dusk::after {
+    bottom: 0;
+    height: 14px;
+    background: var(--rose-deep);
+    inset-inline: 4%;
+  }
+
+  .section-intro {
+    max-width: 870px;
+  }
+
+  .section-intro > p:last-child,
+  .split-title > p {
+    margin: 28px 0 0;
+    max-width: 620px;
+    font-size: clamp(1.03rem, 1.3vw, 1.2rem);
+  }
+
+  .split-title {
+    max-width: none;
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.65fr);
+    gap: clamp(40px, 7vw, 110px);
+    align-items: end;
+  }
+
+  .split-title > p {
+    margin: 0 0 5px;
+  }
+
+  .steps {
+    margin: clamp(54px, 7vw, 90px) 0 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid rgb(39 48 77 / 38%);
+  }
+
+  .steps li {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 28px;
+    padding: 28px 0;
+    border-bottom: 1px solid rgb(39 48 77 / 38%);
+  }
+
+  .step-number,
+  .destination-index {
+    font: 0.74rem 'IBM Plex Mono', monospace;
+    letter-spacing: 0.1em;
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 1.15rem;
+    line-height: 1.3;
+  }
+
+  .steps h3 {
+    font-family: 'Sentient', serif;
+    font-size: clamp(1.5rem, 2.2vw, 2rem);
+    font-weight: 400;
+  }
+
+  .steps p,
+  .destinations p,
+  .durability p,
+  .promises p {
+    margin: 7px 0 0;
+  }
+
+  .answer {
+    margin-top: 32px;
+    padding: 24px 28px;
+    border-block: 1px solid rgb(39 48 77 / 38%);
+    background: rgb(255 248 233 / 48%);
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 25px;
+  }
+
+  .answer p {
+    margin: 0;
+  }
+
+  .destinations {
+    margin: clamp(54px, 7vw, 90px) 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    list-style: none;
+    border-top: 1px solid rgb(39 48 77 / 28%);
+    border-left: 1px solid rgb(39 48 77 / 28%);
+  }
+
+  .destinations li {
+    min-width: 0;
+    min-height: 270px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid rgb(39 48 77 / 28%);
+    border-bottom: 1px solid rgb(39 48 77 / 28%);
+  }
+
+  .destinations h3 {
+    margin-top: 32px;
+    font-family: 'Sentient', serif;
+    font-weight: 400;
+    font-size: 1.65rem;
+  }
+
+  .destinations code {
+    margin-top: auto;
+    padding-top: 20px;
+    font-size: 0.7rem;
+    overflow-wrap: anywhere;
+  }
+
+  .table-wrap {
+    margin-top: clamp(54px, 7vw, 90px);
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+
+  th,
+  td {
+    padding: 19px 14px;
+    border-bottom: 1px solid rgb(39 48 77 / 34%);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  thead th {
+    font: 0.68rem 'IBM Plex Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  tbody th {
+    width: 16%;
+    font-size: 1.08rem;
+  }
+
+  tbody td:nth-child(2) {
+    width: 43%;
+  }
+
+  .warning {
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: var(--rose-deep);
+    text-underline-offset: 4px;
+  }
+
+  .durability {
+    margin: clamp(55px, 7vw, 90px) 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-top: 1px solid rgb(255 248 233 / 35%);
+    border-left: 1px solid rgb(255 248 233 / 35%);
+  }
+
+  .durability li {
+    min-height: 260px;
+    padding: 24px;
+    border-right: 1px solid rgb(255 248 233 / 35%);
+    border-bottom: 1px solid rgb(255 248 233 / 35%);
+  }
+
+  .durability code {
+    font-size: 0.7rem;
+  }
+
+  .durability h3 {
+    margin-top: 48px;
+    font-family: 'Sentient', serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+  }
+
+  .honesty-ledger {
+    margin-top: 60px;
+    display: grid;
+    grid-template-columns: minmax(260px, 0.75fr) 1.25fr;
+    gap: clamp(45px, 8vw, 120px);
+    align-items: start;
+  }
+
+  .honesty-ledger h3 {
+    font-family: 'Sentient', serif;
+    font-size: clamp(1.9rem, 3vw, 3rem);
+    font-weight: 400;
+  }
+
+  .honesty-ledger > div > p:last-child {
+    margin: 24px 0 0;
+  }
+
+  .honesty-ledger ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .honesty-ledger li {
+    display: grid;
+    grid-template-columns: 10px minmax(120px, 0.45fr) 1fr;
+    gap: 18px;
+    align-items: baseline;
+    padding: 15px 0;
+    border-bottom: 1px solid rgb(255 248 233 / 28%);
+  }
+
+  .honesty-ledger strong {
+    text-transform: capitalize;
+  }
+
+  .state-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: var(--paper);
+  }
+
+  .state-dot--good {
+    background: var(--gold);
+  }
+
+  .state-dot--unknown {
+    background: var(--rose);
+  }
+
+  .state-dot--flat {
+    border: 1px solid currentColor;
+    background: transparent;
+  }
+
+  .state-dot--bad {
+    background: var(--night);
+    border: 1px solid var(--paper);
+  }
+
+  .test-count {
+    margin: 65px 0 0;
+    padding-top: 40px;
+    border-top: 1px solid rgb(255 248 233 / 28%);
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+  }
+
+  .test-count strong {
+    font: 400 clamp(3.5rem, 7vw, 7rem) 'Sentient', serif;
+    letter-spacing: -0.05em;
+  }
+
+  .test-count span {
+    font-size: 1.08rem;
+  }
+
+  .promises {
+    margin: clamp(54px, 7vw, 85px) 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border-top: 1px solid rgb(255 248 233 / 40%);
+  }
+
+  .promises li {
+    display: grid;
+    grid-template-columns: 30px 1fr;
+    gap: 10px;
+    min-height: 150px;
+    padding: 25px 20px 25px 0;
+    border-bottom: 1px solid rgb(255 248 233 / 40%);
+  }
+
+  .promises h3 {
+    font-family: 'Sentient', serif;
+    font-size: 1.45rem;
+    font-weight: 400;
+  }
+
+  .assistant-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 0.65fr);
+    gap: clamp(50px, 8vw, 140px);
+  }
+
+  .assistant-grid h2 {
+    max-width: 800px;
+  }
+
+  .lede-small {
+    margin: 30px 0 0;
+    max-width: 660px;
+    font-size: 1.08rem;
+  }
+
+  .caveat {
+    margin-top: 35px;
+    padding: 22px;
+    border: 1px solid rgb(240 216 166 / 42%);
+    font-size: 0.9rem;
+  }
+
+  .caveat strong {
+    display: block;
+    margin-bottom: 5px;
+  }
+
+  .query-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid rgb(240 216 166 / 32%);
+  }
+
+  .query-list li {
+    display: grid;
+    grid-template-columns: 42px 1fr;
+    padding: 12px 0;
+    border-bottom: 1px solid rgb(240 216 166 / 32%);
+    font-size: 0.92rem;
+  }
+
+  .query-list span {
+    font: 0.7rem 'IBM Plex Mono', monospace;
+  }
+
+  .status-columns {
+    margin-top: clamp(50px, 7vw, 85px);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(45px, 8vw, 120px);
+  }
+
+  .status-columns h3 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 17px;
+    border-bottom: 1px solid rgb(39 48 77 / 28%);
+    font: 400 1.6rem 'Sentient', serif;
+  }
+
+  .status-columns li {
+    padding: 8px 0 8px 4px;
+  }
+
+  .status-columns ul {
+    margin: 12px 0 0;
+    padding-left: 20px;
+  }
+
+  .status-columns .state-dot--good {
+    background: var(--indigo);
+  }
+
+  .status-columns .state-dot--unknown {
+    background: var(--rose-deep);
+  }
+
+  .faq-list {
+    margin-top: clamp(50px, 7vw, 80px);
+    border-top: 1px solid rgb(39 48 77 / 36%);
+  }
+
+  details {
+    border-bottom: 1px solid rgb(39 48 77 / 36%);
+  }
+
+  summary {
+    cursor: pointer;
+    padding: 24px 0;
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    list-style: none;
+    font-family: 'Sentient', serif;
+    font-size: clamp(1.25rem, 2vw, 1.7rem);
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary span {
+    font-family: 'General Sans', sans-serif;
+  }
+
+  details[open] summary span {
+    transform: rotate(45deg);
+  }
+
+  details p {
+    max-width: 840px;
+    margin: -4px 0 28px;
+    font-size: 1.02rem;
+  }
+
+  .closing {
+    min-height: 760px;
+    padding: 110px 24px;
+    background: var(--gold);
+    color: var(--night);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .closing > .eyebrow {
+    margin-top: 28px;
+  }
+
+  .closing > p:not(.eyebrow) {
+    margin: 28px 0;
+  }
+
+  footer {
+    padding: 26px max(24px, calc((100vw - var(--max)) / 2));
+    background: var(--night);
+    color: var(--gold);
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 30px;
+    font-size: 0.78rem;
+  }
+
+  footer p {
+    margin: 0;
+  }
+
+  footer > div {
+    display: flex;
+    justify-content: flex-end;
+    gap: 20px;
+  }
+
+  @media (max-width: 1050px) {
+    .hero {
+      min-height: auto;
+      grid-template-columns: 100px minmax(0, 1fr);
+    }
+
+    .hero .time-stamp {
+      grid-row: 1 / span 2;
+    }
+
+    .hero-copy {
+      grid-column: 2;
+    }
+
+    .daybook {
+      grid-column: 2;
+      margin-top: 70px;
+      max-width: 680px;
+    }
+
+    .destinations {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .durability {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .assistant-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .site-head {
+      width: min(100% - 34px, var(--max));
+    }
+
+    nav a:not(.source-link) {
+      display: none;
+    }
+
+    .band,
+    .hero {
+      display: block;
+      padding-inline: 20px;
+      padding-top: 88px;
+      padding-bottom: 88px;
+    }
+
+    .hero {
+      padding-top: 140px;
+    }
+
+    .time-stamp {
+      border: 0;
+      border-bottom: 1px solid currentColor;
+      padding: 0 0 14px;
+      margin-bottom: 36px;
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .time-stamp .phase {
+      margin: 0;
+      text-align: right;
+    }
+
+    h1 {
+      font-size: clamp(3.25rem, 15vw, 5rem);
+    }
+
+    h2 {
+      font-size: clamp(2.45rem, 12vw, 4rem);
+    }
+
+    .daybook {
+      margin-top: 55px;
+    }
+
+    .horizon {
+      height: 36px;
+    }
+
+    .split-title,
+    .honesty-ledger,
+    .status-columns {
+      grid-template-columns: 1fr;
+      gap: 35px;
+    }
+
+    .split-title > p {
+      margin: 0;
+    }
+
+    .steps li {
+      grid-template-columns: 45px 1fr;
+      gap: 14px;
+    }
+
+    .answer {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .destinations {
+      grid-template-columns: 1fr;
+    }
+
+    .destinations li {
+      min-height: 230px;
+    }
+
+    .table-wrap {
+      overflow: visible;
+    }
+
+    table,
+    thead,
+    tbody,
+    tr,
+    th,
+    td {
+      display: block;
+    }
+
+    thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+    }
+
+    tbody tr {
+      padding: 22px 0;
+      border-bottom: 1px solid rgb(39 48 77 / 34%);
+    }
+
+    tbody th,
+    tbody td,
+    tbody td:nth-child(2) {
+      width: auto;
+      padding: 3px 0;
+      border: 0;
+    }
+
+    tbody th {
+      font-size: 1.2rem;
+    }
+
+    tbody td:last-child {
+      margin-top: 6px;
+      font-size: 0.85rem;
+    }
+
+    .durability {
+      grid-template-columns: 1fr;
+    }
+
+    .durability li {
+      min-height: 220px;
+    }
+
+    .honesty-ledger li {
+      grid-template-columns: 10px 1fr;
+      gap: 10px 14px;
+    }
+
+    .honesty-ledger li > span:last-child {
+      grid-column: 2;
+    }
+
+    .promises {
+      grid-template-columns: 1fr;
+    }
+
+    .assistant-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .test-count {
+      align-items: center;
+    }
+
+    .closing {
+      min-height: 640px;
+    }
+
+    footer {
+      grid-template-columns: 1fr auto;
+    }
+
+    footer > p {
+      display: none;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .site-head {
+      width: calc(100% - 28px);
+    }
+
+    .source-link {
+      padding: 7px 9px;
+      font-size: 0.73rem;
+    }
+
+    .band,
+    .hero {
+      padding-inline: 16px;
+    }
+
+    .hero-actions {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .daybook-head span:last-child {
+      display: none;
+    }
+
+    .daybook li {
+      grid-template-columns: 31px minmax(0, 1fr);
+      padding-right: 10px;
+    }
+
+    .kept {
+      display: none;
+    }
+
+    .destinations li,
+    .durability li {
+      padding: 22px 18px;
+    }
+
+    .test-count {
+      display: block;
+    }
+
+    footer {
+      gap: 15px;
+    }
+
+    footer > div {
+      gap: 12px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>

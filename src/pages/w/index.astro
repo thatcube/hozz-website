@@ -1,0 +1,291 @@
+---
+/**
+ * The website concepts board.
+ *
+ * Auto-discovers everything in `src/pages/w/`, so ten concepts can be built in
+ * parallel without a shared list to collide on. Each is framed live at real
+ * width, because a picture of a page is not the page.
+ */
+import '../../styles/sketch-base.css';
+import { SITE } from '../../data/site';
+
+/* Derived from the meta files alone. Referencing the sibling .astro pages at
+   all — even lazily — pulls ten full site concepts' <style> blocks into this
+   page's CSS bundle, and they then fight the board's own styling. */
+const metas = import.meta.glob('./*.meta.ts', { eager: true }) as Record<
+  string,
+  { default?: { n?: string; name?: string; mark?: string; idea?: string; palette?: string[] } }
+>;
+
+const items = Object.entries(metas)
+  .map(([path, mod]) => {
+    const slug = path.split('/').pop()!.replace('.meta.ts', '');
+    return { slug, href: `/w/${slug}/`, meta: mod.default ?? {} };
+  })
+  .sort((a, b) => a.slug.localeCompare(b.slug));
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Website concepts · Hozz</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href={`${SITE}/w/`} />
+  </head>
+  <body>
+    <header class="top">
+      <p class="eyebrow">Hozz · working file</p>
+      <h1>{items.length} complete site concepts.</h1>
+      <p class="lede">
+        Each one is a whole page, not a hero study, built around one of the
+        marks on the <a href="/logos/">logo board</a> and inheriting its palette.
+        The product facts underneath them are the real ones.
+      </p>
+      <p class="links">
+        <a href="/logos/">Logo concepts</a>
+        <a href="/directions/">Earlier directions</a>
+        <a href="/">Live site</a>
+      </p>
+    </header>
+
+    <main>
+      {
+        items.map((it) => (
+          <section class="item" id={it.slug}>
+            <div class="meta">
+              <p class="tag">
+                <b>{it.meta.n ?? it.slug}</b>
+                <span>{it.meta.name ?? it.slug}</span>
+              </p>
+              {it.meta.mark && <p class="mark">Mark {it.meta.mark}</p>}
+              {it.meta.idea && <p class="idea">{it.meta.idea}</p>}
+              {it.meta.palette && (
+                <ul class="pal">
+                  {it.meta.palette.map((c) => (
+                    <li><i style={`background:${c}`} />{c}</li>
+                  ))}
+                </ul>
+              )}
+              <a class="open" href={it.href}>Open full size →</a>
+            </div>
+            <div class="screen">
+              <iframe src={it.href} title={it.meta.name ?? it.slug} loading="lazy" />
+            </div>
+          </section>
+        ))
+      }
+      {items.length === 0 && <p class="empty">No concepts yet.</p>}
+    </main>
+  </body>
+</html>
+
+<style>
+  body {
+    background: #16161a;
+    color: #f4f4f6;
+    font-family: var(--sans);
+  }
+
+  .top {
+    width: min(100% - 3rem, 1400px);
+    margin-inline: auto;
+    padding-block: clamp(3rem, 7vw, 5rem) clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #9599a6;
+    margin-bottom: 1rem;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 1.2rem + 3.2vw, 3.4rem);
+    font-weight: 800;
+    letter-spacing: -0.042em;
+    line-height: 1.02;
+  }
+
+  .lede {
+    margin-top: 1.1rem;
+    max-width: 60ch;
+    line-height: 1.55;
+    color: #b0b0ba;
+  }
+
+  .lede a,
+  .links a {
+    color: #f4f4f6;
+    text-decoration: none;
+    border-bottom: 2px solid #5a5a66;
+    padding-bottom: 1px;
+  }
+
+  .lede a:hover,
+  .links a:hover {
+    border-bottom-color: #f4f4f6;
+  }
+
+  .links {
+    margin-top: 1.4rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
+
+  main {
+    width: min(100% - 3rem, 1400px);
+    margin: 0 auto 6rem;
+    display: grid;
+    gap: clamp(2rem, 4vw, 3rem);
+  }
+
+  .item {
+    display: grid;
+    gap: 1.25rem;
+    padding-top: clamp(1.75rem, 3vw, 2.5rem);
+    border-top: 1px solid #2c2c33;
+  }
+
+  .item > * {
+    min-inline-size: 0;
+  }
+
+  @media (min-width: 1000px) {
+    .item {
+      grid-template-columns: minmax(0, 19rem) minmax(0, 1fr);
+      gap: clamp(2rem, 4vw, 3.5rem);
+      align-items: start;
+    }
+  }
+
+  .tag {
+    display: flex;
+    align-items: baseline;
+    gap: 0.55rem;
+    flex-wrap: wrap;
+  }
+
+  .tag b {
+    font-family: var(--mono);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #9599a6;
+  }
+
+  .tag span {
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: -0.032em;
+  }
+
+  .mark {
+    margin-top: 0.4rem;
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    color: #9599a6;
+  }
+
+  .idea {
+    margin-top: 0.7rem;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: #b0b0ba;
+  }
+
+  .pal {
+    margin-top: 0.85rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    list-style: none;
+    padding: 0;
+  }
+
+  .pal li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.32rem;
+    font-family: var(--mono);
+    font-size: 0.625rem;
+    color: #a8acb8;
+    border: 1px solid #2c2c33;
+    border-radius: 999px;
+    padding: 0.14rem 0.42rem 0.14rem 0.2rem;
+  }
+
+  .pal i {
+    inline-size: 11px;
+    block-size: 11px;
+    border-radius: 3px;
+  }
+
+  .open {
+    display: inline-block;
+    margin-top: 1.1rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #f4f4f6;
+    text-decoration: none;
+    border-bottom: 2px solid #5a5a66;
+    padding-bottom: 2px;
+  }
+
+  .open:hover {
+    border-bottom-color: #f4f4f6;
+  }
+
+  .screen {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    aspect-ratio: 16 / 11;
+  }
+
+  .screen iframe {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    inline-size: 1440px;
+    block-size: 990px;
+    border: 0;
+    transform-origin: 0 0;
+  }
+
+  .empty {
+    padding: 4rem 0;
+    text-align: center;
+    color: #9599a6;
+  }
+
+  :focus-visible {
+    outline: 3px solid #6ea8ff;
+    outline-offset: 3px;
+  }
+</style>
+
+<script>
+  /* Scale each frame to the width its slot ended up at, so previews stay honest
+     at every viewport instead of guessing a ratio. */
+  const FRAME_W = 1440;
+  const fit = () => {
+    document.querySelectorAll<HTMLElement>('.screen').forEach((box) => {
+      const frame = box.querySelector('iframe');
+      if (!frame) return;
+      const scale = box.clientWidth / FRAME_W;
+      frame.style.transform = `scale(${scale})`;
+      frame.style.height = `${box.clientHeight / scale}px`;
+    });
+  };
+  fit();
+  window.addEventListener('resize', fit);
+  window.addEventListener('load', fit);
+</script>

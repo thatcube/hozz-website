@@ -1,0 +1,32 @@
+---
+/**
+ * Frame for a mark concept.
+ *
+ * Fixes the 32×32 grid and the crisp-edge rendering so pixels stay pixels at
+ * any size, and leaves everything else — container, palette, depth — to the
+ * concept. The face goes on top, from `Face.astro`, never redrawn here.
+ */
+import { GRID } from '../../data/mark';
+
+interface Props {
+  /** Rendered size in px. The grid is always 32 regardless. */
+  size?: number;
+  title: string;
+  class?: string;
+}
+
+const { size = 128, title, class: cls } = Astro.props;
+---
+
+<svg
+  class={cls}
+  width={size}
+  height={size}
+  viewBox={`0 0 ${GRID} ${GRID}`}
+  role="img"
+  aria-label={title}
+  shape-rendering="crispEdges"
+  style="display:block"
+>
+  <slot />
+</svg>

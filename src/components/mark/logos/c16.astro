@@ -1,0 +1,141 @@
+---
+/**
+ * 16 · Breath
+ *
+ * Two soft lobes, bilateral, notched top and bottom, nested three deep so the
+ * form reads as expanding outward from its own centre — a breath being taken.
+ * The oldest measure there is, and nearly unused as a mark. No anatomy, no
+ * trachea, no diagram: just a symmetry that looks like it is filling.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import Face from '../Face.astro';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Hozz — Breath">
+  <!-- outer -->
+  <path d="M9 4h4v1h-4z" fill="#b39a72" />
+  <path d="M18 4h4v1h-4z" fill="#b39a72" />
+  <path d="M7 5h7v1h-7z" fill="#b39a72" />
+  <path d="M17 5h7v1h-7z" fill="#b39a72" />
+  <path d="M6 6h4v1h-4z" fill="#b39a72" />
+  <path d="M14 6h1v1h-1z" fill="#b39a72" />
+  <path d="M16 6h1v1h-1z" fill="#b39a72" />
+  <path d="M21 6h4v1h-4z" fill="#b39a72" />
+  <path d="M6 7h3v1h-3z" fill="#b39a72" />
+  <path d="M15 7h1v1h-1z" fill="#b39a72" />
+  <path d="M22 7h3v1h-3z" fill="#b39a72" />
+  <path d="M5 8h3v1h-3z" fill="#b39a72" />
+  <path d="M23 8h3v1h-3z" fill="#b39a72" />
+  <path d="M5 9h2v1h-2z" fill="#b39a72" />
+  <path d="M24 9h2v1h-2z" fill="#b39a72" />
+  <path d="M4 10h3v1h-3z" fill="#b39a72" />
+  <path d="M24 10h3v1h-3z" fill="#b39a72" />
+  <path d="M4 11h2v1h-2z" fill="#b39a72" />
+  <path d="M25 11h2v1h-2z" fill="#b39a72" />
+  <path d="M4 12h2v1h-2z" fill="#b39a72" />
+  <path d="M25 12h2v1h-2z" fill="#b39a72" />
+  <path d="M4 13h2v1h-2z" fill="#b39a72" />
+  <path d="M25 13h2v1h-2z" fill="#b39a72" />
+  <path d="M3 14h3v1h-3z" fill="#b39a72" />
+  <path d="M25 14h3v1h-3z" fill="#b39a72" />
+  <path d="M3 15h3v1h-3z" fill="#b39a72" />
+  <path d="M25 15h3v1h-3z" fill="#b39a72" />
+  <path d="M3 16h3v1h-3z" fill="#b39a72" />
+  <path d="M25 16h3v1h-3z" fill="#b39a72" />
+  <path d="M3 17h3v1h-3z" fill="#b39a72" />
+  <path d="M25 17h3v1h-3z" fill="#b39a72" />
+  <path d="M3 18h3v1h-3z" fill="#b39a72" />
+  <path d="M25 18h3v1h-3z" fill="#b39a72" />
+  <path d="M4 19h2v1h-2z" fill="#b39a72" />
+  <path d="M25 19h2v1h-2z" fill="#b39a72" />
+  <path d="M4 20h2v1h-2z" fill="#b39a72" />
+  <path d="M25 20h2v1h-2z" fill="#b39a72" />
+  <path d="M4 21h2v1h-2z" fill="#b39a72" />
+  <path d="M25 21h2v1h-2z" fill="#b39a72" />
+  <path d="M4 22h3v1h-3z" fill="#b39a72" />
+  <path d="M24 22h3v1h-3z" fill="#b39a72" />
+  <path d="M5 23h2v1h-2z" fill="#b39a72" />
+  <path d="M24 23h2v1h-2z" fill="#b39a72" />
+  <path d="M5 24h3v1h-3z" fill="#b39a72" />
+  <path d="M23 24h3v1h-3z" fill="#b39a72" />
+  <path d="M6 25h3v1h-3z" fill="#b39a72" />
+  <path d="M15 25h1v1h-1z" fill="#b39a72" />
+  <path d="M22 25h3v1h-3z" fill="#b39a72" />
+  <path d="M6 26h4v1h-4z" fill="#b39a72" />
+  <path d="M14 26h1v1h-1z" fill="#b39a72" />
+  <path d="M16 26h1v1h-1z" fill="#b39a72" />
+  <path d="M21 26h4v1h-4z" fill="#b39a72" />
+  <path d="M7 27h7v1h-7z" fill="#b39a72" />
+  <path d="M17 27h7v1h-7z" fill="#b39a72" />
+  <path d="M9 28h4v1h-4z" fill="#b39a72" />
+  <path d="M18 28h4v1h-4z" fill="#b39a72" />
+  <!-- mid -->
+  <path d="M10 6h4v1h-4z" fill="#ddcaa8" />
+  <path d="M17 6h4v1h-4z" fill="#ddcaa8" />
+  <path d="M9 7h6v1h-6z" fill="#ddcaa8" />
+  <path d="M16 7h6v1h-6z" fill="#ddcaa8" />
+  <path d="M8 8h3v1h-3z" fill="#ddcaa8" />
+  <path d="M15 8h1v1h-1z" fill="#ddcaa8" />
+  <path d="M20 8h3v1h-3z" fill="#ddcaa8" />
+  <path d="M7 9h3v1h-3z" fill="#ddcaa8" />
+  <path d="M21 9h3v1h-3z" fill="#ddcaa8" />
+  <path d="M7 10h2v1h-2z" fill="#ddcaa8" />
+  <path d="M22 10h2v1h-2z" fill="#ddcaa8" />
+  <path d="M6 11h2v1h-2z" fill="#ddcaa8" />
+  <path d="M23 11h2v1h-2z" fill="#ddcaa8" />
+  <path d="M6 12h2v1h-2z" fill="#ddcaa8" />
+  <path d="M23 12h2v1h-2z" fill="#ddcaa8" />
+  <path d="M6 13h2v1h-2z" fill="#ddcaa8" />
+  <path d="M23 13h2v1h-2z" fill="#ddcaa8" />
+  <path d="M6 14h1v1h-1z" fill="#ddcaa8" />
+  <path d="M24 14h1v1h-1z" fill="#ddcaa8" />
+  <path d="M6 15h1v1h-1z" fill="#ddcaa8" />
+  <path d="M24 15h1v1h-1z" fill="#ddcaa8" />
+  <path d="M6 16h1v1h-1z" fill="#ddcaa8" />
+  <path d="M24 16h1v1h-1z" fill="#ddcaa8" />
+  <path d="M6 17h1v1h-1z" fill="#ddcaa8" />
+  <path d="M24 17h1v1h-1z" fill="#ddcaa8" />
+  <path d="M6 18h1v1h-1z" fill="#ddcaa8" />
+  <path d="M24 18h1v1h-1z" fill="#ddcaa8" />
+  <path d="M6 19h2v1h-2z" fill="#ddcaa8" />
+  <path d="M23 19h2v1h-2z" fill="#ddcaa8" />
+  <path d="M6 20h2v1h-2z" fill="#ddcaa8" />
+  <path d="M23 20h2v1h-2z" fill="#ddcaa8" />
+  <path d="M6 21h2v1h-2z" fill="#ddcaa8" />
+  <path d="M23 21h2v1h-2z" fill="#ddcaa8" />
+  <path d="M7 22h2v1h-2z" fill="#ddcaa8" />
+  <path d="M22 22h2v1h-2z" fill="#ddcaa8" />
+  <path d="M7 23h3v1h-3z" fill="#ddcaa8" />
+  <path d="M21 23h3v1h-3z" fill="#ddcaa8" />
+  <path d="M8 24h3v1h-3z" fill="#ddcaa8" />
+  <path d="M15 24h1v1h-1z" fill="#ddcaa8" />
+  <path d="M20 24h3v1h-3z" fill="#ddcaa8" />
+  <path d="M9 25h6v1h-6z" fill="#ddcaa8" />
+  <path d="M16 25h6v1h-6z" fill="#ddcaa8" />
+  <path d="M10 26h4v1h-4z" fill="#ddcaa8" />
+  <path d="M17 26h4v1h-4z" fill="#ddcaa8" />
+  <!-- core -->
+  <path d="M11 8h4v1h-4z" fill="#f7f0e0" />
+  <path d="M16 8h4v1h-4z" fill="#f7f0e0" />
+  <path d="M10 9h11v1h-11z" fill="#f7f0e0" />
+  <path d="M9 10h13v1h-13z" fill="#f7f0e0" />
+  <path d="M8 11h15v1h-15z" fill="#f7f0e0" />
+  <path d="M8 12h15v1h-15z" fill="#f7f0e0" />
+  <path d="M8 13h15v1h-15z" fill="#f7f0e0" />
+  <path d="M7 14h17v1h-17z" fill="#f7f0e0" />
+  <path d="M7 15h17v1h-17z" fill="#f7f0e0" />
+  <path d="M7 16h17v1h-17z" fill="#f7f0e0" />
+  <path d="M7 17h17v1h-17z" fill="#f7f0e0" />
+  <path d="M7 18h17v1h-17z" fill="#f7f0e0" />
+  <path d="M8 19h15v1h-15z" fill="#f7f0e0" />
+  <path d="M8 20h15v1h-15z" fill="#f7f0e0" />
+  <path d="M8 21h15v1h-15z" fill="#f7f0e0" />
+  <path d="M9 22h13v1h-13z" fill="#f7f0e0" />
+  <path d="M10 23h11v1h-11z" fill="#f7f0e0" />
+  <path d="M11 24h4v1h-4z" fill="#f7f0e0" />
+  <path d="M16 24h4v1h-4z" fill="#f7f0e0" />
+  <Face fill="#4b3a30" />
+</MarkFrame>
