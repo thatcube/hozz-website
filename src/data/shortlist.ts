@@ -48,10 +48,6 @@ export const SHORTLIST: Pick[] = [
     why: 'The panel is turned away from you, so it has a front face and a foreshortened side. The letters turn with it, which is why they cannot be lifted off.',
   },
   {
-    slug: 'm01',
-    why: 'The cut runs wider than the record and is stopped by the rim, so the disc decides where the letters end.',
-  },
-  {
     slug: 'm03',
     why: 'The record is raked away and the slot rakes with it — depth from geometry rather than from a gradient.'
   },
