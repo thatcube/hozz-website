@@ -26,7 +26,7 @@ type Dest = {
 const dests: Dest[] = [
   {
     id: 'mac',
-    name: 'This Mac',
+    name: 'Your Mac',
     transport: 'NDJSON over your local network · Bonjour _hozz._tcp · port 54330 · token auth',
     tag: 'this mac · ndjson',
     line: '{"type":"heartRate","value":58,"unit":"count/min","startDate":"2026-03-11T07:02:14Z"}',
@@ -69,7 +69,7 @@ const tickHeights = Array.from({ length: 40 }, (_, i) => {
 
 const rows = [
   {
-    name: 'This Mac',
+    name: 'Your Mac',
     how: 'Straight over your local network. Bonjour <code>_hozz._tcp</code>, port <code>54330</code>, token auth. The Mac app stores what arrives in <code>hozz-received.sqlite</code> and charts it.',
     formats: 'NDJSON',
   },

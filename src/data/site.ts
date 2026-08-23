@@ -77,7 +77,7 @@ export const STEPS = [
   {
     category: 'heart' as CategoryKey,
     title: 'Add a destination',
-    body: 'Your Mac, a folder, Home Assistant, a URL, or MQTT. Test it before you trust it.',
+    body: 'Your Mac, a folder, Home Assistant, InfluxDB, a URL, or MQTT. Test it before you trust it.',
   },
   {
     category: 'body' as CategoryKey,
@@ -99,8 +99,8 @@ export const DESTINATIONS = [
   {
     category: 'mind' as CategoryKey,
     icon: 'mac',
-    title: 'This Mac',
-    body: 'The companion app receives straight from your phone, over your own network.',
+    title: 'Your Mac',
+    body: 'Run the companion Mac app and your phone finds it on your own network — no address to type.',
     fact: '_hozz._tcp · :54330',
   },
   {
