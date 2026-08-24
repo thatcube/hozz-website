@@ -7,9 +7,11 @@
  * c10's size and its water, but a true circle: c10's outline has single pixels
  * standing off the sides, which read as little arms. The shading is concentric.
  *
- * Centred by opening the face's gap to 3 rather than by nudging it — the
- * field is 16 rows and the faces are odd, so at the default gap an even
- * split cannot happen. Measured air: 3 above, 3 below.
+ * The face is centred on the disc, not on the lit field. Centring on the field
+ * rides the face high, because the chin eats rows off the field's bottom — Mozz
+ * centres on the record and lets its shading pass behind the ZZ, and that is
+ * what makes the face read as the middle of the thing rather than as something
+ * dropped on it. Measured air on the disc: 6 above, 6 below.
  */
 import MarkFrame from '../MarkFrame.astro';
 import { facePathsAt } from '../../../data/mark';

@@ -77,9 +77,11 @@ def build(slug, name, mode, size, idea, note):
         rgs, core = rings(inner, 2)
         lit, shade, deep, field = rgs[0], rgs[1], set(), core
     elif mode == 'above':
+        # Two rows of chin, not four. A deep crescent three rows tall reads as
+        # a heavy jaw and drags the whole mark downward.
         lit = edge(inner, 0, -1, 1)
         deep = crescent(inner, 0, -1)
-        shade = crescent(inner, 0, -3) - deep
+        shade = crescent(inner, 0, -2) - deep
         field = clear(inner, lit, shade, deep)
     else:  # soft — one thin rim of each and nothing more
         lit = edge(inner, 0, -1, 1)
@@ -87,35 +89,40 @@ def build(slug, name, mode, size, idea, note):
         shade = set()
         field = clear(inner, lit, deep)
 
-    fys = sorted({p[1] for p in field})
-    span = fys[-1] - fys[0] + 1
+    # Centre the face on the DISC, not on the lit field.
+    #
+    # This is the bug Brandon spotted. Centring on the field looks right on
+    # paper, but the field is not the shape — the chin eats rows off its bottom,
+    # so the field's middle sits above the disc's middle and the face rides
+    # high. Mozz centres its face on the disc and lets the shading pass behind
+    # it, which is why the ZZ reads as the middle of the record rather than as
+    # something dropped on top of it. Same here.
+    dys = sorted({p[1] for p in DISC})
+    disc_mid2 = dys[0] + dys[-1] + 1          # twice the disc's centre line
 
-    # Measured from the face module rather than assumed: an even-height face is
-    # not symmetric about cy, so computing the placement arithmetically put it a
-    # row out every time. (height, top offset from cy) for each gap.
     GEOM = {
         'lg': {1: (10, -5), 2: (11, -5), 3: (12, -6), 4: (13, -6)},
         'md': {1: (8, -4), 2: (9, -4), 3: (10, -5), 4: (11, -5)},
         'sm': {1: (7, -3), 2: (8, -4), 3: (9, -4), 4: (10, -5)},
     }[size]
 
-    # Choose the gap whose height splits the field evenly, then place the face
-    # by its measured top edge.
     choice = None
     for gap in (2, 3, 1, 4):
         h, off = GEOM[gap]
-        if (span - h) % 2:
+        # face centre line, doubled, must equal the disc's
+        if (disc_mid2 - h) % 2:
             continue
-        pad = (span - h) // 2
-        choice = (gap, h, fys[0] + pad - off)
+        cy = (disc_mid2 - h) // 2 - off
+        choice = (gap, h, cy)
         break
-    assert choice, f'{slug}: no gap splits a {span}-row field evenly'
+    assert choice, f'{slug}: no gap centres on a disc of {dys[-1] - dys[0] + 1} rows'
     gap, h, cy = choice
-    above = (cy + GEOM[gap][1]) - fys[0]
-    below = fys[-1] - (cy + GEOM[gap][1] + h - 1)
-    assert above == below, f'{slug}: air {above}/{below}'
-    print(f'{slug} {name:18} field {span} · face {size} gap {gap} = {h} rows '
-          f'· air {above}/{below}')
+    top = cy + GEOM[gap][1]
+    above = top - dys[0]
+    below = dys[-1] - (top + h - 1)
+    assert above == below, f'{slug}: air {above}/{below} on the disc'
+    print(f'{slug} {name:18} disc {dys[-1] - dys[0] + 1} rows · face {size} gap {gap} '
+          f'= {h} rows · air {above}/{below}')
 
     layers = [(WATER_OUT, '#96bcd6'), (WATER_IN, '#5d8cb0'), (field, FIELD)]
     if shade:
@@ -136,9 +143,11 @@ def build(slug, name, mode, size, idea, note):
  * c10's size and its water, but a true circle: c10's outline has single pixels
  * standing off the sides, which read as little arms. {note}
  *
- * Centred by opening the face's gap to {gap} rather than by nudging it — the
- * field is {span} rows and the faces are odd, so at the default gap an even
- * split cannot happen. Measured air: {above} above, {below} below.'''
+ * The face is centred on the disc, not on the lit field. Centring on the field
+ * rides the face high, because the chin eats rows off the field's bottom — Mozz
+ * centres on the record and lets its shading pass behind the ZZ, and that is
+ * what makes the face read as the middle of the thing rather than as something
+ * dropped on it. Measured air on the disc: {above} above, {below} below.'''
 
     (OUT / f'{slug}.astro').write_text(f'''---
 /**
