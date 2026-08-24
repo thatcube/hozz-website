@@ -2,8 +2,9 @@
  * Renders every documentation page at three widths and checks the things that
  * only show up in a browser.
  *
- *   npm run build && npm run preview &        # or any static server
- *   node tools/audit-pages.mjs
+ *   npm run build
+ *   npm run preview &
+ *   SHOOT_BASE=http://localhost:4321 npm run verify:layout
  *
  * Writes PNGs to .shots/ (gitignored) and prints a report. Exits non-zero if
  * anything failed, so it can be run the same way a test is.
@@ -14,6 +15,15 @@
  * navigation that cannot be opened are all invisible on a desktop and obvious
  * to the person holding the phone. They are also mechanical, so they are
  * checked mechanically and the screenshots are left for the judgement calls.
+ *
+ * Why it refuses to start rather than assuming
+ * -------------------------------------------
+ * This used to take a default address and audit whatever answered there. Run by
+ * hand against a forgotten server on the same port, it reported thirty-nine tap
+ * target failures — with element names and pixel sizes, entirely real-looking,
+ * and about somebody else's site. So the address is printed before anything is
+ * measured, and the server is made to prove it is serving *this* build before a
+ * single page is opened. A number about the wrong thing is worse than no number.
  */
 import puppeteer from 'puppeteer-core';
 import { mkdir, writeFile, readFile, readdir } from 'node:fs/promises';
@@ -24,7 +34,7 @@ import { dirname, join, relative, sep } from 'node:path';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const outDir = join(root, '.shots');
 const dist = join(root, 'dist');
-const base = process.env.SHOOT_BASE ?? 'http://localhost:4321';
+const base = (process.env.SHOOT_BASE ?? 'http://localhost:4321').replace(/\/$/, '');
 
 const executablePath =
   process.env.CHROME_PATH ??
@@ -58,11 +68,15 @@ async function walk(directory) {
 
 const built = (await walk(dist)).filter((file) => file.endsWith('index.html'));
 const ROUTES = [];
+/** route -> the file on disk it was built from, for the preflight below. */
+const SOURCE_OF = new Map();
 for (const file of built) {
   const html = await readFile(file, 'utf8');
   if (!html.includes('class="docs-shell"')) continue;
   const route = '/' + relative(dist, file).split(sep).slice(0, -1).join('/');
-  ROUTES.push(route === '/' ? '/' : `${route}/`);
+  const href = route === '/' ? '/' : `${route}/`;
+  ROUTES.push(href);
+  SOURCE_OF.set(href, file);
 }
 ROUTES.sort();
 
@@ -103,6 +117,52 @@ function fail(route, viewport, message) {
 }
 
 await mkdir(outDir, { recursive: true });
+
+/**
+ * Prove the server is there, and that it is serving this build.
+ *
+ * `SHOOT_BASE` is the only name this reads. Pass a different variable and the
+ * default applies silently, which is how a run once measured a forgotten server
+ * on the default port and reported its problems as this site's. Both failures
+ * are caught here: nothing answering, and something answering that is not this.
+ */
+console.log(`Auditing ${base}${process.env.SHOOT_BASE ? '' : '  (default — set SHOOT_BASE to change)'}`);
+
+{
+  const probe = ROUTES[0];
+  let served;
+  try {
+    const response = await fetch(base + probe);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    served = await response.text();
+  } catch (error) {
+    console.error(
+      `\nNothing usable answered ${base}${probe} — ${error.message}\n\n` +
+        '  Start a server for this build first:\n' +
+        '    npm run build && npm run preview\n\n' +
+        '  Then point this at it with SHOOT_BASE, which is the only variable it\n' +
+        '  reads. Note that `astro preview` binds localhost, which may resolve to\n' +
+        '  IPv6 — a readiness check against 127.0.0.1 can fail while the server is\n' +
+        '  up and answering perfectly well on localhost.'
+    );
+    process.exit(1);
+  }
+
+  // Comparing against the file the route was built from catches both a server
+  // that belongs to something else and one still serving a previous build.
+  const onDisk = await readFile(SOURCE_OF.get(probe), 'utf8');
+  if (served.trim() !== onDisk.trim()) {
+    console.error(
+      `\n${base}${probe} is not serving this build.\n\n` +
+        '  Something is answering, but it does not match dist/. Either it belongs\n' +
+        '  to another site or another checkout, or dist/ has been rebuilt since it\n' +
+        '  started. Auditing it would produce real-looking numbers about the wrong\n' +
+        '  pages, so this stops here.\n\n' +
+        '  Rebuild and restart the server, or point SHOOT_BASE somewhere else.'
+    );
+    process.exit(1);
+  }
+}
 const browser = await puppeteer.launch({ executablePath, headless: true });
 
 for (const route of ROUTES) {
