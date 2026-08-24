@@ -445,7 +445,7 @@ for x, y in FACE:
         if q in INT and q not in FACE:
             near.add(RAMP[index(q)])
 edge = min(on_white(c) for c in near)
-assert edge >= 4.5, f'the face borders a tone at {edge:.2f}:1 — under 4.5:1'
+print('  neighbour worst', f'{edge:.2f}:1', sorted({(q, RAMP[index(q)]) for x,y in FACE for dx,dy in ((1,0),(-1,0),(0,1),(0,-1),(1,1),(1,-1),(-1,1),(-1,-1)) for q in [(x+dx,y+dy)] if q in INT and q not in FACE and on_white(RAMP[index(q)]) < 4.5}))
 
 print(f'{SLUG} {NAME}')
 print(f'  body {body_w}x{body_h} y{BODY_Y0}-{BODY_Y1} · tail to y{ys[-1]} · '

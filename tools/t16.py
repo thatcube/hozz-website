@@ -100,19 +100,20 @@ face_x1 = face_x0 + FACE_W - 1
 assert face_x0 - body_x0 == body_x1 - face_x1 == 9
 
 # The shipped lg face keeps its full width and default two-row breathing gap.
-# At cy 13 it occupies y8-18, leaving six rows above and below on the visibly
-# symmetric body at y2-24.
-FACE_CY = 13
+# Its optical body begins at y4, below the two-row circular cap; cy 14 puts its
+# rendered box at y9-19, leaving five visible rows above and below.
+FACE_CY = 14
 FACE_GAP = 2
-FACE_TOP = 8
+FACE_TOP = 9
 FACE_HEIGHT = 11
-body_y0 = min(y for _, y in BODY)
 body_y1 = min(y for _, y in TAIL) - 1
 body_proper = {(x, y) for x, y in BODY if y <= body_y1}
 assert all((31 - x, y) in body_proper for x, y in body_proper)
+body_y0 = 4
+assert min(y for _, y in BODY) == body_y0 - 2
 air_above = FACE_TOP - body_y0
 air_below = body_y1 - (FACE_TOP + FACE_HEIGHT - 1)
-assert air_above == air_below == 6
+assert air_above == air_below == 5
 
 assert min(y for _, y in TAIL) == body_y1 + 1
 body_last = sorted(x for x, y in SHAPE if y == body_y1)
@@ -122,8 +123,8 @@ tail_first_c = (tail_first[0] + tail_first[-1] + 1) / 2
 assert body_last_c == 16 and tail_first_c == 12.5
 
 # A single keyline encloses the combined mark, so no line can close across the
-# body-to-tail join. Only two one-pixel body bands sit inside it; both live in
-# the outer quarter, leaving one calm violet field around the face.
+# body-to-tail join. Upper-left light crosses two shallow contours, fades around
+# the right turn, and disappears on the lower right instead of forming a bezel.
 outer_rings, _ = rings(SHAPE, 1)
 outline = outer_rings[0]
 open_join = [
@@ -141,17 +142,47 @@ assert len(tail_rings) == 1 and tail_core
 body_owned = BODY - TAIL
 body_join = (body_rings[0] & body_owned) - outline
 inner_rim = (body_rings[1] & body_owned) - outline
-rim_highlight = {(x, y) for x, y in inner_rim if y <= 13}
-rim_return = inner_rim - rim_highlight
+mid_contour = (body_rings[2] & body_owned) - outline
+
+
+def light_score(point):
+    x, y = point
+    return 30 - x - 1.2 * y
+
+
+rim_highlight = {point for point in inner_rim if light_score(point) >= 8}
+rim_light = (
+    {point for point in inner_rim if 2 <= light_score(point) < 8}
+    | {point for point in mid_contour if light_score(point) >= 8}
+)
+rim_fade = (
+    {point for point in inner_rim if -4 <= light_score(point) < 2}
+    | {point for point in mid_contour if 2 <= light_score(point) < 8}
+    | body_join
+    | (tail_rings[0] - outline)
+)
+body_field = (
+    (body_owned - outline)
+    - rim_highlight
+    - rim_light
+    - rim_fade
+)
+lower_right_turn = {
+    point
+    for point in inner_rim | mid_contour
+    if point[0] >= 16 and point[1] >= 16
+}
+assert lower_right_turn <= body_field
+assert sum(x for x, _ in rim_highlight) / len(rim_highlight) < 16
+assert sum(y for _, y in rim_highlight) / len(rim_highlight) < 13
 tail_shadow = {(x, y) for x, y in tail_core if y >= 27}
 tail_depth = tail_core - tail_shadow
 layers = [
     (outline, KEY),
     (rim_highlight, SURFACE[0]),
-    (rim_return, SURFACE[1]),
-    ((body_rings[2] & body_owned) - outline, SURFACE[2]),
-    ((body_core & body_owned) - outline, SURFACE[3]),
-    ((tail_rings[0] - outline) | body_join, SURFACE[2]),
+    (rim_light, SURFACE[1]),
+    (rim_fade, SURFACE[2]),
+    (body_field, SURFACE[3]),
     (tail_depth, SURFACE[4]),
     (tail_shadow, SURFACE[5]),
 ]
@@ -203,17 +234,17 @@ paths = "\n".join(
  * three duplicate equator rows removed. Its final two cap rows give way to the
  * tail, preserving the circle's shoulders while matching the siblings' width.
  *
- * The ramp occupies only the keyline and next two pixels: one split rim and one
- * mid tone, then a broad plain violet field. The face lives entirely on that
- * field instead of inside a stack of collars.
+ * Upper-left light enters across two shallow contours, fades as it turns down
+ * the right edge, and disappears on the lower right. The face lives on a broad
+ * violet field instead of inside a stack of collars.
  *
  * A straight-left, right-tapered 9-7-5-3-1 wedge continues the body's lower-left
  * edge. One outer keyline encloses both, leaving no seam at the join.
  *
- * The lg face matches the body's even parity and occupies y8-18 on the visibly
- * symmetric body at y2-24: 6 pixels of air above and 6 below, plus 9 on either
- * side. The white face clears 4.5:1 against its full background box. Eight tones
- * including face.
+ * The lg face matches the body's even parity and occupies y9-19 on the optical
+ * body at y4-24: 5 pixels of air above and 5 below, plus 9 on either side. The
+ * white face clears 4.5:1 against its full background box. Eight tones including
+ * face.
  */
 import MarkFrame from '../MarkFrame.astro';
 import {{ facePathsAt }} from '../../../data/mark';

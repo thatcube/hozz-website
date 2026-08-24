@@ -1,6 +1,6 @@
 export default {
   n: 't18', name: 'Held',
-  idea: 'Upper-left light falls across one recessed field, whose wall dissolves into the lower-right shadow.',
+  idea: 'A keyed recessed field falls monotonically from upper-left lavender to lower-right violet.',
   ground: 'light',
-  palette: ['#54258f', '#6730a9', '#7b42b9', '#8250c5', '#7545b9', '#9a70ce', '#c3a8e7', '#d2c0ed', '#fffaf3'],
+  palette: ['#211532', '#d2c0ed', '#b89ae3', '#a27bda', '#8b58d1', '#7e45cd', '#7134c1', '#622ca7', '#54258f', '#fffaf3'],
 };

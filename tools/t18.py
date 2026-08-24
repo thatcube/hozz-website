@@ -1,7 +1,6 @@
 """Generate t18: a speech bubble whose face is held in one recessed field."""
 
 import colorsys
-import math
 import sys
 from pathlib import Path
 
@@ -9,40 +8,23 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
 from circles import check  # noqa: E402
-from shade import is_slab, keyline, rings, to_paths  # noqa: E402
+from shade import is_slab, keyline, to_paths  # noqa: E402
 
 OUT = ROOT / "src/components/mark/logos"
 
-KEY = "#54258f"
-RIM_SHADOW = "#7545b9"
-RIM_BASE = "#9a70ce"
-RIM_LIGHT = "#d2c0ed"
-WALL_SHADOW = "#6730a9"
-WALL_MID = "#7b42b9"
-WALL_LIGHT = "#c3a8e7"
-CORE = "#8250c5"
+KEYLINE = "#211532"
 FACE = "#fffaf3"
-PALETTE = [
-    KEY,
-    WALL_SHADOW,
-    WALL_MID,
-    CORE,
-    RIM_SHADOW,
-    RIM_BASE,
-    WALL_LIGHT,
-    RIM_LIGHT,
-    FACE,
+RAMP = [
+    "#d2c0ed",
+    "#b89ae3",
+    "#a27bda",
+    "#8b58d1",
+    "#7e45cd",
+    "#7134c1",
+    "#622ca7",
+    "#54258f",
 ]
-LIGHT_TO_DARK = [
-    RIM_LIGHT,
-    WALL_LIGHT,
-    RIM_BASE,
-    CORE,
-    WALL_MID,
-    RIM_SHADOW,
-    WALL_SHADOW,
-    KEY,
-]
+PALETTE = [KEYLINE, *RAMP, FACE]
 
 
 def rows(profile, top):
@@ -79,42 +61,29 @@ TAIL = {
 SILHOUETTE = BODY | TAIL
 OUTLINE = keyline(SILHOUETTE)
 
-# Light enters from above-left. Distance from that one source drives the whole
-# ramp, while the inward wall takes two fewer stops of light and the recessed
-# field one fewer. On the shadow side all three converge, so the plane change
-# disappears instead of wrapping the bubble in an equally bright collar.
-SOURCE = (-5.0, -6.0)
-RADII = (18.0, 19.5, 21.5, 25.0, 29.0, 33.0, 36.0)
-
-(body_rings, CORE_FIELD) = rings(BODY, 4)
-BODY_EDGE, RIM, WALL_OUTER, WALL_INNER = body_rings
-WALL = WALL_OUTER | WALL_INNER
+# The keyline is structural and deliberately separate from the recovered
+# lavender range. Inside it, one upper-left light travels on a 45-degree axis:
+# x+y can only increase when walking right or down, so the ramp can never become
+# lighter again on the way toward the lower-right shadow. The first three bands
+# are tighter near the light; the five darker bands open into the field.
+INNER = SILHOUETTE - OUTLINE
+THRESHOLDS = (13, 16, 19, 25, 31, 37, 43)
 
 
-def distance_from_light(pixel):
-    x, y = pixel
-    return math.hypot(x + 0.5 - SOURCE[0], y + 0.5 - SOURCE[1])
+def light_axis(pixel):
+    return pixel[0] + pixel[1]
 
 
 def tone_index(pixel):
-    step = sum(distance_from_light(pixel) >= radius for radius in RADII)
-    if pixel in OUTLINE:
-        # Keep the contour visible on white, but let it fall from lavender into
-        # the dark anchor instead of drawing one key colour around the bubble.
-        return max(2, step)
-    if pixel in WALL:
-        step += 2
-    elif pixel in CORE_FIELD:
-        step += 1
-    return min(step, len(LIGHT_TO_DARK) - 1)
+    return sum(light_axis(pixel) >= threshold for threshold in THRESHOLDS)
 
 
-tone_map = {pixel: tone_index(pixel) for pixel in SILHOUETTE}
+tone_map = {pixel: tone_index(pixel) for pixel in INNER}
 tone_pixels = [
     {pixel for pixel, tone in tone_map.items() if tone == index}
-    for index in range(len(LIGHT_TO_DARK))
+    for index in range(len(RAMP))
 ]
-LAYERS = list(zip(tone_pixels, LIGHT_TO_DARK))
+LAYERS = [(OUTLINE, KEYLINE), *zip(tone_pixels, RAMP)]
 
 
 def row_widths(shape):
@@ -156,10 +125,10 @@ assert {
     (x, y)
     for x in range(face_left, face_right + 1)
     for y in range(face_top, face_bottom + 1)
-} <= CORE_FIELD
+} <= INNER
 
-# Paint assertions: disjoint layers cover the silhouette, every shade comes from
-# the directional falloff, and no contour ring resolves to one constant band.
+# Paint assertions: one full-strength keyline contains the silhouette, while
+# every interior shade comes from the same monotonic directional falloff.
 paint_sets = [pixels for pixels, _ in LAYERS]
 for i, layer in enumerate(paint_sets):
     assert layer
@@ -170,12 +139,13 @@ for i, layer in enumerate(paint_sets):
     assert not any(layer & other for other in paint_sets[i + 1 :])
     assert not is_slab(layer, SILHOUETTE)
 assert set().union(*paint_sets) == SILHOUETTE
-assert len(set(PALETTE)) == 9
-contour_rings, _ = rings(SILHOUETTE, 4)
-contour_tone_counts = [
-    len({tone_map[pixel] for pixel in ring}) for ring in contour_rings
-]
-assert all(count >= 3 for count in contour_tone_counts)
+assert paint_sets[0] == keyline(SILHOUETTE)
+assert len(set(PALETTE)) == 10
+for pixel, tone in tone_map.items():
+    x, y = pixel
+    for darker_neighbour in ((x + 1, y), (x, y + 1)):
+        if darker_neighbour in INNER:
+            assert tone_map[darker_neighbour] >= tone
 
 
 def rgb(colour):
@@ -199,11 +169,17 @@ def contrast(first, second):
     return (high + 0.05) / (low + 0.05)
 
 
-purple_colours = PALETTE[:-1]
+purple_colours = RAMP
 for colour in purple_colours:
     hue, _, saturation = colorsys.rgb_to_hls(*rgb(colour))
     assert 0.69 <= hue <= 0.78
     assert saturation >= 0.45
+assert relative_luminance(KEYLINE) < 0.02
+ramp_luminances = [relative_luminance(colour) for colour in RAMP]
+assert all(
+    0.60 <= darker / lighter <= 0.80
+    for lighter, darker in zip(ramp_luminances, ramp_luminances[1:])
+)
 face_box = {
     (x, y)
     for x in range(face_left, face_right + 1)
@@ -211,7 +187,7 @@ face_box = {
 }
 face_tones = sorted({tone_map[pixel] for pixel in face_box})
 face_contrast = min(
-    contrast(FACE, LIGHT_TO_DARK[tone]) for tone in face_tones
+    contrast(FACE, RAMP[tone]) for tone in face_tones
 )
 assert face_contrast >= 4.5
 
@@ -225,16 +201,16 @@ paths = "\n".join(
 /**
  * t18 · Held
  *
- * A single recessed field, not a screen inside a bubble. Light enters from the
- * upper left and every tone follows its distance from that source. The inward
- * wall loses two stops and the field one; both differences converge into the
- * shadow at lower right, so no collar closes around the face.
+ * A single recessed field, not a screen inside a bubble. A near-black violet
+ * keyline contains the full contour, including the tail. Inside it, one
+ * upper-left light falls monotonically across the held plane to lower right:
+ * every step right or down stays at the same tone or becomes darker.
  *
  * The body is symmetric about x=16; only the speech tail is exempt. The shipped
  * 10-wide face and 28-wide body have matching even parity. Its measured y8–17
  * box sits in the y2–23 body with six rows of air above and six below.
  *
- * Nine tones. Bounds x2–29, y2–29. Body and silhouette pass the no-spur check.
+ * Ten tones. Bounds x2–29, y2–29. Body and silhouette pass the no-spur check.
  */
 import MarkFrame from '../MarkFrame.astro';
 import {{ facePathsAt }} from '../../../data/mark';
@@ -257,7 +233,7 @@ const {{ size = 128 }} = Astro.props;
 (OUT / "t18.meta.ts").write_text(
     f"""export default {{
   n: 't18', name: 'Held',
-  idea: 'Upper-left light falls across one recessed field, whose wall dissolves into the lower-right shadow.',
+  idea: 'A keyed recessed field falls monotonically from upper-left lavender to lower-right violet.',
   ground: 'light',
   palette: [{", ".join(repr(colour) for colour in PALETTE)}],
 }};
@@ -270,7 +246,7 @@ print(
     f"face=x{face_left}–{face_right} y{face_top}–{face_bottom} · "
     f"air=v{air_above}/{air_below} h{air_left}/{air_right} · "
     f"face tones={face_tones} contrast={face_contrast:.2f}:1 · "
-    f"contour tone counts={contour_tone_counts} · "
+    f"ramp={ramp_luminances[0]:.3f}→{ramp_luminances[-1]:.3f} · "
     "bounds=x2–29 y2–29 · "
     f"body rows={body_widths} · silhouette rows={silhouette_widths}"
 )

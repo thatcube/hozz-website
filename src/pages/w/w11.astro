@@ -109,7 +109,7 @@ const rideTo = (aspect: number, ly: number, len: number, angle: number, y: numbe
 };
 
 /* ---- landscape: lens at 47% / 40% of a 1600 × 900 stage ---- */
-const AL = 1600 / 900;
+const AL = 1600 / 850;
 const LX = 47;
 const LY = 40;
 /** Long enough that each band is still running when it passes under its chip. */
@@ -1076,7 +1076,7 @@ const jsonLd = {
         width: 100%;
         max-width: 1680px;
         margin-inline: auto;
-        aspect-ratio: 1600 / 900;
+        aspect-ratio: 1600 / 850;
       }
 
       .art {
@@ -1248,7 +1248,7 @@ const jsonLd = {
         position: absolute;
         left: var(--d);
         top: 0;
-        transform-origin: 0 50%;
+        transform-origin: 0 0;
         transform: rotate(calc(-1 * var(--a))) translate(-50%, -50%);
         display: grid;
         gap: 0.15em;
@@ -1317,7 +1317,7 @@ const jsonLd = {
         position: absolute;
         left: 100%;
         top: 0;
-        transform-origin: 0 50%;
+        transform-origin: 0 0;
         transform: rotate(calc(-1 * var(--a))) translate(-50%, -50%);
         display: grid;
         gap: 0.25em;
@@ -1596,13 +1596,13 @@ const jsonLd = {
          copy rather than under it. */
       @media (min-width: 760px) and (max-width: 1199px) {
         .stage-port {
-          grid-template-columns: minmax(0, 1fr) minmax(0, 440px);
+          grid-template-columns: minmax(0, 1fr) minmax(0, 380px);
           align-items: center;
         }
 
         .art-port {
-          max-width: 440px;
-          font-size: 12px;
+          max-width: 380px;
+          font-size: 11px;
         }
       }
 

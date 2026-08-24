@@ -110,13 +110,16 @@ NAME = 'Depth'
 # ---------------------------------------------------------------------------
 # Silhouette.
 #
-# A rounded rectangle taking the shipped bubble's own corner arc, read off the
-# raster: 18, 22, 24, 26, 26 and then full width. An earlier pass rounded it
-# harder on the theory that a longer arc gives the rim more to curve around, and
-# at 320px it just looked blobby — the rim reads perfectly well on a six-row
-# arc, and the tighter silhouette is the one that sits next to the siblings.
-# One row taller than the shipped body, which is what lets a ten-row face clear
-# the floor's grading rings and still leave equal air.
+# A true quarter-circle corner, not a rounded-rectangle one. The arc is r = 9
+# sampled honestly — inset = r - sqrt(r^2 - k^2) at each row — which gives
+# 16, 20, 22, 24, 26, 26 before full width: six rows of arc on a body 22 rows
+# tall, so better than a quarter of the height is curve. An earlier pass copied
+# the shipped mark's tighter arc on the theory that matching it exactly was the
+# safest way to sit next to the siblings, and on a sheet of ten it read as a
+# squircle badge instead: the corners were tight enough, and the sides straight
+# enough, that the thing stopped looking like a bubble and started looking like
+# an app tile. Speech is the meaning of this mark, so the silhouette is not
+# decoration and cannot be the part that gets compromised.
 #
 # Every width is even, so the body is symmetric about x=16 by construction and
 # its parity is fixed. That also rules out the `sm` face by arithmetic rather
@@ -124,7 +127,7 @@ NAME = 'Depth'
 # would land on x=16.5 — the half-pixel error the brief warns about.
 # ---------------------------------------------------------------------------
 BODY_TOP = 2
-BODY_WIDTHS = [18, 22, 24, 26, 26] + [28] * 15 + [26, 26, 24, 18]
+BODY_WIDTHS = [16, 20, 22, 24, 26, 26] + [28] * 10 + [26, 26, 24, 22, 20, 16]
 
 BODY = set()
 for i, w in enumerate(BODY_WIDTHS):
@@ -134,21 +137,29 @@ for i, w in enumerate(BODY_WIDTHS):
 BODY_Y0, BODY_Y1 = BODY_TOP, BODY_TOP + len(BODY_WIDTHS) - 1
 BODY_W = max(BODY_WIDTHS)
 
-# The tail, in the shipped mark's own idiom and at its measured proportion: six
-# wide at the junction, falling to a point over four rows, on a vertical left
-# edge with the taper carried on the right. Two earlier shapes were wrong in
-# opposite ways — a 45-degree run read as an arrow, and an eight-wide junction
-# read as a nub.
+# The tail is a wedge growing off the lower left, and the thing that makes it
+# read as a wedge rather than as a notch bitten out of the outline is a visible
+# change of direction where it leaves the body. Down the body's bottom-left the
+# left edge is curving inward — x3, x4, x5, x6, x8 — and at the junction that
+# curve stops dead and goes vertical: x8 for all six rows, with the whole taper
+# carried on the right. Curve, then straight. You can see the corner turn.
 #
-# The left edge holds at x7 for the whole drop, flush with the body's bottom
-# row rather than stepping out past it. A single column poking out one row
-# lower than its neighbour is a new upward-facing surface, and the lighting
-# rule correctly lights it: one stray pale pixel halfway down the tail.
+# Six rows and eight wide at the junction, against a bottom row only sixteen
+# wide, so the tail is half the width it hangs off and cannot be mistaken for a
+# nick in the arc. An earlier version gave it four rows off a flat 28-wide
+# bottom, and at that proportion it was a notch.
+#
+# The left edge is flush with the body's bottom row rather than stepping out
+# past it. A single column poking out one row lower than its neighbour is a new
+# upward-facing surface, and the lighting rule correctly lights it: one stray
+# pale pixel halfway down the tail.
 TAIL_ROWS = {
-    26: (7, 12),
-    27: (7, 11),
-    28: (7, 9),
-    29: (7, 8),
+    24: (8, 15),
+    25: (8, 14),
+    26: (8, 13),
+    27: (8, 12),
+    28: (8, 10),
+    29: (8, 9),
 }
 TAIL = {(x, y) for y, (a, b) in TAIL_ROWS.items() for x in range(a, b + 1)}
 
@@ -218,8 +229,16 @@ TAIL_IN = TAIL - KEY_PX
 # the tail meets it: the panel then bulges down into the junction and the
 # recess is no longer square with the face. That was visible on the first
 # render. Taking the rings from the body means the fold closes as a loop.
-BANDS, PANEL = rings(BODY, 4)
-FOLD = BANDS[3]                     # where the front face turns inward
+#
+# Three rings, not four. The first version spent six of the fourteen columns
+# across the mark on edge treatment — keyline, three rings of rim, a fold, then
+# two grading rings — and however carefully each one was toned, the sum of them
+# read as a frame drawn around the shape rather than as an edge belonging to
+# it. At 28px it closed over the interior and the mark went muddy. One ring of
+# rim, one of fold and one of grading is enough to state three planes, and it
+# hands four extra columns back to the field the face sits on.
+BANDS, PANEL = rings(BODY, 3)
+FOLD = BANDS[2]                     # where the front face turns inward
 
 # The fold is not one surface, it is the recess's own wall, and its top and
 # bottom face opposite ways. The near wall — the top arc — leans down and away
@@ -239,7 +258,7 @@ F_SIDE = FOLD - F_TOP - F_BOT
 # object's outline and is keyline; the pixels that do not are exactly the tail
 # junction, and there the wall must carry on into the tail rather than have a
 # dark line ruled across it.
-RIM = (BANDS[0] - KEY_PX) | BANDS[1] | BANDS[2]
+RIM = (BANDS[0] - KEY_PX) | BANDS[1]
 
 CASING = RIM | TAIL_IN              # everything made of wall
 
@@ -257,22 +276,25 @@ W_MID = CASING - W_LIT - W_SHAD
 # ---------------------------------------------------------------------------
 # The recess.
 #
-# Two contour rings and a core, the way Plozz builds its screen — but each ring
-# graded by height, which is the part Plozz has no reason to do because a TV
-# screen is emissive and a recess is not.
+# One contour ring and a core, graded by height — the part Plozz has no reason
+# to do, because a TV screen is emissive and a recess is not.
 #
-# One construction, two jobs. Across the top the stack runs
-# darkest -> dark -> core: an inset bevel, and the near wall's shadow lying on
-# the floor. Across the bottom it runs lightest -> light -> core: the same
-# bevel, and the light that cleared the wall pooling where it lands. Down the
-# sides the rings pass through the core's own tone and disappear, which is
-# right — a floor lit from directly above gets nothing extra from walls it is
-# edge-on to, and drawing something there is how a recess turns into an emboss.
+# One construction, two jobs. Across the top the ring runs darker than the
+# core: the near wall's shadow lying on the floor. Across the bottom it runs
+# lighter: the light that cleared the wall, pooling where it lands. Down the
+# sides it passes through the core's own tone and disappears, which is right —
+# a floor lit from directly above gets nothing extra from walls it is edge-on
+# to, and drawing something there is how a recess turns into an emboss.
 #
-# The core is a single tone across two hundred pixels, which is the plain open
-# field the face needs and the reason `lg` is defensible here.
+# The ring used to be two rings, and losing one is what stopped the interior
+# reading as a frame. It costs nothing: the grading was always the thing doing
+# the work, and a one-pixel ring sweeping the whole ramp says it just as well
+# as two pixels sweeping it twice.
+#
+# The core is a single tone across better than two hundred pixels, which is the
+# plain open field the face needs and the reason `lg` is defensible here.
 # ---------------------------------------------------------------------------
-P_RINGS, P_CORE = rings(PANEL, 2)
+P_RINGS, P_CORE = rings(PANEL, 1)
 P_Y0 = min(y for _, y in PANEL)
 P_Y1 = max(y for _, y in PANEL)
 
@@ -289,12 +311,8 @@ def grade(px, lo, hi):
     return out
 
 
-# Ring 0 sweeps the whole ramp; ring 1 sweeps the middle of it, so the two
-# never cross and the stack always reads in one direction from outside in.
 P_LAYERS = {}
 for i, s in grade(P_RINGS[0], 0, STEPS - 1).items():
-    P_LAYERS.setdefault(i, set()).update(s)
-for i, s in grade(P_RINGS[1], 1, STEPS - 2).items():
     P_LAYERS.setdefault(i, set()).update(s)
 P_LAYERS.setdefault(CORE_I, set()).update(P_CORE)
 
@@ -316,13 +334,28 @@ P_LAYERS.setdefault(CORE_I, set()).update(P_CORE)
 # what a scooped hollow does and what lets it carry white type. Between them
 # the fold spans from one to the other, and that span is a plane change, so it
 # is allowed to jump where a ramp step is not.
+#
+# Everything except the keyline now lives in the upper half of the range. The
+# first palette put four interior tones below #6b3fc9 to buy depth, and it did
+# buy depth — at 320px. At 28px those tones merged with the keyline into one
+# dark ring and the mark turned to mud. The two siblings that stay legible
+# small, t19 and t14, both bottom out around #6138d0 and #7243c3 and spend
+# nothing below that, so this ramp does the same: one dark tone, the outline,
+# and light doing all the work inside it.
+#
+# The floor ramp is hinged on the core rather than run straight from end to
+# end, because the core is the one tone the white face has to sit on and it has
+# to clear 4.5:1. Hinging lets the floor climb well past the core on the way
+# down without dragging the core up with it.
 # ---------------------------------------------------------------------------
-KEY = '#22103f'
-WALL = ['#b184f6', '#a072eb', '#8f60e0']        # up-facing, mid, down-facing
-F_SIDE_C = '#7e4ed5'                            # the wall, one step deeper
-F_TOP_C = '#6d3cca'                             # deeper again: the near wall
+KEY = '#1e1136'
+WALL = ['#b78ef3', '#a87ce9', '#986bde']        # up-facing, mid, down-facing
+F_SIDE_C = '#885ad3'                            # the wall, one step deeper
+F_TOP_C = '#7849c7'                             # deeper again: the near wall
 
-FLOOR_LO, FLOOR_HI = (0x4a, 0x24, 0x9c), (0xa4, 0x74, 0xf0)
+FLOOR_LO = (0x64, 0x37, 0xc4)                   # the near wall's shadow
+FLOOR_CORE = (0x81, 0x54, 0xcf)                 # the plain field, 5.1:1 white
+FLOOR_HI = (0xad, 0x86, 0xee)                   # where the light lands
 INK = '#ffffff'                                 # Twozz's own ink, per FAMILY
 
 
@@ -330,9 +363,13 @@ def lerp(a, b, t):
     return round(a + (b - a) * t)
 
 
-FLOOR = ['#%02x%02x%02x' % tuple(lerp(FLOOR_LO[c], FLOOR_HI[c], i / (STEPS - 1))
-                                 for c in range(3))
-         for i in range(STEPS)]
+FLOOR = []
+for i in range(STEPS):
+    if i <= CORE_I:
+        a, b, t = FLOOR_LO, FLOOR_CORE, i / CORE_I
+    else:
+        a, b, t = FLOOR_CORE, FLOOR_HI, (i - CORE_I) / (STEPS - 1 - CORE_I)
+    FLOOR.append('#%02x%02x%02x' % tuple(lerp(a[c], b[c], t) for c in range(3)))
 
 MAX_STEP = 18  # Plozz's own widest interior step is 21, so this is inside it.
 # Two ramps, continued by the parts of the fold that belong to them. The near
@@ -381,13 +418,13 @@ for px, fill in LAYERS:
 # Equal air on the *body*, ignoring the tail, exactly as Plozz centres on its
 # screen rather than on its whole TV:
 #     top - y0 == y1 - (top + h - 1)   ->   top = (y0 + y1 - h + 1) / 2
-# With the body at y2-y25 and h = 10 that is top = 9, so cy = 14. The same
-# arithmetic is why the body is 24 rows: it forces y0 + y1 - h + 1 even, and
+# With the body at y2-y23 and h = 10 that is top = 8, so cy = 13. The same
+# arithmetic is why the body is 22 rows: it forces y0 + y1 - h + 1 even, and
 # an odd result would have put the face half a pixel off centre.
 # ---------------------------------------------------------------------------
 FACE_SIZE, FACE_SMILE, FACE_GAP = 'lg', 'wide', 1
 FACE_W, FACE_H = 10, 10
-FACE_CY = 14
+FACE_CY = 13
 FACE_TOP = FACE_CY - 5              # the table's offset for a 10-row face
 FACE_LEFT = 16 - FACE_W // 2
 
