@@ -1,0 +1,9 @@
+127.0.0.1 - - [23/Aug/2026 23:11:01] "GET /logos/index.html HTTP/1.1" 200 -
+127.0.0.1 - - [23/Aug/2026 23:11:05] "GET /logos/index.html HTTP/1.1" 200 -
+127.0.0.1 - - [23/Aug/2026 23:11:05] "GET /_astro/logos.DDjFoBSq.css HTTP/1.1" 200 -
+127.0.0.1 - - [23/Aug/2026 23:11:05] "GET /fonts/ibm-plex-mono-400.woff2 HTTP/1.1" 200 -
+127.0.0.1 - - [23/Aug/2026 23:11:05] "GET /fonts/ibm-plex-mono-500.woff2 HTTP/1.1" 200 -
+127.0.0.1 - - [23/Aug/2026 23:11:05] "GET /fonts/switzer-400.woff2 HTTP/1.1" 200 -
+127.0.0.1 - - [23/Aug/2026 23:11:05] "GET /fonts/switzer-700.woff2 HTTP/1.1" 200 -
+127.0.0.1 - - [23/Aug/2026 23:11:05] "GET /fonts/switzer-800.woff2 HTTP/1.1" 200 -
+127.0.0.1 - - [23/Aug/2026 23:11:05] "GET /fonts/switzer-600.woff2 HTTP/1.1" 200 -

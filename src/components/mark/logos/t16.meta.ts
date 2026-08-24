@@ -1,7 +1,7 @@
 export default {
   n: '16',
-  name: 'Flow',
-  idea: 'A true circular body whose lower-left arc continues into the tail, with a seven-step lavender-violet lens ramp.',
+  name: 'Round Reply',
+  idea: 'A true circular body ends before a stepped lower-left tail, while a light rim falls inward through six structured violet tones.',
   ground: 'light',
-  palette: ['#281245', '#d7c2ff', '#c7abfa', '#b993f3', '#aa7deb', '#9a68e2', '#8955d5', '#7945c4', '#fffdf8'],
+  palette: ['#281245', '#e0d1fb', '#d1bdf5', '#c2a8ed', '#b294e4', '#a17eda', '#9068ce', '#fffdf8'],
 };

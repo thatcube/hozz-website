@@ -26,31 +26,26 @@ for y, right in ((25, 12), (26, 11), (27, 10), (28, 9), (29, 9)):
 
 SILHOUETTE = BODY | TAIL
 
-# Keep the shipped physical account: light arrives from above-right, leaving a
-# pale top edge and a deeper bottom-left edge. The old mark stopped there; this
-# version resolves the flat middle as six close steps along that same axis.
+# Keep the shipped physical account, but give it anatomy rather than a wash:
+# four contour-following steps form the distinct top bevel, the face sits on one
+# plain field, and three nested crescents form the lower-left shadow band.
 KEYLINE = keyline(SILHOUETTE)
 INNER = SILHOUETTE - KEYLINE
-TOP_LIGHT = edge(INNER, 0, -1)
-LOWER_LEFT = crescent(INNER, 1, -1) - TOP_LIGHT
-FIELD = INNER - TOP_LIGHT - LOWER_LEFT
 
+remaining = set(INNER)
+TOP_BANDS = []
+for _ in range(4):
+    band = edge(remaining, 0, -1)
+    TOP_BANDS.append(band)
+    remaining -= band
 
-def light_score(pixel):
-    """Continuous upper-right-to-lower-left light axis before quantisation."""
-    x, y = pixel
-    # The shallow curve keeps the transitions on the rounded surface instead of
-    # reading as horizontal stripes, without changing the light direction.
-    return y - 0.22 * (x - 16) + 0.025 * (x - 16) ** 2
+SHADOW_BANDS = []
+for _ in range(3):
+    band = crescent(remaining, 1, -1)
+    SHADOW_BANDS.append(band)
+    remaining -= band
 
-
-score_min = min(light_score(pixel) for pixel in FIELD)
-score_max = max(light_score(pixel) for pixel in FIELD)
-FIELD_LEVELS = [set() for _ in range(6)]
-for pixel in FIELD:
-    normalised = (light_score(pixel) - score_min) / (score_max - score_min)
-    level = min(5, int(normalised * 6))
-    FIELD_LEVELS[level].add(pixel)
+FIELD = remaining
 
 INK = '#211532'
 GLASS = [
@@ -102,7 +97,7 @@ AIR_ABOVE = FACE_TOP - min(y for _, y in BODY)
 AIR_BELOW = max(y for _, y in BODY) - (FACE_TOP + FACE_HEIGHT - 1)
 assert (AIR_ABOVE, AIR_BELOW) == (6, 6)
 
-LAYERS = [KEYLINE, TOP_LIGHT, *FIELD_LEVELS, LOWER_LEFT]
+LAYERS = [KEYLINE, *TOP_BANDS, FIELD, *SHADOW_BANDS]
 assert all(LAYERS)
 assert set().union(*LAYERS) == SILHOUETTE
 for index, layer in enumerate(LAYERS):
@@ -113,9 +108,11 @@ assert len(set(PALETTE)) == 10
 
 paint = [
     (KEYLINE, INK),
-    (TOP_LIGHT, GLASS[0]),
-    *zip(FIELD_LEVELS, GLASS[1:7]),
-    (LOWER_LEFT, GLASS[7]),
+    *zip(TOP_BANDS, GLASS[:4]),
+    (FIELD, GLASS[4]),
+    (SHADOW_BANDS[2], GLASS[5]),
+    (SHADOW_BANDS[1], GLASS[6]),
+    (SHADOW_BANDS[0], GLASS[7]),
 ]
 paths = '\n'.join(
     f'  <path d="{" ".join(to_paths(layer))}" fill="{colour}" />'
@@ -126,9 +123,10 @@ paths = '\n'.join(
 /**
  * t14 · Same Light
  *
- * This does not invent a new glass object. It keeps the shipped mark's pale
- * top edge, violet body and dark bottom-left edge, then spends six close tones
- * resolving the 438-pixel flat middle along that existing light axis.
+ * This does not invent a new glass object. It articulates the shipped mark's
+ * existing parts: a four-step top bevel, one plain violet field, and a
+ * three-step lower-left shadow band. The boundaries are structural, not a
+ * diagonal wash.
  *
  * The body is the shipped silhouette regularised to exact x=16 symmetry; the
  * tail is deliberately exempt. The shipped-size lg face preserves the happy
@@ -157,7 +155,7 @@ const {{ size = 128 }} = Astro.props;
 
 (OUT / f'{SLUG}.meta.ts').write_text(f'''export default {{
   n: 't14', name: 'Same Light',
-  idea: 'The shipped bubble’s own top-light and bottom-left-shadow story, resolved through eight close violet glass tones instead of one flat middle.',
+  idea: 'The shipped bubble’s own anatomy, rebuilt as a four-step light bevel, a plain violet field and a three-step lower-left shadow band.',
   ground: 'light',
   palette: [{', '.join(repr(colour) for colour in PALETTE)}],
 }};

@@ -1,0 +1,11 @@
+Another astro preview server is already running.
+
+  URL:  http://localhost:4340
+  PID:  65230
+
+Run `astro preview stop` to stop it, or use `astro preview --force` to replace it.
+  Location:
+    /Users/brandon/Development/copilot-worktrees/hozz-website/thatcube-curly-dollop/node_modules/astro/dist/cli/preview/index.js:82:11
+  Stack trace:
+    at preview (file:///Users/brandon/Development/copilot-worktrees/hozz-website/thatcube-curly-dollop/node_modules/astro/dist/cli/preview/index.js:82:11)
+    at async cli (file:///Users/brandon/Development/copilot-worktrees/hozz-website/thatcube-curly-dollop/node_modules/astro/dist/cli/index.js:220:5)

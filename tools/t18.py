@@ -1,5 +1,6 @@
 """Generate t18: a speech bubble whose face is held in one recessed field."""
 
+import colorsys
 import sys
 from pathlib import Path
 
@@ -11,15 +12,15 @@ from shade import edge, keyline, rings, to_paths  # noqa: E402
 
 OUT = ROOT / "src/components/mark/logos"
 
-KEY = "#241438"
-RIM_SHADOW = "#69488b"
-RIM_BASE = "#79599a"
-RIM_LIGHT = "#9173ae"
-WALL_SHADOW = "#4b3068"
-WALL_MID = "#5a3b76"
-WALL_LIGHT = "#806196"
-CORE = "#61447d"
-FACE = "#fff8e8"
+KEY = "#54258f"
+RIM_SHADOW = "#ad84dc"
+RIM_BASE = "#b795e1"
+RIM_LIGHT = "#d2c0ed"
+WALL_SHADOW = "#925bd1"
+WALL_MID = "#9f6fd6"
+WALL_LIGHT = "#c3a8e7"
+CORE = "#a77bdd"
+FACE = "#fffaf3"
 PALETTE = [
     KEY,
     WALL_SHADOW,
@@ -41,10 +42,11 @@ def rows(profile, top):
     return shape
 
 
-# The body keeps the shipped mark's broad, unmistakable bubble proportions.
-# Every width is even, so it is symmetric about x=16 and accepts an even face.
+# The body keeps the shipped mark's broad bubble proportions but rounds both
+# shoulders enough that the recessed field inherits curves instead of becoming
+# a screen-like rectangle. Every width is even, so it remains centred on x=16.
 BODY = rows(
-    [18, 22, 24, 26, 26, *([28] * 14), 26, 26, 24, 22],
+    [14, 18, 22, 24, 26, 26, *([28] * 11), 26, 26, 24, 22, 18],
     top=2,
 )
 
@@ -120,14 +122,19 @@ assert min(y for _, y in SILHOUETTE) >= 2
 assert max(y for _, y in SILHOUETTE) <= 29
 assert all((31 - x, y) in BODY for x, y in BODY)
 
-face_width = 8
+face_width = 10
 body_width = max(body_widths)
 assert (body_width - face_width) % 2 == 0
-face_top, face_bottom = 9, 17
-body_top, body_bottom = 2, 24
+face_left, face_top, face_right, face_bottom = 11, 8, 20, 17
+body_left, body_right = min(x for x, _ in BODY), max(x for x, _ in BODY)
+body_top, body_bottom = min(y for _, y in BODY), max(y for _, y in BODY)
+assert (body_left, body_right, body_top, body_bottom) == (2, 29, 2, 23)
 air_above = face_top - body_top
 air_below = body_bottom - face_bottom
-assert air_above == air_below == 7
+air_left = face_left - body_left
+air_right = body_right - face_right
+assert air_above == air_below == 6
+assert air_left == air_right == 9
 
 # Paint assertions: disjoint layers cover the silhouette, the recessed plane is
 # symmetric, and all nine intended tones are present.
@@ -139,6 +146,26 @@ assert set().union(*paint_sets) == SILHOUETTE
 for layer in (wall_top, wall_middle, wall_bottom, CORE_FIELD):
     assert all((31 - x, y) in layer for x, y in layer)
 assert len(set(PALETTE)) == 9
+
+
+def hsl_lightness(colour):
+    red, green, blue = (
+        int(colour[i : i + 2], 16) / 255 for i in (1, 3, 5)
+    )
+    return colorsys.rgb_to_hls(red, green, blue)[1]
+
+
+interior_colours = [
+    RIM_SHADOW,
+    RIM_BASE,
+    RIM_LIGHT,
+    WALL_SHADOW,
+    WALL_MID,
+    WALL_LIGHT,
+    CORE,
+]
+interior_lightness = [hsl_lightness(colour) for colour in interior_colours]
+assert min(interior_lightness) >= 0.58
 
 paths = "\n".join(
     f'  <path d="{" ".join(to_paths(pixels))}" fill="{fill}" />'
@@ -156,9 +183,9 @@ paths = "\n".join(
  * Because every layer is peeled from the body contour, there is no second
  * outlined panel and therefore no second object.
  *
- * The body is symmetric about x=16; only the speech tail is exempt. The md
- * face and 28-wide body have matching even parity. Its y9–17 box sits in the
- * y2–24 body with seven rows of air above and seven below.
+ * The body is symmetric about x=16; only the speech tail is exempt. The shipped
+ * 10-wide face and 28-wide body have matching even parity. Its measured y8–17
+ * box sits in the y2–23 body with six rows of air above and six below.
  *
  * Nine tones. Bounds x2–29, y2–29. Body and silhouette pass the no-spur check.
  */
@@ -172,7 +199,7 @@ const {{ size = 128 }} = Astro.props;
 <MarkFrame size={{size}} title="Twozz — Held">
 {paths}
   <g fill="{FACE}" shape-rendering="crispEdges">
-    {{facePathsAt({{ cx: 16, cy: 13, size: 'md', smile: 'wide', gap: 2 }}).map((d) => (
+    {{facePathsAt({{ cx: 16, cy: 13, size: 'lg', smile: 'wide', gap: 1 }}).map((d) => (
       <path d={{d}} />
     ))}}
   </g>
@@ -193,6 +220,9 @@ const {{ size = 128 }} = Astro.props;
 print(
     "t18 Held · depth=recession · "
     f"tones={len(PALETTE)} · body={body_width}×{body_bottom - body_top + 1} · "
-    f"air={air_above}/{air_below} · bounds=x2–29 y2–29 · "
+    f"face=x{face_left}–{face_right} y{face_top}–{face_bottom} · "
+    f"air=v{air_above}/{air_below} h{air_left}/{air_right} · "
+    f"interior-L={min(interior_lightness):.3f}–{max(interior_lightness):.3f} · "
+    "bounds=x2–29 y2–29 · "
     f"body rows={body_widths} · silhouette rows={silhouette_widths}"
 )

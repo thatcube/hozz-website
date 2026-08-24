@@ -1,4 +1,4 @@
-"""Generate t16: a circular bubble whose lower-left arc flows into its tail."""
+"""Generate t16: a round bubble with an unmistakable lower-left tail."""
 
 import sys
 from pathlib import Path
@@ -14,30 +14,25 @@ OUT = ROOT / "src/components/mark/logos"
 
 KEY = "#281245"
 SURFACE = [
-    "#d7c2ff",
-    "#c7abfa",
-    "#b993f3",
-    "#aa7deb",
-    "#9a68e2",
-    "#8955d5",
-    "#7945c4",
+    "#e0d1fb",
+    "#d1bdf5",
+    "#c2a8ed",
+    "#b294e4",
+    "#a17eda",
+    "#9068ce",
 ]
 FACE = "#fffdf8"
 
-# A canonical circle remains the measurable body. The tail begins inside its
-# lower-left arc, then takes over as that arc falls away, avoiding a separate
-# triangle attached below the body.
-BODY = circle(24, top=2)
+# The body is a complete canonical circle. The tail begins only after it ends,
+# changing direction sharply instead of extending the circle into a teardrop.
+BODY = circle(22, top=2)
 TAIL_ROWS = {
-    21: (7, 14),
-    22: (7, 18),
-    23: (7, 19),
-    24: (8, 18),
-    25: (8, 18),
-    26: (8, 16),
-    27: (8, 14),
-    28: (8, 12),
-    29: (8, 10),
+    24: (8, 17),
+    25: (7, 16),
+    26: (7, 14),
+    27: (7, 12),
+    28: (8, 11),
+    29: (9, 10),
 }
 TAIL = {
     (x, y)
@@ -91,32 +86,62 @@ assert 2 <= x0 <= x1 <= 29 and 2 <= y0 <= y1 <= 29
 
 BODY_W = max(x for x, _ in BODY) - min(x for x, _ in BODY) + 1
 FACE_W = 10
-assert BODY_W == 24 and (BODY_W - FACE_W) % 2 == 0
+assert BODY_W == 22 and (BODY_W - FACE_W) % 2 == 0
+body_x0 = min(x for x, _ in BODY)
+body_x1 = max(x for x, _ in BODY)
+face_x0 = 16 - FACE_W // 2
+face_x1 = face_x0 + FACE_W - 1
+assert face_x0 - body_x0 == body_x1 - face_x1 == 6
 
-# lg + wide + gap 1 is ten rows. At cy 14 it occupies y9-18, leaving
-# seven body rows above and seven below the face.
-FACE_CY = 14
+# lg + wide + gap 1 is ten rows. At cy 13 it occupies y8-17, leaving
+# six body rows above and six below the face.
+FACE_CY = 13
 FACE_GAP = 1
-FACE_TOP = 9
+FACE_TOP = 8
 FACE_HEIGHT = 10
 body_y0 = min(y for _, y in BODY)
 body_y1 = max(y for _, y in BODY)
 air_above = FACE_TOP - body_y0
 air_below = body_y1 - (FACE_TOP + FACE_HEIGHT - 1)
-assert air_above == air_below == 7
+assert air_above == air_below == 6
 
-peeled, core = rings(SHAPE, 7)
-assert len(peeled) == 7 and core
-assert all(peeled) and all(not is_slab(layer, SHAPE) for layer in [*peeled, core])
-assert set().union(*peeled, core) == SHAPE
-assert sum(map(len, [*peeled, core])) == len(SHAPE)
+assert min(y for _, y in TAIL) == body_y1 + 1
+body_last = sorted(x for x, y in BODY if y == body_y1)
+tail_first = sorted(x for x, y in TAIL if y == body_y1 + 1)
+body_last_c = (body_last[0] + body_last[-1] + 1) / 2
+tail_first_c = (tail_first[0] + tail_first[-1] + 1) / 2
+assert body_last_c == 16 and tail_first_c == 13
 
-# Ring 0 is the keyline. Rings 1-6 and the core make a seven-tone,
-# contour-following interior whose bands continue through the tail.
-layers = [(core, SURFACE[-1])]
-layers.extend((peeled[i], SURFACE[i - 1]) for i in range(6, 0, -1))
-layers.append((peeled[0], KEY))
-assert len({fill for _, fill in layers} | {FACE}) == 9
+# A single keyline encloses the combined mark. Inside it, the circular body
+# gets a true inset bevel: a light meniscus and five small steps to a deep,
+# plain core. The tail has its own two nested steps, reusing the body ramp.
+outer_rings, _ = rings(SHAPE, 1)
+outline = outer_rings[0]
+body_rings, body_core = rings(BODY, 6)
+tail_rings, tail_core = rings(TAIL, 2)
+assert len(body_rings) == 6 and body_core
+assert len(tail_rings) == 2 and tail_core
+
+layers = [
+    (outline, KEY),
+    ((body_rings[0] | body_rings[1]) - outline, SURFACE[0]),
+    (body_rings[2] - outline, SURFACE[1]),
+    (body_rings[3] - outline, SURFACE[2]),
+    (body_rings[4] - outline, SURFACE[3]),
+    (body_rings[5] - outline, SURFACE[4]),
+    (body_core - outline, SURFACE[5]),
+    (tail_rings[0] - outline, SURFACE[0]),
+    (tail_rings[1] - outline, SURFACE[2]),
+    (tail_core - outline, SURFACE[4]),
+]
+assert all(layer for layer, _ in layers)
+assert all(not is_slab(layer, SHAPE) for layer, _ in layers)
+claimed = set()
+for layer, _ in layers:
+    assert not claimed & layer
+    claimed |= layer
+assert claimed == SHAPE
+assert len({fill for _, fill in layers} | {FACE}) == 8
 
 paths = "\n".join(
     f'  <path d="{" ".join(to_paths(layer))}" fill="{fill}" />'
@@ -126,15 +151,17 @@ paths = "\n".join(
 (OUT / f"{SLUG}.astro").write_text(
     f"""---
 /**
- * t16 · Flow
+ * t16 · Round Reply
  *
- * A canonical 24-pixel circle supplies the body, while the lower-left arc
- * widens into the tail before the circle ends. There is no seam or separate
- * triangle: all seven interior steps are peeled from the combined silhouette,
- * so light and volume continue through the join.
+ * A complete canonical 22-pixel circle ends before a stepped lower-left wedge
+ * begins. Its centre jumps three pixels at the join, preserving "speech" rather
+ * than extending the body into a teardrop.
  *
- * The lg face matches the body's even parity and occupies y9-18 on the body
- * at y2-25: 7 pixels of air above and 7 below. Nine tones including face.
+ * Six body rings form a light meniscus, a stepped inward ramp and a deep core;
+ * the tail reuses that ramp in two nested steps rather than receiving a wash.
+ *
+ * The lg face matches the body's even parity and occupies y8-17 on the body
+ * at y2-23: 6 pixels of air above and 6 below. Eight tones including face.
  */
 import MarkFrame from '../MarkFrame.astro';
 import {{ facePathsAt }} from '../../../data/mark';
@@ -143,7 +170,7 @@ interface Props {{ size?: number }}
 const {{ size = 128 }} = Astro.props;
 ---
 
-<MarkFrame size={{size}} title="Twozz — Flow">
+<MarkFrame size={{size}} title="Twozz — Round Reply">
 {paths}
   <g fill="{FACE}" shape-rendering="crispEdges">
     {{facePathsAt({{ cx: 16, cy: {FACE_CY}, size: 'lg', smile: 'wide', gap: {FACE_GAP} }}).map((d) => (
@@ -158,8 +185,8 @@ palette = ", ".join(f"'{tone}'" for tone in [KEY, *SURFACE, FACE])
 (OUT / f"{SLUG}.meta.ts").write_text(
     f"""export default {{
   n: '16',
-  name: 'Flow',
-  idea: 'A true circular body whose lower-left arc continues into the tail, with a seven-step lavender-violet lens ramp.',
+  name: 'Round Reply',
+  idea: 'A true circular body ends before a stepped lower-left tail, while a light rim falls inward through six structured violet tones.',
   ground: 'light',
   palette: [{palette}],
 }};
@@ -168,7 +195,12 @@ palette = ", ".join(f"'{tone}'" for tone in [KEY, *SURFACE, FACE])
 
 print(
     f"{SLUG}: body {BODY_W}x{body_y1 - body_y0 + 1}, "
-    f"air {air_above}/{air_below}, tones 9, bounds x{x0}-{x1} y{y0}-{y1}"
+    f"air {air_above}/{air_below}, tones 8, bounds x{x0}-{x1} y{y0}-{y1}"
 )
 print(f"body widths: {body_widths}")
 print(f"silhouette widths: {silhouette_widths}")
+print("row extents:")
+for y in range(y0, y1 + 1):
+    xs = sorted(x for x, py in SHAPE if py == y)
+    centre = (xs[0] + xs[-1] + 1) / 2
+    print(f"  y{y}: x{xs[0]}-{xs[-1]} w{len(xs)} c{centre:g}")

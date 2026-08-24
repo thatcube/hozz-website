@@ -1,0 +1,60 @@
+---
+/**
+ * t15 · Swell
+ *
+ * The bubble pulled toward the circle, and lit like one.
+ *
+ * Hozz's chosen mark is a disc and this is a rounded rectangle, so the two did
+ * not rhyme. The corners here are the cap of the canonical **24-across circle**
+ * — one step wider than the 22 Hozz is drawn from — widened onto a 28 body, so
+ * a Twozz corner and the Hozz disc are now literally the same curve. Nine rows
+ * of corner against the shipped five.
+ *
+ * It stops one step short of round. The body is 28x23, the shipped footprint
+ * exactly, with five straight rows on each side and twelve pixels of flat top;
+ * take the corners to circle(28) and the flats vanish, the body becomes an
+ * ellipse, and the mark is Hozz's silhouette in purple with a spike on it.
+ *
+ * The rounder the body, the more the tail carries — so it takes over the
+ * bottom-left corner instead of hanging under a flat underside (the left
+ * contour runs unbroken from corner into spout, never stepping back out), and
+ * it holds the two deepest tones in the mark, so it separates by value as well
+ * as by outline and survives at 24px.
+ *
+ * 13 tones. One monotone violet ramp, no step larger than 16 on any
+ * channel, laid down by a single scalar field: three steps of meniscus in from
+ * the outline, plus distance from a light off the top-left corner, plus a fold
+ * on the spout. One field, so the light wraps the corner, crosses the body and
+ * runs out into the tail with no seam. Ramp tone 6 is #8f52f6 — the shipped
+ * body colour — and that is what the face sits on.
+ *
+ * The face is the shipped one: lg, wide smile, family gap. Ten on twenty-eight
+ * is the same face-to-body ratio as Hozz's eight on twenty-two. Centred on the
+ * **body**, tail ignored: 6 rows of air above, 6 below, measured.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Twozz — Swell">
+  <path d="M8 4h1v1h-1z" fill="#cdb0fa" />
+  <path d="M10 3h4v1h-4z M9 4h1v1h-1z M7 5h1v1h-1z M6 6h1v1h-1z M5 7h1v1h-1z M5 8h1v1h-1z" fill="#c3a0f9" />
+  <path d="M14 3h4v1h-4z M10 4h4v1h-4z M8 5h2v1h-2z M7 6h1v1h-1z M6 7h1v1h-1z M6 8h1v1h-1z M4 9h1v1h-1z M4 10h1v1h-1z M3 11h1v1h-1z" fill="#b891f9" />
+  <path d="M18 3h3v1h-3z M14 4h4v1h-4z M10 5h3v1h-3z M8 6h2v1h-2z M7 7h1v1h-1z M7 8h1v1h-1z M5 9h1v1h-1z M5 10h1v1h-1z M4 11h1v1h-1z M3 12h1v1h-1z M3 13h1v1h-1z M3 14h1v1h-1z" fill="#ae81f8" />
+  <path d="M21 3h1v1h-1z M18 4h3v1h-3z M22 4h2v1h-2z M13 5h4v1h-4z M10 6h2v1h-2z M8 7h2v1h-2z M6 9h1v1h-1z M6 10h1v1h-1z M5 11h1v1h-1z M4 12h1v1h-1z M4 13h1v1h-1z M4 14h1v1h-1z M3 15h1v1h-1z M4 16h1v1h-1z M4 17h1v1h-1z M5 18h1v1h-1z" fill="#a471f7" />
+  <path d="M21 4h1v1h-1z M17 5h4v1h-4z M22 5h3v1h-3z M12 6h4v1h-4z M25 6h1v1h-1z M10 7h5v1h-5z M26 7h1v1h-1z M8 8h6v1h-6z M7 9h6v1h-6z M7 10h5v1h-5z M6 11h3v1h-3z M5 12h1v1h-1z M5 13h1v1h-1z M5 14h1v1h-1z M4 15h1v1h-1z M5 16h1v1h-1z M5 17h1v1h-1z M6 18h1v1h-1z M5 19h1v1h-1z M6 20h1v1h-1z M7 21h1v1h-1z" fill="#9962f7" />
+  <path d="M21 5h1v1h-1z M16 6h4v1h-4z M22 6h3v1h-3z M15 7h5v1h-5z M25 7h1v1h-1z M14 8h5v1h-5z M25 8h2v1h-2z M13 9h5v1h-5z M27 9h1v1h-1z M12 10h5v1h-5z M27 10h1v1h-1z M9 11h7v1h-7z M6 12h9v1h-9z M6 13h7v1h-7z M6 14h4v1h-4z M5 15h1v1h-1z M6 16h1v1h-1z M6 17h1v1h-1z M6 19h1v1h-1z M7 20h1v1h-1z M8 21h1v1h-1z M8 22h1v1h-1z M8 23h1v1h-1z M8 24h1v1h-1z" fill="#8f52f6" />
+  <path d="M20 6h2v1h-2z M20 7h3v1h-3z M24 7h1v1h-1z M19 8h4v1h-4z M24 8h1v1h-1z M18 9h4v1h-4z M25 9h2v1h-2z M17 10h4v1h-4z M26 10h1v1h-1z M16 11h5v1h-5z M27 11h2v1h-2z M15 12h5v1h-5z M27 12h2v1h-2z M13 13h6v1h-6z M28 13h1v1h-1z M10 14h7v1h-7z M28 14h1v1h-1z M6 15h10v1h-10z M28 15h1v1h-1z M7 16h7v1h-7z M27 16h1v1h-1z M7 17h5v1h-5z M27 17h1v1h-1z M7 18h1v1h-1z M26 18h1v1h-1z M7 19h1v1h-1z M26 19h1v1h-1z M8 20h1v1h-1z M25 20h1v1h-1z M24 21h1v1h-1z M9 22h1v1h-1z M15 22h2v1h-2z M22 22h2v1h-2z M9 23h1v1h-1z M13 23h1v1h-1z M15 23h7v1h-7z M9 24h1v1h-1z M13 24h2v1h-2z" fill="#854ae7" />
+  <path d="M23 7h1v1h-1z M23 8h1v1h-1z M22 9h3v1h-3z M21 10h5v1h-5z M21 11h4v1h-4z M26 11h1v1h-1z M20 12h4v1h-4z M26 12h1v1h-1z M19 13h4v1h-4z M26 13h2v1h-2z M17 14h5v1h-5z M27 14h1v1h-1z M16 15h5v1h-5z M27 15h1v1h-1z M14 16h6v1h-6z M26 16h1v1h-1z M12 17h7v1h-7z M26 17h1v1h-1z M8 18h9v1h-9z M25 18h1v1h-1z M8 19h7v1h-7z M25 19h1v1h-1z M9 20h4v1h-4z M24 20h1v1h-1z M9 21h1v1h-1z M15 21h3v1h-3z M22 21h2v1h-2z M10 22h1v1h-1z M13 22h2v1h-2z M17 22h5v1h-5z M10 23h1v1h-1z M12 23h1v1h-1z M14 23h1v1h-1z M10 24h1v1h-1z M12 24h1v1h-1z M8 25h1v1h-1z" fill="#7a42d8" />
+  <path d="M25 11h1v1h-1z M24 12h2v1h-2z M23 13h3v1h-3z M22 14h5v1h-5z M21 15h6v1h-6z M20 16h6v1h-6z M19 17h5v1h-5z M25 17h1v1h-1z M17 18h6v1h-6z M24 18h1v1h-1z M15 19h6v1h-6z M24 19h1v1h-1z M13 20h7v1h-7z M22 20h2v1h-2z M10 21h5v1h-5z M18 21h4v1h-4z M11 22h2v1h-2z M11 23h1v1h-1z M11 24h1v1h-1z M9 25h1v1h-1z M11 25h2v1h-2z M8 26h1v1h-1z M11 26h1v1h-1z M8 27h1v1h-1z M10 27h1v1h-1z M9 28h1v1h-1z" fill="#703bca" />
+  <path d="M24 17h1v1h-1z M23 18h1v1h-1z M21 19h3v1h-3z M20 20h2v1h-2z M10 25h1v1h-1z M9 26h2v1h-2z M9 27h1v1h-1z" fill="#6633bb" />
+  <path d="M10 2h12v1h-12z M8 3h2v1h-2z M22 3h2v1h-2z M7 4h1v1h-1z M24 4h1v1h-1z M6 5h1v1h-1z M25 5h1v1h-1z M5 6h1v1h-1z M26 6h1v1h-1z M4 7h1v1h-1z M27 7h1v1h-1z M4 8h1v1h-1z M27 8h1v1h-1z M3 9h1v1h-1z M28 9h1v1h-1z M3 10h1v1h-1z M28 10h1v1h-1z M2 11h1v1h-1z M29 11h1v1h-1z M2 12h1v1h-1z M29 12h1v1h-1z M2 13h1v1h-1z M29 13h1v1h-1z M2 14h1v1h-1z M29 14h1v1h-1z M2 15h1v1h-1z M29 15h1v1h-1z M3 16h1v1h-1z M28 16h1v1h-1z M3 17h1v1h-1z M28 17h1v1h-1z M4 18h1v1h-1z M27 18h1v1h-1z M4 19h1v1h-1z M27 19h1v1h-1z M5 20h1v1h-1z M26 20h1v1h-1z M6 21h1v1h-1z M25 21h1v1h-1z M7 22h1v1h-1z M24 22h1v1h-1z M7 23h1v1h-1z M22 23h2v1h-2z M7 24h1v1h-1z M15 24h7v1h-7z M7 25h1v1h-1z M13 25h2v1h-2z M7 26h1v1h-1z M12 26h1v1h-1z M7 27h1v1h-1z M11 27h1v1h-1z M8 28h1v1h-1z M10 28h1v1h-1z M8 29h2v1h-2z" fill="#241056" />
+  <g fill="#ffffff" shape-rendering="crispEdges">
+    {facePathsAt({ cx: 16, cy: 13.5, size: 'lg', smile: 'wide', gap: 2 }).map((d) => (
+      <path d={d} />
+    ))}
+  </g>
+</MarkFrame>
