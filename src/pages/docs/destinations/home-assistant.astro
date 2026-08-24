@@ -4,6 +4,7 @@ import Callout from '../../../components/docs/Callout.astro';
 import Code from '../../../components/docs/Code.astro';
 import DeviceConstraints from '../../../components/docs/DeviceConstraints.astro';
 import { page } from '../../../data/docs-nav';
+import { COUNTS, spell } from '../../../data/docs';
 
 const entry = page('/docs/destinations/home-assistant/');
 
@@ -150,7 +151,7 @@ const payload = `{
     </li>
     <li>
       On the phone, the destination shows <code>delivered</code> once everything staged has been
-      accepted. <a href="/docs/background-sync/">The other six states</a> are all explained.
+      accepted. <a href="/docs/background-sync/">The other {spell(COUNTS.deliveryStates - 1)} states</a> are all explained.
     </li>
   </ul>
 

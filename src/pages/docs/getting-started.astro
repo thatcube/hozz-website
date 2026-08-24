@@ -3,6 +3,7 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
 import Callout from '../../components/docs/Callout.astro';
 import Code from '../../components/docs/Code.astro';
 import { page } from '../../data/docs-nav';
+import { COUNTS, REQUIREMENTS, spell } from '../../data/docs';
 import { GITHUB_URL } from '../../data/site';
 
 const entry = page('/docs/getting-started/');
@@ -28,8 +29,8 @@ tools/device-build.sh`;
 
   <p>
     Hozz is early alpha and <strong>not in the App Store yet</strong>, so today installing it means
-    building it. That needs a Mac with Xcode 27 or newer and{' '}
-    <a href="https://github.com/yonaskolb/XcodeGen">XcodeGen</a> 2.46 or newer.
+    building it. That needs a Mac with Xcode {REQUIREMENTS.xcode} or newer and{' '}
+    <a href="https://github.com/yonaskolb/XcodeGen">XcodeGen</a> {REQUIREMENTS.xcodegen} or newer.
   </p>
 
   <Code caption="Terminal" code={build} />
@@ -77,7 +78,7 @@ tools/device-build.sh`;
 
   <p>
     On the <strong>Automatic</strong> tab, add a destination. Hozz lists any Macs it can find on
-    your network first, then five presets: Folder, Home Assistant, InfluxDB, Web address, and MQTT.{' '}
+    your network first, then {spell(COUNTS.presets)} presets: Folder, Home Assistant, InfluxDB, Web address, and MQTT.{' '}
     <a href="/docs/destinations/">Choosing a destination</a> covers what each is for; if you have no
     strong preference, <a href="/docs/destinations/folder/">Folder</a> is the one Hozz recommends,
     because it needs no server, no open ports and no VPN.
@@ -137,8 +138,8 @@ tools/device-build.sh`;
       not run at 8am, and what Hozz reports instead of pretending it did.
     </li>
     <li>
-      <a href="/docs/formats/">Export formats</a> — which of the seven keeps everything, and which
-      three deliberately do not.
+      <a href="/docs/formats/">Export formats</a> — which of the {spell(COUNTS.exportFormats)} keeps
+      everything, and which {spell(COUNTS.lossyExportFormats)} deliberately do not.
     </li>
     <li>
       <a href="/docs/data-coverage/">Data coverage</a> — what Hozz exports today and what it does

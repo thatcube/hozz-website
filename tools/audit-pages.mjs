@@ -16,14 +16,14 @@
  * checked mechanically and the screenshots are left for the judgement calls.
  */
 import puppeteer from 'puppeteer-core';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, writeFile, readFile, readdir } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { dirname, join } from 'node:path';
-
-import { DOC_PAGES } from '../src/data/docs-nav.ts';
+import { dirname, join, relative, sep } from 'node:path';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const outDir = join(root, '.shots');
+const dist = join(root, 'dist');
 const base = process.env.SHOOT_BASE ?? 'http://localhost:4321';
 
 const executablePath =
@@ -31,8 +31,45 @@ const executablePath =
   `${process.env.HOME}/.cache/puppeteer/chrome/mac_arm-151.0.7922.47/chrome-mac-arm64/` +
     'Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing';
 
-/** The docs, plus the two pages that share their shell. */
-const ROUTES = ['/docs/', ...DOC_PAGES.map((p) => p.href)];
+if (!existsSync(dist)) {
+  console.error('No dist/ — run `npm run build` first.');
+  process.exit(1);
+}
+
+/**
+ * Every page built on the documentation shell.
+ *
+ * Read out of dist rather than imported from src/data/docs-nav.ts, because that
+ * module imports a sibling without a file extension — which Vite resolves and
+ * plain node does not. Reading the build also means a page added to the site is
+ * audited without this list being remembered, and that what is checked is what
+ * was actually produced.
+ */
+async function walk(directory) {
+  const entries = await readdir(directory, { withFileTypes: true });
+  const files = await Promise.all(
+    entries.map((entry) => {
+      const full = join(directory, entry.name);
+      return entry.isDirectory() ? walk(full) : Promise.resolve([full]);
+    })
+  );
+  return files.flat();
+}
+
+const built = (await walk(dist)).filter((file) => file.endsWith('index.html'));
+const ROUTES = [];
+for (const file of built) {
+  const html = await readFile(file, 'utf8');
+  if (!html.includes('class="docs-shell"')) continue;
+  const route = '/' + relative(dist, file).split(sep).slice(0, -1).join('/');
+  ROUTES.push(route === '/' ? '/' : `${route}/`);
+}
+ROUTES.sort();
+
+if (ROUTES.length === 0) {
+  console.error('No pages using the documentation shell were found in dist/.');
+  process.exit(1);
+}
 
 /**
  * Full-page captures are taken at 1x on purpose.
@@ -78,7 +115,16 @@ for (const route of ROUTES) {
     // cache hit rather than a failure but is indistinguishable from one here.
     await page.setCacheEnabled(false);
 
-    const response = await page.goto(base + route, { waitUntil: 'networkidle0' });
+    let response;
+    try {
+      response = await page.goto(base + route, { waitUntil: 'networkidle0' });
+    } catch (error) {
+      // A refused connection means the server is not there, which is a failed
+      // check rather than a crash — CI should say so and move on.
+      fail(route, viewport.name, `could not be loaded — ${error.message.split('\n')[0]}`);
+      await page.close();
+      continue;
+    }
     const status = response?.status() ?? 0;
     if (status >= 400 || status === 0) {
       fail(route, viewport.name, `HTTP ${status}`);

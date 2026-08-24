@@ -513,3 +513,72 @@ export const SYNC = {
   /** BackgroundExportScheduler.scheduleRefresh's default delay, in minutes. */
   refreshMinutes: 15,
 };
+
+/**
+ * A small number as an English word.
+ *
+ * The pages say "Seven formats" rather than "7 formats" because that is the
+ * voice, but a hand-typed "Seven" beside a list that is checked mechanically is
+ * the same trap as a hand-typed test count: the list gains an entry, the
+ * verifier is satisfied, and the sentence is quietly wrong. Counting through
+ * here means the word and the list cannot disagree.
+ *
+ * Above twelve it gives up and returns digits, which is where spelling numbers
+ * out stops reading well anyway.
+ */
+const WORDS = [
+  'zero',
+  'one',
+  'two',
+  'three',
+  'four',
+  'five',
+  'six',
+  'seven',
+  'eight',
+  'nine',
+  'ten',
+  'eleven',
+  'twelve',
+  'thirteen',
+];
+
+export function spell(n: number): string {
+  return WORDS[n] ?? String(n);
+}
+
+/** The same word with its first letter capitalised, for the start of a sentence. */
+export function Spell(n: number): string {
+  const word = spell(n);
+  return word[0].toUpperCase() + word.slice(1);
+}
+
+/** Counts the pages quote, each derived from the list it describes. */
+export const COUNTS = {
+  destinations: DESTINATIONS.length,
+  deliveryFormats: DELIVERY_FORMATS.length,
+  exportFormats: EXPORT_FORMATS.length,
+  lossyExportFormats: EXPORT_FORMATS.filter((f) => f.lossy).length,
+  mcpTools: MCP_TOOLS.length,
+  deliveryStates: DELIVERY_STATES.length,
+  presets: DESTINATIONS.filter((d) => d.preset).length,
+};
+
+/**
+ * What you need on the machine to build the app, and the platform versions the
+ * pages name.
+ *
+ * The two toolchain versions are quoted from the app repository's README, and
+ * the platform versions from the availability checks in its source, so
+ * tools/verify-facts.mjs can hold both to it rather than trusting this file.
+ */
+export const REQUIREMENTS = {
+  /** README: "Xcode N or newer". */
+  xcode: 27,
+  /** README: "XcodeGen N.NN or newer". */
+  xcodegen: '2.46',
+  /** #available(iOS N, *) around State of Mind. */
+  stateOfMindIOS: 18,
+  /** #available(iOS N, *) around medication doses. */
+  medicationsIOS: 26,
+};

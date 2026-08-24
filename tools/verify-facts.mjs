@@ -31,6 +31,7 @@ import {
   EXPORT_FORMATS,
   MCP,
   MCP_TOOLS,
+  REQUIREMENTS,
   SOURCE_REF,
   SYNC,
 } from '../src/data/docs.ts';
@@ -56,6 +57,8 @@ const FILES = {
   scheduler: 'App/BackgroundExportScheduler.swift',
   manualExporter: 'Sources/HozzHealth/HealthKitManualExporter.swift',
   stdio: 'Sources/HozzMCP/MCPStdioTransport.swift',
+  readme: 'README.md',
+  typeRegistry: 'Sources/HozzHealth/HealthKitTypeRegistry.swift',
 };
 
 const problems = [];
@@ -168,6 +171,8 @@ try {
     scheduler,
     manualExporter,
     stdio,
+    readme,
+    typeRegistry,
   ] = await Promise.all([
     load('preset'),
     load('destination'),
@@ -182,6 +187,8 @@ try {
     load('scheduler'),
     load('manualExporter'),
     load('stdio'),
+    load('readme'),
+    load('typeRegistry'),
   ]);
 
   // --- Destinations -------------------------------------------------------
@@ -356,6 +363,30 @@ try {
     'Minutes before the next refresh is requested',
     SYNC.refreshMinutes,
     refresh ? Number(refresh[1]) : 'not found'
+  );
+
+  // --- What you need to build it -----------------------------------------
+  // Getting started names two tool versions. They are the app README's to
+  // change, so they are read from it rather than remembered here.
+  const xcode = readme.match(/Xcode (\d+) or newer/);
+  equal('Xcode version required', REQUIREMENTS.xcode, xcode ? Number(xcode[1]) : 'not found');
+
+  const xcodegen = readme.match(/XcodeGen\]\([^)]*\) ([\d.]+) or newer/);
+  equal('XcodeGen version required', REQUIREMENTS.xcodegen, xcodegen ? xcodegen[1] : 'not found');
+
+  // Two areas on Data coverage are annotated with the OS that introduced them.
+  const stateOfMind = typeRegistry.match(/#available\(iOS (\d+)\.\d+, \*\)[\s\S]{0,120}?stateOfMindType/);
+  equal(
+    'iOS version State of Mind needs',
+    REQUIREMENTS.stateOfMindIOS,
+    stateOfMind ? Number(stateOfMind[1]) : 'not found'
+  );
+
+  contains(
+    'iOS version medication doses need',
+    typeRegistry,
+    `#available(iOS ${REQUIREMENTS.medicationsIOS}.0, *)`,
+    'Data coverage says medication doses need this iOS version'
   );
 } catch (error) {
   problems.push(`Could not read the app's source\n    ${error.message}\n`);

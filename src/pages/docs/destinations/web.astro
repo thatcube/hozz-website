@@ -5,7 +5,7 @@ import Code from '../../../components/docs/Code.astro';
 import Table from '../../../components/docs/Table.astro';
 import DeviceConstraints from '../../../components/docs/DeviceConstraints.astro';
 import { page } from '../../../data/docs-nav';
-import { DELIVERY_FORMATS } from '../../../data/docs';
+import { COUNTS, DELIVERY_FORMATS, spell } from '../../../data/docs';
 
 const entry = page('/docs/destinations/web/');
 
@@ -97,7 +97,7 @@ const headers = [
     </li>
     <li>
       <h3>Choose a format</h3>
-      <p>All five are available here. NDJSON is the default and the only lossless streaming one.</p>
+      <p>All {spell(COUNTS.deliveryFormats)} are available here. NDJSON is the default and the only lossless streaming one.</p>
     </li>
     <li>
       <h3>Send a test</h3>

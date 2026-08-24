@@ -4,7 +4,7 @@ import Callout from '../../components/docs/Callout.astro';
 import Code from '../../components/docs/Code.astro';
 import Table from '../../components/docs/Table.astro';
 import { page } from '../../data/docs-nav';
-import { MCP, MCP_TOOLS } from '../../data/docs';
+import { COUNTS, MCP, MCP_TOOLS, spell } from '../../data/docs';
 
 const entry = page('/docs/mcp/');
 
@@ -32,7 +32,7 @@ You can check it works before I restart by running the command yourself with
 those arguments and sending it this on stdin:
   {"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}
   {"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}
-It should answer with thirteen tools. If it says there is no received data,
+It should answer with ${spell(COUNTS.mcpTools)} tools. If it says there is no received data,
 Hozz has not synced to this Mac yet, which is a different problem from the
 configuration being wrong.`;
 
@@ -136,7 +136,7 @@ const byHand = `{
     environment variable.
   </p>
 
-  <h2>The thirteen tools</h2>
+  <h2>The {spell(COUNTS.mcpTools)} tools</h2>
 
   {
     groups.map((group) => (

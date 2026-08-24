@@ -3,7 +3,7 @@ import DocsLayout from '../../../layouts/DocsLayout.astro';
 import Callout from '../../../components/docs/Callout.astro';
 import Table from '../../../components/docs/Table.astro';
 import { page, DOC_PAGES } from '../../../data/docs-nav';
-import { DESTINATIONS, DELIVERY_FORMATS } from '../../../data/docs';
+import { COUNTS, DELIVERY_FORMATS, DESTINATIONS, Spell } from '../../../data/docs';
 
 const entry = page('/docs/destinations/');
 
@@ -84,8 +84,9 @@ const formatName = (id: string) => DELIVERY_FORMATS.find((f) => f.id === id)?.na
       than everything.
     </li>
     <li>
-      <strong>A format.</strong> Five are available; which ones make sense depends on the
-      destination. <a href="/docs/delivery-schema/">The delivery schema</a> documents all of them.
+      <strong>A format.</strong> {Spell(COUNTS.deliveryFormats)} are available; which ones make sense
+      depends on the destination. <a href="/docs/delivery-schema/">The delivery schema</a> documents all
+      of them.
     </li>
     <li>
       <strong>A cadence.</strong> On arrival, hourly, daily, or manual only. These are requests —{' '}

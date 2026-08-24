@@ -4,7 +4,7 @@ import Callout from '../../components/docs/Callout.astro';
 import Table from '../../components/docs/Table.astro';
 import Code from '../../components/docs/Code.astro';
 import { page } from '../../data/docs-nav';
-import { EXPORT_FORMATS, DELIVERY_FORMATS } from '../../data/docs';
+import { COUNTS, DELIVERY_FORMATS, EXPORT_FORMATS, spell } from '../../data/docs';
 
 const entry = page('/docs/formats/');
 
@@ -78,8 +78,8 @@ resting_heart_rate: 54
       more surprising way — it takes almost nothing in the export and keeps all of what it takes.
     </p>
     <p>
-      All three say so in the app, at the moment you choose them, rather than only here. If you want
-      an archive, use NDJSON or SQLite.
+      All {spell(COUNTS.lossyExportFormats)} say so in the app, at the moment you choose them, rather
+      than only here. If you want an archive, use NDJSON or SQLite.
     </p>
   </Callout>
 

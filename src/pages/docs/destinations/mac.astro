@@ -4,6 +4,7 @@ import Callout from '../../../components/docs/Callout.astro';
 import Code from '../../../components/docs/Code.astro';
 import DeviceConstraints from '../../../components/docs/DeviceConstraints.astro';
 import { page } from '../../../data/docs-nav';
+import { COUNTS, spell } from '../../../data/docs';
 
 const entry = page('/docs/destinations/mac/');
 
@@ -54,7 +55,7 @@ curl http://your-mac.local:54330/
       <h3>On the iPhone, add a destination</h3>
       <p>
         The Mac appears at the top of the list under <strong>Your computers</strong>, before the
-        five presets. Tap it.
+        {' '}{spell(COUNTS.presets)} presets. Tap it.
       </p>
     </li>
     <li>

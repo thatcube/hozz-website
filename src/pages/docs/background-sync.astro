@@ -3,9 +3,11 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
 import Callout from '../../components/docs/Callout.astro';
 import Table from '../../components/docs/Table.astro';
 import { page } from '../../data/docs-nav';
-import { CADENCES, DELIVERY_STATES, SYNC } from '../../data/docs';
+import { CADENCES, COUNTS, DELIVERY_STATES, SYNC, Spell, spell } from '../../data/docs';
 
 const entry = page('/docs/background-sync/');
+
+const healthyStates = DELIVERY_STATES.filter((state) => state.healthy).length;
 ---
 
 <DocsLayout page={entry}>
@@ -150,8 +152,9 @@ const entry = page('/docs/background-sync/');
   <h2>Reading the dashboard</h2>
 
   <p>
-    The dashboard shows one of seven states per destination. Five of them are healthy; only two mean
-    something is wrong.
+    The dashboard shows one of {spell(COUNTS.deliveryStates)} states per destination. {
+      Spell(healthyStates)
+    } of them are healthy; only {spell(COUNTS.deliveryStates - healthyStates)} mean something is wrong.
   </p>
 
   <Table

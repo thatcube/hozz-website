@@ -6,6 +6,8 @@
  * exists. A page missing from here is a page nobody can navigate to.
  */
 
+import { COUNTS, Spell, spell } from './docs';
+
 export type DocPage = {
   /**
    * Path, always with a trailing slash to match Astro's directory routes.
@@ -79,7 +81,7 @@ export const DOC_SECTIONS: DocSection[] = [
         title: 'Apple Health export destinations — which one to choose',
         description:
           'Hozz can send Apple Health data to a Mac, a folder, Home Assistant, a web endpoint, MQTT or InfluxDB. What each is for, and how to choose.',
-        lede: 'Six places Hozz can send your data, and how to tell which one you want.',
+        lede: `${Spell(COUNTS.destinations)} places Hozz can send your data, and how to tell which one you want.`,
       },
       {
         href: '/docs/destinations/mac/',
@@ -124,7 +126,7 @@ export const DOC_SECTIONS: DocSection[] = [
         title: 'Apple Health to your own endpoint — POST, headers and idempotency',
         description:
           'Point Hozz at any endpoint that accepts a POST. Every header Hozz sends, which status codes it retries, and how the idempotency key is derived.',
-        lede: 'Any endpoint that accepts a POST, in whichever of the five formats you pick.',
+        lede: `Any endpoint that accepts a POST, in whichever of the ${spell(COUNTS.deliveryFormats)} formats you pick.`,
       },
       {
         href: '/docs/destinations/mqtt/',
@@ -147,7 +149,7 @@ export const DOC_SECTIONS: DocSection[] = [
         title: 'Apple Health export formats — NDJSON, CSV, JSON, SQLite, Markdown, GPX',
         description:
           'Every format Hozz can export Apple Health data to, what each is good for, and exactly which ones lose detail. CSV, Markdown and GPX are lossy and say so.',
-        lede: 'Seven formats. Three of them lose detail on purpose, and this page says which and what.',
+        lede: `${Spell(COUNTS.exportFormats)} formats. ${Spell(COUNTS.lossyExportFormats)} of them lose detail on purpose, and this page says which and what.`,
       },
       {
         href: '/docs/delivery-schema/',
@@ -178,8 +180,8 @@ export const DOC_SECTIONS: DocSection[] = [
         nav: 'The MCP server',
         title: 'Apple Health MCP server — query live Health data from an AI assistant',
         description:
-          'Hozz ships a read-only MCP server over a local SQLite database your phone keeps current — not the stale bulk XML export. Thirteen tools, and analysis that refuses to overstate.',
-        lede: 'Thirteen read-only tools over a database your phone keeps current, built to refuse the claims it cannot support.',
+          `Hozz ships a read-only MCP server over a local SQLite database your phone keeps current — not the stale bulk XML export. ${Spell(COUNTS.mcpTools)} tools, and analysis that refuses to overstate.`,
+        lede: `${Spell(COUNTS.mcpTools)} read-only tools over a database your phone keeps current, built to refuse the claims it cannot support.`,
       },
       {
         href: '/docs/switching-from-health-auto-export/',
