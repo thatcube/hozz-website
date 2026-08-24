@@ -11,7 +11,7 @@
  */
 
 /** The app-repo commit these facts were last verified against. */
-export const SOURCE_REF = 'b5b430a56494e0ea22898f0e8c6bf0833c6e6f0a';
+export const SOURCE_REF = '8816ca1b931488e62182c722c33bb6cfe41bde93';
 
 export const APP_REPO = 'https://github.com/thatcube/hozz';
 
