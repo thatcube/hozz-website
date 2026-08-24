@@ -157,9 +157,12 @@ const structuredData = {
             <a class="button secondary" href="#how">Follow the crossing</a>
           </div>
           <p class="conditions">
-            No account{' '}<span aria-hidden="true">·</span>{' '}No subscription{' '}<span
+            <span class="condition-item">No account</span>{' '}<span class="condition-separator" aria-hidden="true"
+              >·</span
+            >{' '}<span class="condition-item">No subscription</span>{' '}<span
+              class="condition-separator"
               aria-hidden="true">·</span
-            >{' '}No default destination
+            >{' '}<span class="condition-item">No default destination</span>
           </p>
         </div>
 
@@ -943,16 +946,6 @@ const structuredData = {
         min-width: 10.5rem;
         padding: 0.92rem 1rem 1rem;
         border-radius: 1.1rem;
-      }
-      .foothold::after {
-        content: '';
-        position: absolute;
-        z-index: -1;
-        inset: 54% 12% auto;
-        height: 52%;
-        border: 1px solid rgba(93, 140, 176, 0.2);
-        border-radius: 50%;
-        transform: scaleX(1.14);
       }
       .foothold-1 {
         left: 13%;
@@ -1815,7 +1808,7 @@ const structuredData = {
           display: grid;
           gap: 0.2rem;
         }
-        .conditions span {
+        .conditions .condition-separator {
           display: none;
         }
         .crossing-landscape {

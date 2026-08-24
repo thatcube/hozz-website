@@ -59,10 +59,11 @@ NAME = 'Glass, cast'
 # Silhouette.
 # ---------------------------------------------------------------------------
 BODY_TOP = 2
-# 26 across. Round on top (radius 5, insets 5,3,2,1,0 — the shipped idiom) and
-# flatter underneath (radius 4), because a bubble needs a base to sit on and a
-# tail needs a corner to leave from, not a curve to slide off.
-WIDTHS = ([16, 20, 22, 24, 26] + [26] * 13 + [24, 22, 18])
+# 28 across, the shipped width, so the mark has the same presence in a 32 box.
+# Rounder on top than the shipped bubble (insets 6,4,2,1,0 rather than 5,3,2,1,0)
+# and flatter underneath, because light pools in a base and a tail needs a corner
+# to leave from, not a curve to slide off.
+WIDTHS = ([16, 20, 24, 26, 28] + [28] * 13 + [26, 24, 20])
 
 BODY = set()
 LEFT = {}
@@ -74,14 +75,12 @@ for i, w in enumerate(WIDTHS):
 
 BODY_Y0, BODY_Y1 = BODY_TOP, BODY_TOP + len(WIDTHS) - 1
 
-# The tail. It squares off the bottom-left corner — the body's left wall carries
-# straight down to x4 — and then tapers to a blunt tip. Row widths below the
-# body fall monotonically, so the silhouette carries no spur.
+# The tail hangs off the bottom-left corner, its left wall carrying straight down
+# from x6 where the body's last row starts. Row widths below the body fall
+# monotonically, so the silhouette carries no spur.
 TAIL = set()
-for y in range(19, BODY_Y1 + 1):
-    TAIL |= {(x, y) for x in range(4, LEFT[y])}
-for y, (a, b) in {23: (4, 11), 24: (4, 10), 25: (4, 9),
-                  26: (5, 8), 27: (5, 7), 28: (6, 7)}.items():
+for y, (a, b) in {23: (6, 12), 24: (6, 11), 25: (6, 10),
+                  26: (6, 8), 27: (6, 7)}.items():
     TAIL |= {(x, y) for x in range(a, b + 1)}
 
 SHAPE = BODY | TAIL
@@ -161,64 +160,113 @@ for a, b in zip(RAMP, RAMP[1:]):
 # ---------------------------------------------------------------------------
 K = keyline(SHAPE)
 inner = SHAPE - K
-EDGE = keyline(inner)
-INT = inner - EDGE
+RING = keyline(inner)          # the 1px ring right inside the keyline
+INT = inner - RING             # the field: everything the light crosses
 
-# Depth: how far inside the lit edge a pixel sits. Straight out of rings(), so
-# it follows the contour and the bevel it drives wraps all four sides.
+# Light arrives from above and to the left. Only the ring it actually strikes is
+# lit; the rest of the ring is glass seen edge-on, and glass seen edge-on is
+# *darker* than the field behind it, not lighter. Getting that the wrong way
+# round is what makes a translucent object read as a sticker with a white border.
+LIT_TO = 13
+
+
+def faces_light(p):
+    x, y = p
+    return (x, y - 1) not in inner or ((x - 1, y) not in inner and y <= LIT_TO)
+
+
+LIT = {p for p in RING if faces_light(p)}
+WALL = RING - LIT
+assert LIT and WALL, 'the ring did not split into a lit side and a dark side'
+
+# How far down each column the light got. A wall pixel just under the lit part
+# is still half lit, and saying so is what keeps the rim from stopping dead
+# halfway round like a border someone drew half of.
+LAST_LIT = {}
+for x, y in LIT:
+    LAST_LIT[x] = max(LAST_LIT.get(x, -99), y)
+
+# Depth inside the field, straight out of rings(), so the bevel it drives follows
+# the contour rather than the rows.
 DEPTH = {}
 layer, rest = rings(INT, 6)
 for i, r in enumerate(layer):
-    for p in r:
-        DEPTH[p] = i
-for p in rest:
-    DEPTH[p] = 6
+    for q in r:
+        DEPTH[q] = i
+for q in rest:
+    DEPTH[q] = 6
 
-iy0 = min(y for _, y in INT)
-iy1 = max(y for _, y in INT)
+iy0 = min(y for _, y in inner)
+iy1 = max(y for _, y in inner)
 
-FLOOR = 2       # where the ramp starts at the top, so the top still has a bevel
-CAP = 8         # and where it stops: the palest four stops belong to the glow
-BEVEL = 1.4     # stops of darkening per pixel inward — Plozz's inset, with room
-DEEPEST = 3     # how far in the bevel reaches before the field goes flat
-BIAS = 1.3      # the cast, held back so the pale end lands under the face
-GLOW = (16, 19.5)
-GLOW_R = 5.5
-GLOW_LIFT = 6.5
+FLOOR = 3.6      # the top of the cast, leaving room for the bevel under the rim
+CAP = 11.0          # the bottom of it: the palest four stops belong to the light
+BEVEL = 1.15     # stops of darkening per pixel in from the lit edge
+DEEPEST = 3      # how far that reaches before the field goes flat
+FADE = 0.75      # ...and how much of it survives by the time it reaches the base
+BIAS = 0.95       # the cast, held back so the pale end lands under the face
+GLOW = (16, 20.8)      # where the transmitted light gathers
+GLOW_R = 4.4
+GLOW_LIFT = 8.2
+WALL_FRAC = 0.45       # the unlit ring, as a fraction deeper than what it holds
+GUTTER = 4             # rows over which the lit edge gutters out down the side
 
 
-def index(p):
-    """Tone for an interior pixel: cast, minus thickness, plus what comes through.
+def field(p):
+    """Tone for a pixel: cast, minus thickness, plus what comes through.
 
-    cast     — the light arriving at the top edge and reaching further down the
-               body the deeper it goes, biased low so the pale end lands under
-               the face rather than behind it.
-    thickness— every pixel inward is a step deeper. This is Plozz's inset bevel
-               and it is what makes an edge read as an edge.
-    glow     — the transmitted light, gathering *inside* the lower body and
-               spilling out through the tail. This is the part no opaque mark
-               can show: a bright region that is not attached to the lit edge.
+    cast      the light arriving at the top edge, reaching further down the body
+              the deeper it goes, biased low so the pale end lands under the face
+              rather than behind it.
+    thickness every pixel in from the lit edge is a step deeper — Plozz's inset
+              bevel, and what makes an edge read as an edge. It fades toward the
+              base, where transmission rather than reflection is doing the work.
+    glow      the transmitted light, gathering *inside* the lower body and
+              leaking out at the tail tip. This is the part no opaque mark can
+              show: a bright region that is not attached to the lit edge.
     """
     x, y = p
     u = (y - iy0) / (iy1 - iy0)
     cast = FLOOR + (CAP - FLOOR) * u ** BIAS
-    thick = BEVEL * min(DEPTH[p], DEEPEST)
+    thick = BEVEL * min(DEPTH.get(p, 0), DEEPEST) * (1 - FADE * u)
     d = ((x + 0.5 - GLOW[0]) ** 2 + (y + 0.5 - GLOW[1]) ** 2) ** 0.5
     glow = max(0.0, (GLOW_R - d) / GLOW_R) * GLOW_LIFT
-    return max(0, min(N - 1, round(cast - thick + glow)))
+    return cast - thick + glow
+
+
+def index(p, drop=0.0):
+    return max(0, min(N - 1, round(field(p) - drop)))
+
+
+def wall_index(p):
+    """The ring the light did not strike.
+
+    Mostly it is deeper than the field it holds — glass seen edge-on, and the
+    thing that keeps a pool of light inside the bubble instead of letting it run
+    out at the bottom. Down the left side, though, the lit edge does not stop
+    dead: it gutters out over three rows, or the rim reads as a border that
+    someone drew half of.
+    """
+    x, y = p
+    gap = y - LAST_LIT.get(x, -99)
+    if 0 < gap <= GUTTER:
+        return index(p, -1.0 * (GUTTER + 1 - gap))
+    return index(p, max(1.5, WALL_FRAC * field(p)))
 
 
 BANDS = [set() for _ in range(N)]
 for p in INT:
     BANDS[index(p)].add(p)
+for p in WALL:
+    BANDS[wall_index(p)].add(p)
 
 # The catch: the stretch of lit edge on the upper-left shoulder, where a curved
 # glass surface turns away from a light above and to the left.
-CATCH = {p for p in EDGE if 3 <= p[1] <= 6 and p[0] <= 11}
-EDGE -= CATCH
+CATCH = {p for p in LIT if 3 <= p[1] <= 7 and p[0] <= 10}
+LIT -= CATCH
 
 LAYERS = [(BANDS[i], RAMP[i]) for i in range(N) if BANDS[i]]
-LAYERS += [(EDGE, RIM), (CATCH, SPEC), (K, INK)]
+LAYERS += [(LIT, RIM), (CATCH, SPEC), (K, INK)]
 
 covered = set()
 for px, fill in LAYERS:
@@ -278,7 +326,7 @@ assert box['x'] + box['right'] == 31, 'face is not centred on x=16'
 above, below = box['y'] - BODY_Y0, BODY_Y1 - box['bottom']
 assert above == below, f'air {above}/{below} on the body'
 assert FACE <= BODY, 'face hangs off the body'
-assert not (FACE & EDGE) and not (FACE & K), 'the face touches the edge of the glass'
+assert not (FACE & RING) and not (FACE & K), 'the face touches the edge of the glass'
 
 # The Zs do not mirror — they are one letter repeated by translation (5 on md).
 # The smile does mirror. Assert what is true rather than what is convenient.

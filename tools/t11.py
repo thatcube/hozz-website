@@ -29,23 +29,28 @@ remainder of the ΔE budget is spent on lightness. The step *size* is what the
 eye reads, and that is matched.
 
 **Rim to centre on a bubble.** A disc has one answer; a bubble needs one worked
-out. Ring-peeling (`shade.rings`) is wrong here, and visibly: a 4-neighbour peel
-erodes diagonals faster than sides, so six peels of a round-shouldered body
-leave a core with hard square corners — a rectangle inside a curve, the exact
-defect `is_slab` exists to catch. So the ramp is built the way the silhouette
-is: seven nested superellipses on the same centre, each one pixel in from the
-last. Every band is then a true parallel of the outline, the corners stay round
-all the way down, and the core comes out as a soft blob rather than a box —
-which is what the disc's core is, and the reason the two read as one system.
+out. Ring-peeling (`shade.rings`) is wrong here, and measurably: a 4-neighbour
+peel erodes diagonals faster than sides, so six peels of this body leave a 16x10
+rectangle with a single pixel off each corner — a box inside a curve, the exact
+defect `is_slab` exists to catch, and it flags it. So the ramp is built the way
+the silhouette is: seven nested superellipses on the same centre, each one pixel
+in from the last. Every band is then a true parallel of the outline, the corners
+keep shrinking all the way down, and the core comes out as a soft blob rather
+than a box — which is what the disc's core is, and the reason the two read as one
+system. `--rings` renders the rejected version.
 
-**The tail.** It takes the rim tone and stays flat, and that is a decision, not
-a shortcut. A ramp needs depth to run through; the tail is two to five pixels
-across, so every pixel of it is rim. Ramping it anyway would mean inventing a
-curvature the form does not have, and the giveaway would be a seam at the
-join. Flat rim is also what continuity demands: the body's own outermost tone
-at the join is rim, so the tail is the same skin carried on where it is too thin
-to turn. The body's keyline stops at the join for the same reason — the
-silhouette is outlined once, around the outside of the whole shape.
+**The tail.** It takes the rim tone and stays flat, and that was measured rather
+than assumed. Peel the whole silhouette and no pixel of the tail is more than
+four deep, so the body's own law would hand it the first two tones over a
+handful of pixels. Rendered at 96px that is not a surface — it is a 2x2 of the
+deeper tone floating inside a flap five pixels wide, and it reads as dirt. (The
+generator will draw it: `--ramp-tail`.) Flat rim is also what continuity demands,
+because the body's own outermost tone at the join is rim, so the tail is the same
+skin carried on where the form is too thin to turn. Its shape follows the shipped
+mark: one straight left edge, the taper taken entirely from the right, because a
+tail that narrows on both sides at once stops being a piece of the bubble and
+becomes a diagonal stroke. The silhouette is outlined once, around the outside of
+the whole shape.
 """
 import json
 import re
@@ -219,10 +224,14 @@ for y in sorted(TAIL_ROWS):
     prev = (a, b)
 assert set(range(TAIL_ROWS[24][0], TAIL_ROWS[24][1] + 1)) <= set(rows[23]), \
     'tail overhangs the body'
-# The tail is not a separate object with its own colour scheme: it is skin, and
-# it takes the same law the body takes — tone by distance from the edge. Peel
-# the whole silhouette and read the tail's depth off it. It is thin, so the law
-# only ever hands it the first three tones, and mostly the rim.
+# The tail is skin, not a separate object, so the question is what the body's
+# own law — tone by distance from the edge — would give it. Peel the whole
+# silhouette and read the depth off it: the tail never gets more than four deep,
+# so the law would hand it the first two tones over a handful of pixels. Painted,
+# that is not a surface, it is a stain: a 2x2 of the deeper tone floating in a
+# flap five pixels wide. So the tail takes the rim tone flat, which is also the
+# tone the body carries at the join, and the join reads as one skin.
+# Run with --ramp-tail to see the alternative that was rejected.
 DEPTH = {}
 _r, _rem = rings(SIL, STEPS)
 for _i, _ring in enumerate(_r, 1):
@@ -230,12 +239,12 @@ for _i, _ring in enumerate(_r, 1):
         DEPTH[_p] = _i
 for _p in _rem:
     DEPTH[_p] = STEPS + 1
-assert max(DEPTH[p] for p in TAIL) <= 4, 'the tail has more depth than a flap should'
+assert max(DEPTH[p] for p in TAIL) <= 4, 'the tail is deep enough to need the ramp'
 
 # ---------------------------------------------------------------------------
 # Paint. One outline around the whole silhouette; the ramp inside the body by
-# shell, down the tail by depth — the same tone for the same distance from the
-# edge, so the join is a continuation and not a seam.
+# shell; the tail flat at the rim tone, which is what the body carries where the
+# two meet.
 # ---------------------------------------------------------------------------
 OUTLINE = keyline(SIL)
 level = {}
@@ -247,7 +256,7 @@ paint = {}
 for p in BODY:
     paint[p] = RAMP[min(max(level[p] - 1, 0), STEPS - 1)]
 for p in TAIL:
-    paint[p] = RAMP[min(max(DEPTH[p] - 2, 0), STEPS - 1)] if '--flat' not in sys.argv \
+    paint[p] = RAMP[min(max(DEPTH[p] - 2, 0), STEPS - 1)] if '--ramp-tail' in sys.argv \
         else RAMP[0]
 JUNCTION = {p for p in BODY if level[p] == 0 and p not in OUTLINE}
 EXEMPT = JUNCTION | {(31 - x, y) for x, y in JUNCTION}   # the tail's own rows
@@ -380,18 +389,28 @@ if '--svg' in sys.argv:
  * lightness; the rest of the step is spent on lightness, and the step size —
  * the thing the eye actually reads — matches.
  *
- * Rim to centre had to be worked out for a bubble. Peeling contour rings the
- * way a disc takes them erodes diagonals faster than sides, and six peels leave
- * a core with hard square corners: a rectangle inside a curve. So the bands are
- * seven nested superellipses on one centre, each a pixel in from the last —
- * true parallels of the outline, round corners all the way down, and a soft
- * core rather than a box.
+ * Rim to centre had to be worked out for a bubble. Peeling contour rings the way
+ * a disc takes them erodes diagonals faster than sides, and six peels of this
+ * body leave a 16x10 rectangle with a pixel off each corner — a box inside a
+ * curve, which is exactly what the slab check is for. So the bands are seven
+ * nested superellipses on one centre, each a pixel in from the last: true
+ * parallels of the outline, corners that keep shrinking, a core with no corners
+ * left to speak of. Run the generator with --rings to see the version that was
+ * rejected.
  *
- * The tail takes the rim tone and stays flat. It is two to five pixels across,
- * so there is no depth for a ramp to run through; the body's outermost tone at
- * the join is the rim, so flat rim is the same skin carried on where the form
- * is too thin to turn. The outline stops at the join and goes round the outside
- * of the whole shape, once.
+ * Whether the tail takes the ramp was measured, not chosen. Peel the whole
+ * silhouette and no pixel in the tail is more than four deep, so the body's own
+ * law would give it the first two tones over a handful of pixels — at 96px that
+ * is not a surface, it is a 2x2 smudge floating in a flap five pixels wide. The
+ * tail takes the rim tone flat, which is the tone the body carries at the join,
+ * so the two read as one skin. --ramp-tail renders the alternative.
+ *
+ * The tail is built the way the shipped mark builds its own: one straight left
+ * edge continuing the body's bottom-left curve, the taper taken entirely from
+ * the right. Narrowing on both sides at once turns a tail into a diagonal
+ * stroke. Once the keyline has taken the outer ring the fill runs 6-5-4-3-2 and
+ * only the last row is pure line. The outline goes round the outside of the
+ * whole shape, once.
  *
  * {len(layers) + 1} tones. Body symmetric about x=16 — the tail, deliberately, is not.
  */

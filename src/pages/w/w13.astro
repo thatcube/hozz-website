@@ -100,10 +100,10 @@ const RIDERS = [
 ];
 
 const RIDERS_P = [
-  { ring: 2, a: '68deg', category: 'heart', id: 'heartRateVariabilitySDNN', sample: '48 ms' },
-  { ring: 3, a: '112deg', category: 'sleep', id: 'sleepAnalysis', sample: '7h 12m' },
-  { ring: 4, a: '72deg', category: 'heart', id: 'electrocardiogram', sample: 'sinus rhythm' },
-  { ring: 5, a: '105deg', category: 'mind', id: 'stateOfMind', sample: 'pleasant' },
+  { ring: 2, a: '58deg', category: 'heart', id: 'heartRateVariabilitySDNN', sample: '48 ms' },
+  { ring: 3, a: '118deg', category: 'sleep', id: 'sleepAnalysis', sample: '7h 12m' },
+  { ring: 4, a: '66deg', category: 'heart', id: 'electrocardiogram', sample: 'sinus rhythm' },
+  { ring: 5, a: '108deg', category: 'mind', id: 'stateOfMind', sample: 'pleasant' },
 ];
 
 const allTypes = STREAM_LANES.flat();
@@ -175,24 +175,41 @@ const jsonLd = {
       <!-- ================= hero ================= -->
       <section class="hero" id="top">
         <div class="shell hero-copy">
-          <p class="eyebrow">
-            <svg class="glyph" viewBox="0 0 16 16" aria-hidden="true">
-              <circle cx="8" cy="8" r="2" fill="currentColor" />
-              <circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".55" />
-              <circle cx="8" cy="8" r="7.4" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".28" />
-            </svg>
-            Apple Health export · early alpha
-          </p>
-          <h1>Drop it once. It reaches everywhere you <em class="em">own.</em></h1>
-          <p class="lede">
-            Hozz copies your Apple Health history off your iPhone into places you already run —
-            your Mac, a folder, Home Assistant, InfluxDB, a web endpoint, MQTT. Free, open source,
-            one developer. No account, no analytics, no server of mine.
-          </p>
-          <div class="actions">
-            <a class="btn" href="#export">How to export your data</a>
-            <a class="btn-quiet" href={GITHUB_URL}>Read the source <span aria-hidden="true">↗</span></a>
+          <div class="hero-say">
+            <p class="eyebrow">
+              <svg class="glyph" viewBox="0 0 16 16" aria-hidden="true">
+                <circle cx="8" cy="8" r="2" fill="currentColor" />
+                <circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".55" />
+                <circle cx="8" cy="8" r="7.4" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".28" />
+              </svg>
+              Apple Health export · early alpha
+            </p>
+            <h1>Drop it once. It reaches everywhere you <em class="em">own.</em></h1>
+            <p class="lede">
+              Hozz copies your Apple Health history off your iPhone into places you already run —
+              your Mac, a folder, Home Assistant, InfluxDB, a web endpoint, MQTT. Free, open source,
+              one developer. No account, no analytics, no server of mine.
+            </p>
+            <div class="actions">
+              <a class="btn" href="#export">How to export your data</a>
+              <a class="btn-quiet" href={GITHUB_URL}>Read the source <span aria-hidden="true">↗</span></a>
+            </div>
           </div>
+
+          <dl class="hero-facts">
+            <div>
+              <dt>It reads</dt>
+              <dd><b class="fnum">{allTypes.length}</b> Health record types, across {STREAM_LANES.length} lanes</dd>
+            </div>
+            <div>
+              <dt>It writes to</dt>
+              <dd><b class="fnum">{DESTINATIONS.length}</b> destinations, in {FORMATS.length} formats</dd>
+            </div>
+            <div>
+              <dt>It sends me</dt>
+              <dd><b class="fnum">0</b> bytes — there is no server of mine</dd>
+            </div>
+          </dl>
         </div>
 
         <figure class="stagewrap">
@@ -842,10 +859,10 @@ const jsonLd = {
 
         --step--1: clamp(0.78rem, 0.75rem + 0.12vw, 0.85rem);
         --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.1rem);
-        --step-1: clamp(1.12rem, 1.04rem + 0.36vw, 1.34rem);
-        --step-2: clamp(1.44rem, 1.28rem + 0.72vw, 1.95rem);
-        --step-3: clamp(1.95rem, 1.55rem + 1.7vw, 3.15rem);
-        --step-4: clamp(2.55rem, 1.7rem + 3.6vw, 5.2rem);
+        --step-1: clamp(1.25rem, 1.1rem + 0.52vw, 1.42rem);
+        --step-2: clamp(1.58rem, 1.36rem + 0.86vw, 2.05rem);
+        --step-3: clamp(1.95rem, 1.5rem + 1.6vw, 2.85rem);
+        --step-4: clamp(2.5rem, 1.75rem + 2.9vw, 4.35rem);
 
         --gap: clamp(1.2rem, 0.9rem + 1.2vw, 2rem);
         --pad-y: clamp(3.4rem, 2.2rem + 4.2vw, 7rem);
@@ -1028,7 +1045,57 @@ const jsonLd = {
       .hero-copy {
         position: relative;
         z-index: 2;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 17.5rem);
+        gap: clamp(1.8rem, 1rem + 3.4vw, 4.5rem);
+        align-items: end;
+      }
+
+      .hero-say {
         max-width: 46rem;
+      }
+
+      .hero-facts {
+        margin: 0 0 0.5rem;
+        border-top: 1px solid rgba(93, 140, 176, 0.32);
+      }
+
+      .hero-facts > div {
+        padding: 0.72rem 0;
+        border-bottom: 1px solid rgba(93, 140, 176, 0.32);
+      }
+
+      .hero-facts dt {
+        font-family: var(--mono);
+        font-size: 0.7rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--mid);
+      }
+
+      .hero-facts dd {
+        margin: 0.18rem 0 0;
+        font-size: 0.94rem;
+        line-height: 1.4;
+        color: var(--mid);
+      }
+
+      .fnum {
+        font-family: var(--mono);
+        font-weight: 500;
+        font-size: 1.08rem;
+        color: var(--ink);
+      }
+
+      @media (max-width: 900px) {
+        .hero-copy {
+          grid-template-columns: 1fr;
+          gap: 2.2rem;
+        }
+
+        .hero-facts {
+          margin-bottom: 0;
+        }
       }
 
       .eyebrow {
@@ -1147,6 +1214,12 @@ const jsonLd = {
         }
         .stage-p {
           display: block;
+        }
+        .stage-p .pin-ride {
+          max-width: 11.5rem;
+        }
+        .stage-p .pin-dest {
+          max-width: 10rem;
         }
       }
 
@@ -1267,13 +1340,16 @@ const jsonLd = {
       }
 
       .pin-ride {
-        border-left: 3px solid var(--c);
-        padding-left: 0.6rem;
         max-width: 14rem;
       }
 
+      .ridline {
+        display: flex;
+        align-items: center;
+        gap: 0.38rem;
+      }
+
       .pin-ride .rid {
-        display: block;
         font-size: clamp(0.63rem, 0.58rem + 0.18vw, 0.74rem);
         font-weight: 500;
         color: var(--ink);
@@ -1282,6 +1358,7 @@ const jsonLd = {
 
       .pin-ride .rsample {
         display: block;
+        padding-left: calc(8px + 0.38rem);
         font-size: clamp(0.63rem, 0.58rem + 0.14vw, 0.7rem);
         color: var(--mid);
       }
@@ -1781,8 +1858,8 @@ const jsonLd = {
       }
 
       .proms li {
-        padding-left: 1rem;
-        border-left: 3px solid var(--c);
+        padding-top: 0.95rem;
+        border-top: 2px solid var(--c);
       }
 
       .proms h3 {
@@ -1876,7 +1953,8 @@ const jsonLd = {
       .close-in {
         display: flex;
         flex-direction: column;
-        align-items: flex-start;
+        align-items: center;
+        text-align: center;
         gap: 1.1rem;
       }
 
@@ -1887,14 +1965,18 @@ const jsonLd = {
       .close h2 {
         font-size: var(--step-3);
         line-height: 1.04;
-        max-width: 16ch;
+        max-width: 18ch;
       }
 
       .close p {
-        max-width: 52ch;
+        max-width: 46ch;
         font-size: var(--step-1);
         line-height: 1.5;
         color: var(--mid);
+      }
+
+      .close .actions {
+        justify-content: center;
       }
 
       /* ---------------- footer ---------------- */

@@ -190,6 +190,15 @@ TAIL_IN = TAIL - KEY_PX
 BANDS, PANEL = rings(BODY, 4)
 FOLD = BANDS[3]                     # where the front face turns inward
 
+# The fold is not one surface, it is the recess's own wall, and its top and
+# bottom face opposite ways. The near wall — the top arc — leans down and away
+# from the light, so it is the darkest thing here. The far wall — the bottom
+# arc — leans up into it, so it is the brightest. The sides are edge-on and
+# stay with the wall's own tone.
+F_TOP = {(x, y) for (x, y) in FOLD if (x, y + 1) in PANEL}
+F_BOT = {(x, y) for (x, y) in FOLD if (x, y - 1) in PANEL} - F_TOP
+F_SIDE = FOLD - F_TOP - F_BOT
+
 # BANDS[0] is the body's own outline. Almost all of it coincides with the
 # object's outline and is keyline; the pixels that do not are exactly the tail
 # junction, and there the wall must carry on into the tail rather than have a
@@ -270,8 +279,10 @@ P_LAYERS.setdefault(CORE_I, set()).update(P_CORE)
 # and fold are lines rather than ramp steps, and are allowed to jump.
 # ---------------------------------------------------------------------------
 KEY = '#261347'
-FOLD_C = '#452680'
 WALL = ['#8358d4', '#7349c4', '#633bb2']        # lit, mid, shaded
+F_SIDE_C = '#532ca2'                            # the wall, one step deeper
+F_TOP_C = '#4a2794'                             # deeper again: the near wall
+F_BOT_C = '#d1b7f8'                             # the far wall, angled up
 
 FLOOR_LO, FLOOR_HI = (0x7a, 0x56, 0xbf), (0xc6, 0xa9, 0xf3)
 
@@ -285,7 +296,12 @@ FLOOR = ['#%02x%02x%02x' % tuple(lerp(FLOOR_LO[c], FLOOR_HI[c], i / (STEPS - 1))
          for i in range(STEPS)]
 
 MAX_STEP = 18  # Plozz's own widest interior step is 21, so this is inside it.
-for ramp, what in ((WALL, 'wall'), (FLOOR, 'floor')):
+# Two ramps, each continued by the half of the fold that belongs to it: the
+# near wall and the sides are wall carrying on down into shadow, the far wall
+# is the one surface tipped up into the light, so it reads off the top of the
+# floor.
+for ramp, what in ((WALL + [F_SIDE_C, F_TOP_C], 'wall'),
+                   (FLOOR + [F_BOT_C], 'floor')):
     for a, b in zip(ramp, ramp[1:]):
         d = max(abs(int(a[i:i + 2], 16) - int(b[i:i + 2], 16)) for i in (1, 3, 5))
         assert d <= MAX_STEP, f'{what}: {a}->{b} steps by {d}, which reads as a band'
@@ -295,7 +311,9 @@ LAYERS = [
     (W_LIT, WALL[0]),
     (W_MID, WALL[1]),
     (W_SHAD, WALL[2]),
-    (FOLD, FOLD_C),
+    (F_SIDE, F_SIDE_C),
+    (F_TOP, F_TOP_C),
+    (F_BOT, F_BOT_C),
 ] + [(P_LAYERS[i], FLOOR[i]) for i in sorted(P_LAYERS)]
 
 # ---------------------------------------------------------------------------
@@ -450,7 +468,7 @@ const {{ size = 128 }} = Astro.props;
 </MarkFrame>
 '''
 
-palette = [KEY, FOLD_C] + WALL[::-1] + FLOOR
+palette = [KEY, F_TOP_C, F_SIDE_C] + WALL[::-1] + FLOOR + [F_BOT_C]
 meta = f'''export default {{
   n: '{SLUG}', name: '{NAME}',
   idea: 'A rim with real thickness — lit on top, shaded underneath — folding into a recessed floor lit the other way round, so the tone reverses exactly where the plane does.',
@@ -479,5 +497,5 @@ print(f'  parity      body {BODY_W} / face {FACE_W} — both even')
 print(f'  air         {AIR_ABOVE} above, {AIR_BELOW} below (on the body)')
 print('  layers      ' + ', '.join(f'{f}:{len(p)}' for p, f in LAYERS))
 print()
-marks = ['K', 'L', 'M', 'S', 'F'] + [str(i) for i in sorted(P_LAYERS)]
+marks = ['K', 'L', 'M', 'S', 'f', 'v', '^'] + [str(i) for i in sorted(P_LAYERS)]
 show([p for p, _ in LAYERS] + [FACE_PX], marks + ['#'])

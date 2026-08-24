@@ -83,7 +83,7 @@ TAIL_ROWS = {
 
 # Where the voice enters. Half a pixel below the tip, so the innermost arc
 # closes around the tail rather than sitting on it.
-SOURCE = (8.5, 29.0)
+SOURCE = (5.0, 33.5)
 
 
 def body():
@@ -172,7 +172,7 @@ def contrast(a, b):
 # the deep half of the ramp without anything being cleared for it.
 # ---------------------------------------------------------------------------
 
-RADII = [5.0, 8.6, None, 16.0, 19.6, 23.2, 27.0]
+RADII = [10.5, 14.4, None, 21.4, 24.5, 27.8, 31.6]
 
 
 def dist(p):
@@ -210,18 +210,6 @@ def build():
         t = 1 + sum(1 for r in RADII if d >= r)
         bands[t - 1 if p in wall else t].add(p)
 
-    # The crest. Mozz names its whole idea with twelve pixels of #c10026 —
-    # one lighter line reading as the groove. This is the same move: a single
-    # arc at full strength, the wavefront itself, struck from the same centre
-    # as every other tone in the mark. It rises out of the tail, breaks on the
-    # left edge and sweeps down under the chin, through the one part of this
-    # mark that has been empty in every version of it. It borrows the wall's
-    # tone rather than introducing a colour, and it closes a whole pixel short
-    # of the face, so nothing is cleared for the letterforms.
-    crest = {p for p in inner if abs(dist(p) - (RADII[2] - 0.6)) <= 0.5}
-    for t in bands:
-        t -= crest
-    bands[0] |= crest
     return key, bands
 
 
@@ -386,7 +374,7 @@ __PATHS__
 
 META = '''export default {
   n: 't19', name: 'Carrier',
-  idea: 'A record has a groove — a recorded wave. A speech bubble has the live one: seven close tones struck as arcs from the tail, so the ring stack runs wide where the voice has just arrived and thins to a rim at the far shoulder.',
+  idea: 'A record has a groove — a wave already recorded. A speech bubble carries the live one. Nine tones struck as arcs, not around the bubble but around the speaker the tail points at, off-frame: the bands run wide and bright at the mouth and crowd into a thin rim at the far shoulder, the way a voice actually falls off across a room.',
   ground: 'light',
   palette: __PALETTE__,
 };

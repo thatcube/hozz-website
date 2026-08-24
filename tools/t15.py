@@ -256,17 +256,45 @@ for px in BANDS.values():
 assert covered == INNER, 'the interior is not exactly covered'
 
 # ---------------------------------------------------------------------------
-# The face: the shipped one. lg, wide smile, family gap of 2.
+# The face.
+#
+# Which rows count as "the body" decides this, and there are two honest answers:
+#
+#   outline   y2-24, 23 rows  — every row the body silhouette occupies, keyline
+#                              ring included, tail-junction rows included.
+#   field     y3-22, 20 rows  — the violet the face actually floats in: interior
+#                              only (the keyline ring is outline, not field) and
+#                              stopping where the tail takes the corner at y23,
+#                              because those rows read as tail, not as chin.
+#
+# The eye reads the field, so the field is what the face is centred on, and it
+# is measured off the emitted pixels rather than assumed. Twenty rows is even,
+# so the face has to be even too: `lg` at gap 1 is 10 rows and lands 5/5. The
+# family's gap of 2 is 11 rows and cannot split 20 evenly — it is what put this
+# mark 5-above/4-below in the first place. 10 rows on a 23-row body is also the
+# closer rhyme with Hozz, whose face is 9 on 22.
+#
+# The field's middle is y13.0 and the outline's is y13.5, so centring on the
+# field leaves the outline half a row light on top: 6 above, 7 below. That is
+# the safe direction — the tail already loads the bottom — and it is asserted,
+# so the extra row can never drift back above the face.
 # ---------------------------------------------------------------------------
 GEOM_LG_WIDE = {1: (10, -5), 2: (11, -5), 3: (12, -6), 4: (13, -6)}
-FACE_W, GAP, SIZE, SMILE = 10, 2, 'lg', 'wide'
+FACE_W, GAP, SIZE, SMILE = 10, 1, 'lg', 'wide'
 H, OFF = GEOM_LG_WIDE[GAP]
 
 assert (BODY_W - FACE_W) % 2 == 0, \
     f'a {FACE_W}-wide face cannot centre on a {BODY_W}-wide body'
-assert (BODY_H - H) % 2 == 0, f'a {H}-row face cannot split {BODY_H} rows evenly'
 
-CY = (BODY_Y0 + BODY_Y1 + 1) / 2       # the body's optical middle; tail ignored
+TAIL_TOP = min(TAIL_ROWS)
+FIELD = {p for p in INNER if p in BODY and p[1] < TAIL_TOP}
+FIELD_Y0 = min(y for _, y in FIELD)
+FIELD_Y1 = max(y for _, y in FIELD)
+FIELD_H = FIELD_Y1 - FIELD_Y0 + 1
+assert (FIELD_H - H) % 2 == 0, \
+    f'a {H}-row face cannot split the {FIELD_H}-row field evenly'
+
+CY = (FIELD_Y0 + FIELD_Y1 + 1) / 2     # the field's middle; keyline and tail out
 
 
 def pixels(d):
