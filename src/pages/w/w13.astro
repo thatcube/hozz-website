@@ -223,27 +223,38 @@ const jsonLd = {
 
             {RINGS.map((ring, i) => (
               <div class="ring" style={`--d:${ring.d};--cap:${ring.cap};--stroke:${ring.stroke}`} aria-hidden="true">
-                <div class="arm arm-dest" style={`--a:${DEST_A[i]}`}>
-                  <div class="tip">
-                    <div class="pin pin-dest">
-                      <i class="bead" style={`--c:${hue(DESTINATIONS[i].category)}`}></i>
-                      <b>{DESTINATIONS[i].title}</b>
-                      <span class="mono">{SHORT[DESTINATIONS[i].title]}</span>
-                    </div>
-                  </div>
-                </div>
+                <div class="arm arm-dest" style={`--a:${DEST_A[i]}`}></div>
                 {RIDERS.filter((r) => r.ring === i + 1).map((r) => (
-                  <div class="arm arm-ride" style={`--a:${r.a}`}>
-                    <div class="tip">
-                      <div class="pin pin-ride" style={`--c:${hue(r.category)}`}>
-                        <span class="ridline"><i class="bead"></i><span class="mono rid">{r.id}</span></span>
-                        <span class="mono rsample">{r.sample}</span>
-                      </div>
-                    </div>
-                  </div>
+                  <div class="arm arm-ride" style={`--a:${r.a}`}></div>
                 ))}
               </div>
             ))}
+
+            <div class="layer layer-pins">
+              {RINGS.map((ring, i) => (
+                <div class="ring bare" style={`--d:${ring.d};--cap:${ring.cap}`} aria-hidden="true">
+                  <div class="arm" style={`--a:${DEST_A[i]}`}>
+                    <div class="tip">
+                      <div class="pin pin-dest">
+                        <i class="bead" style={`--c:${hue(DESTINATIONS[i].category)}`}></i>
+                        <b>{DESTINATIONS[i].title}</b>
+                        <span class="mono">{SHORT[DESTINATIONS[i].title]}</span>
+                      </div>
+                    </div>
+                  </div>
+                  {RIDERS.filter((r) => r.ring === i + 1).map((r) => (
+                    <div class="arm" style={`--a:${r.a}`}>
+                      <div class="tip">
+                        <div class="pin pin-ride" style={`--c:${hue(r.category)}`}>
+                          <span class="ridline"><i class="bead"></i><span class="mono rid">{r.id}</span></span>
+                          <span class="mono rsample">{r.sample}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
 
             <div class="disc" aria-hidden="true"><Mark size={132} /></div>
           </div>
@@ -258,27 +269,38 @@ const jsonLd = {
 
             {RINGS_P.map((ring, i) => (
               <div class="ring" style={`--d:${ring.d};--cap:${ring.cap};--stroke:${ring.stroke}`} aria-hidden="true">
-                <div class="arm arm-dest" style={`--a:${DEST_A_P[i]}`}>
-                  <div class="tip">
-                    <div class="pin pin-dest">
-                      <i class="bead" style={`--c:${hue(DESTINATIONS[i].category)}`}></i>
-                      <b>{DESTINATIONS[i].title}</b>
-                      <span class="mono">{SHORT[DESTINATIONS[i].title]}</span>
-                    </div>
-                  </div>
-                </div>
+                <div class="arm arm-dest" style={`--a:${DEST_A_P[i]}`}></div>
                 {RIDERS_P.filter((r) => r.ring === i + 1).map((r) => (
-                  <div class="arm arm-ride" style={`--a:${r.a}`}>
-                    <div class="tip">
-                      <div class="pin pin-ride" style={`--c:${hue(r.category)}`}>
-                        <span class="ridline"><i class="bead"></i><span class="mono rid">{r.id}</span></span>
-                        <span class="mono rsample">{r.sample}</span>
-                      </div>
-                    </div>
-                  </div>
+                  <div class="arm arm-ride" style={`--a:${r.a}`}></div>
                 ))}
               </div>
             ))}
+
+            <div class="layer layer-pins">
+              {RINGS_P.map((ring, i) => (
+                <div class="ring bare" style={`--d:${ring.d};--cap:${ring.cap}`} aria-hidden="true">
+                  <div class="arm" style={`--a:${DEST_A_P[i]}`}>
+                    <div class="tip">
+                      <div class="pin pin-dest">
+                        <i class="bead" style={`--c:${hue(DESTINATIONS[i].category)}`}></i>
+                        <b>{DESTINATIONS[i].title}</b>
+                        <span class="mono">{SHORT[DESTINATIONS[i].title]}</span>
+                      </div>
+                    </div>
+                  </div>
+                  {RIDERS_P.filter((r) => r.ring === i + 1).map((r) => (
+                    <div class="arm" style={`--a:${r.a}`}>
+                      <div class="tip">
+                        <div class="pin pin-ride" style={`--c:${hue(r.category)}`}>
+                          <span class="ridline"><i class="bead"></i><span class="mono rid">{r.id}</span></span>
+                          <span class="mono rsample">{r.sample}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
 
             <div class="disc" aria-hidden="true"><Mark size={104} /></div>
           </div>
@@ -1249,6 +1271,7 @@ const jsonLd = {
         width: var(--disc);
         aspect-ratio: 1;
         translate: -50% -50%;
+        z-index: 2;
         filter: drop-shadow(0 10px 22px rgba(19, 38, 56, 0.13));
       }
 
@@ -1257,10 +1280,28 @@ const jsonLd = {
         height: auto;
       }
 
+      /* Two layers over one origin: every dashed line is painted first, every
+         label second, so no line can ever cross a word. Each .arm rotates, and
+         a rotation makes its own stacking context, so z-index inside an arm
+         cannot lift a label above a sibling arm's line — separate layers can. */
+      .layer {
+        position: absolute;
+        inset: 0;
+      }
+
+      .layer-pins {
+        z-index: 3;
+      }
+
+      .ring.bare {
+        border-color: transparent;
+        animation: none;
+        opacity: 1;
+      }
+
       /* Ring n is destination n. Diameter is a share of the stage width with a
          cap, so once the composition has its room it stops growing. */
-      .ring {
-        position: absolute;
+      .ring {        position: absolute;
         left: var(--ox);
         top: var(--oy);
         width: min(var(--d), var(--cap));
@@ -1303,7 +1344,7 @@ const jsonLd = {
         top: 0;
         translate: -50% -50%;
         width: max-content;
-        background: rgba(255, 255, 255, 0.78);
+        background: rgba(255, 255, 255, 0.9);
         backdrop-filter: blur(9px);
         -webkit-backdrop-filter: blur(9px);
         border: 1px solid rgba(93, 140, 176, 0.28);

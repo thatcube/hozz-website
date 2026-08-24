@@ -2000,12 +2000,12 @@ const jsonLd = {
         min-width: 0;
       }
 
+      /* An identifier that is cut short cannot be checked, so it wraps instead. */
       .types b {
         font-weight: 400;
         font-size: 0.72rem;
         color: var(--ink);
-        overflow: hidden;
-        text-overflow: ellipsis;
+        overflow-wrap: anywhere;
       }
 
       .types em {

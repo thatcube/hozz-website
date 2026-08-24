@@ -1,7 +1,17 @@
-const http=require('http'),fs=require('fs'),path=require('path');
-const ROOT=path.resolve(__dirname,'..','dist');
-const T={'.html':'text/html','.css':'text/css','.js':'text/javascript','.woff2':'font/woff2','.svg':'image/svg+xml','.png':'image/png','.xml':'application/xml','.json':'application/json','.ico':'image/x-icon','.webmanifest':'application/manifest+json'};
-http.createServer((q,s)=>{let u=decodeURIComponent(q.url.split('?')[0]);let f=path.join(ROOT,u);
- try{if(fs.statSync(f).isDirectory())f=path.join(f,'index.html');}catch(e){if(!path.extname(f))f+='.html';}
- fs.readFile(f,(e,d)=>{if(e){s.writeHead(404);return s.end('nf');}s.writeHead(200,{'Content-Type':T[path.extname(f)]||'application/octet-stream','Cache-Control':'no-store'});s.end(d);});
-}).listen(5177,'127.0.0.1',()=>console.log('up'));
+const http = require('http');
+const fs = require('fs');
+const path = require('path');
+const ROOT = path.join(__dirname, '..', 'dist');
+const TYPES = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.svg': 'image/svg+xml', '.woff2': 'font/woff2', '.png': 'image/png', '.webp': 'image/webp', '.ico': 'image/x-icon', '.json': 'application/json', '.txt': 'text/plain', '.xml': 'application/xml' };
+
+http.createServer((req, res) => {
+  let p = decodeURIComponent(req.url.split('?')[0]);
+  let f = path.join(ROOT, p);
+  try {
+    if (fs.existsSync(f) && fs.statSync(f).isDirectory()) f = path.join(f, 'index.html');
+    if (!fs.existsSync(f)) f = path.join(ROOT, p + '.html');
+    if (!fs.existsSync(f)) { res.writeHead(404); return res.end('nope'); }
+    res.writeHead(200, { 'content-type': TYPES[path.extname(f)] || 'application/octet-stream', 'cache-control': 'no-store' });
+    res.end(fs.readFileSync(f));
+  } catch (e) { res.writeHead(500); res.end(String(e)); }
+}).listen(5188, '127.0.0.1', () => console.log('serving dist on 5188'));

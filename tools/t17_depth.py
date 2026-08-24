@@ -1,111 +1,111 @@
 """
-t17 — Depth. The bubble as a physical object with thickness.
+t17 — Depth. The bubble as a physical object, lit from one direction.
 
 The direction: not a flat shape with light painted on it, but something with a
-front face, an edge, and a body behind.
+front face and a body behind, so it reads as a lit balloon of glass.
 
-The shipped Twozz already claims thickness, which is easy to miss until you
-rasterise it. Of its five tones, two do nothing but assert an edge — one row of
-#ad84ec along the top of the bubble and one row of #7243c3 along the bottom,
-with the tail filled in that same deep tone as though it were folded away from
-you. So the shipped mark is not flat. It is a slab, one pixel of light on the
-top edge and one of shadow on the bottom, with nothing behind it.
+Three versions of this mark reached for that with concentric structure — a
+proud rim peeled off the outline, a fold, a recessed panel — and all three came
+back with the same note. A ring that follows the outline at a constant offset
+is a frame, whatever tone you paint it. Inset a second one and you have a
+plaque inside a bezel: the visual language of a television surround, which is
+Plozz's language and not this one. The rim got thinner each time and the read
+never changed, because thinness was never the problem. The problem was that the
+structure was concentric at all.
 
-Plozz takes the same idea one step further and shows what "behind it" looks
-like:
+So the rule this version is built on, and enforces:
 
-      6 .....0000000000000000000000.....   keyline
-      7 ....066666666666666666666660....   case, lit along its top edge
-      8 ...06222222222222222222222260...   case, mid
-      9 ..0622200000000000000000022260..   case, then the bezel closing
-     10 ..0622033333333333333333302260..   screen, one plane further back
-     ...
-     28 ....055555555555555555555550....   case, shaded along its bottom edge
+    NO CLOSED CONSTANT-OFFSET LOOP EXISTS INSIDE THE KEYLINE.
 
-Three planes, and the solidity is not in any single tone: it is in the fact
-that the tones change *direction* when the plane changes.
+That is asserted, not asserted-to. `encloses()` takes any layer, removes it
+from the interior, and floods what is left inward from the keyline. If a single
+pixel is unreachable, that layer has closed a ring around it and the build
+fails. It runs on every tone, and on every prefix and suffix of the ramp, so a
+loop cannot be assembled out of two tones that individually look innocent
+either.
 
-t17 keeps the shipped Twozz's claim exactly and puts a plane behind it:
+What replaces it is the simplest thing that can describe a curved surface:
 
-    keyline -> rim (2px) -> fold -> recessed panel -> face
+    ONE LIGHT SOURCE. ONE DIRECTION. ONE SMOOTH RAMP.
 
-and it rests on one inversion.
+The light sits off the **upper left**, one pixel outside the interior's own
+bounding box, at (minx - 1, miny - 1). Every pixel is toned by its distance
+from that point. Brightest at the upper-left shoulder, steadily darker toward
+the lower right, darkest in the lower-right corner.
 
-  * The **rim is proud**. Light from above lands on its top edge and misses its
-    underside, so it runs light at the top, mid at the sides, dark along the
-    bottom — which is the shipped mark's own two rows, widened to two pixels so
-    there is something to see.
-  * The **panel is recessed**, so it runs the other way. It sits a plane
-    further from the light to begin with, and the near wall throws a shadow
-    across the top of it; what light clears that wall lands at the bottom. Dark
-    at the top, brightening downward.
+Placing the light up and left of *every* pixel is what makes the falloff
+provably monotone rather than approximately monotone. Walk from any pixel in
+direction (1, 1):
 
-Read down the middle and the tone reverses at exactly the rows where the plane
-changes. That is the whole argument, and it is the one thing a drop shadow
-cannot imitate: a shadow darkens in one direction only and it lives *outside*
-the silhouette. Every pixel here is inside it. It is also what keeps this off
-the 2005 bevel — a bevel filter runs light top-left to dark bottom-right across
-everything at once, uniformly; here the two planes disagree on purpose, and the
-light is straight top-down rather than diagonal, which is what a rounded rim
-under a ceiling light actually does.
+    d(s)^2 = (x + s - cx)^2 + (y + s - cy)^2
+    d/ds   = 2[(x - cx + s) + (y - cy + s)]
 
-The fold is not one surface either. Its top arc is the near wall, leaning down
-and away from the light, and it is the darkest thing in the mark. Its bottom
-arc is the far wall, tipped up into the light, and it takes the *same tone as
-the top of the rim* — because it faces the same way, and a surface that faces
-the same way should be the same colour wherever it occurs. That single rule
-does a lot of work: it costs nothing, it makes the bright shelf at the bottom
-of the recess feel like part of the object rather than a highlight painted on
-it, and the floor ramps smoothly up into it.
+and since cx < x and cy < y for every pixel in the shape, that derivative is
+positive everywhere. Never brighter again, in any straight line from upper left
+to lower right — and the same argument holds for straight right and straight
+down, so it is true of every direction in that quadrant, not just the diagonal.
+`monotone()` checks all three empirically as well.
 
-The floor's grading is carried by two contour rings graded by height, not by
-horizontal bands. Bands were tried first and failed: 1px stripes across a
-14-row floor are invisible at 96px, and the mark read as a flat shape with a
-thick border. Rings wrap the corners, so grading them by height makes the same
-two rings deliver an inset bevel you can still see at 24px *and* a gradient
-that tells you which way is up. Down the sides they pass through the core's own
-tone and vanish, which is correct: a floor lit from above gets nothing from
-walls it is edge-on to, and drawing something there is how a recess becomes an
-emboss.
+Radial rather than linear on purpose. A linear ramp gives straight 45-degree
+stripes, which describe a tilted flat plane; distance from a point gives arcs
+that bend around the light, which is what a curved surface does. And because
+the light is outside the silhouette, those arcs enter one edge and leave by
+another. They cannot close. The construction and the rule agree.
 
-Subtlety is enforced, not hoped for. No step inside either ramp moves any
-channel by more than 18, inside the 21 the shipped Plozz screen already spends.
-The only jumps larger than that are plane changes, where a jump is the point.
+Two exceptions to the ramp, and only two:
 
-The silhouette is the shipped bubble's, measured off the raster: the same
-six-row corner arc, the same narrow tail hung from a vertical left edge with
-the taper on its right. An earlier pass ran the tail out at 45 degrees and it
-read as an arrow; another made it eight pixels wide at the junction and it read
-as a nub. The shipped proportion is a tail six wide falling to a point, and it
-is right.
+  * The keyline. One pixel, near-black, all the way round. It is a loop, and it
+    is the only one — an outline is allowed to be an outline.
+  * A specular catch of a handful of pixels on the upper-left shoulder, where
+    the surface most directly faces the light. It is taken from the contour
+    just inside the keyline and cut off at a fixed radius, so it is a short arc
+    that stops well before the top of the mark and appears nowhere else.
 
-Face: `lg` + `wide` + gap 1. mark.ts says to keep `lg` for a plain open field,
-and at first glance a rim, a fold and a graded floor disqualify this one — but
-the recess exists precisely to make a plain open field, and its core is a
-single tone across 204 pixels. That is the same argument Plozz makes: a busy
-container, a plain screen built into it, and a full-size face on the screen. A
-smaller face was tried and next to the shipped mark it read as timid. `wide` is
-Twozz's own smile against Plozz's compact one, and gap 1 brings the face to ten
-rows, which is what makes the air come out equal on a 24-row body.
+The specular is the one place MAX_STEP is deliberately broken. Every step
+inside the ramp moves each channel by 15 or less; the catch jumps 28 in red. A
+highlight that eases in is not a highlight, it is a fourth ramp step.
 
-White ink, because FAMILY records Twozz's as white and it is the reason the
-shipped mark carries at 24px. That in turn fixes the polarity: the floor has to
-stay dark enough to hold white type, which is also the physically honest
-reading of a recess — a scooped-out hollow is further from the light than the
-face around it, not nearer.
+Silhouette: a true quarter-circle corner at r = 9, sampled honestly with
+inset = r - sqrt(r^2 - k^2) at each row, which gives 16, 20, 22, 24, 26, 26
+before full width. Six rows of arc on a body 22 rows tall, so over a quarter of
+the height is curve on each end. Rounder than the shipped mark's arc and
+rounder than t19's, because the concentric version read as a squircle even
+after the arc had been opened once — part of that was the rings reinforcing the
+corner geometry, but the corners were genuinely too tight as well.
+
+The tail is a wedge growing off the lower left. What makes it a wedge and not a
+notch is a visible change of direction: down the body's bottom-left the left
+edge curves inward, and at the junction that curve stops dead and runs vertical
+for all six rows, with the whole taper carried on the right. Curve, then
+straight. You can see the corner turn.
+
+Face: `lg` + `wide` + gap 1. mark.ts says to keep `lg` for a plain open field.
+There is no rim, fold or panel to spill onto now — the interior is one smooth
+surface — so this is the version where `lg` is easiest to defend. The ink does
+sit across several ramp tones rather than one flat core, which means the
+contrast test has to be made against the *lightest* tone any ink pixel lands
+on, not against an average. That is the binding constraint on the whole
+palette, and it is why the ramp reaches 4.5:1 by its fourth step: the face's
+upper-left corner is the brightest ground the ink ever touches.
+
+White ink, because FAMILY records Twozz's as white and it is why the shipped
+mark carries at 24px.
 """
 import sys
+from math import hypot
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tools'))
 
 from circles import check  # noqa: E402
-from shade import rings, edge, keyline, to_paths, is_slab, show  # noqa: E402
+from shade import keyline, to_paths, is_slab, show  # noqa: E402
 
 OUT = ROOT / 'src/components/mark/logos'
 SLUG = 't17'
 NAME = 'Depth'
+
+NEI = ((1, 0), (-1, 0), (0, 1), (0, -1))
 
 # ---------------------------------------------------------------------------
 # Silhouette.
@@ -113,13 +113,15 @@ NAME = 'Depth'
 # A true quarter-circle corner, not a rounded-rectangle one. The arc is r = 9
 # sampled honestly — inset = r - sqrt(r^2 - k^2) at each row — which gives
 # 16, 20, 22, 24, 26, 26 before full width: six rows of arc on a body 22 rows
-# tall, so better than a quarter of the height is curve. An earlier pass copied
-# the shipped mark's tighter arc on the theory that matching it exactly was the
-# safest way to sit next to the siblings, and on a sheet of ten it read as a
-# squircle badge instead: the corners were tight enough, and the sides straight
-# enough, that the thing stopped looking like a bubble and started looking like
-# an app tile. Speech is the meaning of this mark, so the silhouette is not
-# decoration and cannot be the part that gets compromised.
+# tall, so better than a quarter of the height is curve at each end.
+#
+# Opened twice. The first version copied the shipped mark's tighter arc on the
+# theory that matching it exactly was the safest way to sit beside the
+# siblings, and on a sheet of ten it read as an app tile. The second opened it
+# partway and still read as square-shouldered — some of which was the
+# concentric rings running parallel to the outline and stating the corner
+# geometry twice, but the corners were tight as well. This is the full r = 9
+# circle with nothing inside it echoing the outline.
 #
 # Every width is even, so the body is symmetric about x=16 by construction and
 # its parity is fixed. That also rules out the `sm` face by arithmetic rather
@@ -137,26 +139,14 @@ for i, w in enumerate(BODY_WIDTHS):
 BODY_Y0, BODY_Y1 = BODY_TOP, BODY_TOP + len(BODY_WIDTHS) - 1
 BODY_W = max(BODY_WIDTHS)
 
-# The tail is a wedge growing off the lower left, and the thing that makes it
-# read as a wedge rather than as a notch bitten out of the outline is a visible
-# change of direction where it leaves the body. Down the body's bottom-left the
-# left edge is curving inward — x3, x4, x5, x6, x8 — and at the junction that
-# curve stops dead and goes vertical: x8 for all six rows, with the whole taper
-# carried on the right. Curve, then straight. You can see the corner turn.
-#
-# Six rows and eight wide at the junction, against a bottom row only sixteen
-# wide, so the tail is half the width it hangs off and cannot be mistaken for a
-# nick in the arc. An earlier version gave it four rows off a flat 28-wide
-# bottom, and at that proportion it was a notch.
-#
-# The left edge is flush with the body's bottom row rather than stepping out
-# past it. A single column poking out one row lower than its neighbour is a new
-# upward-facing surface, and the lighting rule correctly lights it: one stray
-# pale pixel halfway down the tail.
+# The tail's left edge is flush with the body's bottom row — x8 for all six
+# rows, against a bottom row of x8-x23 — rather than stepping out past it. A
+# column poking out one row lower than its neighbour is a spur, and it is also
+# a new surface for the light to catch.
 TAIL_ROWS = {
-    24: (8, 15),
-    25: (8, 14),
-    26: (8, 13),
+    24: (8, 16),
+    25: (8, 15),
+    26: (8, 14),
     27: (8, 12),
     28: (8, 10),
     29: (8, 9),
@@ -199,8 +189,8 @@ def connected(shape):
     stack = list(seen)
     while stack:
         x, y = stack.pop()
-        for d in ((1, 0), (-1, 0), (0, 1), (0, -1)):
-            p = (x + d[0], y + d[1])
+        for dx, dy in NEI:
+            p = (x + dx, y + dy)
             if p in shape and p not in seen:
                 seen.add(p)
                 stack.append(p)
@@ -214,107 +204,100 @@ YS = [p[1] for p in SIL]
 assert min(XS) >= 2 and max(XS) <= 29, f'x out of 2-29: {min(XS)}-{max(XS)}'
 assert min(YS) >= 2 and max(YS) <= 29, f'y out of 2-29: {min(YS)}-{max(YS)}'
 
-# ---------------------------------------------------------------------------
-# The three planes.
-#
-# Every layer below comes out of `rings` or `edge`, so each one follows the
-# object's own contour and none of them could come out a rectangle.
-# ---------------------------------------------------------------------------
-KEY_PX = keyline(SIL)               # one continuous outline around the whole object
+KEY_PX = keyline(SIL)               # the one loop the mark is allowed
 INNER = SIL - KEY_PX
-TAIL_IN = TAIL - KEY_PX
-
-# Rim, fold and panel are peeled off the **body on its own**, never off the
-# union. Peel them off the union and the body's bottom edge simply stops where
-# the tail meets it: the panel then bulges down into the junction and the
-# recess is no longer square with the face. That was visible on the first
-# render. Taking the rings from the body means the fold closes as a loop.
-#
-# Three rings, not four. The first version spent six of the fourteen columns
-# across the mark on edge treatment — keyline, three rings of rim, a fold, then
-# two grading rings — and however carefully each one was toned, the sum of them
-# read as a frame drawn around the shape rather than as an edge belonging to
-# it. At 28px it closed over the interior and the mark went muddy. One ring of
-# rim, one of fold and one of grading is enough to state three planes, and it
-# hands four extra columns back to the field the face sits on.
-BANDS, PANEL = rings(BODY, 3)
-FOLD = BANDS[2]                     # where the front face turns inward
-
-# The fold is not one surface, it is the recess's own wall, and its top and
-# bottom face opposite ways. The near wall — the top arc — leans down and away
-# from the light, so it is the darkest thing in the mark. The far wall — the
-# bottom arc — leans up into it, and so takes the same tone as the top of the
-# rim, which faces the same way. The sides are edge-on and stay with the wall.
-#
-# Derived from the panel rather than from the fold itself: `edge` follows
-# contours per run, so on a closed ring it reports both arcs as "topmost" and
-# the two come out identical. Asking which fold pixels have panel below them,
-# and which have panel above, is unambiguous.
-F_TOP = {(x, y) for (x, y) in FOLD if (x, y + 1) in PANEL}
-F_BOT = {(x, y) for (x, y) in FOLD if (x, y - 1) in PANEL} - F_TOP
-F_SIDE = FOLD - F_TOP - F_BOT
-
-# BANDS[0] is the body's own outline. Almost all of it coincides with the
-# object's outline and is keyline; the pixels that do not are exactly the tail
-# junction, and there the wall must carry on into the tail rather than have a
-# dark line ruled across it.
-RIM = (BANDS[0] - KEY_PX) | BANDS[1]
-
-CASING = RIM | TAIL_IN              # everything made of wall
-
-# One lighting rule for the whole object: surfaces facing up are lit, surfaces
-# facing down are shaded, the sides stay mid. Taken from the union, so the
-# tail's top is *not* lit — it is continuous with the body, not a separate
-# thing with a top of its own.
-LIT_CONTOUR = edge(INNER, 0, -1, 1)
-SHAD_CONTOUR = edge(INNER, 0, 1, 1) - LIT_CONTOUR
-
-W_LIT = CASING & LIT_CONTOUR
-W_SHAD = CASING & SHAD_CONTOUR
-W_MID = CASING - W_LIT - W_SHAD
 
 # ---------------------------------------------------------------------------
-# The recess.
+# The light.
 #
-# One contour ring and a core, graded by height — the part Plozz has no reason
-# to do, because a TV screen is emissive and a recess is not.
-#
-# One construction, two jobs. Across the top the ring runs darker than the
-# core: the near wall's shadow lying on the floor. Across the bottom it runs
-# lighter: the light that cleared the wall, pooling where it lands. Down the
-# sides it passes through the core's own tone and disappears, which is right —
-# a floor lit from directly above gets nothing extra from walls it is edge-on
-# to, and drawing something there is how a recess turns into an emboss.
-#
-# The ring used to be two rings, and losing one is what stopped the interior
-# reading as a frame. It costs nothing: the grading was always the thing doing
-# the work, and a one-pixel ring sweeping the whole ramp says it just as well
-# as two pixels sweeping it twice.
-#
-# The core is a single tone across better than two hundred pixels, which is the
-# plain open field the face needs and the reason `lg` is defensible here.
+# One point, one pixel off the interior's own top-left corner. Everything about
+# the shading is a consequence of where this sits: outside the silhouette so
+# the iso-lines cannot close, and up-and-left of every single pixel so the
+# falloff is monotone by proof rather than by inspection.
 # ---------------------------------------------------------------------------
-P_RINGS, P_CORE = rings(PANEL, 1)
-P_Y0 = min(y for _, y in PANEL)
-P_Y1 = max(y for _, y in PANEL)
+LX = min(x for x, _ in INNER) - 1
+LY = min(y for _, y in INNER) - 1
 
-STEPS = 7
-CORE_I = STEPS // 2                 # 3 of 0..6 — the middle of the ramp
+D = {p: hypot(p[0] - LX, p[1] - LY) for p in INNER}
+D_MIN, D_MAX = min(D.values()), max(D.values())
+
+STEPS = 11
+GAMMA = 0.85                        # see the ramp note below
+
+TONE_I = {}
+for p, d in D.items():
+    t = (d - D_MIN) / (D_MAX - D_MIN)
+    TONE_I[p] = min(STEPS - 1, int(round((t ** GAMMA) * (STEPS - 1))))
+
+# The specular catch: the contour just inside the keyline, cut off at a fixed
+# radius from the light. Because the cut is on distance and not on position, it
+# lands exactly where the surface faces the light most directly and stops on
+# its own — it cannot run round the top, because the top is further away.
+CONTOUR = {p for p in INNER if any((p[0] + dx, p[1] + dy) not in INNER
+                                   for dx, dy in NEI)}
+SPEC_REACH = 1.7
+SPEC = {p for p in CONTOUR if D[p] <= D_MIN + SPEC_REACH}
+assert 4 <= len(SPEC) <= 12, f'the catch is {len(SPEC)}px — a catch is a few pixels'
+
+RAMP_PX = {i: set() for i in range(STEPS)}
+for p, i in TONE_I.items():
+    if p not in SPEC:
+        RAMP_PX[i].add(p)
+RAMP_PX = {i: s for i, s in RAMP_PX.items() if s}
+
+# ---------------------------------------------------------------------------
+# Monotonicity.
+#
+# The client's test, run as code: walking from upper left to lower right, every
+# step is the same tone or darker, never brighter again. Checked on the
+# diagonal and on both axes, since all three point into that quadrant.
+# ---------------------------------------------------------------------------
+for dx, dy in ((1, 1), (1, 0), (0, 1)):
+    for p, i in TONE_I.items():
+        q = (p[0] + dx, p[1] + dy)
+        if q in TONE_I:
+            assert TONE_I[q] >= i, (
+                f'{p}->{q} steps back toward the light ({i} -> {TONE_I[q]})')
+
+# ---------------------------------------------------------------------------
+# No closed constant-offset loop.
+#
+# The rule this version exists to satisfy, made falsifiable. Pull a layer out
+# of the interior and flood what remains inward from the keyline. Anything a
+# flood from the edge cannot reach has been ringed in, and a ring is a frame.
+#
+# Run on each tone alone and on every prefix and suffix of the ramp, so that a
+# loop assembled out of two adjacent tones — a "bright band" made of steps 0
+# and 1 together — fails just as loudly as a single-tone one.
+# ---------------------------------------------------------------------------
+def encloses(layer):
+    rest = INNER - layer
+    if not rest:
+        return False
+    seen = {p for p in rest
+            if any((p[0] + dx, p[1] + dy) not in INNER for dx, dy in NEI)}
+    stack = list(seen)
+    while stack:
+        x, y = stack.pop()
+        for dx, dy in NEI:
+            q = (x + dx, y + dy)
+            if q in rest and q not in seen:
+                seen.add(q)
+                stack.append(q)
+    return len(seen) != len(rest)
 
 
-def grade(px, lo, hi):
-    """Bucket a layer's pixels by height, across ramp indices lo..hi."""
-    out = {}
-    for x, y in px:
-        t = (y - P_Y0) / (P_Y1 - P_Y0)
-        out.setdefault(round(lo + t * (hi - lo)), set()).add((x, y))
-    return out
+KEYS = sorted(RAMP_PX)
+GROUPS = [('the catch', SPEC)]
+GROUPS += [(f'tone {i}', RAMP_PX[i]) for i in KEYS]
+GROUPS += [(f'tones 0-{k}', set().union(*(RAMP_PX[i] for i in KEYS[:n])))
+           for n, k in ((n, KEYS[n - 1]) for n in range(2, len(KEYS)))]
+GROUPS += [(f'tones {k}-{KEYS[-1]}',
+            set().union(*(RAMP_PX[i] for i in KEYS[n:])))
+           for n, k in ((n, KEYS[n]) for n in range(1, len(KEYS) - 1))]
 
-
-P_LAYERS = {}
-for i, s in grade(P_RINGS[0], 0, STEPS - 1).items():
-    P_LAYERS.setdefault(i, set()).update(s)
-P_LAYERS.setdefault(CORE_I, set()).update(P_CORE)
+for what, layer in GROUPS:
+    assert not encloses(layer), f'{what} closes a loop inside the keyline'
 
 # ---------------------------------------------------------------------------
 # Palette.
@@ -322,85 +305,51 @@ P_LAYERS.setdefault(CORE_I, set()).update(P_CORE)
 # Violet, and staying violet. Twitch is purple and the client only allowed
 # *leaving* purple, he did not ask for it; the family already spends cyan on
 # Plozz, red on Mozz and pale blue on Hozz, so violet is the one open hue with
-# nothing to argue about. It is pulled toward indigo from the shipped #8f52f6,
-# which sits too near the top of its own range to leave a ramp anywhere to go —
-# and the client's standard, "you barely notice it change colours, and yet
-# they're completely different colours", needs a wide total range crossed in
-# small steps.
+# nothing to argue about.
 #
-# Two ramps, because there are two planes, and they are stacked rather than
-# side by side. The wall is the front face and is the lighter of the two: it is
-# nearest the light. The floor sits behind it and runs darker, which is both
-# what a scooped hollow does and what lets it carry white type. Between them
-# the fold spans from one to the other, and that span is a plane change, so it
-# is allowed to jump where a ramp step is not.
+# The ramp is anchored at three points rather than two, and the middle anchor
+# is the one doing the real work. The face's upper-left corner is the brightest
+# ground the white ink ever touches, and it lands on step 3, so step 3 has to
+# clear 4.5:1 on its own. Everything brighter than that — the shoulder glow and
+# the catch — lives outside the face entirely.
 #
-# Everything except the keyline now lives in the upper half of the range. The
-# first palette put four interior tones below #6b3fc9 to buy depth, and it did
-# buy depth — at 320px. At 28px those tones merged with the keyline into one
-# dark ring and the mark turned to mud. The two siblings that stay legible
-# small, t19 and t14, both bottom out around #6138d0 and #7243c3 and spend
-# nothing below that, so this ramp does the same: one dark tone, the outline,
-# and light doing all the work inside it.
-#
-# The floor ramp is hinged on the core rather than run straight from end to
-# end, because the core is the one tone the white face has to sit on and it has
-# to clear 4.5:1. Hinging lets the floor climb well past the core on the way
-# down without dragging the core up with it.
+# GAMMA = 0.85 is what puts the face's corner on step 3 rather than step 2. It
+# also biases the ramp's resolution toward the lit end, which is where a curved
+# surface actually turns fastest.
 # ---------------------------------------------------------------------------
-KEY = '#1e1136'
-WALL = ['#b78ef3', '#a87ce9', '#986bde']        # up-facing, mid, down-facing
-F_SIDE_C = '#885ad3'                            # the wall, one step deeper
-F_TOP_C = '#7849c7'                             # deeper again: the near wall
-
-FLOOR_LO = (0x64, 0x37, 0xc4)                   # the near wall's shadow
-FLOOR_CORE = (0x81, 0x54, 0xcf)                 # the plain field, 5.1:1 white
-FLOOR_HI = (0xad, 0x86, 0xee)                   # where the light lands
+KEY = '#1c0f38'
+SPEC_C = '#d3b0fb'                              # the catch
+A, A_I = (0xb9, 0x88, 0xf0), 0                  # the lit shoulder
+B, B_I = (0x8a, 0x52, 0xdd), 3                  # the face's brightest ground
+C, C_I = (0x46, 0x21, 0x9c), STEPS - 1          # the far corner
 INK = '#ffffff'                                 # Twozz's own ink, per FAMILY
 
 
-def lerp(a, b, t):
-    return round(a + (b - a) * t)
+def lerp(p, q, t):
+    return '#%02x%02x%02x' % tuple(round(p[c] + (q[c] - p[c]) * t)
+                                   for c in range(3))
 
 
-FLOOR = []
-for i in range(STEPS):
-    if i <= CORE_I:
-        a, b, t = FLOOR_LO, FLOOR_CORE, i / CORE_I
-    else:
-        a, b, t = FLOOR_CORE, FLOOR_HI, (i - CORE_I) / (STEPS - 1 - CORE_I)
-    FLOOR.append('#%02x%02x%02x' % tuple(lerp(a[c], b[c], t) for c in range(3)))
+RAMP = [lerp(A, B, i / (B_I - A_I)) if i <= B_I
+        else lerp(B, C, (i - B_I) / (C_I - B_I))
+        for i in range(STEPS)]
 
 MAX_STEP = 18  # Plozz's own widest interior step is 21, so this is inside it.
-# Two ramps, continued by the parts of the fold that belong to them. The near
-# wall and the sides are the front face carrying on down into shadow. The far
-# wall is tipped up into the light exactly as the top of the rim is, so it
-# takes the rim's own lit tone and the floor ramps up into it — the same
-# surface orientation gets the same tone wherever it occurs.
-for ramp, what in ((WALL + [F_SIDE_C, F_TOP_C], 'wall'),
-                   (FLOOR + [WALL[0]], 'floor')):
-    for a, b in zip(ramp, ramp[1:]):
-        d = max(abs(int(a[i:i + 2], 16) - int(b[i:i + 2], 16)) for i in (1, 3, 5))
-        assert d <= MAX_STEP, f'{what}: {a}->{b} steps by {d}, which reads as a band'
+for a, b in zip(RAMP, RAMP[1:]):
+    d = max(abs(int(a[i:i + 2], 16) - int(b[i:i + 2], 16)) for i in (1, 3, 5))
+    assert d <= MAX_STEP, f'ramp: {a}->{b} steps by {d}, which reads as a band'
 
-LAYERS = [
-    (KEY_PX, KEY),
-    (W_LIT | F_BOT, WALL[0]),
-    (W_MID, WALL[1]),
-    (W_SHAD, WALL[2]),
-    (F_SIDE, F_SIDE_C),
-    (F_TOP, F_TOP_C),
-] + [(P_LAYERS[i], FLOOR[i]) for i in sorted(P_LAYERS)]
+LAYERS = [(KEY_PX, KEY)] + [(RAMP_PX[i], RAMP[i]) for i in KEYS] + [(SPEC, SPEC_C)]
 
 # ---------------------------------------------------------------------------
 # Layer assertions.
 # ---------------------------------------------------------------------------
-seen = set()
-for px, fill in LAYERS:
-    assert px, f'empty layer {fill}'
-    assert not (px & seen), f'layer {fill} overlaps an earlier one'
-    seen |= px
-assert seen == SIL, f'layers do not tile the silhouette ({len(seen)} vs {len(SIL)})'
+COVER = set()
+for px, _ in LAYERS:
+    assert px, 'an empty layer'
+    assert not (px & COVER), 'two layers overlap'
+    COVER |= px
+assert COVER == SIL, f'{len(SIL - COVER)} pixels of the shape are unpainted'
 
 TONES = {f for _, f in LAYERS}
 assert len(TONES) >= 8, f'only {len(TONES)} tones'
@@ -419,8 +368,8 @@ for px, fill in LAYERS:
 # screen rather than on its whole TV:
 #     top - y0 == y1 - (top + h - 1)   ->   top = (y0 + y1 - h + 1) / 2
 # With the body at y2-y23 and h = 10 that is top = 8, so cy = 13. The same
-# arithmetic is why the body is 22 rows: it forces y0 + y1 - h + 1 even, and
-# an odd result would have put the face half a pixel off centre.
+# arithmetic is why the body is 22 rows: it forces y0 + y1 - h + 1 even, and an
+# odd result would have put the face half a pixel off centre.
 # ---------------------------------------------------------------------------
 FACE_SIZE, FACE_SMILE, FACE_GAP = 'lg', 'wide', 1
 FACE_W, FACE_H = 10, 10
@@ -456,8 +405,8 @@ assert len(FACE_ROWS) == FACE_H
 FACE_PX = {(FACE_LEFT + x, FACE_TOP + i)
            for i, runs in enumerate(FACE_ROWS) for a, b in runs
            for x in range(a, b + 1)}
-assert FACE_PX <= PANEL, 'the face spills off the panel onto the rim'
-assert FACE_PX <= P_CORE, 'the face sits on the floor grading rather than its plain core'
+assert FACE_PX <= INNER, 'the face runs into the keyline'
+assert not (FACE_PX & SPEC), 'the face sits on the catch'
 
 
 def luminance(hexc):
@@ -468,9 +417,18 @@ def luminance(hexc):
     return 0.2126 * ch(r) + 0.7152 * ch(g) + 0.0722 * ch(b)
 
 
-CONTRAST = (max(luminance(FLOOR[CORE_I]), luminance(INK)) + 0.05) / \
-           (min(luminance(FLOOR[CORE_I]), luminance(INK)) + 0.05)
-assert CONTRAST >= 4.5, f'face contrast only {CONTRAST:.2f}:1 on the core'
+def contrast(p, q):
+    a, b = luminance(p), luminance(q)
+    return (max(a, b) + 0.05) / (min(a, b) + 0.05)
+
+
+# The ink crosses the ramp, so the test is against the lightest ground any ink
+# pixel actually lands on — the worst case, not the average.
+BED = {RAMP[TONE_I[p]] for p in FACE_PX}
+BED_LIGHTEST = max(BED, key=luminance)
+CONTRAST = contrast(BED_LIGHTEST, INK)
+assert CONTRAST >= 4.5, (
+    f'face contrast only {CONTRAST:.2f}:1 on {BED_LIGHTEST}, its lightest ground')
 
 # ---------------------------------------------------------------------------
 # Emit.
@@ -478,70 +436,70 @@ assert CONTRAST >= 4.5, f'face contrast only {CONTRAST:.2f}:1 on the core'
 DOC = f'''/**
  * t17 · Depth
  *
- * The bubble as a physical object with thickness, rather than a flat shape
- * with light on it.
+ * The bubble as a physical object lit from one direction, rather than a flat
+ * shape with light painted on it.
  *
- * The shipped Twozz mark already claims thickness — of its five tones, two do
- * nothing but assert an edge: one row of #ad84ec along the top of the bubble
- * and one of #7243c3 along the bottom, with the tail filled in that same deep
- * tone as though it were folded away from you. It is a slab. What it has not
- * got is anything behind it. Plozz has: a case, a bezel, and a screen one
- * plane further back. This keeps the shipped mark's claim and adds the plane.
+ * Three earlier versions built the depth out of concentric structure — a proud
+ * rim peeled off the outline, a fold, a recessed panel — and all three read as
+ * a frame around a plaque. The rim got thinner each time and the read never
+ * changed, because thinness was not the problem: a ring that follows the
+ * outline at a constant offset is a frame whatever tone it is painted.
  *
- *     keyline -> rim (2px) -> fold -> recessed panel -> face
+ * So the rule this version is built on, and asserts:
  *
- * It turns on one inversion. The **rim is proud**, so light lands on its top
- * edge and misses its underside: light at the top, mid at the sides, dark
- * along the bottom — the shipped mark's two rows, widened to two pixels so
- * there is something to see. The **panel is recessed**, so it runs the other
- * way. It sits a plane further from the light to begin with, and the near wall
- * throws a shadow across the top of it, so it is darkest at the top and
- * brightens downward.
+ *     no closed constant-offset loop exists inside the keyline
  *
- * That reversal is the argument. A drop shadow darkens in one direction only
- * and lives outside the silhouette; every pixel here is inside it. A bevel
- * filter runs light top-left to dark bottom-right across everything at once;
- * here the two planes disagree on purpose, and the light is straight top-down
- * rather than diagonal, which is what a rounded rim under a ceiling light
- * actually does.
+ * `encloses()` removes each layer from the interior and floods what is left
+ * inward from the edge. One unreachable pixel means that layer has ringed
+ * something in, and the build fails. It runs on every tone and on every prefix
+ * and suffix of the ramp, so a band cannot be assembled out of two tones that
+ * individually look innocent.
  *
- * The fold is not one surface either. Its top arc is the near wall, leaning
- * away from the light, and it is the darkest thing in the mark. Its bottom arc
- * is the far wall, tipped up into it, and it takes the *same tone as the top
- * of the rim* — a surface that faces the same way should be the same colour
- * wherever it occurs. That costs no extra tone and it makes the bright shelf
- * at the bottom of the recess feel like part of the object rather than a
- * highlight painted onto it.
+ * What replaces it is one light source, one direction, one smooth ramp. The
+ * light sits off the **upper left**, one pixel outside the interior's bounding
+ * box; every pixel is toned by its distance from it. Brightest at the
+ * upper-left shoulder, steadily darker toward the lower right, darkest in the
+ * far corner.
  *
- * The floor's grading is carried by two contour rings graded by height, not by
- * horizontal bands. Bands were tried first and were invisible at 96px, which
- * left the mark reading as a flat shape with a thick border. Rings wrap the
- * corners, and grading them by height makes the same two rings deliver an
- * inset bevel you can still see at 24px *and* a gradient that tells you which
- * way is up. Down the sides they pass through the core's own tone and vanish,
- * which is correct: a floor lit from directly above gets nothing from walls it
- * is edge-on to, and drawing something there is how a recess becomes an
- * emboss.
+ * Putting the light up and left of every pixel makes that falloff monotone by
+ * proof. Walking from any pixel in direction (1, 1), the derivative of
+ * distance is 2[(x - cx + s) + (y - cy + s)], and both terms are positive
+ * everywhere in the shape — so no straight line from upper left to lower right
+ * ever gets brighter again. The same holds for straight right and straight
+ * down, and all three are checked empirically too.
  *
- * No step inside either ramp moves any channel by more than 18, inside the 21
- * the shipped Plozz screen already spends. The only jumps larger than that are
- * plane changes, where a jump is the point.
+ * Radial rather than linear on purpose. A linear ramp gives 45-degree stripes,
+ * which describe a tilted flat plane; distance from a point gives arcs that
+ * bend around the light, which is what a curved surface does. And because the
+ * light is outside the silhouette, those arcs enter by one edge and leave by
+ * another — they cannot close. The construction and the rule agree.
  *
- * Silhouette and tail are the shipped bubble's own, measured off the raster —
- * the same six-row corner arc, the same narrow tail on a vertical left edge.
- * One row taller in the body, which is what lets a full-size face clear the
- * floor's grading and still leave equal air.
+ * Two exceptions, and only two. The keyline, one pixel, near-black, all the
+ * way round: it is a loop, and it is the only one an outline is allowed to be.
+ * And a specular catch of {len(SPEC)} pixels on the upper-left shoulder, taken from the
+ * contour just inside the keyline and cut off at a fixed radius from the
+ * light, so it stops on its own well before the top and appears nowhere else.
+ * The catch is the one place the ramp's step limit is broken on purpose — a
+ * highlight that eases in is not a highlight, it is another ramp step.
+ *
+ * Silhouette: a true quarter-circle corner at r = 9, sampled row by row, which
+ * gives 16, 20, 22, 24, 26, 26 before full width. Rounder than the shipped
+ * mark's arc and rounder than its siblings', because with rings inside echoing
+ * the outline the corner geometry was being stated twice and read square. The
+ * tail is a wedge off the lower left whose left edge stops curving and goes
+ * vertical exactly where it leaves the body, so you see the corner turn rather
+ * than reading a notch.
  *
  * Violet, pulled toward indigo from the shipped #8f52f6, which sits too near
  * the top of its own range to leave a ramp anywhere to go. White ink, as the
- * shipped mark has, which is what fixes the polarity: the floor has to stay
- * dark enough to carry it, and a hollow being darker than the face around it
- * is the honest reading anyway.
+ * shipped mark has. The ink crosses the ramp rather than sitting on one flat
+ * core, so its contrast is measured against the lightest ground any ink pixel
+ * lands on — {BED_LIGHTEST} at {CONTRAST:.1f}:1 — and that worst case is what sets where
+ * the ramp has to be dark by.
  *
  * {len(TONES)} tones. Body y{BODY_Y0}-{BODY_Y1}, {BODY_W} wide, symmetric about x=16;
- * the tail is asymmetric by design and exempt. Face {FACE_SIZE}/{FACE_SMILE}/gap{FACE_GAP} on the
- * plain core at {CONTRAST:.1f}:1, with {AIR_ABOVE} rows of air above it and {AIR_BELOW} below,
- * measured on the body, not on the tail.
+ * the tail is asymmetric by design and exempt. {AIR_ABOVE} rows of air above the face
+ * and {AIR_BELOW} below, measured on the body, not on the tail.
  */'''
 
 body_lines = [f'  <path d="{" ".join(to_paths(px))}" fill="{fill}" />'
@@ -566,10 +524,10 @@ const {{ size = 128 }} = Astro.props;
 </MarkFrame>
 '''
 
-palette = [KEY, F_TOP_C, F_SIDE_C] + WALL[::-1] + FLOOR
+palette = [KEY] + RAMP[::-1] + [SPEC_C]
 meta = f'''export default {{
   n: '{SLUG}', name: '{NAME}',
-  idea: 'The shipped mark already spends two of its five tones asserting an edge. This keeps that claim and puts a plane behind it: a proud rim lit on top and shaded underneath, folding into a recess that grades the other way, so the tone reverses exactly where the plane does.',
+  idea: 'One light source off the upper left, one radial falloff, and a rule the build enforces: no closed constant-offset loop anywhere inside the keyline. Every earlier attempt at depth here was concentric — a rim, a fold, an inset panel — and concentric structure reads as a frame around a plaque however thin you make it. This is the same fourteen tones laid out as a gradient instead of as bands, so the surface curves away from the light and never brightens again.',
   ground: 'light',
   palette: {palette},
 }};
@@ -586,14 +544,19 @@ print(f'  silhouette  x{min(XS)}-{max(XS)} y{min(YS)}-{max(YS)}, {len(SIL)}px, c
 print(f'  body        y{BODY_Y0}-{BODY_Y1}, {BODY_W} wide, symmetric about x=16, no spurs')
 print(f'  tail        y{min(TAIL_ROWS)}-{max(TAIL_ROWS)}, asymmetric by design; '
       f'union spur-checked')
-print(f'  panel       y{P_Y0}-{P_Y1}, 2 graded rings + plain core')
+print(f'  light       ({LX}, {LY}) — upper left, outside the shape; '
+      f'radial falloff d={D_MIN:.1f}-{D_MAX:.1f}, gamma {GAMMA}')
+print(f'  monotone    (1,1), (1,0) and (0,1) all same-or-darker: verified')
+print(f'  no loops    {len(GROUPS)} layers and layer-groups tested by flood fill: '
+      f'none encloses a pixel')
+print(f'  catch       {len(SPEC)}px on the upper-left shoulder, {SPEC_C}')
 print(f'  tones       {len(TONES)}')
 print(f'  face        {FACE_SIZE}/{FACE_SMILE}/gap{FACE_GAP} — {FACE_W}x{FACE_H} at '
-      f'x{FACE_LEFT}-{FACE_LEFT+FACE_W-1} y{FACE_TOP}-{FACE_TOP+FACE_H-1}, '
-      f'cy={FACE_CY}, {CONTRAST:.1f}:1 on the core')
+      f'x{FACE_LEFT}-{FACE_LEFT+FACE_W-1} y{FACE_TOP}-{FACE_TOP+FACE_H-1}, cy={FACE_CY}; '
+      f'ink crosses {len(BED)} tones, lightest {BED_LIGHTEST} at {CONTRAST:.1f}:1')
 print(f'  parity      body {BODY_W} / face {FACE_W} — both even')
 print(f'  air         {AIR_ABOVE} above, {AIR_BELOW} below (on the body)')
 print('  layers      ' + ', '.join(f'{f}:{len(p)}' for p, f in LAYERS))
 print()
-marks = ['K', 'L', 'M', 'S', 'f', 'v'] + [str(i) for i in sorted(P_LAYERS)]
-show([p for p, _ in LAYERS] + [FACE_PX], marks + ['#'])
+show([KEY_PX] + [RAMP_PX[i] for i in KEYS] + [SPEC, FACE_PX],
+     ['K'] + [str(i) for i in KEYS] + ['*', '#'])

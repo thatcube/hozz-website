@@ -27,25 +27,37 @@ is the whole idea:
      *deeper* than the field it borders, not lighter. It is what keeps the pool
      of light inside the bubble instead of letting it run out of the bottom, and
      it is what holds the silhouette on a white page at 24px;
-  3. the thickness — every pixel in from the lit edge is a step deeper again,
-     fading out toward the base where transmission rather than reflection is
-     doing the work. Bright, dark, then field: that three-part profile is the
-     difference between glass and paint;
-  4. the cast and the pool — the field falls from deep violet under the entering
-     edge to a pale lilac gathering low in the body, and rakes slightly across
-     as it falls, because light enters at a corner rather than everywhere at
-     once. That pool is the part no opaque mark can show: a bright region not
-     attached to the lit edge and not explained by the shape's curvature.
+  3. the thickness — depth is measured *from the lit ring outward through the
+     glass*, not as an offset of the outline. That distinction is the whole of
+     it: offset the outline and you get a band of identical width on all four
+     sides, which is a moulding, not light. Measured from the lit edge, the
+     ramp is five steps deep where the light enters and has run out entirely by
+     the far side. Bright, dark, then field: that three-part profile is the
+     difference between glass and paint. It relaxes as it descends, so the
+     field carries from deep at the entering edge to mid at the base;
+  4. the pool — transmitted light does not stay where it landed. It is measured
+     up from the silhouette's own underside (edge(inner, 0, 1)), so its contour
+     is the bottom contour, and it converges to a focus in from the far corner,
+     falling off on both sides along the wall and upward away from it. It then
+     carries *into* the wall it leaves through, because light that stops one
+     pixel short of the surface it exits by ends on a cliff and reads as a
+     patch somebody painted. A slight rake across the body, scaled by that same
+     depth so it is a lean rather than a stripe, is what puts the focus off to
+     one side: light enters at a corner rather than everywhere at once.
+
+     The pool is the one thing an opaque mark cannot show — a bright region not
+     attached to the lit edge. Every contour in it is still the shape's own.
 
 Pure white is the face's alone. The catch is a violet-white a step off it, so
 the ZZ stays the brightest thing on the glass — and so that measuring the white
 pixels measures the face, rather than the face plus whatever else was painted
 #ffffff.
 
-The cast is biased so the face's nine rows stay on the deep half of the ramp — a
-white ZZ needs something to sit on at 24px — and spends the pale end below it.
-Same system as c45, a fine ramp with no step louder than its neighbours, put to
-the opposite use.
+The field is biased so the face's eleven rows stay on the deep half of the ramp
+and the pale end is spent below them. That is asserted, not eyeballed: every tone
+the ZZ sits on or touches must clear 4.5:1 against white, and the worst measures
+4.94:1. Same system as c45, a fine ramp with no step louder than its neighbours,
+put to the opposite use.
 
 Silhouette: the shipped bubble at its full 28 across, rounder over the top
 (insets 6,4,2,1,0 rather than 5,3,2,1,0) and flatter underneath, so the light has
@@ -69,7 +81,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tools'))
 
 from circles import check  # noqa: E402
-from shade import keyline, to_paths, is_slab, show  # noqa: E402
+from shade import edge, keyline, to_paths, is_slab, show  # noqa: E402
 
 OUT = ROOT / 'src/components/mark/logos'
 SLUG = 't13'
@@ -212,12 +224,14 @@ for x, y in LIT:
 
 
 def spread(seed, region):
-    """rings() outward from a seed: how many pixels of glass to the nearest one.
+    """How many pixels of glass from `seed` to here, measured through the glass.
 
-    The whole point of measuring distance this way rather than by row or by
-    radius is that the answer is a property of the silhouette. Every contour it
-    produces is the shape's own contour, offset — so nothing derived from it can
-    come out as a rectangle.
+    rings() peels bands off the outside of a shape; this is the same idea run
+    outward from an arbitrary seed, which is what lets the light be measured
+    from the edge it actually enters or leaves by. The point of measuring
+    distance this way rather than by row or by radius is that the answer is a
+    property of the silhouette: every contour it produces is the shape's own
+    contour, offset, so nothing derived from it can come out as a rectangle.
     """
     d, front, n = {}, set(seed), 0
     while front:
@@ -242,64 +256,77 @@ def spread(seed, region):
 DEPTH = spread(LIT, inner)
 FAR = max(DEPTH.values())
 
-# The far wall, taken off the silhouette: the field pixels with no field below
-# them. This is the surface the transmitted light gathers against, and because
-# it is the shape's own underside the pool it carries is curved by the bubble
-# rather than cut by a rect.
-BASE = {p for p in INT if (p[0], p[1] + 1) not in INT and p[1] <= BODY_Y1}
-UP = spread(BASE, INT)
+# The far wall, taken off the silhouette: the pixels with no glass below them.
+# This is the surface the transmitted light gathers against and leaves through,
+# and because it is the shape's own underside the pool it carries is curved by
+# the bubble rather than cut by a rect. It is measured over the whole of the
+# inside, ring included: light that has crossed the glass has to leave somewhere,
+# and stopping it one pixel short of the wall is what leaves a pale patch sitting
+# in mid-air with nothing to be resting on.
+BASE = {p for p in edge(inner, 0, 1) if p[1] <= BODY_Y1}
+UP = spread(BASE, inner)
 BX0 = min(x for x, _ in BASE)
 BX1 = max(x for x, _ in BASE)
 
 iy0 = min(y for _, y in inner)
 
-FLOOR = 1.15     # the top of the cast, deep enough that the ZZ has ground to sit on
-CAP = 4.85       # ...and where it has got to by the last row of the face
-BEVEL = 1.05     # stops of darkening per pixel in from the lit edge
-DEEPEST = 3      # how far that reaches before the field goes flat
-FADE = 0.55      # ...and how much of it survives by the time it reaches the base
+FLOOR = 7.46     # the tone right against the lit edge, before the ramp steps in
+CAP = 7.66       # ...and where that has drifted to by the last row
+BEVEL = 1.35     # stops of darkening per pixel in from the lit edge
+DEEPEST = 5      # how far that reaches before the field goes flat
+FADE = 0.35      # ...and how much of it survives by the time it reaches the base
 BIAS = 1.35      # the cast, held back so the pale end lands below the face
-RAKE = 1.55      # how far across the cast leans by the time it reaches the base
-RAKE0 = 0.18     # ...and how far it leans at the top, where the light comes in flat
-POOL_LIFT = 8.2      # the transmitted light gathering against the far wall
-POOL_DEEP = 3.2      # how far up off that wall it reaches
-POOL_AT = 0.66       # where along the wall it converges, 0 at the left end
-POOL_WIDE = 0.30     # ...and how much of the wall it covers
+RAKE = 2.00      # how far across the cast leans by the time it reaches the base
+RAKE0 = 0.60     # ...and how far it leans at the top, where the light comes in flat
+POOL_LIFT = 7.6      # the transmitted light gathering against the far wall
+POOL_DEEP = 2.6      # how far up off that wall it reaches
+POOL_AT = 0.73       # where along the wall it converges, 0 at the left end
+POOL_WIDE = 0.31     # ...and how much of the wall it covers
+POOL_TIGHT = 1.4     # how sharply it falls off along the wall...
+POOL_LENS = 1.3      # ...and up off it, so the pool is a lens, not a shelf
 WALL_FRAC = 0.45     # the unlit ring, as a fraction deeper than what it holds
 GUTTER = 4           # rows over which the lit edge gutters out down the side
+EXIT_MIN = 1.2       # how much has to reach the wall before it counts as an exit
+EXIT_DROP = 1.4      # ...and the wall still sits a step under the pool it holds
+
+
+def transmitted(p):
+    """How much light has crossed the glass and reached this pixel."""
+    up = UP.get(p)
+    if up is None or up >= POOL_DEEP:
+        return 0.0
+    t = (p[0] - BX0) / (BX1 - BX0)
+    along = 2.718281828 ** (-(((t - POOL_AT) / POOL_WIDE) ** 2))
+    return POOL_LIFT * along ** POOL_TIGHT * (1 - up / POOL_DEEP) ** POOL_LENS
 
 
 def field(p):
     """Tone for a pixel: cast, minus thickness, plus what comes through.
 
-    cast      the light arriving at the top edge, reaching further down the body
-              the deeper it goes, biased low so the pale end lands below the face
-              rather than behind it, and leaning further across the further it
-              falls — a beam that entered one corner is displaced by the time it
-              leaves, and a lean that is already full strength at the top row
-              would just be a stripe painted down the far side.
+    cast      the light arriving at the top edge, leaning further across the
+              further it falls — a beam that entered one corner is displaced by
+              the time it leaves, and a lean already at full strength on the top
+              row would just be a stripe painted down the far side.
     thickness every pixel in from the *lit* edge is a step deeper — Plozz's inset
-              ramp — running out after three, so the far side gets a wall rather
-              than a second bright border.
+              ramp — running out after five, so the far side gets a wall rather
+              than a second bright border. It relaxes as it descends, which is
+              what carries the field from deep at the top to mid at the base:
+              nearer the base it is transmission rather than reflection doing the
+              work, and transmitted light does not care how thick the near face
+              is.
     pool      the transmitted light, gathering against the far wall of the
-              bubble: strongest on the wall itself, fading up off it, and
-              converging past the middle rather than spread evenly along it. It
-              is anchored to a surface and shaped by the silhouette, and it is
-              the part no opaque mark can show — a bright region that is not
-              attached to the lit edge and not explained by the curvature.
+              bubble: strongest on the wall itself, falling off up from it and
+              along it, so it is a lens rather than a shelf. Anchored to a
+              surface and shaped by the silhouette, and the part no opaque mark
+              can show — a bright region not attached to the lit edge and not
+              explained by the curvature.
     """
     x, y = p
     u = min(1.0, max(0.0, (y - iy0) / (BODY_Y1 - iy0)))
     lean = (RAKE0 + (RAKE - RAKE0) * u) * (x - 2) / 27
     cast = FLOOR + (CAP - FLOOR) * u ** BIAS + lean
     thick = BEVEL * min(DEPTH.get(p, DEEPEST), DEEPEST) * (1 - FADE * u)
-    up = UP.get(p)
-    pool = 0.0
-    if up is not None and up < POOL_DEEP:
-        t = (x - BX0) / (BX1 - BX0)
-        along = 2.718281828 ** (-(((t - POOL_AT) / POOL_WIDE) ** 2))
-        pool = POOL_LIFT * (1 - up / POOL_DEEP) * along
-    return cast - thick + pool
+    return cast - thick + transmitted(p)
 
 
 TAIL_CAP = 6.4   # the tail is lit from within, but it is not the pool
@@ -317,14 +344,20 @@ def wall_index(p):
 
     Mostly it is deeper than the field it holds — glass seen edge-on, and the
     thing that keeps a pool of light inside the bubble instead of letting it run
-    out at the bottom. Down the left side, though, the lit edge does not stop
-    dead: it gutters out over three rows, or the rim reads as a border that
-    someone drew half of.
+    out at the bottom. Two exceptions, and both are the light rather than a
+    decision: down the left side the lit edge does not stop dead but gutters out
+    over four rows, or the rim reads as a border somebody drew half of; and where
+    the pool reaches the far wall the wall is what the light leaves through, so
+    it is lit from the inside rather than dropped. Without that second one the
+    pool ends on a cliff and its brightest pixels read as a patch floating clear
+    of everything.
     """
     x, y = p
     gap = y - LAST_LIT.get(x, -99)
     if 0 < gap <= GUTTER:
         return index(p, -1.0 * (GUTTER + 1 - gap))
+    if transmitted(p) > EXIT_MIN:
+        return index(p, EXIT_DROP)
     return index(p, max(1.5, WALL_FRAC * field(p)))
 
 
@@ -358,11 +391,11 @@ assert len(TONES) >= 8, f'only {len(TONES)} tones'
 assert '#ffffff' not in {t.lower() for t in TONES}, 'the bubble is using the face white'
 
 # ---------------------------------------------------------------------------
-# The face. md/wide/gap2 — 8 wide, 9 rows.
+# The face. lg/wide/gap2 — the shipped size, 10 wide, 11 rows.
 #
-# Parity: the body is 26 across and the face 8, both even, so it centres on
-# x=16 exactly. A 7-wide `sm` face would sit on x=16.5.
-# Placement is measured out of mark.ts, not computed here.
+# Parity: the body is 28 across and the face 10, both even, so it centres on
+# x=16 exactly. A 7-wide `sm` face would sit on x=16.5 and no adjustment fixes
+# it. Placement is measured out of mark.ts, not computed here.
 # ---------------------------------------------------------------------------
 FACE_W, GAP = 10, 2
 CY = 12
@@ -489,15 +522,25 @@ rows = '\n'.join(f'  <path d="{" ".join(to_paths(p))}" fill="{f}" />' for p, f i
  * edge the tone steps deeper again per pixel, fading toward the base. Bright,
  * dark, then field: that profile is the difference between glass and paint.
  *
- * The field itself falls from deep violet under the entering edge to a pale
- * pool low in the body, raking slightly across as it falls because light enters
- * at a corner rather than everywhere at once. That pool is the one thing an
- * opaque mark cannot show: a bright region not attached to the lit edge and not
- * explained by the curvature. The cast is held back so every tone under the
- * letterforms stays on the deep half of the ramp; a white ZZ needs something to
- * sit on at 24px. Nothing is cleared for the face — the bands pass behind it,
- * as they do on both shipped marks — and pure white is the face's alone, the
- * catch being a violet-white one step off it.
+ * Depth is measured from that lit ring outward through the glass rather than as
+ * an offset of the outline, and the difference matters: offset the outline and
+ * the same band appears on all four sides at the same width, which reads as a
+ * moulding. Measured from the light, the ramp has run out by the far side.
+ *
+ * What is over there instead is the pool — transmitted light, measured up from
+ * the silhouette's own underside so its contour is the bottom contour, focusing
+ * in from the far corner and falling away on both sides. It carries into the
+ * wall it leaves through, because light stopping a pixel short of the surface
+ * it exits by ends on a cliff and reads as a painted patch. A rake across the
+ * body, scaled by the same depth so it leans rather than stripes, is what puts
+ * the focus off to one side. That pool is the one thing an opaque mark cannot
+ * show: a bright region not attached to the lit edge.
+ *
+ * The field is held back so every tone the letterforms sit on or touch clears
+ * 4.5:1 against white — asserted, worst 4.94:1 — because a white ZZ needs
+ * something to sit on at 24px. Nothing is cleared for the face: the bands pass
+ * behind it, as they do on both shipped marks. Pure white is the face's alone,
+ * the catch being a violet-white one step off it.
  *
  * The silhouette is the shipped bubble at its full 28 across, rounder over the
  * top (insets 6,4,2,1,0 rather than 5,3,2,1,0) and flatter underneath, so the
@@ -533,7 +576,7 @@ const {{ size = 128 }} = Astro.props;
 palette = ', '.join(f"'{c}'" for c in dict.fromkeys([INK, *RAMP, RIM, SPEC, '#ffffff']))
 (OUT / f'{SLUG}.meta.ts').write_text(f'''export default {{
   n: '{SLUG}', name: '{NAME}',
-  idea: 'Glass rather than paint. The ring inside the keyline is lit only where the light actually strikes — desaturated, Plozz\\'s trick — and is a step deeper everywhere else, because glass seen edge-on is darker than the field behind it. That dark wall holds a pool of transmitted light low in the body, which spills down the tail: a bright region not attached to the lit edge, which is the one thing an opaque mark cannot show.',
+  idea: 'Glass rather than paint. The ring inside the keyline is lit only where the light actually strikes — desaturated, Plozz\\'s trick — and is a step deeper everywhere else, because glass seen edge-on is darker than the field behind it. That dark wall holds a pool of transmitted light, measured up from the silhouette\\'s own underside so it follows the bottom contour, focusing in from the far corner and leaving through the wall it meets: a bright region not attached to the lit edge, which is the one thing an opaque mark cannot show.',
   ground: 'light',
   palette: [{palette}],
 }};
