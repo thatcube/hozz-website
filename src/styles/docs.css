@@ -381,6 +381,15 @@ kbd {
   margin-top: 0.5rem;
 }
 
+/* Structured lists — cards, steps, message blocks — carry their own spacing
+   through `gap` or padding. Without this they inherit the prose list rhythm too
+   and every item after the first sits 8px lower than the one beside it. */
+.prose .card-grid > li,
+.prose .message-list > li,
+.prose .steps > li {
+  margin-top: 0;
+}
+
 .prose ul > li {
   list-style: none;
   position: relative;
@@ -564,7 +573,9 @@ kbd {
 
 .table-wrap code {
   font-size: 0.8em;
-  word-break: break-word;
+  /* Never break a machine string across lines — a `.sqlite` split into `.sqli`
+     and `te` is worse than a table that scrolls, and these tables scroll. */
+  white-space: nowrap;
 }
 
 /* A table of machine strings reads better set in mono throughout. */

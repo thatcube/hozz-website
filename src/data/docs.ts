@@ -206,7 +206,7 @@ export const EXPORT_FORMATS: ExportFormatFact[] = [
     routesOnly: false,
     inPicker: true,
     good: 'Asking questions without an import step.',
-    keeps: 'Everything. Typed columns for querying, plus the original record in `raw`.',
+    keeps: 'Everything. Typed columns for querying, plus the original record kept verbatim in a raw column.',
   },
   {
     id: 'json',
