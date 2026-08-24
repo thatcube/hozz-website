@@ -61,7 +61,7 @@ const categorySamples = CATEGORIES.map((category) => ({
           <a href="#formats">Formats</a>
           <a href="#how">How it works</a>
           <a href="#status">Status</a>
-          <a href="/docs/">Docs</a>
+          <a href="/docs/" class="header-docs">Docs</a>
         </nav>
         <a class="header-source" href={GITHUB_URL}>Source ↗</a>
       </div>
@@ -1739,12 +1739,21 @@ const categorySamples = CATEGORIES.map((category) => ({
   }
 
   @media (max-width: 1100px) {
-    .header-inner nav {
+    /* The in-page section links go, because there is no room for five of them
+       and the page they point at is the one you are already on. Docs is a
+       different section of the site and is the one thing here you cannot get
+       to by scrolling, so it stays. */
+    .header-inner nav a:not(.header-docs) {
       display: none;
     }
 
+    .header-inner nav {
+      justify-self: end;
+    }
+
     .header-inner {
-      grid-template-columns: 1fr auto;
+      grid-template-columns: 1fr auto auto;
+      column-gap: 1.35rem;
     }
 
     .hero-grid {

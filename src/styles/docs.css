@@ -468,6 +468,22 @@ kbd {
   font-size: 0.78rem;
   line-height: 1.7;
   tab-size: 2;
+  /* Same scroll shadows as the tables: the `local` layers ride with the content
+     and uncover the pinned ones only while there is more line to the side. */
+  background:
+    linear-gradient(to right, var(--white) 30%, rgba(255, 255, 255, 0)) left center / 2rem 100%
+      no-repeat local,
+    linear-gradient(to left, var(--white) 30%, rgba(255, 255, 255, 0)) right center / 2rem 100%
+      no-repeat local,
+    radial-gradient(farthest-side at 0 50%, rgba(19, 38, 56, 0.12), rgba(19, 38, 56, 0)) left center /
+      0.8rem 100% no-repeat scroll,
+    radial-gradient(farthest-side at 100% 50%, rgba(19, 38, 56, 0.12), rgba(19, 38, 56, 0)) right
+      center / 0.8rem 100% no-repeat scroll;
+}
+
+.code-block pre:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: -3px;
 }
 
 .code-block pre code {
