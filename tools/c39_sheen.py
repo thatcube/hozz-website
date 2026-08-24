@@ -122,39 +122,65 @@ def lum(hexv):
 CX, CY, R = 16.0, 13.0, 11.0
 
 W_FORM = 1.00     # light from above — the part that survives 24px
-W_SHEEN = 0.62    # the four arms — the part that appears at 96px
-W_EDGE = 0.34     # the rim takes the light hardest, top and bottom both
+W_SHEEN = 0.66    # the crossed bands — the part that appears at 96px
+W_EDGE = 0.30     # the rim takes the light hardest, top and bottom both
+
+BAND = 7.2        # half-wavelength of a band, in pixels across the diagonal
 
 
-def value(x, y):
-    """Continuous lightness at a pixel, before quantising.
+def wave(t):
+    """One band: bright on its axis, falling to dark a `BAND` away and holding.
 
-    Depends on x only through `dx`, and `dx` flips sign under x -> 31-x while
-    every use of it is even, so the field is mirror-symmetric about x=16 by
-    construction rather than by correction afterwards.
+    A cosine rather than a step, because the whole brief is that you should not
+    be able to point at where one tone becomes the next.
+    """
+    return math.cos(math.pi * min(1.0, abs(t) / BAND))
+
+
+def raw(x, y):
+    """Continuous lightness at a pixel, before smoothing and quantising.
+
+    x enters only through `dx`, and `dx` flips sign under x -> 31-x while every
+    use of it is even in the pair (u, v) — the two diagonals swap — so the
+    field is mirror-symmetric about x=16 by construction rather than by
+    correction afterwards.
     """
     dx = (x + 0.5) - CX
     dy = (y + 0.5) - CY
     r = math.hypot(dx, dy) / R
-    th = math.atan2(dy, dx)
 
     form = -dy / R                                  # +1 at the top, -1 at the foot
 
-    # cos(4t) is +1 on the cardinals and -1 on the diagonals; negated, the
-    # bright arms fall on the diagonals, which reads as a sparkle rather than
-    # as crosshairs. Even in dx and even in dy, so it mirrors both ways.
-    star = -math.cos(4 * th)
-    # The arms are a surface effect: nothing at the dead centre, full strength
-    # across the middle of the radius, easing back at the very rim so they do
-    # not fight the keyline.
-    sheen = star * min(1.0, r / 0.42) * (1.0 - 0.40 * max(0.0, r - 0.78) / 0.22)
+    # Mozz's bands are straight diagonals — they step one pixel per row and run
+    # right across the disc and out the other side. Two of them, crossed, so
+    # the pattern mirrors: u -> -v and v -> -u under the flip, and `wave` is
+    # even. An angular star was tried first and is wrong here — radial wedges
+    # converge, and the bottom one drove a dark spike out under the chin.
+    u = (dx + dy) * 0.7071
+    v = (dx - dy) * 0.7071
+    sheen = 0.5 * (wave(u) + wave(v))
+    sheen *= 1.0 - 0.35 * max(0.0, r - 0.76) / 0.24  # ease off at the keyline
 
     edge = max(0.0, (r - 0.68) / 0.32)              # 0 inside, 1 at the rim
     return W_FORM * form + W_SHEEN * sheen + W_EDGE * edge * form
 
 
+def smooth(body, passes=2):
+    """Blur the field before quantising, so band edges land as clean one-step
+    transitions instead of a sawtooth of single pixels."""
+    vals = {p: raw(*p) for p in body}
+    for _ in range(passes):
+        nxt = {}
+        for (x, y), v in vals.items():
+            ns = [vals[q] for q in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1))
+                  if q in vals]
+            nxt[(x, y)] = (2 * v + sum(ns)) / (2 + len(ns))
+        vals = nxt
+    return vals
+
+
 def quantise(body):
-    vals = {p: value(*p) for p in body}
+    vals = smooth(body)
     lo, hi = min(vals.values()), max(vals.values())
     out = {}
     for p, v in vals.items():
@@ -241,15 +267,20 @@ def build():
     gap, h, cy, above, below, dys = place()
 
     steps = [100 * (lum(b) - lum(a)) / lum(RAMP[0]) for a, b in zip(used, used[1:])]
+    jump = max(abs(tone[p] - tone[q])
+               for p in tone for q in ((p[0] + 1, p[1]), (p[0], p[1] + 1))
+               if q in tone)
     print(f'{SLUG} {NAME}')
     print(f'  disc {dys[-1] - dys[0] + 1} rows (y{dys[0]}-{dys[-1]}) · '
           f'face {SIZE} gap {gap} = {h} rows · air {above}/{below}')
     print(f'  {len(used)} body tones + keyline = {len(used) + 1} inside the circle')
     print(f'  steps: {" ".join(f"{s:.1f}%" for s in steps)}  '
           f'(max {max(steps):.1f}%, Mozz maxes at 9.1% ignoring its deep accent)')
+    print(f'  biggest jump between neighbouring pixels: {jump} level(s) '
+          f'= {jump * max(steps):.1f}%')
     for i, f in enumerate(used):
         n = sum(1 for t in tone.values() if RAMP[t] == f)
-        print(f'    {i} {f}  lum {lum(f):5.1f}  {n:3} px')
+        print(f'    {i} {f}  lum {lum(f):5.1f}  {n:3} px  ' + '#' * (n // 3))
 
     show(tone, inner, cy, gap)
 

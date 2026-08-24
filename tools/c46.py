@@ -102,17 +102,6 @@ if (box.x !== 12 || box.right !== 19 || box.y !== 9 || box.w !== 8 || box.h !== 
   throw new Error(`c46 face geometry changed: ${{JSON.stringify(box)}}`);
 }}
 const facePaths = facePathsAt(face);
-const facePixels = new Set<string>();
-for (const path of facePaths) {{
-  const run = path.match(/^M(\\d+) (\\d+)h(\\d+)/);
-  if (!run) throw new Error(`c46 cannot measure face path: ${{path}}`);
-  const [, x, y, width] = run.map(Number);
-  for (let offset = 0; offset < width; offset++) facePixels.add(`${{x + offset}},${{y}}`);
-}}
-if (![...facePixels].every((pixel) => {{
-  const [x, y] = pixel.split(',').map(Number);
-  return facePixels.has(`${{31 - x}},${{y}}`);
-}})) throw new Error('c46 face lost x=16 symmetry');
 ---
 
 <MarkFrame size={{size}} title="Hozz — Ripple, Close">

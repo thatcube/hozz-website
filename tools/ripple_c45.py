@@ -73,11 +73,23 @@ WATER_OUT_FILL, WATER_IN_FILL = '#96bcd6', '#5d8cb0'
 
 # ---------------------------------------------------------------------------
 # The ramp. Six stops, rim to core, interpolated so no step is louder than its
-# neighbours. The core lands just above the water's own #96bcd6, which is what
-# makes the disc read as something the light passes through rather than a
-# painted counter.
+# neighbours. The core lands on the same weight as the water's own #96bcd6 and
+# a little bluer, so the middle of the disc has very nearly caught the colour
+# of the pool it is sitting in — which is what makes it read as something the
+# light passes through rather than a painted counter.
+#
+# Two constructions were rendered side by side before this one was kept:
+# contour rings from `rings()`, and bands quantised by radius from the disc's
+# centre. Radial bands mottle — the canonical raster circle is not a euclidean
+# one, so the quantisation leaves visible patches at the diagonals. The contour
+# rings come out even, which is the whole reason shade.py builds shading from
+# the silhouette rather than from geometry.
+#
+# Six is also the ceiling here, not a shortfall of nerve. A seventh ring erodes
+# the core to an 8x8 blob that `is_slab` correctly rejects — a soft square
+# sitting inside a circle — and it would push the face off its plain field.
 # ---------------------------------------------------------------------------
-RIM, CORE = (0xf2, 0xf9, 0xfd), (0xa6, 0xcb, 0xe4)
+RIM, CORE = (0xed, 0xf6, 0xfc), (0x96, 0xc2, 0xe0)
 STEPS = 6
 
 
@@ -89,7 +101,7 @@ RAMP = ['#%02x%02x%02x' % tuple(lerp(RIM[c], CORE[c], i / (STEPS - 1)) for c in 
         for i in range(STEPS)]
 
 # Subtlety: no single step may jump more than this on any channel. Plozz's own
-# #97e3fe -> #82deff -> #72daff steps by 21/16 at the widest, so this is inside
+# #97e3fe -> #82deff -> #72daff steps by 21 at the widest, so this is inside
 # the standard set by the shipped mark.
 MAX_STEP = 18
 for a, b in zip(RAMP, RAMP[1:]):

@@ -42,11 +42,12 @@ TONES = [
     '#d7eff5',
     '#dbf3f8',
 ]
+FOLD = (0, 0, 1, 1, 0, 0, -1, -1, 0, 1, 1)
 
 
 def tone_index(x, y):
     u2 = abs((2 * x + 1) - 32)
-    curve = (u2 * u2) // 96
+    curve = FOLD[(u2 - 1) // 2]
     phase = (y + curve - 2) % 14
     return phase if phase <= 7 else 14 - phase
 
