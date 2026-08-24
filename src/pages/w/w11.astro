@@ -92,7 +92,6 @@ const OUT = ['Your Mac', 'Folder', 'Home Assistant', 'Web address', 'InfluxDB', 
  * angles. Units are percentages of the stage; `aspect` converts the horizontal
  * ones so a degree means the same thing in both axes.
  */
-const rad = (deg: number) => (deg * Math.PI) / 180;
 const spokeTo = (aspect: number, lx: number, ly: number, x: number, y: number) => {
   const dx = (x - lx) * aspect;
   const dy = y - ly;
@@ -101,71 +100,58 @@ const spokeTo = (aspect: number, lx: number, ly: number, x: number, y: number) =
     len: +(Math.hypot(dx, dy) / aspect).toFixed(3),
   };
 };
-/** How far along a band of length `len` a rider must sit to land on row `y`. */
-const rideTo = (aspect: number, ly: number, len: number, angle: number, y: number, fallbackR: number) => {
-  const s = Math.sin(rad(angle));
-  const r = Math.abs(s) < 1e-6 ? fallbackR : (y - ly) / s;
-  return +((r / ((len / 100) * aspect * 100)) * 100).toFixed(3);
-};
+/* ---- landscape: lens at 45% / 50% of a 1600 x 900 stage ----
+   Two sectors leaving one lens, so nothing has to cross anything. The seven
+   formats leave above the axis and stop at their own identifier card; the six
+   destinations leave below it and stop at their own plate. Both sectors land on
+   the same left edge, so the cards and the plates read as one column. */
+const AL = 1600 / 900;
+const LX = 45;
+const LY = 50;
+/** The edge every band and every hairline terminates on. */
+const COL_L = 74;
+/** Seven rows above the axis, then six below it, both on a real rhythm. */
+const CARD_Y_L = [6.2, 12.5, 18.8, 25.1, 31.4, 37.7, 44];
+const PLATE_Y_L = [56.5, 64.5, 72.5, 80.5, 88.5, 96];
 
-/* ---- landscape: lens at 47% / 40% of a 1600 × 900 stage ---- */
-const AL = 1600 / 850;
-const LX = 47;
-const LY = 40;
-/** Long enough that each band is still running when it passes under its chip. */
-const LEN_L = 40;
-/** Seven evenly spaced rows, so the chips read as one sorted ladder. */
-const CHIP_STEP = 7.2;
+const bandsL = BANDS.map((b, i) => ({ ...b, ...spokeTo(AL, LX, LY, COL_L, CARD_Y_L[i]) }));
+const platesL = OUT.map((d, i) => ({ ...d, ...spokeTo(AL, LX, LY, COL_L, PLATE_Y_L[i]) }));
 
-const bandsL = BANDS.map((b, i) => {
-  const angle = (i - 3) * 10;
-  const y = LY + (i - 3) * CHIP_STEP;
-  return { ...b, angle, d: rideTo(AL, LY, LEN_L, angle, y, 41.5) };
-});
+/** The archive sits above the lens, so the undispersed beam is a straight drop. */
+const SRC_L = { x: 45, y: 5 };
+const beamL = spokeTo(AL, LX, LY, SRC_L.x, SRC_L.y);
 
-/** Where each destination sits on the stage, chosen to clear the chip ladder. */
-const platesL = [
-  { d: OUT[0], x: 88, y: 10 },
-  { d: OUT[1], x: 92, y: 22 },
-  { d: OUT[2], x: 93, y: 35 },
-  { d: OUT[3], x: 93, y: 50 },
-  { d: OUT[4], x: 90, y: 65 },
-  { d: OUT[5], x: 89, y: 80 },
-].map((p) => ({ ...p.d, ...spokeTo(AL, LX, LY, p.x, p.y) }));
-
-/** The archive, up and left of the lens, and the undispersed beam back to it. */
-const SRC_L = { x: 37, y: 8 };
-const beamL = (() => {
-  const s = spokeTo(AL, LX, LY, SRC_L.x, SRC_L.y);
-  return { a: s.a, len: +(s.len * 0.72).toFixed(3) };
-})();
-
-/* ---- portrait: lens at 50% / 18% of a 390 × 940 stage ---- */
+/* ---- portrait: lens at 50% / 12% of a 390 x 1080 stage ----
+   Not the landscape one squashed. A phone has no room for a sideways fan, so
+   the cards alternate across the axis and each band stops at the top edge of
+   the card it carries. */
 const AP = 390 / 1080;
-const PLY = 18;
-const LEN_P = 240;
-/** The first row clears the lens and its halo; the rest step down evenly. */
-const CARD_Y_P = [30, 36, 42, 48, 54, 60, 66];
+const PLX = 50;
+const PLY = 12;
+/** Card top-centres: the side flips every row so the fan opens as it falls. */
+const CARD_P = [
+  { x: 50, y: 19 },
+  { x: 39, y: 26.5 },
+  { x: 62, y: 34 },
+  { x: 34, y: 41.5 },
+  { x: 67, y: 49 },
+  { x: 30, y: 56.5 },
+  { x: 70, y: 64 },
+];
+const PLATE_P = [
+  { x: 25, y: 72.5 },
+  { x: 75, y: 72.5 },
+  { x: 25, y: 82.5 },
+  { x: 75, y: 82.5 },
+  { x: 25, y: 92.5 },
+  { x: 75, y: 92.5 },
+];
 
-const bandsP = BANDS.map((b, i) => {
-  const angle = +(98 - i * (16 / 6)).toFixed(3);
-  return { ...b, angle, d: rideTo(AP, PLY, LEN_P, angle, CARD_Y_P[i], 30) };
-});
+const bandsP = BANDS.map((b, i) => ({ ...b, ...spokeTo(AP, PLX, PLY, CARD_P[i].x, CARD_P[i].y) }));
+const platesP = OUT.map((d, i) => ({ ...d, ...spokeTo(AP, PLX, PLY, PLATE_P[i].x, PLATE_P[i].y) }));
 
-const platesP = [
-  { d: OUT[0], x: 25, y: 74 },
-  { d: OUT[1], x: 75, y: 74 },
-  { d: OUT[2], x: 25, y: 84 },
-  { d: OUT[3], x: 75, y: 84 },
-  { d: OUT[4], x: 25, y: 94 },
-  { d: OUT[5], x: 75, y: 94 },
-].map((p) => ({ ...p.d, ...spokeTo(AP, 50, PLY, p.x, p.y) }));
-
-const SRC_P = { x: 50, y: 5.5 };
-const beamP = (() => {
-  const s = spokeTo(AP, 50, PLY, SRC_P.x, SRC_P.y);
-  return { a: s.a, len: +(s.len * 0.66).toFixed(3) };
-})();
+const SRC_P = { x: 50, y: 4 };
+const beamP = spokeTo(AP, PLX, PLY, SRC_P.x, SRC_P.y);
 
 /** Every identifier the site documents, for the section that grounds the hero chips. */
 const allTypes = STREAM_LANES.flat();
@@ -258,27 +244,22 @@ const jsonLd = {
                 bandsL.map((b) => (
                   <div
                     class:list={['band', b.keeps === 'lossy' && 'is-lossy']}
-                    style={`--a:${b.angle}deg; --len:${LEN_L}%; --w:${b.weight}; --tone:${b.tone}`}
+                    style={`--a:${b.a}deg; --len:${b.len}%; --w:${b.weight}; --tone:${b.tone}`}
                   >
                     <i class="rail" />
                   </div>
                 ))
               }
 
+              <i class="halo" />
+
               {
                 bandsL.map((b) => (
-                  <div class="band rider" style={`--a:${b.angle}deg; --len:${LEN_L}%; --w:${b.weight}; --tone:${b.tone}`}>
-                    <span class="chip" style={`--d:${b.d}%; --hue:${hue[b.category]}`}>
-                      <span class="chip-fmt">
-                        <i class:list={['chip-bar', b.keeps === 'lossy' && 'is-lossy']} />
-                        <b class="mono">{b.name}</b>
-                        <em class="mono">{b.keeps}</em>
-                      </span>
-                      <span class="chip-type">
-                        <i class="chip-hue" />
-                        <b class="mono">{b.id}</b>
-                        <em class="mono">{b.sample}</em>
-                      </span>
+                  <div class="band rider" style={`--a:${b.a}deg; --len:${b.len}%`}>
+                    <span class="chip" style={`--hue:${hue[b.category]}`}>
+                      <i class="chip-hue" />
+                      <b class="mono">{b.id}</b>
+                      <em class="mono">{b.sample}</em>
                     </span>
                   </div>
                 ))
@@ -297,6 +278,13 @@ const jsonLd = {
                   </div>
                 ))
               }
+
+              <span class="sector mono" style={`--x:${COL_L}%; --y:1.4%`}>
+                seven formats · thickness is what each keeps
+              </span>
+              <span class="sector mono" style={`--x:${COL_L}%; --y:50.4%`}>
+                six destinations · where any of them can land
+              </span>
 
               <div class="source" style={`--x:${SRC_L.x}%; --y:${SRC_L.y}%`}>
                 <span class="mono src-k">Apple Health</span>
@@ -358,27 +346,22 @@ const jsonLd = {
                 bandsP.map((b) => (
                   <div
                     class:list={['band', b.keeps === 'lossy' && 'is-lossy']}
-                    style={`--a:${b.angle}deg; --len:${LEN_P}%; --w:${b.weight}; --tone:${b.tone}`}
+                    style={`--a:${b.a}deg; --len:${b.len}%; --w:${b.weight}; --tone:${b.tone}`}
                   >
                     <i class="rail" />
                   </div>
                 ))
               }
 
+              <i class="halo" />
+
               {
                 bandsP.map((b) => (
-                  <div class="band rider" style={`--a:${b.angle}deg; --len:${LEN_P}%; --w:${b.weight}; --tone:${b.tone}`}>
-                    <span class="chip" style={`--d:${b.d}%; --hue:${hue[b.category]}`}>
-                      <span class="chip-fmt">
-                        <i class:list={['chip-bar', b.keeps === 'lossy' && 'is-lossy']} />
-                        <b class="mono">{b.name}</b>
-                        <em class="mono">{b.keeps}</em>
-                      </span>
-                      <span class="chip-type">
-                        <i class="chip-hue" />
-                        <b class="mono">{b.id}</b>
-                        <em class="mono">{b.sample}</em>
-                      </span>
+                  <div class="band rider" style={`--a:${b.a}deg; --len:${b.len}%`}>
+                    <span class="chip" style={`--hue:${hue[b.category]}`}>
+                      <i class="chip-hue" />
+                      <b class="mono">{b.id}</b>
+                      <em class="mono">{b.sample}</em>
                     </span>
                   </div>
                 ))
@@ -397,6 +380,8 @@ const jsonLd = {
                   </div>
                 ))
               }
+
+              <span class="sector mono" style={`--x:50%; --y:69.6%`}>six destinations</span>
 
               <div class="source" style={`--x:${SRC_P.x}%; --y:${SRC_P.y}%`}>
                 <span class="mono src-k">Apple Health</span>
@@ -433,12 +418,12 @@ const jsonLd = {
 
           <figcaption>
             <span>
-              The fan is ordered by what survives: thick and deep keeps everything, thin and broken
-              throws information away and says so. Each band is named on the card riding it, and
-              each card carries a real HealthKit identifier that band could honestly hold — the
-              readings beside them are examples, not your data. The dotted lines run out to the six
-              real destinations, and every one of them starts at the same archive, because nothing
-              here is invented.
+              Two things leave the lens. Above the axis, seven bands in the order of the key
+              above — thick and deep keeps everything, thin and broken throws information away and
+              says so — each ending at one real HealthKit identifier that format could honestly
+              hold. Below it, six dotted lines, each ending at one real destination. Formats and
+              destinations are chosen separately, so they are drawn separately: any of the seven
+              can go to any of the six. The readings are examples, not your data.
             </span>
           </figcaption>
         </figure>
@@ -1076,7 +1061,7 @@ const jsonLd = {
         width: 100%;
         max-width: 1680px;
         margin-inline: auto;
-        aspect-ratio: 1600 / 850;
+        aspect-ratio: 1600 / 900;
       }
 
       .art {
@@ -1085,8 +1070,8 @@ const jsonLd = {
         overflow: hidden;
         font-size: clamp(10px, 0.75vw, 13px);
         --tk: 1.1em;
-        --lx: 47%;
-        --ly: 40%;
+        --lx: 45%;
+        --ly: 50%;
       }
 
       /* Bands, spokes and the beam share one mechanism: a zero-height rail
@@ -1135,8 +1120,8 @@ const jsonLd = {
         height: calc(var(--tk) * var(--w));
         transform: translateY(-50%);
         background: var(--tone);
-        -webkit-mask-image: linear-gradient(90deg, rgb(0 0 0 / 0) 0, rgb(0 0 0 / 0.4) 5%, #000 15%, #000 80%, rgb(0 0 0 / 0) 100%);
-        mask-image: linear-gradient(90deg, rgb(0 0 0 / 0) 0, rgb(0 0 0 / 0.4) 5%, #000 15%, #000 80%, rgb(0 0 0 / 0) 100%);
+        -webkit-mask-image: linear-gradient(90deg, rgb(0 0 0 / 0) 0, rgb(0 0 0 / 0.4) 4%, #000 14%, #000 100%);
+        mask-image: linear-gradient(90deg, rgb(0 0 0 / 0) 0, rgb(0 0 0 / 0.4) 4%, #000 14%, #000 100%);
       }
 
       /* Lossy formats are drawn broken, because that is what lossy is. */
@@ -1152,8 +1137,8 @@ const jsonLd = {
         height: calc(var(--tk) * 1.6);
         transform: translateY(-50%);
         background: linear-gradient(90deg, #7ba7c9 0%, #a7cce6 60%, #dcecf6 100%);
-        -webkit-mask-image: linear-gradient(90deg, #000 0, #000 42%, rgb(0 0 0 / 0) 100%);
-        mask-image: linear-gradient(90deg, #000 0, #000 42%, rgb(0 0 0 / 0) 100%);
+        -webkit-mask-image: linear-gradient(90deg, #000 0, #000 55%, rgb(0 0 0 / 0.25) 100%);
+        mask-image: linear-gradient(90deg, #000 0, #000 55%, rgb(0 0 0 / 0.25) 100%);
       }
 
       /* The beam is light, so it spills — done with a vertical gradient rather
@@ -1177,7 +1162,22 @@ const jsonLd = {
         width: 100%;
         height: 0;
         border-top: 1px dotted var(--water);
-        opacity: 0.8;
+        opacity: 0.75;
+        -webkit-mask-image: linear-gradient(90deg, rgb(0 0 0 / 0) 0, #000 16%, #000 100%);
+        mask-image: linear-gradient(90deg, rgb(0 0 0 / 0) 0, #000 16%, #000 100%);
+      }
+
+      /* Names the sector it heads, so the two fans are not left to be guessed. */
+      .sector {
+        position: absolute;
+        left: var(--x);
+        top: var(--y);
+        font-size: 0.92em;
+        letter-spacing: 0.11em;
+        text-transform: uppercase;
+        color: var(--muted);
+        white-space: nowrap;
+        z-index: 4;
       }
 
       .lens {
@@ -1188,17 +1188,18 @@ const jsonLd = {
       }
 
       /* The dispersion happens inside the lens, so the fan is not allowed to
-         read as seven lines that merely pass behind it. */
-      .lens::before {
-        content: '';
+         read as seven lines that merely pass behind it. It sits above the
+         bands and below the cards, so it can never wash a label. */
+      .halo {
         position: absolute;
-        left: 50%;
-        top: 50%;
-        width: 300%;
-        height: 300%;
+        left: var(--lx);
+        top: var(--ly);
+        width: 26em;
+        height: 26em;
         transform: translate(-50%, -50%);
-        background: radial-gradient(circle, rgb(255 255 255 / 0.96) 0 32%, rgb(255 255 255 / 0) 70%);
-        z-index: -1;
+        background: radial-gradient(circle, rgb(255 255 255 / 0.96) 0 30%, rgb(255 255 255 / 0) 68%);
+        pointer-events: none;
+        z-index: 2;
       }
 
       .lens :global(svg) {
@@ -1242,72 +1243,46 @@ const jsonLd = {
         color: var(--slate);
       }
 
-      /* A rider names its own band and carries a real identifier, so pointing at
-         any one of them answers both questions at once. */
+      /* A rider is the payload, so it is opaque and it sits at the end of its
+         own band: the band stops at the card's edge and never reaches a word.
+         The format is not repeated here — the band under it is the format, and
+         the key below the figure names all seven. */
       .chip {
         position: absolute;
-        left: var(--d);
+        left: 100%;
         top: 0;
         transform-origin: 0 0;
-        transform: rotate(calc(-1 * var(--a))) translate(-50%, -50%);
-        display: grid;
-        gap: 0.15em;
-        padding: 0.45em 0.6em;
-        background: rgb(255 255 255 / 0.97);
+        transform: rotate(calc(-1 * var(--a))) translate(0, -50%);
+        display: flex;
+        align-items: center;
+        gap: 0.45em;
+        width: 19.5em;
+        padding: 0.42em 0.6em;
+        background: #ffffff;
         border: 1px solid var(--line);
-        box-shadow: 0 3px 12px rgb(19 38 56 / 0.08);
+        box-shadow: 0 3px 12px rgb(19 38 56 / 0.09);
         white-space: nowrap;
         animation: drift 19s ease-in-out infinite alternate;
       }
 
-      .chip-fmt,
-      .chip-type {
-        display: flex;
-        align-items: center;
-        gap: 0.45em;
-      }
-
-      .chip-fmt b {
-        font-size: 1.02em;
-        font-weight: 500;
-        color: var(--ink);
-      }
-
-      .chip-fmt em {
-        font-style: normal;
-        font-size: 0.92em;
-        color: var(--muted);
-      }
-
-      .chip-type b {
+      .chip b {
         font-size: 0.95em;
         font-weight: 400;
         color: var(--ink);
       }
 
-      .chip-type em {
+      .chip em {
         font-style: normal;
         font-size: 0.95em;
         font-weight: 500;
         color: var(--slate);
         margin-left: auto;
-        padding-left: 0.5em;
-      }
-
-      .chip-bar {
-        width: 1.5em;
-        height: calc(0.16em + 0.66em * var(--w));
-        flex: none;
-        background: var(--tone);
-      }
-
-      .chip-bar.is-lossy {
-        background: repeating-linear-gradient(90deg, var(--tone) 0 0.3em, rgb(0 0 0 / 0) 0.3em 0.52em);
+        padding-left: 0.6em;
       }
 
       .chip-hue {
-        width: 0.32em;
-        height: 1.1em;
+        width: 0.34em;
+        height: 1.15em;
         flex: none;
         background: var(--hue);
       }
@@ -1318,13 +1293,12 @@ const jsonLd = {
         left: 100%;
         top: 0;
         transform-origin: 0 0;
-        transform: rotate(calc(-1 * var(--a))) translate(-50%, -50%);
+        transform: rotate(calc(-1 * var(--a))) translate(0, -50%);
         display: grid;
         gap: 0.25em;
-        width: 15.5em;
-        padding: 0.7em 0.8em;
-        background: rgb(255 255 255 / 0.94);
-        backdrop-filter: blur(6px);
+        width: 19.5em;
+        padding: 0.62em 0.8em;
+        background: #ffffff;
         border: 1px solid var(--line);
         box-shadow: 0 6px 20px rgb(19 38 56 / 0.09);
         animation: drift 24s ease-in-out infinite alternate;
@@ -1575,7 +1549,35 @@ const jsonLd = {
 
         .art-port {
           --lx: 50%;
-          --ly: 18%;
+          --ly: 12%;
+        }
+
+        /* A phone is too narrow for a card that reads across, so the sample
+           drops to a second line and the card meets its band top-edge first. */
+        .art-port .chip {
+          flex-wrap: wrap;
+          row-gap: 0.1em;
+          width: 12.6em;
+          transform: rotate(calc(-1 * var(--a))) translate(-50%, 0);
+        }
+
+        .art-port .chip em {
+          width: 100%;
+          margin-left: 0;
+          padding-left: 1.35em;
+        }
+
+        .art-port .chip .chip-hue {
+          height: 1em;
+        }
+
+        .art-port .plate {
+          width: 14em;
+          transform: rotate(calc(-1 * var(--a))) translate(-50%, 0);
+        }
+
+        .art-port .sector {
+          transform: translateX(-50%);
         }
 
         .art-port .lens :global(svg) {
@@ -1583,12 +1585,8 @@ const jsonLd = {
         }
 
         .art-port .rail {
-          -webkit-mask-image: linear-gradient(90deg, rgb(0 0 0 / 0) 0, rgb(0 0 0 / 0.4) 3%, #000 9%, #000 74%, rgb(0 0 0 / 0) 100%);
-          mask-image: linear-gradient(90deg, rgb(0 0 0 / 0) 0, rgb(0 0 0 / 0.4) 3%, #000 9%, #000 74%, rgb(0 0 0 / 0) 100%);
-        }
-
-        .art-port .plate {
-          width: 15em;
+          -webkit-mask-image: linear-gradient(90deg, rgb(0 0 0 / 0) 0, rgb(0 0 0 / 0.4) 3%, #000 9%, #000 100%);
+          mask-image: linear-gradient(90deg, rgb(0 0 0 / 0) 0, rgb(0 0 0 / 0.4) 3%, #000 9%, #000 100%);
         }
       }
 

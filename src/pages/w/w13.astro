@@ -53,12 +53,12 @@ const hue = (key: string) => CATEGORIES.find((c) => c.key === key)?.hue ?? '#5d8
    the room it needs and every label stays on its own ring. Stroke tones step
    through the mark's water colours, palest furthest from the drop. */
 const RINGS = [
-  { d: '21%', cap: '272px', stroke: '#5d8cb0' },
-  { d: '32%', cap: '420px', stroke: '#6b98ba' },
-  { d: '45%', cap: '600px', stroke: '#79a4c4' },
-  { d: '59%', cap: '810px', stroke: '#87b0ce' },
-  { d: '74%', cap: '1044px', stroke: '#96bcd6' },
-  { d: '92%', cap: '1320px', stroke: '#a6c8de' },
+  { d: '21%', cap: '300px', stroke: '#5d8cb0' },
+  { d: '30%', cap: '430px', stroke: '#6b98ba' },
+  { d: '40%', cap: '580px', stroke: '#79a4c4' },
+  { d: '52%', cap: '750px', stroke: '#87b0ce' },
+  { d: '62%', cap: '880px', stroke: '#96bcd6' },
+  { d: '75%', cap: '1040px', stroke: '#a6c8de' },
 ];
 
 /* Portrait rings are wider than the phone on purpose — the outer two run off
@@ -85,18 +85,18 @@ const SHORT: Record<string, string> = {
 
 /* Angles measured from three o'clock, clockwise, so 90deg is straight down —
    away from the drop at the top of the stage. */
-const DEST_A = ['130deg', '18deg', '112deg', '62deg', '166deg', '38deg'];
+const DEST_A = ['103deg', '345deg', '33deg', '217deg', '39deg', '48deg'];
 const DEST_A_P = ['122deg', '14deg', '131deg', '116deg', '112deg', '78deg'];
 
 /* What rides the rings: real HealthKit identifiers, coloured by the category
    they belong to. The readings are examples and the caption says so. */
 const RIDERS = [
-  { ring: 3, a: '50deg', category: 'heart', id: 'heartRateVariabilitySDNN', sample: '48 ms' },
-  { ring: 4, a: '116deg', category: 'sleep', id: 'sleepAnalysis', sample: '7h 12m' },
-  { ring: 5, a: '62deg', category: 'activity', id: 'workoutRoute', sample: '6.2 mi' },
-  { ring: 5, a: '138deg', category: 'heart', id: 'electrocardiogram', sample: 'sinus rhythm' },
-  { ring: 6, a: '20deg', category: 'respiratory', id: 'vo2Max', sample: '44.1' },
-  { ring: 6, a: '126deg', category: 'mind', id: 'stateOfMind', sample: 'pleasant' },
+  { ring: 2, a: '216deg', category: 'heart', id: 'heartRateVariabilitySDNN', sample: '48 ms' },
+  { ring: 3, a: '12deg', category: 'sleep', id: 'sleepAnalysis', sample: '7h 12m' },
+  { ring: 3, a: '83deg', category: 'activity', id: 'workoutRoute', sample: '6.2 mi' },
+  { ring: 4, a: '145deg', category: 'heart', id: 'electrocardiogram', sample: 'sinus rhythm' },
+  { ring: 4, a: '327deg', category: 'respiratory', id: 'vo2Max', sample: '44.1' },
+  { ring: 5, a: '124deg', category: 'mind', id: 'stateOfMind', sample: 'pleasant' },
 ];
 
 const RIDERS_P = [
@@ -174,6 +174,7 @@ const jsonLd = {
     <main id="main">
       <!-- ================= hero ================= -->
       <section class="hero" id="top">
+       <div class="herogrid">
         <div class="shell hero-copy">
           <div class="hero-say">
             <p class="eyebrow">
@@ -186,9 +187,8 @@ const jsonLd = {
             </p>
             <h1>Drop it once. It reaches everywhere you <em class="em">own.</em></h1>
             <p class="lede">
-              Hozz copies your Apple Health history off your iPhone into places you already run —
-              your Mac, a folder, Home Assistant, InfluxDB, a web endpoint, MQTT. Free, open source,
-              one developer. No account, no analytics, no server of mine.
+              Your Apple Health history, copied off your iPhone into places you already run.
+              Free, open source, one developer.
             </p>
             <div class="actions">
               <a class="btn" href="#export">How to export your data</a>
@@ -304,13 +304,16 @@ const jsonLd = {
 
             <div class="disc" aria-hidden="true"><Mark size={104} /></div>
           </div>
+        </figure>
 
-          <figcaption class="shell">
+        <div class="shell notewrap">
+          <p class="stagenote">
             Six rings, six real destinations, each with a fact you could check. Riding them are
             real HealthKit identifiers — the readings beside them are examples, not your data.
             Nothing on this page ever touches Health.
-          </figcaption>
-        </figure>
+          </p>
+        </div>
+       </div>
       </section>
 
       <!-- ================= the lens ================= -->
@@ -1060,7 +1063,8 @@ const jsonLd = {
         position: relative;
         z-index: 0;
         background: var(--air);
-        padding-top: clamp(2.6rem, 1.6rem + 3.6vw, 5rem);
+        padding-top: clamp(1.6rem, 1.1rem + 1.8vw, 2.8rem);
+        padding-bottom: clamp(2rem, 1.4rem + 2vw, 3.4rem);
         overflow: hidden;
       }
 
@@ -1075,6 +1079,68 @@ const jsonLd = {
 
       .hero-say {
         max-width: 46rem;
+      }
+
+      /* Wide: the reader meets the diagram, not a description of it. The copy
+         column and the ripple share one grid cell — the drop sits right of the
+         text and the outer rings pass behind it, so the first screen is the
+         thing spreading. The copy stays on .shell, so its left edge is the
+         same x as the nav mark at every width. */
+      @media (min-width: 1240px) {
+        .herogrid {
+          display: grid;
+          grid-template-rows: auto auto;
+        }
+
+        .hero-copy,
+        .stagewrap {
+          grid-column: 1;
+          grid-row: 1;
+        }
+
+        .hero-copy {
+          align-self: start;
+          grid-template-columns: minmax(0, 1fr);
+          gap: clamp(1.5rem, 1rem + 1.2vw, 2.2rem);
+          align-items: start;
+          width: min(100% - 2.5rem, var(--shell));
+          margin-inline: auto;
+          pointer-events: none;
+        }
+
+        .hero-copy > * {
+          max-width: 25.5rem;
+          pointer-events: auto;
+        }
+
+        .hero-say {
+          max-width: 25.5rem;
+        }
+
+        .stage {
+          margin-top: 0;
+        }
+
+        .hero-say h1 {
+          font-size: clamp(2.35rem, 1.2rem + 2vw, 3.05rem);
+        }
+
+        .notewrap {
+          grid-column: 1;
+          grid-row: 2;
+        }
+      }
+
+      .notewrap {
+        margin-top: clamp(1rem, 0.7rem + 1vw, 1.7rem);
+      }
+
+      .stagenote {
+        margin: 0;
+        max-width: 46rem;
+        font-size: var(--step--1);
+        line-height: 1.62;
+        color: var(--mid);
       }
 
       .hero-facts {
@@ -1211,11 +1277,15 @@ const jsonLd = {
         );
       }
 
+      /* The drop sits right of centre and a little above it, so the rings have
+         room to spread in every direction rather than only downward. Same
+         origin at every landscape width, so the composition is one thing that
+         scales rather than two that disagree. */
       .stage-l {
-        --ox: 50%;
-        --oy: 16%;
+        --ox: 64%;
+        --oy: 38%;
         --disc: clamp(84px, 8.4vw, 132px);
-        height: clamp(470px, 54vw, 680px);
+        height: clamp(660px, 4rem + 44vw, 796px);
       }
 
       .stage-p {

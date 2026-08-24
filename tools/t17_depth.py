@@ -221,7 +221,7 @@ LY = min(y for _, y in INNER) - 1
 D = {p: hypot(p[0] - LX, p[1] - LY) for p in INNER}
 D_MIN, D_MAX = min(D.values()), max(D.values())
 
-STEPS = 11
+STEPS = 12
 GAMMA = 0.85                        # see the ramp note below
 
 TONE_I = {}
@@ -229,14 +229,20 @@ for p, d in D.items():
     t = (d - D_MIN) / (D_MAX - D_MIN)
     TONE_I[p] = min(STEPS - 1, int(round((t ** GAMMA) * (STEPS - 1))))
 
-# The specular catch: the contour just inside the keyline, cut off at a fixed
-# radius from the light. Because the cut is on distance and not on position, it
-# lands exactly where the surface faces the light most directly and stops on
-# its own — it cannot run round the top, because the top is further away.
-CONTOUR = {p for p in INNER if any((p[0] + dx, p[1] + dy) not in INNER
-                                   for dx, dy in NEI)}
-SPEC_REACH = 1.7
-SPEC = {p for p in CONTOUR if D[p] <= D_MIN + SPEC_REACH}
+# The specular catch: everything within a fixed radius of the light. Because
+# the cut is on distance and not on position, it lands exactly where the
+# surface faces the light most directly and stops on its own — it cannot run
+# round the top, because the top is further away.
+#
+# A disc rather than a slice of the contour. Taking only contour pixels left
+# the two brightest ramp pixels stranded *behind* the catch, with the catch on
+# their outboard side and darker ramp on their inboard side — a two-pixel
+# island that the loop test correctly refused to call boundary-touching. A
+# catch is a blob at the point of the shoulder anyway, not a line ruled along
+# the edge, so the disc is both the honest shape and the one that leaves the
+# ramp's brightest step still open to the edge.
+SPEC_REACH = 1.6
+SPEC = {p for p in INNER if D[p] <= D_MIN + SPEC_REACH}
 assert 4 <= len(SPEC) <= 12, f'the catch is {len(SPEC)}px — a catch is a few pixels'
 
 RAMP_PX = {i: set() for i in range(STEPS)}
@@ -288,13 +294,21 @@ def encloses(layer):
 
 
 KEYS = sorted(RAMP_PX)
-GROUPS = [('the catch', SPEC)]
-GROUPS += [(f'tone {i}', RAMP_PX[i]) for i in KEYS]
-GROUPS += [(f'tones 0-{k}', set().union(*(RAMP_PX[i] for i in KEYS[:n])))
-           for n, k in ((n, KEYS[n - 1]) for n in range(2, len(KEYS)))]
-GROUPS += [(f'tones {k}-{KEYS[-1]}',
-            set().union(*(RAMP_PX[i] for i in KEYS[n:])))
-           for n, k in ((n, KEYS[n]) for n in range(1, len(KEYS) - 1))]
+ORDER = [('the catch', SPEC)] + [(str(i), RAMP_PX[i]) for i in KEYS]
+
+# Every contiguous run of tones, brightest to darkest — singles, prefixes,
+# suffixes and every band in between. A frame does not have to be one tone: two
+# adjacent tones that individually look like arcs can still add up to a ring,
+# and testing only the extremes would miss it.
+GROUPS = []
+for i in range(len(ORDER)):
+    for j in range(i + 1, len(ORDER) + 1):
+        run = ORDER[i:j]
+        px = set().union(*(p for _, p in run))
+        if px == INNER:
+            continue                # removing everything leaves nothing to ring
+        name = run[0][0] if len(run) == 1 else f'{run[0][0]}-{run[-1][0]}'
+        GROUPS.append((f'tones {name}', px))
 
 for what, layer in GROUPS:
     assert not encloses(layer), f'{what} closes a loop inside the keyline'
@@ -547,8 +561,8 @@ print(f'  tail        y{min(TAIL_ROWS)}-{max(TAIL_ROWS)}, asymmetric by design; 
 print(f'  light       ({LX}, {LY}) — upper left, outside the shape; '
       f'radial falloff d={D_MIN:.1f}-{D_MAX:.1f}, gamma {GAMMA}')
 print(f'  monotone    (1,1), (1,0) and (0,1) all same-or-darker: verified')
-print(f'  no loops    {len(GROUPS)} layers and layer-groups tested by flood fill: '
-      f'none encloses a pixel')
+print(f'  no loops    every contiguous run of tones ({len(GROUPS)} of them) flooded '
+      f'from the edge: none encloses a pixel')
 print(f'  catch       {len(SPEC)}px on the upper-left shoulder, {SPEC_C}')
 print(f'  tones       {len(TONES)}')
 print(f'  face        {FACE_SIZE}/{FACE_SMILE}/gap{FACE_GAP} — {FACE_W}x{FACE_H} at '
