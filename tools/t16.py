@@ -23,20 +23,20 @@ SURFACE = [
 ]
 FACE = "#fffdf8"
 
-# Keep the shipped Mozz circle's shoulders and 28-pixel diameter, removing only
-# three duplicate equator rows to reserve four rows for a speech-bubble tail.
-# This remains substantially rounder than the 21/23-row sibling bubbles.
-BODY_PROFILE = [*MOZZ_28[:10], *([28] * 5), *MOZZ_28[18:]]
-assert len(BODY_PROFILE) == 25
+# Keep the shipped Mozz circle's shoulders and 28-pixel diameter, removing three
+# duplicate equator rows and handing its final two cap rows to the tail. The
+# lower-left curve therefore changes direction once, rather than growing a lobe.
+BODY_PROFILE = [*MOZZ_28[:10], *([28] * 5), *MOZZ_28[18:-2]]
+assert len(BODY_PROFILE) == 23
 BODY = {
     (16 - width // 2 + offset, 2 + row)
     for row, width in enumerate(BODY_PROFILE)
     for offset in range(width)
 }
 TAIL_ROWS = {
-    25: (7, 15),
-    26: (7, 14),
-    27: (7, 12),
+    25: (8, 16),
+    26: (8, 14),
+    27: (8, 12),
     28: (8, 10),
     29: (9, 9),
 }
@@ -119,7 +119,7 @@ body_last = sorted(x for x, y in SHAPE if y == body_y1)
 tail_first = sorted(x for x, y in SHAPE if y == body_y1 + 1)
 body_last_c = (body_last[0] + body_last[-1] + 1) / 2
 tail_first_c = (tail_first[0] + tail_first[-1] + 1) / 2
-assert body_last_c == 16 and tail_first_c == 14.5
+assert body_last_c == 16 and tail_first_c == 12.5
 
 # A single keyline encloses the combined mark, so no line can close across the
 # body-to-tail join. Only two one-pixel body bands sit inside it; both live in
@@ -134,15 +134,17 @@ open_join = [
 ]
 assert len(open_join) >= 5
 body_rings, body_core = rings(BODY, 3)
-tail_rings, tail_core = rings(TAIL, 2)
+tail_rings, tail_core = rings(TAIL, 1)
 assert len(body_rings) == 3 and body_core
-assert len(tail_rings) == 2 and tail_core
+assert len(tail_rings) == 1 and tail_core
 
 body_owned = BODY - TAIL
 body_join = (body_rings[0] & body_owned) - outline
 inner_rim = (body_rings[1] & body_owned) - outline
 rim_highlight = {(x, y) for x, y in inner_rim if y <= 13}
 rim_return = inner_rim - rim_highlight
+tail_shadow = {(x, y) for x, y in tail_core if y >= 27}
+tail_depth = tail_core - tail_shadow
 layers = [
     (outline, KEY),
     (rim_highlight, SURFACE[0]),
@@ -150,8 +152,8 @@ layers = [
     ((body_rings[2] & body_owned) - outline, SURFACE[2]),
     ((body_core & body_owned) - outline, SURFACE[3]),
     ((tail_rings[0] - outline) | body_join, SURFACE[2]),
-    (tail_rings[1] - outline, SURFACE[4]),
-    (tail_core - outline, SURFACE[5]),
+    (tail_depth, SURFACE[4]),
+    (tail_shadow, SURFACE[5]),
 ]
 assert all(layer for layer, _ in layers)
 assert all(not is_slab(layer, SHAPE) for layer, _ in layers)
@@ -198,15 +200,15 @@ paths = "\n".join(
  * t16 · Round Reply
  *
  * The body is 28 pixels wide, built from the shipped Mozz circle profile with
- * only three duplicate equator rows removed to reserve room for the tail. It is
- * visibly rounder than the sibling bubbles while matching their full width.
+ * three duplicate equator rows removed. Its final two cap rows give way to the
+ * tail, preserving the circle's shoulders while matching the siblings' width.
  *
  * The ramp occupies only the keyline and next two pixels: one split rim and one
  * mid tone, then a broad plain violet field. The face lives entirely on that
  * field instead of inside a stack of collars.
  *
- * A straight-left, right-tapered wedge overlaps the final two body rows. One
- * outer keyline encloses both, leaving no seam at the join.
+ * A straight-left, right-tapered 9-7-5-3-1 wedge continues the body's lower-left
+ * edge. One outer keyline encloses both, leaving no seam at the join.
  *
  * The lg face matches the body's even parity and occupies y8-18 on the visibly
  * symmetric body at y2-24: 6 pixels of air above and 6 below, plus 9 on either
@@ -244,7 +246,7 @@ palette = ", ".join(f"'{tone}'" for tone in [KEY, *SURFACE, FACE])
 )
 
 print(
-    f"{SLUG}: round body {BODY_W}x25, centred body y{body_y0}-{body_y1}, "
+    f"{SLUG}: round body {BODY_W}x23, centred body y{body_y0}-{body_y1}, "
     f"air {air_above}/{air_below}, tones 8, bounds x{x0}-{x1} y{y0}-{y1}, "
     f"side air 9/9, open join {len(open_join)}px, "
     f"face contrast {face_contrast:.2f}:1"

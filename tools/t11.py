@@ -18,23 +18,30 @@ review is everything the tone count could not see.
 field — the exact note the client has made all along, that a mark should *be* a
 face rather than contain one. It is now lg, 10 wide, the same ratio the shipped
 mark uses, and the body grew to 24 rows so a 10-row face still splits its air
-7/7. The face is 100 px on a 164 px field: it is the subject, not an inset.
+7/7. The face is 40 px of ink on a 282 px plate: it is the subject, not an inset.
 
 **The parts.** Six stops spent as an even wash is still a wash — every step does
-the same thing as the one before, so the eye finds no seam. The stops are spent
-on named parts instead, and one of them reverses direction, which is what makes
-a boundary visible at all:
+the same thing as the one before, so the eye finds no seam. The first rebuild
+spent them as six even 1px contours and still looked airbrushed. What makes a
+part legible is *area* and a *boundary*, so the stops are spent as named parts
+of very unequal size:
 
-    rim      1 px, the lightest stop        the lit outer edge
-    bevel    3 px, three stops, 1 px each   the surface turning away
-    groove   1 px, the *darkest* stop       where the wall meets the floor
-    field    the rest, one stop lighter     the plane the face sits on
+    keyline  1 px                            the outline
+    rim      1 px, the lightest stop         the lit outer edge
+    bevel    1 px, one stop down             the edge turning away
+    step     1 px, one more                  where the wall starts to face you
+    plate    the whole middle, brand purple  the plane the face sits on
+    shadow   under the belly, 3 stops down   the underside, in shade
+    floor    beneath it, one stop back up    light bouncing off the ground
 
-Inward the tone goes down, down, down, down, then *up*. That single reversal at
-the groove is the seam; without it six steps in a row read as a gradient. The
-shells also relax from a squarish superellipse (n=3.6, close to the shipped
-silhouette) to a soft oval (n=2.3) as they go in, so the field's edge is not
-parallel to the outline and reads as a different part rather than another band.
+Within a part the neighbour step is still c45's ΔE 5. Between parts it is not:
+bevel to shadow is ΔE 15.5, three steps at once, because a seam has to be
+visible. The shadow is placed by surface normal rather than by height — a y
+split laid a hard horizontal seam straight across both side walls at the
+equator — so it wraps only what faces downward. The shells also relax from a
+squarish superellipse (n=3.6, close to the shipped silhouette) to a soft oval
+(n=2.3) as they go in, so the plate's edge is not parallel to the outline and
+reads as a different part rather than another band.
 
 **The tail.** A tail is what makes the silhouette a speech bubble, and the first
 version's — six rows, tapering from both the top and the tip — read as a
@@ -195,27 +202,39 @@ for i in range(INSETS):
 #
 #   depth 1   rim        RAMP[0]   the lit outer edge, 1 px
 #   depth 2   bevel      RAMP[1]   the wall, 1 px
-#   depth 3   upper      RAMP[2]   the wall stepping down into the plate
-#             lower      RAMP[5]   ...or, below, dropping three stops into shadow
-#   depth 4   upper      RAMP[3]   plate
-#             lower      RAMP[4]   the shadow lifting back toward the plate
-#   depth 5+             RAMP[3]   the plate: one flat tone, the brand purple,
+#   depth 3   facing up  RAMP[2]   the wall stepping down into the plate
+#             facing down RAMP[5]  ...or, underneath, dropping three stops into shadow
+#   depth 4   facing down RAMP[4]  the shadow lifting back toward the plate
+#   otherwise            RAMP[3]   the plate: one flat tone, the brand purple,
 #                                  the largest area in the mark, carrying the face
 #
-# So the top of the bubble steps gently — three subtle stops and then flat — and
-# the bottom drops hard into a two-pixel shadow and comes back up. Same six
-# stops, same step size between neighbours; what changed is that they are spent
-# where a surface actually changes instead of being spread evenly.
+# So the top and sides step gently — three subtle stops and then flat — and the
+# underside drops hard into a two-pixel shadow and comes back up. Same six stops,
+# same step size between neighbours; what changed is that they are spent where a
+# surface actually changes instead of being spread evenly.
+#
+# "Facing down" is the surface normal, not the half of the picture: on a
+# superellipse the normal turns from sideways to downward where (dy/b)^n
+# overtakes (dx/a)^n, so the shadow covers the underside and the bottom corners
+# and stops before it climbs the side walls. Splitting on y alone puts a hard
+# horizontal seam across both walls at the equator, which reads as a glitch.
+A0, B0 = (X1 + 1 - X0) / 2, (Y1 + 1 - Y0) / 2
+
+
+def faces_down(p):
+    dx, dy = abs(p[0] + 0.5 - CX) / A0, (p[1] + 0.5 - CYY) / B0
+    return dy > 0 and dy ** N_OUT > dx ** N_OUT
+
+
 def part_of(p):
-    d = depth[p]
-    upper = p[1] + 0.5 < CYY
+    d, down = depth[p], faces_down(p)
     if d <= 1:
         return 'rim'
     if d == 2:
         return 'bevel'
     if d == 3:
-        return 'step' if upper else 'shadow'
-    if d == 4 and not upper:
+        return 'shadow' if down else 'step'
+    if d == 4 and down:
         return 'floor'
     return 'plate'
 
@@ -264,13 +283,14 @@ assert TW / len(TAIL_ROWS) >= 1.4, (
 
 # ---------------------------------------------------------------------------
 # Paint. One keyline around the whole silhouette; the parts inside the body by
-# depth; the tail flat at the rim tone.
+# depth; the tail flat at the plate tone.
 #
 # Whether the tail takes the ramp was measured, not chosen: peel the silhouette
 # and nothing in the tail is more than four deep, so the body's own law would
 # give it two tones over a handful of pixels — a 2x2 smudge in a flap, a stain
-# rather than a surface. Flat rim is also what the body carries at the join, so
-# the two read as one skin. --ramp-tail draws the alternative.
+# rather than a surface. Flat at the plate tone, because the tail's face is
+# coplanar with the plate: same plane, same tone, so the two read as one skin.
+# --ramp-tail draws the alternative.
 # ---------------------------------------------------------------------------
 DEPTH = {}
 _r, _rem = rings(SIL, INSETS)
@@ -286,16 +306,21 @@ depth = {p: max(i for i in range(INSETS + 1) if p in SHELLS[i]) for p in BODY}
 part = {p: part_of(p) for p in BODY}
 paint = {p: TONE[part[p]] for p in BODY}
 for p in TAIL:
-    part[p] = 'rim'
+    part[p] = 'plate'
     paint[p] = RAMP[min(max(DEPTH[p] - 2, 0), INSETS - 1)] if '--ramp-tail' in sys.argv \
-        else RAMP[0]
+        else TONE['plate']
 # The only asymmetry the mark is allowed: where the tail hangs off it, the body's
-# bottom row keeps the rim tone instead of turning into keyline. Exactly those
-# pixels and their mirrors are exempt from the symmetry check — nothing else.
+# bottom row keeps a fill instead of turning into keyline. Exactly those pixels
+# and their mirrors are exempt from the symmetry check — nothing else. They take
+# the tail's tone, not the rim's: a rim light exists because there is an edge
+# there, and where the tail joins there is no edge, so the rim is interrupted.
 JUNCTION = {(x, Y1) for x in range(TAIL_ROWS[TOP][0], TAIL_ROWS[TOP][1] + 1)} & BODY
 EXEMPT = JUNCTION | {(31 - x, y) for x, y in JUNCTION}
 assert len(EXEMPT) <= 2 * TW, f'{len(EXEMPT)} px exempted, more than the tail is wide'
 assert all(y == Y1 for _, y in EXEMPT), 'the exemption has crept off the tail row'
+for p in JUNCTION:
+    part[p] = 'plate'
+    paint[p] = TONE['plate']
 for p in OUTLINE:
     paint[p] = KEY
     part[p] = 'keyline'
@@ -318,15 +343,15 @@ body_only = {p: f for p, f in paint.items() if p in BODY and p not in EXEMPT}
 assert all(body_only.get((31 - x, y)) == f for (x, y), f in body_only.items()), \
     'the body is not symmetric about x=16'
 
-# the bevel must read as a run of even steps, and the rim and groove as single
+# the bands must read as single lines and the plate as one flat field, so
 # lines, or "parts" is just a word
 assert len(parts['rim'] & BODY) > len(parts['bevel']), 'the rim has lost the outside'
 assert len(PLATE) > 2 * max(len(parts[nm] & BODY) for nm in ORDER_PARTS if nm != 'plate'), \
     'the plate is not decisively the largest area — the interior is a ramp again'
-assert len(parts['shadow']) > 20 and len(parts['floor']) > 20, \
+assert len(parts['shadow']) >= 20 and len(parts['floor']) >= 16, \
     'the shadow is too thin to read as a part'
 for nm in ('shadow', 'floor'):
-    assert all(y + 0.5 > CYY for _, y in parts[nm]), f'{nm} has crept above the equator'
+    assert all(faces_down(p) for p in parts[nm]), f'{nm} has crept onto a surface facing up'
 
 # ---------------------------------------------------------------------------
 # The face. lg/compact/gap2 — 10 wide, the shipped mark's ratio to this body.
@@ -420,14 +445,25 @@ if '--svg' in sys.argv:
  * The Hozz mark's system, in purple, on the bubble — and rebuilt after review
  * so that the interior has parts instead of a wash.
  *
- * Inward from the outline: a 1px keyline, a 1px **rim** at the lightest stop, a
- * three-step **bevel** a pixel to a step, a 1px **groove** at the *darkest*
- * stop, and then the **field** one step back up, which is the plane the face
- * sits on. That single reversal at the groove is the whole trick — six stops
- * that only ever darken read as a gradient however many there are, and the eye
- * cannot say where one thing ends and the next begins. The shells also relax
- * from n=3.6 at the outline to n=2.3 at the field, so the field's edge is a
- * soft oval inside a squarish bubble rather than another parallel band.
+ * Six parts, not six steps. A 1px keyline; a **rim** at the lightest stop and a
+ * **bevel** below it, the two thin bands that turn the outline into an edge; a
+ * 1px **step** where the wall starts to face the viewer; then the **plate**,
+ * {len(PLATE)} px of the brand purple, flat, by far the largest thing in the mark and
+ * the plane the face sits on. Under the belly the plate drops three stops at
+ * once into a **shadow**, with a **floor** one stop back up beneath it.
+ *
+ * The first attempt spent the same six stops as six even 1px contours and still
+ * looked airbrushed: at 150px a 1px band is 5px of screen and every one did the
+ * same thing as the last, so they blurred into a vignette. What makes a part
+ * legible is area and a boundary — one large flat field, and a jump big enough
+ * to see. The bevel-to-shadow drop is ΔE 15.5, three neighbour steps in one go,
+ * because it is a boundary *between parts*; every step within a part is still
+ * c45's own ΔE 5. Shadow is placed by surface normal, not by y: splitting on
+ * height alone laid a hard seam straight across both side walls at the equator,
+ * so the test is whether a pixel's face turns downward, which keeps the dark to
+ * the underside and the two bottom corners. The shells also relax from n=3.6 at
+ * the outline to n=2.3 inward, so the plate's edge is a soft oval inside a
+ * squarish bubble rather than another parallel band.
  *
  * The face is lg — 10 wide in a 28-wide body, the shipped mark's own ratio,
  * {len(FACE)} px of ink on a {len(PLATE)} px plate. It is the subject of the mark, not
@@ -437,9 +473,12 @@ if '--svg' in sys.argv:
  * The tail is {TW} across and {len(TAIL_ROWS)} deep, an aspect of {TW / len(TAIL_ROWS):.1f} against the shipped
  * mark's 1.5. Mass is stubbiness, not length: the first version ran six rows and
  * tapered from both ends, and read as a hairline flick off the corner. Straight
- * left edge continuing the body's corner, the whole taper from the right, flat
- * at the rim tone because peeling the silhouette shows nothing in the tail is
- * more than four pixels deep — the ramp would leave a smudge, not a surface.
+ * left edge continuing the body's corner, the whole taper from the right, and
+ * flat at the plate tone: peeling the silhouette shows nothing in the tail is
+ * more than four pixels deep, so a ramp would leave a smudge rather than a
+ * surface, and the tail's face is coplanar with the plate, so it takes the
+ * plate's tone. The rim light stops where the tail joins, because a rim exists
+ * where there is an edge and there is no edge there.
  *
  * Colour is unchanged and is the point of holding onto this one: stop 3 of 6 is
  * {BRAND} exactly, so the bubble is the shipped purple at a glance and a
@@ -467,7 +506,7 @@ const {{ size = 128 }} = Astro.props;
 palette = ', '.join(f"'{c}'" for c in [KEY, *RAMP[::-1], INK])
 (OUT / f'{SLUG}.meta.ts').write_text(f'''export default {{
   n: '{SLUG}', name: '{NAME}',
-  idea: 'c45\\u2019s ramp measured off the grid and rebuilt in purple, then spent on parts \\u2014 rim, three-step bevel, a groove at the darkest stop, and the field a step back up. The reversal is what lets the eye find the seams. Face is lg, {len(FACE)} px of ink on a {len(PLATE)} px plate, air {ABOVE}/{BELOW}; the tail is {TW}x{len(TAIL_ROWS)}, stubby like the shipped one. Stop 3 is #8f52f6 exactly.',
+  idea: 'c45\u2019s ramp measured off the grid and rebuilt in purple, then spent on parts rather than on a wash \u2014 keyline, lit rim, bevel, step, a big flat brand-purple plate, and a shadow and floor under the belly placed by surface normal. Steps inside a part are c45\u2019s \u0394E 5; the drop into shadow is three at once, because that is a seam. Face is lg, {len(FACE)} px of ink on a {len(PLATE)} px plate, air {ABOVE}/{BELOW}; the tail is {TW}x{len(TAIL_ROWS)} and takes the plate tone. Stop 3 is #8f52f6 exactly.',
   ground: 'light',
   palette: [{palette}],
 }};

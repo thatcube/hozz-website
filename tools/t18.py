@@ -158,16 +158,24 @@ assert {
     for y in range(face_top, face_bottom + 1)
 } <= CORE_FIELD
 
-# Paint assertions: disjoint layers cover the silhouette, the recessed plane is
-# symmetric, and all nine intended tones are present.
+# Paint assertions: disjoint layers cover the silhouette, every shade comes from
+# the directional falloff, and no contour ring resolves to one constant band.
 paint_sets = [pixels for pixels, _ in LAYERS]
 for i, layer in enumerate(paint_sets):
     assert layer
+    xs = [x for x, _ in layer]
+    ys = [y for _, y in layer]
+    bounding_area = (max(xs) - min(xs) + 1) * (max(ys) - min(ys) + 1)
+    assert len(layer) != bounding_area
     assert not any(layer & other for other in paint_sets[i + 1 :])
+    assert not is_slab(layer, SILHOUETTE)
 assert set().union(*paint_sets) == SILHOUETTE
-for layer in (wall_top, wall_middle, wall_bottom, CORE_FIELD):
-    assert all((31 - x, y) in layer for x, y in layer)
 assert len(set(PALETTE)) == 9
+contour_rings, _ = rings(SILHOUETTE, 4)
+contour_tone_counts = [
+    len({tone_map[pixel] for pixel in ring}) for ring in contour_rings
+]
+assert all(count >= 3 for count in contour_tone_counts)
 
 
 def rgb(colour):
@@ -196,7 +204,15 @@ for colour in purple_colours:
     hue, _, saturation = colorsys.rgb_to_hls(*rgb(colour))
     assert 0.69 <= hue <= 0.78
     assert saturation >= 0.45
-face_contrast = contrast(FACE, CORE)
+face_box = {
+    (x, y)
+    for x in range(face_left, face_right + 1)
+    for y in range(face_top, face_bottom + 1)
+}
+face_tones = sorted({tone_map[pixel] for pixel in face_box})
+face_contrast = min(
+    contrast(FACE, LIGHT_TO_DARK[tone]) for tone in face_tones
+)
 assert face_contrast >= 4.5
 
 paths = "\n".join(
@@ -209,11 +225,10 @@ paths = "\n".join(
 /**
  * t18 · Held
  *
- * A single recessed field, not a screen inside a bubble. The outer two pixels
- * remain the bubble's rim; the next two are one continuous inward wall, dark at
- * the top and light at the bottom; the face rests on the quieter field below.
- * Because every layer is peeled from the body contour, there is no second
- * outlined panel and therefore no second object.
+ * A single recessed field, not a screen inside a bubble. Light enters from the
+ * upper left and every tone follows its distance from that source. The inward
+ * wall loses two stops and the field one; both differences converge into the
+ * shadow at lower right, so no collar closes around the face.
  *
  * The body is symmetric about x=16; only the speech tail is exempt. The shipped
  * 10-wide face and 28-wide body have matching even parity. Its measured y8–17
@@ -242,7 +257,7 @@ const {{ size = 128 }} = Astro.props;
 (OUT / "t18.meta.ts").write_text(
     f"""export default {{
   n: 't18', name: 'Held',
-  idea: 'One contour-following step down: a shaded inward wall holds the face in a quiet plum field.',
+  idea: 'Upper-left light falls across one recessed field, whose wall dissolves into the lower-right shadow.',
   ground: 'light',
   palette: [{", ".join(repr(colour) for colour in PALETTE)}],
 }};
@@ -254,7 +269,8 @@ print(
     f"tones={len(PALETTE)} · body={body_width}×{body_bottom - body_top + 1} · "
     f"face=x{face_left}–{face_right} y{face_top}–{face_bottom} · "
     f"air=v{air_above}/{air_below} h{air_left}/{air_right} · "
-    f"face/core contrast={face_contrast:.2f}:1 · "
+    f"face tones={face_tones} contrast={face_contrast:.2f}:1 · "
+    f"contour tone counts={contour_tone_counts} · "
     "bounds=x2–29 y2–29 · "
     f"body rows={body_widths} · silhouette rows={silhouette_widths}"
 )

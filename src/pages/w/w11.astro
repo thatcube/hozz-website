@@ -108,19 +108,19 @@ const rideTo = (aspect: number, ly: number, len: number, angle: number, y: numbe
   return +((r / ((len / 100) * aspect * 100)) * 100).toFixed(3);
 };
 
-/* ---- landscape: lens at 50% / 40% of a 1600 × 980 stage ---- */
-const AL = 1600 / 980;
-const LX = 50;
+/* ---- landscape: lens at 47% / 40% of a 1600 × 900 stage ---- */
+const AL = 1600 / 900;
+const LX = 47;
 const LY = 40;
-/** Bands stop short of the destination ring; the hairlines finish the journey. */
-const LEN_L = 34;
+/** Long enough that each band is still running when it passes under its chip. */
+const LEN_L = 40;
 /** Seven evenly spaced rows, so the chips read as one sorted ladder. */
-const CHIP_STEP = 6.5;
+const CHIP_STEP = 7.2;
 
 const bandsL = BANDS.map((b, i) => {
   const angle = (i - 3) * 10;
   const y = LY + (i - 3) * CHIP_STEP;
-  return { ...b, angle, d: rideTo(AL, LY, LEN_L, angle, y, 37.3) };
+  return { ...b, angle, d: rideTo(AL, LY, LEN_L, angle, y, 41.5) };
 });
 
 /** Where each destination sits on the stage, chosen to clear the chip ladder. */
@@ -134,28 +134,29 @@ const platesL = [
 ].map((p) => ({ ...p.d, ...spokeTo(AL, LX, LY, p.x, p.y) }));
 
 /** The archive, up and left of the lens, and the undispersed beam back to it. */
-const SRC_L = { x: 40, y: 9 };
+const SRC_L = { x: 37, y: 8 };
 const beamL = (() => {
   const s = spokeTo(AL, LX, LY, SRC_L.x, SRC_L.y);
   return { a: s.a, len: +(s.len * 0.72).toFixed(3) };
 })();
 
 /* ---- portrait: lens at 50% / 18% of a 390 × 940 stage ---- */
-const AP = 390 / 940;
+const AP = 390 / 1080;
 const PLY = 18;
-const LEN_P = 215;
-const CARD_Y_P = [24, 30.5, 37, 43.5, 50, 56.5, 63];
+const LEN_P = 240;
+/** The first row clears the lens and its halo; the rest step down evenly. */
+const CARD_Y_P = [30, 36, 42, 48, 54, 60, 66];
 
 const bandsP = BANDS.map((b, i) => {
   const angle = +(98 - i * (16 / 6)).toFixed(3);
-  return { ...b, angle, d: rideTo(AP, PLY, LEN_P, angle, CARD_Y_P[i], 25.5) };
+  return { ...b, angle, d: rideTo(AP, PLY, LEN_P, angle, CARD_Y_P[i], 30) };
 });
 
 const platesP = [
-  { d: OUT[0], x: 25, y: 76 },
-  { d: OUT[1], x: 75, y: 76 },
-  { d: OUT[2], x: 25, y: 85 },
-  { d: OUT[3], x: 75, y: 85 },
+  { d: OUT[0], x: 25, y: 74 },
+  { d: OUT[1], x: 75, y: 74 },
+  { d: OUT[2], x: 25, y: 84 },
+  { d: OUT[3], x: 75, y: 84 },
   { d: OUT[4], x: 25, y: 94 },
   { d: OUT[5], x: 75, y: 94 },
 ].map((p) => ({ ...p.d, ...spokeTo(AP, 50, PLY, p.x, p.y) }));
@@ -1075,7 +1076,7 @@ const jsonLd = {
         width: 100%;
         max-width: 1680px;
         margin-inline: auto;
-        aspect-ratio: 1600 / 980;
+        aspect-ratio: 1600 / 900;
       }
 
       .art {
@@ -1084,6 +1085,8 @@ const jsonLd = {
         overflow: hidden;
         font-size: clamp(10px, 0.75vw, 13px);
         --tk: 1.1em;
+        --lx: 47%;
+        --ly: 40%;
       }
 
       /* Bands, spokes and the beam share one mechanism: a zero-height rail
@@ -1093,8 +1096,8 @@ const jsonLd = {
       .spoke,
       .beam {
         position: absolute;
-        left: var(--lx, 50%);
-        top: var(--ly, 40%);
+        left: var(--lx);
+        top: var(--ly);
         width: var(--len);
         height: 0;
         transform-origin: 0 0;
@@ -1179,8 +1182,8 @@ const jsonLd = {
 
       .lens {
         position: absolute;
-        left: var(--lx, 50%);
-        top: var(--ly, 40%);
+        left: var(--lx);
+        top: var(--ly);
         transform: translate(-50%, -50%);
       }
 
@@ -1483,7 +1486,14 @@ const jsonLd = {
         padding-top: clamp(1.2rem, 0.8rem + 1.2vw, 2rem);
         display: grid;
         gap: 0.55rem 1.4rem;
-        grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 188px), 1fr));
+      }
+
+      /* Seven columns above the fold width, so the legend is the fan, in order. */
+      @media (min-width: 1100px) {
+        .key {
+          grid-template-columns: repeat(7, minmax(0, 1fr));
+        }
       }
 
       .key li {
@@ -1558,15 +1568,12 @@ const jsonLd = {
           width: 100%;
           max-width: 420px;
           margin-inline: auto;
-          aspect-ratio: 390 / 940;
+          aspect-ratio: 390 / 1080;
           font-size: clamp(10px, 2.9vw, 12px);
           --tk: 0.9em;
         }
 
-        .art-port .band,
-        .art-port .spoke,
-        .art-port .beam,
-        .art-port .lens {
+        .art-port {
           --lx: 50%;
           --ly: 18%;
         }
