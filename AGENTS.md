@@ -46,5 +46,26 @@ whether it already exists as a category hue.
 npm run dev
 npm run build
 npm run preview
+npm run verify:facts          # docs vs the app's Swift source
+npm run verify:links          # dead internal links, after a build
 node tools/build-images.mjs   # only when the social card or icon changes
+node tools/shoot.mjs /docs/   # screenshots for review; needs `npm run dev`
 ```
+
+## Documentation pages
+
+- Content lives in `src/pages/docs/`; the page list is `src/data/docs-nav.ts`
+  and the checkable facts are `src/data/docs.ts`. Add a page to the nav data or
+  it does not exist.
+- **Every claim must be checkable in the app's source**, not in its README —
+  prose in either repository can be stale. `npm run verify:facts` covers the
+  lists; the sentences are on you.
+- Where something is built but switched off, or in flight, say so plainly or
+  leave it out. Never describe a feature that was true for six hours.
+- Mono is for machine facts only: identifiers, formats, states, header names,
+  and the app's own error strings. Prose never uses it.
+- `<title>` is written for search and `<h1>` for the reader; they are separate
+  fields and should stay that way.
+- Astro drops the indentation whitespace when an inline element starts a line,
+  which silently glues a word to the link after it. Use `{' '}` at the end of
+  the previous line, and check the built HTML rather than the source.

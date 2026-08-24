@@ -41,6 +41,41 @@ Content lives in `src/data/site.ts`. The identifiers in the hero stream are real
 HealthKit names, not invented ones — if a claim on this site cannot be checked,
 it should not be on it.
 
+## Documentation
+
+`/docs` is seventeen pages under `src/pages/docs/`. Two data files hold
+everything that would otherwise be repeated or go stale:
+
+- **`src/data/docs-nav.ts`** — every page, in reading order, with its `<title>`,
+  `<h1>`, description and lede. The sidebar, breadcrumbs, previous/next links
+  and the index all read from it. A page missing from this list has no route
+  into it.
+- **`src/data/docs.ts`** — the facts that live in the app's source: destination
+  presets, delivery and export formats, the MCP tool list, the analysis
+  thresholds, and the error strings the app actually shows.
+
+### Keeping the docs honest
+
+The site and the app are separate repositories, so the second file can drift.
+`verify:facts` reads the enums out of the app's Swift and fails if this
+repository disagrees:
+
+```bash
+npm run verify:facts                     # against thatcube/hozz@main
+npm run verify:facts -- --ref my-branch  # against another ref
+HOZZ_REPO=~/Development/hozz npm run verify:facts   # against a local checkout
+npm run build && npm run verify:links    # dead internal links and anchors
+```
+
+Both run in CI on every push and once a week, because the app moves without
+this repository being touched.
+
+This is a verifier rather than a generator on purpose. Generating prose from
+Swift would produce something nobody can maintain, and the prose is most of the
+value; generating only the lists would leave them stranded from the sentences
+around them. Checking the lists gets the drift protection without either
+problem.
+
 ## Images
 
 `public/og-image.png` and `public/apple-touch-icon.png` are generated from the

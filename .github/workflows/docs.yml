@@ -1,0 +1,48 @@
+# Keeps the documentation honest.
+#
+# The site and the app are separate repositories, so nothing here can rely on a
+# relative path. This fetches the app's Swift source from GitHub and checks that
+# the lists in src/data/docs.ts still match it.
+#
+# On a pull request it is a gate: if the facts changed, they had better be the
+# app's facts. On a schedule it is a tripwire — the app moves without this
+# repository being touched, and a weekly failure is how that gets noticed
+# before a reader does.
+name: Docs
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  schedule:
+    # Mondays, 08:00 UTC. Nothing here is urgent enough for a nightly.
+    - cron: '0 8 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Build, and check the docs against the app
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Check for dead internal links
+        run: npm run verify:links
+
+      # Deliberately not continue-on-error. A claim on the site that the app no
+      # longer supports is exactly the thing this site says it does not do.
+      - name: Check the documentation's facts against thatcube/hozz@main
+        run: npm run verify:facts
