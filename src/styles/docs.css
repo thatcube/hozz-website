@@ -483,6 +483,36 @@ kbd {
 
 .table-scroll {
   overflow-x: auto;
+  /* Scroll shadows: the two `local` layers travel with the content and hide the
+     two `scroll` layers pinned to the edges, so a shadow appears on a side only
+     while there is more table in that direction. No script, and nothing shows
+     at all on a table that already fits. */
+  background:
+    linear-gradient(to right, var(--air) 30%, rgba(248, 251, 253, 0)) left center / 2.5rem 100%
+      no-repeat local,
+    linear-gradient(to left, var(--air) 30%, rgba(248, 251, 253, 0)) right center / 2.5rem 100%
+      no-repeat local,
+    radial-gradient(farthest-side at 0 50%, rgba(19, 38, 56, 0.13), rgba(19, 38, 56, 0)) left center /
+      0.9rem 100% no-repeat scroll,
+    radial-gradient(farthest-side at 100% 50%, rgba(19, 38, 56, 0.13), rgba(19, 38, 56, 0)) right
+      center / 0.9rem 100% no-repeat scroll;
+}
+
+/* A table squeezed into 390px is not a table any more — three columns become
+   three stacks of one word. Below these widths the frame scrolls sideways
+   instead, which keeps the rows readable. The scroller is focusable so it can
+   be reached and moved by keyboard, not only by a trackpad. */
+.table-wrap[data-cols='3'] table {
+  min-width: 34rem;
+}
+
+.table-wrap[data-cols='4'] table {
+  min-width: 46rem;
+}
+
+.table-scroll:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: -3px;
 }
 
 .table-wrap table {

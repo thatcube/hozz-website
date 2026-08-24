@@ -1,0 +1,218 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Callout from '../../components/docs/Callout.astro';
+import Code from '../../components/docs/Code.astro';
+import Table from '../../components/docs/Table.astro';
+import { page } from '../../data/docs-nav';
+
+const entry = page('/docs/switching-from-health-auto-export/');
+
+const compat = `{
+  "data": {
+    "metrics": [
+      {
+        "name": "heart_rate",
+        "units": "bpm",
+        "data": [
+          {
+            "date": "2026-02-06 14:30:00 -0800",
+            "Min": 62,
+            "Avg": 62,
+            "Max": 62,
+            "source": "Apple Watch"
+          }
+        ]
+      },
+      {
+        "name": "sleep_analysis",
+        "units": "hr",
+        "data": [
+          {
+            "startDate": "2026-02-05 23:00:00 -0800",
+            "endDate": "2026-02-06 00:30:00 -0800",
+            "qty": 1.5,
+            "value": "Core",
+            "source": "Apple Watch"
+          }
+        ]
+      }
+    ],
+    "workouts": [
+      {
+        "id": "7b21…",
+        "name": "Running",
+        "start": "2026-02-06 07:00:00 -0800",
+        "end": "2026-02-06 07:30:00 -0800",
+        "duration": 1800
+      }
+    ]
+  }
+}`;
+
+const differences = [
+  [
+    'Date format',
+    '2026-02-06T22:30:00.000Z',
+    '2026-02-06 14:30:00 -0800 — local time, space separated, numeric offset, not ISO 8601',
+  ],
+  ['Heart rate points', 'qty', 'Min, Avg, Max — capitalised, with no qty'],
+  ['Heart rate units', 'count/min', 'bpm'],
+  [
+    'Sleep points',
+    'date, qty as a raw stage number',
+    'startDate, endDate, qty in hours, value as a stage name',
+  ],
+  ['Sleep units', 'count', 'hr'],
+  ['Sleep stage', '0–5', 'In Bed, Asleep, Awake, Core, Deep, REM'],
+  ['Workout name', 'Workout', 'The activity, e.g. Running'],
+  ['Workout duration', 'absent', 'Seconds'],
+  ['Per-point units', 'present', 'absent'],
+];
+---
+
+<DocsLayout page={entry} section="Going further">
+  <p>
+    If you are moving from Health Auto Export, the thing most likely to break is not the export —
+    it is everything downstream of it. Home Assistant automations, Node-RED flows, MQTT subscribers
+    and scripts are keyed to that app's field names, and a different shape means rewriting all of
+    them at once.
+  </p>
+
+  <p>
+    So Hozz has an <strong>opt-in compatibility mode</strong> that emits those field names instead
+    of its own. It is available on the{' '}
+    <a href="/docs/destinations/home-assistant/">Home Assistant</a>,{' '}
+    <a href="/docs/destinations/mqtt/">MQTT</a> and{' '}
+    <a href="/docs/destinations/web/">web address</a> destinations, and it is offered when the format
+    is Metrics JSON.
+  </p>
+
+  <Callout kind="note" title="Hozz’s own schema stays the default">
+    <p>
+      Compatibility mode is for keeping existing automations working, not for building new ones
+      against. Anything new should use{' '}
+      <a href="/docs/delivery-schema/#metrics-json">Hozz's own Metrics JSON</a>, which is more
+      precise about intervals and carries deletions.
+    </p>
+  </Callout>
+
+  <h2>What maps to what</h2>
+
+  <Table
+    caption="Field differences between Hozz’s schema and compatibility mode"
+    columns={['', 'Hozz', 'Compatibility mode']}
+  >
+    {
+      differences.map(([label, hozz, compatible]) => (
+        <tr>
+          <th scope="row">{label}</th>
+          <td>
+            <code>{hozz}</code>
+          </td>
+          <td>
+            <code>{compatible}</code>
+          </td>
+        </tr>
+      ))
+    }
+  </Table>
+
+  <Code caption="A compatibility-mode payload" code={compat} />
+
+  <h2>What this mode does not claim</h2>
+
+  <p>
+    These are real differences that no amount of field renaming can remove, and it is better to know
+    them now than to find them in a dashboard.
+  </p>
+
+  <h3>A heart rate point carries the same number three times</h3>
+
+  <p>
+    Hozz sends <strong>individual samples rather than rollups</strong>, so a heart rate point has the
+    same value in <code>Min</code>, <code>Avg</code> and <code>Max</code>. That is what one sample
+    means. The aggregated sleep shape, which only exists for summarised exports, is not produced at
+    all.
+  </p>
+
+  <p>
+    If your automation reads <code>Avg</code>, it keeps working. If it relies on{' '}
+    <code>Min</code> and <code>Max</code> differing to describe a period, it will not — because Hozz
+    never summarised a period in the first place.
+  </p>
+
+  <h3>Blood pressure stays split</h3>
+
+  <p>
+    Hozz emits <code>blood_pressure_systolic</code> and <code>blood_pressure_diastolic</code> as
+    separate metrics rather than pairing them as <code>systolic</code> and <code>diastolic</code> on
+    one point. Pairing them would mean guessing which two samples belong together, and a wrong pair
+    is worse than an unpaired one.
+  </p>
+
+  <h3>Metadata-derived point fields are not emitted</h3>
+
+  <p>
+    <code>mealTime</code> on blood glucose, <code>reason</code> on insulin delivery, the sexual
+    activity keys — Hozz's delivery batches do not carry that metadata, so those fields are absent
+    rather than invented.
+  </p>
+
+  <h3>Deletions are still included</h3>
+
+  <p>
+    Under the <code>deletions</code> key. That format has no tombstone, so this is an addition — a
+    consumer written for their format ignores a key it does not know, and dropping tombstones would
+    leave a receiver showing data you deliberately removed.
+  </p>
+
+  <h2>What the mode is based on</h2>
+
+  <p>
+    Everything the mode matches is taken from the published format: the{' '}
+    <code>data.metrics[].{'{'}name, units, data{'}'}</code> envelope, the{' '}
+    <code>yyyy-MM-dd HH:mm:ss Z</code> timestamp, <code>qty</code>, the capitalised{' '}
+    <code>Min</code>/<code>Avg</code>/<code>Max</code>, and the sleep point's{' '}
+    <code>startDate</code>/<code>endDate</code>/<code>value</code>.
+  </p>
+
+  <p>
+    <strong>Hozz claims no compatibility with anything that format does not document.</strong> If
+    your automation depends on behaviour you discovered by observation rather than from their
+    documentation, test it rather than assuming.
+  </p>
+
+  <h2>Other differences worth knowing</h2>
+
+  <ul>
+    <li>
+      <strong>Hozz has no paid tier.</strong> Every destination and every format is available.{' '}
+      <a href="/docs/free-and-open/">Free and open source</a> covers what that does and does not mean.
+    </li>
+    <li>
+      <strong>Hozz publishes a schema.</strong> Every delivery format is documented field by field
+      with a worked example on <a href="/docs/delivery-schema/">the delivery schema page</a>.
+    </li>
+    <li>
+      <strong>Hozz writes InfluxDB line protocol directly</strong>, so a translator container between
+      the exporter and the database is not needed. See{' '}
+      <a href="/docs/destinations/influxdb/">InfluxDB</a>.
+    </li>
+    <li>
+      <strong>Hozz is early alpha and not in the App Store.</strong> Today you install it by building
+      it. That is the honest reason to stay where you are for now.
+    </li>
+    <li>
+      <strong>Coverage is partial.</strong> <a href="/docs/data-coverage/">Data coverage</a> is the current
+      boundary — check the types you care about are on it before switching anything important.
+    </li>
+  </ul>
+
+  <h2>Running both at once</h2>
+
+  <p>
+    Nothing stops you. They read the same Health database independently, and Hozz's cursors are its
+    own. Pointing Hozz at a second destination — or at the same one under a different webhook — is
+    the low-risk way to compare the two before committing to either.
+  </p>
+</DocsLayout>

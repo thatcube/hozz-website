@@ -1,0 +1,96 @@
+---
+/**
+ * The messages Hozz can show, as blocks rather than as a table.
+ *
+ * These were a three-column table, which reads well on a laptop and turns into
+ * three stacks of single words on a phone — and this is the page someone is
+ * most likely to be reading on a phone, because they are holding the phone
+ * that is showing them the message.
+ */
+import { APP_MESSAGES } from '../../data/docs';
+---
+
+<ul class="message-list">
+  {
+    APP_MESSAGES.map((message) => (
+      <li>
+        <p class="message-text">{message.text}</p>
+        <div class="message-detail">
+          <div>
+            <h4>What it means</h4>
+            <p>{message.means}</p>
+          </div>
+          <div>
+            <h4>What to do</h4>
+            <p>{message.fix}</p>
+          </div>
+        </div>
+      </li>
+    ))
+  }
+</ul>
+
+<style is:global>
+  .message-list {
+    display: grid;
+    gap: 1rem;
+    margin-block: 1.8rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .message-list > li {
+    margin: 0;
+    padding: 1.1rem 1.2rem;
+    border: 1px solid var(--line);
+    border-radius: 0.85rem;
+    background: var(--white);
+  }
+
+  /* No ::before bullet — .prose adds one to every li and it would sit outside
+     the card. */
+  .message-list > li::before {
+    display: none;
+  }
+
+  /* The message is a literal string from the app, so it is set in mono: this is
+     the thing someone is comparing against their own screen. */
+  .message-text {
+    margin: 0 0 0.9rem;
+    color: var(--ink);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.82rem;
+    line-height: 1.55;
+  }
+
+  .message-detail {
+    display: grid;
+    gap: 0.9rem;
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--line-soft);
+  }
+
+  @media (min-width: 34rem) {
+    .message-detail {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.5rem;
+    }
+  }
+
+  .message-detail h4 {
+    margin: 0 0 0.2rem;
+    color: var(--ink-muted);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .message-detail p {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 0.89rem;
+    line-height: 1.55;
+  }
+</style>

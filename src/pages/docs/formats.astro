@@ -1,0 +1,237 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Callout from '../../components/docs/Callout.astro';
+import Table from '../../components/docs/Table.astro';
+import Code from '../../components/docs/Code.astro';
+import { page } from '../../data/docs-nav';
+import { EXPORT_FORMATS, DELIVERY_FORMATS } from '../../data/docs';
+
+const entry = page('/docs/formats/');
+
+const picker = EXPORT_FORMATS.filter((format) => format.inPicker);
+const engineOnly = EXPORT_FORMATS.filter((format) => !format.inPicker);
+
+const sqliteQuery = `-- Everything that happened last Tuesday, across every type:
+SELECT local_day, type, value, unit, source_name
+FROM record
+WHERE local_day = '2026-08-18'
+ORDER BY start_date;
+
+-- Anything the columns left out is still there:
+SELECT json_extract(raw, '$.metadata.HKTimeZone.value') AS tz
+FROM sample
+WHERE type = 'HKQuantityTypeIdentifierStepCount'
+LIMIT 5;`;
+
+const frontMatter = `---
+date: 2026-08-18
+steps: 8241
+sleep_hours: 7.2
+workout_minutes: 42
+resting_heart_rate: 54
+---`;
+---
+
+<DocsLayout page={entry} section="The data">
+  <p>
+    There are two different lists here, because there are two different things Hozz does. A{' '}
+    <strong>manual export</strong> produces a file you save or share from the phone. An{' '}
+    <strong>automatic destination</strong> receives batches of new records as they arrive. They do
+    not offer the same formats, and the reasons are worth knowing.
+  </p>
+
+  <h2>Manual export formats</h2>
+
+  <p>
+    Every manual export is built from a canonical NDJSON spool. That spool is the durable format
+    because it streams, survives interruption, and can be assembled without recompressing.
+    Presentation formats are produced from it at the end.
+  </p>
+
+  <Table
+    caption="Manual export formats, what each is good for, and what each keeps"
+    columns={['Format', 'File', 'Good for', 'Keeps']}
+  >
+    {
+      picker.map((format) => (
+        <tr>
+          <th scope="row">
+            {format.name}
+            {format.lossy && <> — lossy</>}
+          </th>
+          <td>
+            <code>.{format.fileExtension}</code>
+          </td>
+          <td>{format.good}</td>
+          <td>{format.keeps}</td>
+        </tr>
+      ))
+    }
+  </Table>
+
+  {
+    engineOnly.map((format) => (
+      <p>
+        <strong>{format.name}</strong> ({format.keeps}) {format.good.toLowerCase()}
+      </p>
+    ))
+  }
+
+  <Callout kind="lossy" title="Three of these deliberately throw detail away">
+    <p>
+      <strong>CSV</strong> and <strong>Markdown</strong> are lossy projections: they take everything
+      in the export and keep less of each record. <strong>GPX</strong> is lossy in a different and
+      more surprising way — it takes almost nothing in the export and keeps all of what it takes.
+    </p>
+    <p>
+      All three say so in the app, at the moment you choose them, rather than only here. If you want
+      an archive, use NDJSON or SQLite.
+    </p>
+  </Callout>
+
+  <h3>NDJSON — the default</h3>
+
+  <p>
+    One record per line, streamable at any size, and lossless for every field Hozz encodes. It is
+    also the format the export is internally built from, so producing it costs nothing extra: the
+    parts are copied verbatim rather than read and rewritten.
+  </p>
+
+  <h3>SQLite — for asking questions</h3>
+
+  <p>
+    Query it in Datasette, DuckDB, pandas, Grafana or <code>sqlite3</code> with no import step. The
+    schema is built for asking questions rather than for mirroring the JSON: everything time-shaped
+    except workouts goes into one wide <code>sample</code> table with a <code>type</code> column,
+    because the queries worth having are cross-type, and a table per type turns those into a
+    hundred-way union.
+  </p>
+
+  <p>
+    Workouts, deletions and characteristics have genuinely different shapes and get their own
+    tables. A <code>record</code> view puts the time-shaped ones back on one timeline, and a{' '}
+    <code>daily</code> view covers the aggregate most questions start from.
+  </p>
+
+  <Code caption="Querying an export" code={sqliteQuery} />
+
+  <p>
+    <strong>SQLite is not marked lossy</strong>, and that is a real distinction rather than a
+    generous one: every row also stores the untouched export line in <code>raw</code>, so anything
+    the typed columns leave out is still reachable with <code>json_extract</code>. A{' '}
+    <code>meta</code> table records when the export ran, what it covered, and which time zone the{' '}
+    <code>local_day</code> columns were bucketed in — a UTC day would file an evening workout under
+    the following morning.
+  </p>
+
+  <h3>CSV — for spreadsheets</h3>
+
+  <p>
+    One CSV per Health type, plus deletion and export-log files when needed. Opens in Excel, Numbers
+    or Sheets.
+  </p>
+
+  <p>
+    <strong>Lossy.</strong> Metadata and nested workout details do not fit a grid, and are not
+    included. If you need them, export NDJSON or SQLite as well — nothing stops you doing both.
+  </p>
+
+  <h3>Markdown — for Obsidian and journals</h3>
+
+  <p>
+    One <code>YYYY-MM-DD.md</code> note per day, each carrying YAML front matter that Dataview can
+    query, then the day in prose and small tables.
+  </p>
+
+  <Code caption="Front matter on a daily note" code={frontMatter} />
+
+  <p>
+    <strong>Lossy, and deliberately the opposite trade to the others.</strong> A note keeps a day's
+    counts, totals and extremes and throws the records themselves away, along with metadata,
+    sources, devices and sample identifiers. The picker says so, a <code>README.md</code> in the
+    archive says so, and the foot of every single note says so and points at the formats that keep
+    everything.
+  </p>
+
+  <p>
+    Days are local days, and sleep is filed under the day it <em>ended</em>, because last night's
+    sleep belongs to the morning you woke up.
+  </p>
+
+  <h3>GPX — for maps</h3>
+
+  <p>
+    One GPX 1.1 track per workout that has GPS. This is the odd one out, and the interface says so
+    before you choose it: a GPX file is a track, with nowhere to put a heart rate or a body weight,
+    so <strong>a GPX export contains only workouts and their routes and none of the rest of your
+      Health data</strong>. A workout recorded without GPS produces no file — a treadmill run has no
+    route, and that is not an error.
+  </p>
+
+  <p>
+    Because a GPX run drains only workouts and workout routes, it avoids spending hours reading
+    types that could not appear in the output. A manual export's cursors are scoped to its own run,
+    so narrowing like this cannot advance a cursor a destination depends on.
+  </p>
+
+  <Callout kind="note" title="Gaps in a route are shown as gaps">
+    <p>
+      Routes arrive as pages at fixed absolute offsets, so an interrupted sync leaves a hole of a
+      known size rather than a shorter list. Joining the two sides of a missing page would draw a
+      straight line across a mile of city and look correct — so instead a gap becomes a separate{' '}
+      <code>&lt;trkseg&gt;</code> on each side, the track's <code>&lt;desc&gt;</code> says how many
+      points are missing and where, and the archive's <code>README.md</code> lists every affected
+      file.
+    </p>
+    <p>
+      Speed, course and Core Location's accuracies have no element in base GPX, and are published
+      under Hozz's own namespace in <code>&lt;extensions&gt;</code>.
+    </p>
+  </Callout>
+
+  <h2>Delivery formats</h2>
+
+  <p>
+    An automatic destination receives one of five. These are a different list from the one above,
+    and <a href="/docs/delivery-schema/">the delivery schema</a> documents each of them field by
+    field with a worked example.
+  </p>
+
+  <Table
+    caption="Delivery formats and what each keeps"
+    columns={['Format', 'Media type', 'Notes']}
+  >
+    {
+      DELIVERY_FORMATS.map((format) => (
+        <tr>
+          <th scope="row">
+            {format.name}
+            {!format.lossless && <> — lossy</>}
+          </th>
+          <td>
+            <code>{format.contentType}</code>
+          </td>
+          <td>{format.note}</td>
+        </tr>
+      ))
+    }
+  </Table>
+
+  <h3>Why SQLite and Markdown are not offered here</h3>
+
+  <p>
+    A delivery is an append of new records to an endpoint or a folder. A database file is not
+    appendable over HTTP, and a day's note rewritten from one batch would replace a full day with a
+    fraction of it. Offering either would produce something that looked like it was working and was
+    quietly wrong, so neither is offered.
+  </p>
+
+  <h3>Why line protocol is not offered to folders</h3>
+
+  <p>
+    Hozz's own Mac app watches a folder for <code>ndjson</code>, <code>json</code> and{' '}
+    <code>csv</code>, and ignores anything else. A folder destination writing line protocol would
+    look like it was working while nothing was ever ingested, so that combination is not offered at
+    all.
+  </p>
+</DocsLayout>

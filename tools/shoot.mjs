@@ -48,7 +48,7 @@ for (const path of paths) {
     await page.evaluate(() => document.fonts.ready);
 
     const file = join(outDir, `${slug}-${viewport.name}.png`);
-    await page.screenshot({ path: file, fullPage: viewport.name === 'desktop' });
+    await page.screenshot({ path: file, fullPage: process.env.SHOOT_FULL !== '0' });
 
     // A horizontal scrollbar at phone width is a bug, so report it here rather
     // than hoping it is noticed in a tall screenshot.

@@ -18,8 +18,8 @@ interface Props {
 const { caption, columns, mono = false } = Astro.props;
 ---
 
-<div class={`table-wrap${mono ? ' table-wrap--mono' : ''}`}>
-  <div class="table-scroll">
+<div class={`table-wrap${mono ? ' table-wrap--mono' : ''}`} data-cols={columns.length}>
+  <div class="table-scroll" tabindex="0" role="region" aria-label={caption}>
     <table>
       <caption>{caption}</caption>
       <thead>
