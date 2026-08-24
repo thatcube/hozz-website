@@ -4,12 +4,8 @@
       "overflow": 0,
       "scrollWidth": 390,
       "clientWidth": 390,
-      "height": 17032,
-      "worst": {
-        "over": 14,
-        "tag": "SPAN",
-        "cls": "plate"
-      },
+      "height": 17196,
+      "worst": null,
       "requests": [
         "http://127.0.0.1:5187",
         "http://127.0.0.1:5187",
@@ -25,12 +21,8 @@
       "overflow": 0,
       "scrollWidth": 1024,
       "clientWidth": 1024,
-      "height": 11189,
-      "worst": {
-        "over": 184,
-        "tag": "DIV",
-        "cls": "band"
-      },
+      "height": 11857,
+      "worst": null,
       "requests": [
         "http://127.0.0.1:5187",
         "http://127.0.0.1:5187",
@@ -46,12 +38,8 @@
       "overflow": 0,
       "scrollWidth": 1440,
       "clientWidth": 1440,
-      "height": 12094,
-      "worst": {
-        "over": 259,
-        "tag": "DIV",
-        "cls": "band"
-      },
+      "height": 12258,
+      "worst": null,
       "requests": [
         "http://127.0.0.1:5187",
         "http://127.0.0.1:5187",
@@ -67,12 +55,8 @@
       "overflow": 0,
       "scrollWidth": 1920,
       "clientWidth": 1920,
-      "height": 12714,
-      "worst": {
-        "over": 182,
-        "tag": "DIV",
-        "cls": "band"
-      },
+      "height": 12859,
+      "worst": null,
       "requests": [
         "http://127.0.0.1:5187",
         "http://127.0.0.1:5187",
@@ -96,8 +80,8 @@
     {
       "name": "hero figcaption",
       "fg": "rgb(47 74 99)",
-      "bg": "rgb(238 246 252)",
-      "ratio": 8.43,
+      "bg": "rgb(244 250 253)",
+      "ratio": 8.74,
       "pass": true
     },
     {
@@ -110,64 +94,71 @@
     {
       "name": "hero key label",
       "fg": "rgb(19 38 56)",
-      "bg": "rgb(248 252 254)",
-      "ratio": 14.94,
+      "bg": "rgb(250 253 254)",
+      "ratio": 15.08,
       "pass": true
     },
     {
       "name": "hero key note",
       "fg": "rgb(58 90 118)",
-      "bg": "rgb(247 251 253)",
-      "ratio": 6.95,
+      "bg": "rgb(249 252 254)",
+      "ratio": 7.02,
+      "pass": true
+    },
+    {
+      "name": "hero chip format",
+      "fg": "rgb(19 38 56)",
+      "bg": "rgb(255 255 255)",
+      "ratio": 15.42,
+      "pass": true
+    },
+    {
+      "name": "hero chip keeps",
+      "fg": "rgb(58 90 118)",
+      "bg": "rgb(255 255 255)",
+      "ratio": 7.23,
       "pass": true
     },
     {
       "name": "hero chip id",
       "fg": "rgb(19 38 56)",
-      "bg": "rgb(254 255 255)",
-      "ratio": 15.39,
+      "bg": "rgb(255 255 255)",
+      "ratio": 15.42,
       "pass": true
     },
     {
       "name": "hero chip sample",
-      "fg": "rgb(72 96 118)",
-      "bg": "rgb(254 255 255)",
-      "ratio": 6.53,
+      "fg": "rgb(47 74 99)",
+      "bg": "rgb(255 255 255)",
+      "ratio": 9.21,
       "pass": true
-    },
-    {
-      "name": "hero band name",
-      "fg": "rgb(201 216 228)",
-      "bg": "rgb(252 253 254)",
-      "ratio": 1.43,
-      "pass": false
     },
     {
       "name": "hero plate title",
       "fg": "rgb(19 38 56)",
-      "bg": "rgb(253 254 255)",
-      "ratio": 15.27,
+      "bg": "rgb(254 254 255)",
+      "ratio": 15.3,
       "pass": true
     },
     {
       "name": "hero plate fact",
-      "fg": "rgb(247 249 251)",
-      "bg": "rgb(253 254 255)",
-      "ratio": 1.05,
-      "pass": false
+      "fg": "rgb(47 74 99)",
+      "bg": "rgb(254 254 255)",
+      "ratio": 9.14,
+      "pass": true
     },
     {
       "name": "hero source kicker",
       "fg": "rgb(58 90 118)",
-      "bg": "rgb(254 255 255)",
-      "ratio": 7.22,
+      "bg": "rgb(255 255 255)",
+      "ratio": 7.23,
       "pass": true
     },
     {
       "name": "hero source fact",
       "fg": "rgb(47 74 99)",
-      "bg": "rgb(254 255 255)",
-      "ratio": 9.19,
+      "bg": "rgb(255 255 255)",
+      "ratio": 9.21,
       "pass": true
     },
     {

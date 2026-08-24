@@ -1,6 +1,7 @@
 """Generate t18: a speech bubble whose face is held in one recessed field."""
 
 import colorsys
+import math
 import sys
 from pathlib import Path
 
@@ -8,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
 from circles import check  # noqa: E402
-from shade import edge, keyline, rings, to_paths  # noqa: E402
+from shade import is_slab, keyline, rings, to_paths  # noqa: E402
 
 OUT = ROOT / "src/components/mark/logos"
 
@@ -31,6 +32,16 @@ PALETTE = [
     WALL_LIGHT,
     RIM_LIGHT,
     FACE,
+]
+LIGHT_TO_DARK = [
+    RIM_LIGHT,
+    WALL_LIGHT,
+    RIM_BASE,
+    CORE,
+    WALL_MID,
+    RIM_SHADOW,
+    WALL_SHADOW,
+    KEY,
 ]
 
 
@@ -68,36 +79,42 @@ TAIL = {
 SILHOUETTE = BODY | TAIL
 OUTLINE = keyline(SILHOUETTE)
 
-# One plane change: a narrow outer rim, a two-pixel inward wall, then the field.
-# Every part of the well is peeled from the body contour, never pasted inside it.
+# Light enters from above-left. Distance from that one source drives the whole
+# ramp, while the inward wall takes two fewer stops of light and the recessed
+# field one fewer. On the shadow side all three converge, so the plane change
+# disappears instead of wrapping the bubble in an equally bright collar.
+SOURCE = (-5.0, -6.0)
+RADII = (18.0, 19.5, 21.5, 25.0, 29.0, 33.0, 36.0)
+
 (body_rings, CORE_FIELD) = rings(BODY, 4)
 BODY_EDGE, RIM, WALL_OUTER, WALL_INNER = body_rings
-available_rim = (BODY_EDGE | RIM) - OUTLINE
-wall = (WALL_OUTER | WALL_INNER) - OUTLINE
+WALL = WALL_OUTER | WALL_INNER
 
-rim_top = available_rim & edge(BODY, 0, -1, 3)
-rim_bottom = (available_rim & edge(BODY, 0, 1, 3)) - rim_top
-rim_middle = available_rim - rim_top - rim_bottom
 
-inner_body = BODY - BODY_EDGE - RIM
-wall_top = wall & edge(inner_body, 0, -1, 2)
-wall_bottom = (wall & edge(inner_body, 0, 1, 2)) - wall_top
-wall_middle = wall - wall_top - wall_bottom
+def distance_from_light(pixel):
+    x, y = pixel
+    return math.hypot(x + 0.5 - SOURCE[0], y + 0.5 - SOURCE[1])
 
-tail_only = (TAIL - BODY) - OUTLINE
-tail_shadow = tail_only & edge(TAIL, 0, 1, 2)
-tail_middle = tail_only - tail_shadow
 
-LAYERS = [
-    (tail_shadow | rim_bottom, RIM_SHADOW),
-    (tail_middle | rim_middle, RIM_BASE),
-    (rim_top, RIM_LIGHT),
-    (wall_top, WALL_SHADOW),
-    (wall_middle, WALL_MID),
-    (wall_bottom, WALL_LIGHT),
-    (CORE_FIELD, CORE),
-    (OUTLINE, KEY),
+def tone_index(pixel):
+    step = sum(distance_from_light(pixel) >= radius for radius in RADII)
+    if pixel in OUTLINE:
+        # Keep the contour visible on white, but let it fall from lavender into
+        # the dark anchor instead of drawing one key colour around the bubble.
+        return max(2, step)
+    if pixel in WALL:
+        step += 2
+    elif pixel in CORE_FIELD:
+        step += 1
+    return min(step, len(LIGHT_TO_DARK) - 1)
+
+
+tone_map = {pixel: tone_index(pixel) for pixel in SILHOUETTE}
+tone_pixels = [
+    {pixel for pixel, tone in tone_map.items() if tone == index}
+    for index in range(len(LIGHT_TO_DARK))
 ]
+LAYERS = list(zip(tone_pixels, LIGHT_TO_DARK))
 
 
 def row_widths(shape):

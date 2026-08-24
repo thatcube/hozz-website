@@ -1,4 +1,4 @@
-"""Generate t12, a top-lit sibling of c45's six-step Lens ramp."""
+"""Generate t12, an emissive-screen sibling of c45's measured ramp."""
 
 import math
 import re
@@ -9,19 +9,38 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
 from circles import check  # noqa: E402
-from shade import edge, keyline, to_paths  # noqa: E402
+from shade import keyline, to_paths  # noqa: E402
 
 OUT = ROOT / "src/components/mark/logos"
 C45 = OUT / "c45.astro"
 
-KEY = "#321842"
-RAMP = ["#ddc0f6", "#d0b1f0", "#c3a2ea", "#b693e4", "#a984de", "#9c75d8"]
+KEY = "#24102f"
+RAMP = [
+    "#47205f", "#52266f", "#5c2d7e", "#67338e",
+    "#713a9d", "#7c40ad", "#8647bc", "#924ecd",
+]
 FACE = "#fff9fb"
 
 
 def rgb(value):
     value = value.lstrip("#")
     return tuple(int(value[i:i + 2], 16) for i in (0, 2, 4))
+
+
+def relative_luminance(value):
+    channels = [channel / 255 for channel in rgb(value)]
+    linear = [
+        channel / 12.92
+        if channel <= 0.04045
+        else ((channel + 0.055) / 1.055) ** 2.4
+        for channel in channels
+    ]
+    return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2]
+
+
+def contrast_ratio(a, b):
+    light, dark = sorted((relative_luminance(a), relative_luminance(b)), reverse=True)
+    return (light + 0.05) / (dark + 0.05)
 
 
 def rasterise_astro(path):
@@ -124,17 +143,56 @@ assert air_above == air_below == 6, f"face air is {air_above}/{air_below}"
 outline = keyline(SHAPE)
 inner = SHAPE - outline
 
-# c45's six tones begin one grid pixel apart. Here the same cadence follows only
-# the top-facing contour: five one-pixel shells, then the deep field and tail.
-cumulative = [edge(inner, 0, -1, depth) for depth in range(1, 6)]
-ramp_layers = [cumulative[0]]
-ramp_layers.extend(cumulative[i] - cumulative[i - 1] for i in range(1, 5))
-ramp_layers.append(inner - cumulative[-1])
+# The bubble is its own light source: a broad central violet glow falls through
+# elliptical bands into dark corners and an almost unlit tail. These thresholds
+# keep the centre readable at small sizes without tracing a second border.
+RADIANCE_THRESHOLDS = [0.44, 0.54, 0.64, 0.74, 0.84, 0.94, 1.06]
+ramp_layers = [set() for _ in RAMP]
+pixel_tones = {}
+for pixel in inner:
+    x, y = pixel
+    radius = math.hypot((x - 15.5) / 11.5, (y - 13.5) / 10.5)
+    tone_index = next(
+        (len(RAMP) - 1 - i for i, threshold in enumerate(RADIANCE_THRESHOLDS)
+         if radius <= threshold),
+        0,
+    )
+    ramp_layers[tone_index].add(pixel)
+    pixel_tones[pixel] = RAMP[tone_index]
 
 assert all(ramp_layers)
 assert set().union(*ramp_layers) == inner
 assert sum(len(layer) for layer in ramp_layers) == len(inner), "ramp layers overlap"
 assert all(layer <= SHAPE for layer in ramp_layers)
+
+# The face uses the shipped 10-wide ZZ eyes and wide smile at x11–20/y8–19.
+face_rows = [
+    [(0, 3), (6, 9)],
+    [(2, 3), (8, 9)],
+    [(1, 2), (7, 8)],
+    [(0, 1), (6, 7)],
+    [(0, 3), (6, 9)],
+    [], [], [],
+    [(0, 0), (9, 9)],
+    [(0, 1), (8, 9)],
+    [(1, 8)],
+    [(2, 7)],
+]
+face_pixels = {
+    (11 + x, 8 + y)
+    for y, runs in enumerate(face_rows)
+    for start, end in runs
+    for x in range(start, end + 1)
+}
+assert face_pixels <= inner, "face leaves the bubble interior"
+lightest_under_face = max(
+    {pixel_tones[pixel] for pixel in face_pixels},
+    key=relative_luminance,
+)
+face_contrast = contrast_ratio(FACE, lightest_under_face)
+assert face_contrast >= 4.5, (
+    f"face contrast {face_contrast:.2f}:1 on {lightest_under_face} is below 4.5:1"
+)
 
 ramp_distances = []
 for a, b in zip(RAMP, RAMP[1:]):
@@ -153,21 +211,21 @@ paths = "\n".join(
 
 (OUT / "t12.astro").write_text(f'''---
 /**
- * t12 · Canopy
+ * t12 · Phosphor
  *
  * c45 rasterises to six interior tones whose starts are one grid pixel apart,
- * with a mean RGB step of {c45_distance:.2f}. This uses the same six-tone,
- * one-pixel cadence and a mean step of {mean_ramp_distance:.2f}, but changes the
- * physical story: a speech bubble hangs from its body and is lit from above.
- * Light gathers on the crown, then falls through five top-facing shells into a
- * deeper field; the low tail stays in that field instead of glowing like a rim.
+ * with a mean RGB step of {c45_distance:.2f}. This eight-tone violet ramp keeps
+ * that subtle cadence at {mean_ramp_distance:.2f}, but spans a deeper range.
+ * The bubble is a tiny live screen: its surface emits violet light behind the
+ * face, then falls through elliptical bands into dark corners and tail.
  *
  * The softened body is 28 wide and symmetric about x=16; the tail is exempt.
  * The 10-wide lg face has matching parity. At gap 3 it spans y8–19 on the
  * y2–25 body, leaving {air_above} rows of air above and {air_below} below.
  *
- * Eight tones: dark violet keyline, six close amethyst surface tones, and a
- * warm-white face. The silhouette fits x2–29 and y2–29 and has no row spurs.
+ * Ten tones: a one-pixel plum keyline, eight violet emission tones, and a
+ * warm-white face. The face clears {face_contrast:.2f}:1 on its lightest
+ * underlying tone. The mark fits x2–29/y2–29 and has no row spurs.
  */
 import MarkFrame from '../MarkFrame.astro';
 import {{ facePathsAt }} from '../../../data/mark';
@@ -176,7 +234,7 @@ interface Props {{ size?: number }}
 const {{ size = 128 }} = Astro.props;
 ---
 
-<MarkFrame size={{size}} title="Twozz — Canopy">
+<MarkFrame size={{size}} title="Twozz — Phosphor">
 {paths}
   <g fill="{FACE}" shape-rendering="crispEdges">
     {{facePathsAt({{ cx: 16, cy: 14, size: 'lg', smile: 'wide', gap: 3 }}).map((d) => (
@@ -187,15 +245,18 @@ const {{ size = 128 }} = Astro.props;
 ''')
 
 (OUT / "t12.meta.ts").write_text(f'''export default {{
-  n: 't12', name: 'Canopy',
-  idea: 'Six close violet steps follow the top-facing contour, so the crown catches light while the hanging tail keeps its weight.',
+  n: 't12', name: 'Phosphor',
+  idea: 'A tiny live screen emits violet light from behind the face, fading through elliptical bands into dark corners and tail.',
   ground: 'light',
   palette: {RAMP + [KEY, FACE]!r},
 }};
 ''')
 
 print(
-    f"t12: 8 tones · body {body_width}×{body_bottom - body_top + 1} "
+    f"t12: {len(RAMP) + 2} tones · body {body_width}×{body_bottom - body_top + 1} "
     f"· face air {air_above}/{air_below} · fit x{min(xs)}-{max(xs)} y{min(shape_ys)}-{max(shape_ys)}"
 )
-print("assertions: c45 measure, body symmetry, face parity, equal air, no spurs, fit, ramp coverage")
+print(
+    f"face contrast: {face_contrast:.2f}:1 on {lightest_under_face} · "
+    "assertions: c45 measure, symmetry, parity, equal air, no spurs, fit, ramp coverage"
+)

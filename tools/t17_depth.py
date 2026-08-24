@@ -2,68 +2,97 @@
 t17 — Depth. The bubble as a physical object with thickness.
 
 The direction: not a flat shape with light painted on it, but something with a
-front face, an edge, and a body behind. Plozz already does this and the raster
-says exactly how:
+front face, an edge, and a body behind.
+
+The shipped Twozz already claims thickness, which is easy to miss until you
+rasterise it. Of its five tones, two do nothing but assert an edge — one row of
+#ad84ec along the top of the bubble and one row of #7243c3 along the bottom,
+with the tail filled in that same deep tone as though it were folded away from
+you. So the shipped mark is not flat. It is a slab, one pixel of light on the
+top edge and one of shadow on the bottom, with nothing behind it.
+
+Plozz takes the same idea one step further and shows what "behind it" looks
+like:
 
       6 .....0000000000000000000000.....   keyline
-      7 ....066666666666666666666660....   case, LIT along its top edge
+      7 ....066666666666666666666660....   case, lit along its top edge
       8 ...06222222222222222222222260...   case, mid
       9 ..0622200000000000000000022260..   case, then the bezel closing
-     10 ..0622033333333333333333302260..   screen: the bevel's lightest ring
+     10 ..0622033333333333333333302260..   screen, one plane further back
      ...
-     28 ....055555555555555555555550....   case, SHADED along its bottom edge
+     28 ....055555555555555555555550....   case, shaded along its bottom edge
 
-Three planes. A case whose top edge is lighter than its face and whose bottom
-edge is darker — that is the thickness. A hard fold where the case turns
-inward. A recessed panel behind it. The solidity is not in any single tone; it
-is in the fact that the tones change *direction* when the plane changes.
+Three planes, and the solidity is not in any single tone: it is in the fact
+that the tones change *direction* when the plane changes.
 
-So this is one object with a rim and a window in it:
+t17 keeps the shipped Twozz's claim exactly and puts a plane behind it:
 
     keyline -> rim (2px) -> fold -> recessed panel -> face
 
-and everything rests on one inversion.
+and it rests on one inversion.
 
   * The **rim is proud**. Light from above lands on its top edge and misses its
-    underside, so it runs light at the top, mid at the sides, dark at the
-    bottom.
-  * The **panel is recessed**, so it runs the other way. The near wall throws a
-    shadow across the top of the floor; the light that clears that wall lands
-    at the bottom. Dark at the top, lightest at the bottom.
+    underside, so it runs light at the top, mid at the sides, dark along the
+    bottom — which is the shipped mark's own two rows, widened to two pixels so
+    there is something to see.
+  * The **panel is recessed**, so it runs the other way. It sits a plane
+    further from the light to begin with, and the near wall throws a shadow
+    across the top of it; what light clears that wall lands at the bottom. Dark
+    at the top, brightening downward.
 
-Read down the middle and the tone reverses twice, at exactly the two rows where
-the plane changes. That is the whole argument, and it is the one thing a drop
-shadow cannot imitate: a shadow only darkens in one direction and it lives
-*outside* the silhouette. Every pixel here is inside it. It is also what keeps
-this off the 2005 bevel — a bevel filter runs light top-left to dark
-bottom-right across everything at once, uniformly; here the two planes disagree
-on purpose, and the light is straight top-down rather than diagonal, which is
-what a rounded rim under a ceiling light actually does.
+Read down the middle and the tone reverses at exactly the rows where the plane
+changes. That is the whole argument, and it is the one thing a drop shadow
+cannot imitate: a shadow darkens in one direction only and it lives *outside*
+the silhouette. Every pixel here is inside it. It is also what keeps this off
+the 2005 bevel — a bevel filter runs light top-left to dark bottom-right across
+everything at once, uniformly; here the two planes disagree on purpose, and the
+light is straight top-down rather than diagonal, which is what a rounded rim
+under a ceiling light actually does.
 
-The panel's grading is carried by two contour rings rather than by horizontal
-bands. The first attempt used bands and it failed: 1px stripes across a 14-row
-floor were invisible at 96px, so the mark read as a flat shape with a thick
-border. Rings are what Plozz uses, they wrap the corners, and grading each ring
-by height means the same two rings deliver both reads at once — an inset bevel
-you can still see at 24px, and a vertical gradient that tells you which way is
-up.
+The fold is not one surface either. Its top arc is the near wall, leaning down
+and away from the light, and it is the darkest thing in the mark. Its bottom
+arc is the far wall, tipped up into the light, and it takes the *same tone as
+the top of the rim* — because it faces the same way, and a surface that faces
+the same way should be the same colour wherever it occurs. That single rule
+does a lot of work: it costs nothing, it makes the bright shelf at the bottom
+of the recess feel like part of the object rather than a highlight painted on
+it, and the floor ramps smoothly up into it.
 
-Subtlety is enforced, not hoped for: no step within a ramp moves any channel by
-more than 18, inside the 21 the shipped Plozz screen already spends. The only
-large jumps are the two structural lines, keyline and fold, and Plozz draws its
-fold in pure black — a deep violet is the quieter choice.
+The floor's grading is carried by two contour rings graded by height, not by
+horizontal bands. Bands were tried first and failed: 1px stripes across a
+14-row floor are invisible at 96px, and the mark read as a flat shape with a
+thick border. Rings wrap the corners, so grading them by height makes the same
+two rings deliver an inset bevel you can still see at 24px *and* a gradient
+that tells you which way is up. Down the sides they pass through the core's own
+tone and vanish, which is correct: a floor lit from above gets nothing from
+walls it is edge-on to, and drawing something there is how a recess becomes an
+emboss.
 
-The tail is the same object and takes the same rim and the same underside
-shade. Being narrow it never reaches panel depth, so it stays solid wall: a
-body with a window in it and a tail without one, both made of one material. It
-hangs almost vertically, with the taper carried on its right, because the first
-version ran it out at 45 degrees and a 45-degree tail reads as an arrow.
+Subtlety is enforced, not hoped for. No step inside either ramp moves any
+channel by more than 18, inside the 21 the shipped Plozz screen already spends.
+The only jumps larger than that are plane changes, where a jump is the point.
 
-Face: `md` + `wide` + gap 1. `md` because mark.ts says plainly to use it on a
-busy container and this one has a rim, a fold and a graded floor in it; `wide`
-because the wide smile is Twozz's own signature against Plozz's compact one;
-gap 1 because that buys the eighth row back, and eight rows is what makes the
-air come out equal on a 22-row body.
+The silhouette is the shipped bubble's, measured off the raster: the same
+six-row corner arc, the same narrow tail hung from a vertical left edge with
+the taper on its right. An earlier pass ran the tail out at 45 degrees and it
+read as an arrow; another made it eight pixels wide at the junction and it read
+as a nub. The shipped proportion is a tail six wide falling to a point, and it
+is right.
+
+Face: `lg` + `wide` + gap 1. mark.ts says to keep `lg` for a plain open field,
+and at first glance a rim, a fold and a graded floor disqualify this one — but
+the recess exists precisely to make a plain open field, and its core is a
+single tone across 204 pixels. That is the same argument Plozz makes: a busy
+container, a plain screen built into it, and a full-size face on the screen. A
+smaller face was tried and next to the shipped mark it read as timid. `wide` is
+Twozz's own smile against Plozz's compact one, and gap 1 brings the face to ten
+rows, which is what makes the air come out equal on a 24-row body.
+
+White ink, because FAMILY records Twozz's as white and it is the reason the
+shipped mark carries at 24px. That in turn fixes the polarity: the floor has to
+stay dark enough to hold white type, which is also the physically honest
+reading of a recess — a scooped-out hollow is further from the light than the
+face around it, not nearer.
 """
 import sys
 from pathlib import Path
@@ -81,12 +110,13 @@ NAME = 'Depth'
 # ---------------------------------------------------------------------------
 # Silhouette.
 #
-# A rounded rectangle, rounder than the shipped mark's — the brief allows "more
-# round or cohesive" and a longer corner arc gives the rim something to curve
-# around, which is where a rim earns its keep. The top corners are rounder than
-# the bottom ones on purpose: the bottom row is where the tail springs from,
-# and a 12-wide bottom row (the first attempt) left the tail hanging off a
-# point, which is what made it look like a spike rather than a tail.
+# A rounded rectangle taking the shipped bubble's own corner arc, read off the
+# raster: 18, 22, 24, 26, 26 and then full width. An earlier pass rounded it
+# harder on the theory that a longer arc gives the rim more to curve around, and
+# at 320px it just looked blobby — the rim reads perfectly well on a six-row
+# arc, and the tighter silhouette is the one that sits next to the siblings.
+# One row taller than the shipped body, which is what lets a ten-row face clear
+# the floor's grading rings and still leave equal air.
 #
 # Every width is even, so the body is symmetric about x=16 by construction and
 # its parity is fixed. That also rules out the `sm` face by arithmetic rather
@@ -104,13 +134,16 @@ for i, w in enumerate(BODY_WIDTHS):
 BODY_Y0, BODY_Y1 = BODY_TOP, BODY_TOP + len(BODY_WIDTHS) - 1
 BODY_W = max(BODY_WIDTHS)
 
-# The tail, in the shipped mark's own idiom: a near-vertical left edge with the
-# taper carried on the right, hanging rather than pointing. Wide where it meets
-# the body — half the bottom row — so it reads as part of the same object.
-# The left edge holds at x8 for the whole drop, matching the body's bottom row
-# rather than stepping out past it. A single column poking out one row lower
-# than its neighbour is a new upward-facing surface, and the lighting rule
-# correctly lights it — one stray pale pixel halfway down the tail.
+# The tail, in the shipped mark's own idiom and at its measured proportion: six
+# wide at the junction, falling to a point over four rows, on a vertical left
+# edge with the taper carried on the right. Two earlier shapes were wrong in
+# opposite ways — a 45-degree run read as an arrow, and an eight-wide junction
+# read as a nub.
+#
+# The left edge holds at x7 for the whole drop, flush with the body's bottom
+# row rather than stepping out past it. A single column poking out one row
+# lower than its neighbour is a new upward-facing surface, and the lighting
+# rule correctly lights it: one stray pale pixel halfway down the tail.
 TAIL_ROWS = {
     26: (7, 12),
     27: (7, 11),
@@ -190,9 +223,14 @@ FOLD = BANDS[3]                     # where the front face turns inward
 
 # The fold is not one surface, it is the recess's own wall, and its top and
 # bottom face opposite ways. The near wall — the top arc — leans down and away
-# from the light, so it is the darkest thing here. The far wall — the bottom
-# arc — leans up into it, so it is the brightest. The sides are edge-on and
-# stay with the wall's own tone.
+# from the light, so it is the darkest thing in the mark. The far wall — the
+# bottom arc — leans up into it, and so takes the same tone as the top of the
+# rim, which faces the same way. The sides are edge-on and stay with the wall.
+#
+# Derived from the panel rather than from the fold itself: `edge` follows
+# contours per run, so on a closed ring it reports both arcs as "topmost" and
+# the two come out identical. Asking which fold pixels have panel below them,
+# and which have panel above, is unambiguous.
 F_TOP = {(x, y) for (x, y) in FOLD if (x, y + 1) in PANEL}
 F_BOT = {(x, y) for (x, y) in FOLD if (x, y - 1) in PANEL} - F_TOP
 F_SIDE = FOLD - F_TOP - F_BOT
@@ -231,7 +269,8 @@ W_MID = CASING - W_LIT - W_SHAD
 # right — a floor lit from directly above gets nothing extra from walls it is
 # edge-on to, and drawing something there is how a recess turns into an emboss.
 #
-# The face keeps a plain field, because the core is one tone.
+# The core is a single tone across two hundred pixels, which is the plain open
+# field the face needs and the reason `lg` is defensible here.
 # ---------------------------------------------------------------------------
 P_RINGS, P_CORE = rings(PANEL, 2)
 P_Y0 = min(y for _, y in PANEL)
@@ -264,24 +303,26 @@ P_LAYERS.setdefault(CORE_I, set()).update(P_CORE)
 #
 # Violet, and staying violet. Twitch is purple and the client only allowed
 # *leaving* purple, he did not ask for it; the family already spends cyan on
-# Plozz, red on Mozz and pale blue on Hozz, so violet is the one open hue that
-# needs no argument at all. It is pulled toward indigo from the shipped
-# #8f52f6 because a neon violet has nowhere to go — the client's own standard
-# is "you barely notice it change colours, and yet they're completely different
-# colours", which needs a *wide total range* crossed in *small steps*, and
-# #8f52f6 sits too near the top of its own range to leave room for one.
+# Plozz, red on Mozz and pale blue on Hozz, so violet is the one open hue with
+# nothing to argue about. It is pulled toward indigo from the shipped #8f52f6,
+# which sits too near the top of its own range to leave a ramp anywhere to go —
+# and the client's standard, "you barely notice it change colours, and yet
+# they're completely different colours", needs a wide total range crossed in
+# small steps.
 #
-# Two ramps, because there are two planes. The wall is deeper and more
-# saturated: it is the material. The floor is lighter and travels further: it
-# is the surface the message sits on, and it has to carry a dark face. Keyline
-# and fold are lines rather than ramp steps, and are allowed to jump.
+# Two ramps, because there are two planes, and they are stacked rather than
+# side by side. The wall is the front face and is the lighter of the two: it is
+# nearest the light. The floor sits behind it and runs darker, which is both
+# what a scooped hollow does and what lets it carry white type. Between them
+# the fold spans from one to the other, and that span is a plane change, so it
+# is allowed to jump where a ramp step is not.
 # ---------------------------------------------------------------------------
-KEY = '#261347'
-WALL = ['#ac8ae6', '#9d79db', '#8e68d0']        # up-facing, mid, down-facing
-F_SIDE_C = '#7f57c5'                            # the wall, one step deeper
-F_TOP_C = '#7046ba'                             # deeper again: the near wall
+KEY = '#22103f'
+WALL = ['#b184f6', '#a072eb', '#8f60e0']        # up-facing, mid, down-facing
+F_SIDE_C = '#7e4ed5'                            # the wall, one step deeper
+F_TOP_C = '#6d3cca'                             # deeper again: the near wall
 
-FLOOR_LO, FLOOR_HI = (0x54, 0x35, 0xa2), (0xa2, 0x7c, 0xee)
+FLOOR_LO, FLOOR_HI = (0x4a, 0x24, 0x9c), (0xa4, 0x74, 0xf0)
 INK = '#ffffff'                                 # Twozz's own ink, per FAMILY
 
 
@@ -334,13 +375,15 @@ for px, fill in LAYERS:
 # The face.
 #
 # Placement comes from the brief's measured table, never computed: an
-# even-height face is not symmetric about cy. `md` + `wide` + gap 1 is 8 rows,
-# and the table gives (8, -4), so top = cy - 4.
+# even-height face is not symmetric about cy. `lg` + `wide` + gap 1 is 10 rows,
+# and the table gives (10, -5), so top = cy - 5.
 #
 # Equal air on the *body*, ignoring the tail, exactly as Plozz centres on its
 # screen rather than on its whole TV:
 #     top - y0 == y1 - (top + h - 1)   ->   top = (y0 + y1 - h + 1) / 2
-# With the body at y2-y23 and h = 8 that is top = 9, so cy = 13.
+# With the body at y2-y25 and h = 10 that is top = 9, so cy = 14. The same
+# arithmetic is why the body is 24 rows: it forces y0 + y1 - h + 1 even, and
+# an odd result would have put the face half a pixel off centre.
 # ---------------------------------------------------------------------------
 FACE_SIZE, FACE_SMILE, FACE_GAP = 'lg', 'wide', 1
 FACE_W, FACE_H = 10, 10
@@ -399,24 +442,39 @@ DOC = f'''/**
  * t17 · Depth
  *
  * The bubble as a physical object with thickness, rather than a flat shape
- * with light on it. Three planes, built the way the shipped Plozz mark builds
- * its case, its bezel and its screen:
+ * with light on it.
+ *
+ * The shipped Twozz mark already claims thickness — of its five tones, two do
+ * nothing but assert an edge: one row of #ad84ec along the top of the bubble
+ * and one of #7243c3 along the bottom, with the tail filled in that same deep
+ * tone as though it were folded away from you. It is a slab. What it has not
+ * got is anything behind it. Plozz has: a case, a bezel, and a screen one
+ * plane further back. This keeps the shipped mark's claim and adds the plane.
  *
  *     keyline -> rim (2px) -> fold -> recessed panel -> face
  *
  * It turns on one inversion. The **rim is proud**, so light lands on its top
  * edge and misses its underside: light at the top, mid at the sides, dark
- * along the bottom. The **panel is recessed**, so it runs the other way — the
- * near wall throws a shadow across the top of the floor, and the light that
- * cleared that wall pools at the bottom. Read down the middle and the tone
- * reverses twice, at exactly the two rows where the plane changes.
+ * along the bottom — the shipped mark's two rows, widened to two pixels so
+ * there is something to see. The **panel is recessed**, so it runs the other
+ * way. It sits a plane further from the light to begin with, and the near wall
+ * throws a shadow across the top of it, so it is darkest at the top and
+ * brightens downward.
  *
- * That reversal is the argument. A drop shadow only darkens in one direction
+ * That reversal is the argument. A drop shadow darkens in one direction only
  * and lives outside the silhouette; every pixel here is inside it. A bevel
  * filter runs light top-left to dark bottom-right across everything at once;
  * here the two planes disagree on purpose, and the light is straight top-down
  * rather than diagonal, which is what a rounded rim under a ceiling light
  * actually does.
+ *
+ * The fold is not one surface either. Its top arc is the near wall, leaning
+ * away from the light, and it is the darkest thing in the mark. Its bottom arc
+ * is the far wall, tipped up into it, and it takes the *same tone as the top
+ * of the rim* — a surface that faces the same way should be the same colour
+ * wherever it occurs. That costs no extra tone and it makes the bright shelf
+ * at the bottom of the recess feel like part of the object rather than a
+ * highlight painted onto it.
  *
  * The floor's grading is carried by two contour rings graded by height, not by
  * horizontal bands. Bands were tried first and were invisible at 96px, which
@@ -429,21 +487,24 @@ DOC = f'''/**
  * emboss.
  *
  * No step inside either ramp moves any channel by more than 18, inside the 21
- * the shipped Plozz screen already spends. The only large jumps are the two
- * structural lines, keyline and fold — and Plozz draws its fold in pure black,
- * so a deep violet is the quieter choice.
+ * the shipped Plozz screen already spends. The only jumps larger than that are
+ * plane changes, where a jump is the point.
  *
- * The tail is the same object, with the same rim and the same underside shade.
- * Being narrow it never reaches panel depth, so it stays solid wall: a body
- * with a window in it, a tail without one, one material.
+ * Silhouette and tail are the shipped bubble's own, measured off the raster —
+ * the same six-row corner arc, the same narrow tail on a vertical left edge.
+ * One row taller in the body, which is what lets a full-size face clear the
+ * floor's grading and still leave equal air.
  *
  * Violet, pulled toward indigo from the shipped #8f52f6, which sits too near
- * the top of its own range to leave a ramp anywhere to go.
+ * the top of its own range to leave a ramp anywhere to go. White ink, as the
+ * shipped mark has, which is what fixes the polarity: the floor has to stay
+ * dark enough to carry it, and a hollow being darker than the face around it
+ * is the honest reading anyway.
  *
  * {len(TONES)} tones. Body y{BODY_Y0}-{BODY_Y1}, {BODY_W} wide, symmetric about x=16;
- * the tail is asymmetric by design and exempt. Face md/wide/gap1 on the plain
- * core at {CONTRAST:.1f}:1, with {AIR_ABOVE} rows of air above it and {AIR_BELOW} below,
- * measured on the body.
+ * the tail is asymmetric by design and exempt. Face {FACE_SIZE}/{FACE_SMILE}/gap{FACE_GAP} on the
+ * plain core at {CONTRAST:.1f}:1, with {AIR_ABOVE} rows of air above it and {AIR_BELOW} below,
+ * measured on the body, not on the tail.
  */'''
 
 body_lines = [f'  <path d="{" ".join(to_paths(px))}" fill="{fill}" />'
@@ -471,7 +532,7 @@ const {{ size = 128 }} = Astro.props;
 palette = [KEY, F_TOP_C, F_SIDE_C] + WALL[::-1] + FLOOR
 meta = f'''export default {{
   n: '{SLUG}', name: '{NAME}',
-  idea: 'A rim with real thickness — lit on top, shaded underneath — folding into a recessed floor lit the other way round, so the tone reverses exactly where the plane does.',
+  idea: 'The shipped mark already spends two of its five tones asserting an edge. This keeps that claim and puts a plane behind it: a proud rim lit on top and shaded underneath, folding into a recess that grades the other way, so the tone reverses exactly where the plane does.',
   ground: 'light',
   palette: {palette},
 }};

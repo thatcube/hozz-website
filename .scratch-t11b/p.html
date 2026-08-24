@@ -1,0 +1,21 @@
+<!doctype html><meta charset=utf-8><style>
+body{margin:0;font:12px/1.4 ui-sans-serif;background:#fff}
+.r{display:flex;gap:34px;align-items:flex-end;padding:22px 26px}
+.d{background:#131316}
+.d .lbl{color:#999}
+.lbl{text-align:center;color:#666;margin-top:8px;font:10px ui-monospace}
+img{image-rendering:pixelated;display:block}
+</style>
+<div class=r id=light></div><div class="r d" id=dark></div>
+<script>
+const files = {t11:'t11.svg', shipped:'shipped.svg'};
+for (const ground of ['light','dark']) {
+  const host = document.getElementById(ground);
+  for (const [name, f] of Object.entries(files))
+    for (const s of [150, 96, 28, 16]) {
+      const d = document.createElement('div');
+      d.innerHTML = `<img src="${f}" width="${s}" height="${s}"><div class=lbl>${name} ${s}</div>`;
+      host.appendChild(d);
+    }
+}
+</script>

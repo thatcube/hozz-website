@@ -21,7 +21,7 @@ const setup = (sel) => {
       window.__stage.querySelector('.pin-src').getBoundingClientRect(),
     ];
     let s = 0;
-    const PAD = 12;
+    const PAD = Number(window.__pad || 12);
     const hit = (q, z, pad) => {
       const ox = Math.min(q.right, z.right) - Math.max(q.left, z.left) + pad;
       const oy = Math.min(q.bottom, z.bottom) - Math.max(q.top, z.top) + pad;
@@ -48,7 +48,7 @@ const setup = (sel) => {
     const p = await c.newPage();
     await p.goto('http://127.0.0.1:5177/w/w13/', { waitUntil: 'networkidle' });
     await p.waitForTimeout(400);
-    await p.evaluate(setup, SEL);
+    await p.evaluate(setup, SEL); await p.evaluate((v) => (window.__pad = v), MODE === 'l' ? 12 : 7);
     pages.push(p);
   }
   const score = async (a) => {
@@ -59,11 +59,11 @@ const setup = (sel) => {
 
   let best = MODE === 'l'
     ? [130, 52, 112, 96, 141, 38, 50, 116, 28, 138, 20, 126]
-    : [96, 14, 117, 66, 110, 78, 58, 96, 68, 108];
+    : [122, 14, 117, 116, 112, 78, 38, 62, 68, 76];
   let bs = await score(best);
   console.log('start', bs, best.join(','));
 
-  for (let temp = 34; temp >= 2; temp -= 2) {
+  for (let temp = 21; temp >= 1; temp -= 1) {
     let improved = true;
     while (improved) {
       improved = false;

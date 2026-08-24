@@ -2,18 +2,21 @@
 /**
  * t16 · Round Reply
  *
- * A complete canonical 22-pixel circle overlaps a compact lower-left wedge by
- * two rows. One outer keyline encloses both, leaving a five-pixel-wide open join
- * with no pale or dark seam to turn the tail into a floating shape.
+ * The body is 28 pixels wide, built from the shipped Mozz circle profile with
+ * only three duplicate equator rows removed to reserve room for the tail. It is
+ * visibly rounder than the sibling bubbles while matching their full width.
  *
- * A near-black keyline and dark inner ring hold at small size. Inside them, a
- * pale meniscus falls through three deeper violet steps to the core; the tail
- * reuses the deepest three so the join cannot dissolve against white.
+ * The ramp occupies only the keyline and next two pixels: one split rim and one
+ * mid tone, then a broad plain violet field. The face lives entirely on that
+ * field instead of inside a stack of collars.
  *
- * The lg face matches the body's even parity and occupies y7-16 on the visibly
- * symmetric body at y2-21: 5 pixels of air above and 5 below. The white face
- * clears 4.5:1 against every tone beneath its full box. Eight tones including
- * face.
+ * A straight-left, right-tapered wedge overlaps the final two body rows. One
+ * outer keyline encloses both, leaving no seam at the join.
+ *
+ * The lg face matches the body's even parity and occupies y8-18 on the visibly
+ * symmetric body at y2-24: 6 pixels of air above and 6 below, plus 9 on either
+ * side. The white face clears 4.5:1 against its full background box. Eight tones
+ * including face.
  */
 import MarkFrame from '../MarkFrame.astro';
 import { facePathsAt } from '../../../data/mark';
@@ -23,18 +26,16 @@ const { size = 128 } = Astro.props;
 ---
 
 <MarkFrame size={size} title="Twozz — Round Reply">
-  <path d="M13 2h6v1h-6z M11 3h2v1h-2z M19 3h2v1h-2z M9 4h2v1h-2z M21 4h2v1h-2z M8 5h1v1h-1z M23 5h1v1h-1z M7 6h1v1h-1z M24 6h1v1h-1z M7 7h1v1h-1z M24 7h1v1h-1z M6 8h1v1h-1z M25 8h1v1h-1z M6 9h1v1h-1z M25 9h1v1h-1z M5 10h1v1h-1z M26 10h1v1h-1z M5 11h1v1h-1z M26 11h1v1h-1z M5 12h1v1h-1z M26 12h1v1h-1z M5 13h1v1h-1z M26 13h1v1h-1z M5 14h1v1h-1z M26 14h1v1h-1z M5 15h1v1h-1z M26 15h1v1h-1z M6 16h1v1h-1z M25 16h1v1h-1z M6 17h1v1h-1z M25 17h1v1h-1z M7 18h1v1h-1z M24 18h1v1h-1z M7 19h1v1h-1z M24 19h1v1h-1z M8 20h1v1h-1z M23 20h1v1h-1z M9 21h1v1h-1z M21 21h2v1h-2z M8 22h1v1h-1z M19 22h2v1h-2z M7 23h1v1h-1z M15 23h4v1h-4z M7 24h1v1h-1z M14 24h1v1h-1z M7 25h1v1h-1z M13 25h1v1h-1z M7 26h1v1h-1z M12 26h1v1h-1z M8 27h1v1h-1z M11 27h1v1h-1z M9 28h2v1h-2z" fill="#12051f" />
-  <path d="M13 3h6v1h-6z M11 4h2v1h-2z M19 4h2v1h-2z M9 5h2v1h-2z M21 5h2v1h-2z M8 6h1v1h-1z M23 6h1v1h-1z M8 7h1v1h-1z M23 7h1v1h-1z M7 8h1v1h-1z M24 8h1v1h-1z M7 9h1v1h-1z M24 9h1v1h-1z M6 10h1v1h-1z M25 10h1v1h-1z M6 11h1v1h-1z M25 11h1v1h-1z M6 12h1v1h-1z M25 12h1v1h-1z M6 13h1v1h-1z M25 13h1v1h-1z M6 14h1v1h-1z M25 14h1v1h-1z M6 15h1v1h-1z M25 15h1v1h-1z M7 16h1v1h-1z M24 16h1v1h-1z M7 17h1v1h-1z M24 17h1v1h-1z M8 18h1v1h-1z M23 18h1v1h-1z M8 19h1v1h-1z M23 19h1v1h-1z M9 20h2v1h-2z M21 20h2v1h-2z M11 21h2v1h-2z M19 21h2v1h-2z M15 22h4v1h-4z" fill="#4a217c" />
-  <path d="M13 4h6v1h-6z M11 5h2v1h-2z M19 5h2v1h-2z M9 6h2v1h-2z M21 6h2v1h-2z M9 7h1v1h-1z M22 7h1v1h-1z M8 8h1v1h-1z M23 8h1v1h-1z M8 9h1v1h-1z M23 9h1v1h-1z M7 10h1v1h-1z M24 10h1v1h-1z M7 11h1v1h-1z M24 11h1v1h-1z M7 12h1v1h-1z M24 12h1v1h-1z M7 13h1v1h-1z M24 13h1v1h-1z M7 14h1v1h-1z M24 14h1v1h-1z M7 15h1v1h-1z M24 15h1v1h-1z M8 16h1v1h-1z M23 16h1v1h-1z M8 17h1v1h-1z M23 17h1v1h-1z M9 18h1v1h-1z M22 18h1v1h-1z M9 19h2v1h-2z M21 19h2v1h-2z M11 20h2v1h-2z M19 20h2v1h-2z M13 21h6v1h-6z" fill="#d4c1f0" />
-  <path d="M13 5h6v1h-6z M11 6h2v1h-2z M19 6h2v1h-2z M10 7h1v1h-1z M21 7h1v1h-1z M9 8h1v1h-1z M22 8h1v1h-1z M9 9h1v1h-1z M22 9h1v1h-1z M8 10h1v1h-1z M23 10h1v1h-1z M8 11h1v1h-1z M23 11h1v1h-1z M8 12h1v1h-1z M23 12h1v1h-1z M8 13h1v1h-1z M23 13h1v1h-1z M8 14h1v1h-1z M23 14h1v1h-1z M8 15h1v1h-1z M23 15h1v1h-1z M9 16h1v1h-1z M22 16h1v1h-1z M9 17h1v1h-1z M22 17h1v1h-1z M10 18h1v1h-1z M21 18h1v1h-1z M11 19h2v1h-2z M19 19h2v1h-2z M13 20h6v1h-6z" fill="#aa85df" />
-  <path d="M13 6h6v1h-6z M11 7h2v1h-2z M19 7h2v1h-2z M10 8h1v1h-1z M21 8h1v1h-1z M10 9h1v1h-1z M21 9h1v1h-1z M9 10h1v1h-1z M22 10h1v1h-1z M9 11h1v1h-1z M22 11h1v1h-1z M9 12h1v1h-1z M22 12h1v1h-1z M9 13h1v1h-1z M22 13h1v1h-1z M9 14h1v1h-1z M22 14h1v1h-1z M9 15h1v1h-1z M22 15h1v1h-1z M10 16h1v1h-1z M21 16h1v1h-1z M10 17h1v1h-1z M21 17h1v1h-1z M11 18h2v1h-2z M19 18h2v1h-2z M13 19h6v1h-6z" fill="#8754cc" />
-  <path d="M13 7h6v1h-6z M11 8h2v1h-2z M19 8h2v1h-2z M11 9h1v1h-1z M20 9h1v1h-1z M10 10h1v1h-1z M21 10h1v1h-1z M10 11h1v1h-1z M21 11h1v1h-1z M10 12h1v1h-1z M21 12h1v1h-1z M10 13h1v1h-1z M21 13h1v1h-1z M10 14h1v1h-1z M21 14h1v1h-1z M10 15h1v1h-1z M21 15h1v1h-1z M11 16h1v1h-1z M20 16h1v1h-1z M11 17h2v1h-2z M19 17h2v1h-2z M13 18h6v1h-6z" fill="#6b3ab5" />
-  <path d="M13 8h6v1h-6z M12 9h8v1h-8z M11 10h10v1h-10z M11 11h10v1h-10z M11 12h10v1h-10z M11 13h10v1h-10z M11 14h10v1h-10z M11 15h10v1h-10z M12 16h8v1h-8z M13 17h6v1h-6z" fill="#512795" />
-  <path d="M10 21h1v1h-1z M9 22h6v1h-6z M14 23h1v1h-1z" fill="#8754cc" />
-  <path d="M8 23h6v1h-6z M8 24h1v1h-1z M13 24h1v1h-1z M8 25h1v1h-1z M12 25h1v1h-1z M8 26h1v1h-1z M11 26h1v1h-1z M9 27h2v1h-2z" fill="#6b3ab5" />
-  <path d="M9 24h4v1h-4z M9 25h3v1h-3z M9 26h2v1h-2z" fill="#512795" />
+  <path d="M12 2h8v1h-8z M10 3h2v1h-2z M20 3h2v1h-2z M8 4h2v1h-2z M22 4h2v1h-2z M7 5h1v1h-1z M24 5h1v1h-1z M6 6h1v1h-1z M25 6h1v1h-1z M5 7h1v1h-1z M26 7h1v1h-1z M4 8h1v1h-1z M27 8h1v1h-1z M4 9h1v1h-1z M27 9h1v1h-1z M3 10h1v1h-1z M28 10h1v1h-1z M3 11h1v1h-1z M28 11h1v1h-1z M2 12h1v1h-1z M29 12h1v1h-1z M2 13h1v1h-1z M29 13h1v1h-1z M2 14h1v1h-1z M29 14h1v1h-1z M2 15h1v1h-1z M29 15h1v1h-1z M2 16h1v1h-1z M29 16h1v1h-1z M3 17h1v1h-1z M28 17h1v1h-1z M3 18h1v1h-1z M28 18h1v1h-1z M4 19h1v1h-1z M27 19h1v1h-1z M4 20h1v1h-1z M27 20h1v1h-1z M5 21h1v1h-1z M26 21h1v1h-1z M6 22h1v1h-1z M25 22h1v1h-1z M7 23h1v1h-1z M24 23h1v1h-1z M8 24h1v1h-1z M22 24h2v1h-2z M7 25h1v1h-1z M20 25h2v1h-2z M7 26h1v1h-1z M13 26h7v1h-7z M7 27h1v1h-1z M11 27h2v1h-2z M8 28h1v1h-1z M10 28h1v1h-1z M9 29h1v1h-1z" fill="#12051f" />
+  <path d="M12 3h8v1h-8z M10 4h2v1h-2z M20 4h2v1h-2z M8 5h2v1h-2z M22 5h2v1h-2z M7 6h1v1h-1z M24 6h1v1h-1z M6 7h1v1h-1z M25 7h1v1h-1z M5 8h1v1h-1z M26 8h1v1h-1z M5 9h1v1h-1z M26 9h1v1h-1z M4 10h1v1h-1z M27 10h1v1h-1z M4 11h1v1h-1z M27 11h1v1h-1z M3 12h1v1h-1z M28 12h1v1h-1z M3 13h1v1h-1z M28 13h1v1h-1z" fill="#d4c1f0" />
+  <path d="M3 14h1v1h-1z M28 14h1v1h-1z M3 15h1v1h-1z M28 15h1v1h-1z M3 16h1v1h-1z M28 16h1v1h-1z M4 17h1v1h-1z M27 17h1v1h-1z M4 18h1v1h-1z M27 18h1v1h-1z M5 19h1v1h-1z M26 19h1v1h-1z M5 20h1v1h-1z M26 20h1v1h-1z M6 21h1v1h-1z M25 21h1v1h-1z M7 22h1v1h-1z M24 22h1v1h-1z M8 23h2v1h-2z M22 23h2v1h-2z M10 24h2v1h-2z M20 24h2v1h-2z M16 25h4v1h-4z" fill="#bea0e7" />
+  <path d="M12 4h8v1h-8z M10 5h2v1h-2z M20 5h2v1h-2z M8 6h2v1h-2z M22 6h2v1h-2z M7 7h1v1h-1z M24 7h1v1h-1z M6 8h1v1h-1z M25 8h1v1h-1z M6 9h1v1h-1z M25 9h1v1h-1z M5 10h1v1h-1z M26 10h1v1h-1z M5 11h1v1h-1z M26 11h1v1h-1z M4 12h1v1h-1z M27 12h1v1h-1z M4 13h1v1h-1z M27 13h1v1h-1z M4 14h1v1h-1z M27 14h1v1h-1z M4 15h1v1h-1z M27 15h1v1h-1z M4 16h1v1h-1z M27 16h1v1h-1z M5 17h1v1h-1z M26 17h1v1h-1z M5 18h1v1h-1z M26 18h1v1h-1z M6 19h1v1h-1z M25 19h1v1h-1z M6 20h1v1h-1z M25 20h1v1h-1z M7 21h1v1h-1z M24 21h1v1h-1z M8 22h2v1h-2z M22 22h2v1h-2z M10 23h2v1h-2z M20 23h2v1h-2z M12 24h8v1h-8z" fill="#9d73d5" />
+  <path d="M12 5h8v1h-8z M10 6h12v1h-12z M8 7h16v1h-16z M7 8h18v1h-18z M7 9h18v1h-18z M6 10h20v1h-20z M6 11h20v1h-20z M5 12h22v1h-22z M5 13h22v1h-22z M5 14h22v1h-22z M5 15h22v1h-22z M5 16h22v1h-22z M6 17h20v1h-20z M6 18h20v1h-20z M7 19h18v1h-18z M7 20h18v1h-18z M8 21h16v1h-16z M10 22h12v1h-12z M12 23h8v1h-8z" fill="#7548c2" />
+  <path d="M9 24h1v1h-1z M8 25h8v1h-8z" fill="#9d73d5" />
+  <path d="M8 26h5v1h-5z M8 27h1v1h-1z M10 27h1v1h-1z M9 28h1v1h-1z" fill="#6335ad" />
+  <path d="M9 27h1v1h-1z" fill="#512795" />
   <g fill="#fffdf8" shape-rendering="crispEdges">
-    {facePathsAt({ cx: 16, cy: 12, size: 'lg', smile: 'wide', gap: 1 }).map((d) => (
+    {facePathsAt({ cx: 16, cy: 13, size: 'lg', smile: 'wide', gap: 2 }).map((d) => (
       <path d={d} />
     ))}
   </g>

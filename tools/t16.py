@@ -6,7 +6,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
-from circles import check, circle  # noqa: E402
+from circles import MOZZ_28, check  # noqa: E402
 from shade import bbox, is_slab, rings, to_paths  # noqa: E402
 
 SLUG = "t16"
@@ -14,26 +14,31 @@ OUT = ROOT / "src/components/mark/logos"
 
 KEY = "#12051f"
 SURFACE = [
-    "#4a217c",
     "#d4c1f0",
-    "#aa85df",
-    "#8754cc",
-    "#6b3ab5",
+    "#bea0e7",
+    "#9d73d5",
+    "#7548c2",
+    "#6335ad",
     "#512795",
 ]
 FACE = "#fffdf8"
 
-# The canonical circle stays complete, but the tail overlaps its last two rows
-# so the lower-left curve opens directly into a compact stepped wedge.
-BODY = circle(22, top=2)
+# Keep the shipped Mozz circle's shoulders and 28-pixel diameter, removing only
+# three duplicate equator rows to reserve four rows for a speech-bubble tail.
+# This remains substantially rounder than the 21/23-row sibling bubbles.
+BODY_PROFILE = [*MOZZ_28[:10], *([28] * 5), *MOZZ_28[18:]]
+assert len(BODY_PROFILE) == 25
+BODY = {
+    (16 - width // 2 + offset, 2 + row)
+    for row, width in enumerate(BODY_PROFILE)
+    for offset in range(width)
+}
 TAIL_ROWS = {
-    22: (8, 14),
-    23: (7, 14),
-    24: (7, 14),
-    25: (7, 13),
-    26: (7, 12),
-    27: (8, 11),
-    28: (9, 10),
+    25: (7, 15),
+    26: (7, 14),
+    27: (7, 12),
+    28: (8, 10),
+    29: (9, 9),
 }
 TAIL = {
     (x, y)
@@ -87,26 +92,27 @@ assert 2 <= x0 <= x1 <= 29 and 2 <= y0 <= y1 <= 29
 
 BODY_W = max(x for x, _ in BODY) - min(x for x, _ in BODY) + 1
 FACE_W = 10
-assert BODY_W == 22 and (BODY_W - FACE_W) % 2 == 0
+assert BODY_W == 28 and (BODY_W - FACE_W) % 2 == 0
 body_x0 = min(x for x, _ in BODY)
 body_x1 = max(x for x, _ in BODY)
 face_x0 = 16 - FACE_W // 2
 face_x1 = face_x0 + FACE_W - 1
-assert face_x0 - body_x0 == body_x1 - face_x1 == 6
+assert face_x0 - body_x0 == body_x1 - face_x1 == 9
 
-# lg + wide + gap 1 is ten rows. At cy 12 it occupies y7-16, leaving
-# five rows above and below on the visibly symmetric body at y2-21.
-FACE_CY = 12
-FACE_GAP = 1
-FACE_TOP = 7
-FACE_HEIGHT = 10
+# The shipped lg face keeps its full width and default two-row breathing gap.
+# At cy 13 it occupies y8-18, leaving six rows above and below on the visibly
+# symmetric body at y2-24.
+FACE_CY = 13
+FACE_GAP = 2
+FACE_TOP = 8
+FACE_HEIGHT = 11
 body_y0 = min(y for _, y in BODY)
 body_y1 = min(y for _, y in TAIL) - 1
 body_proper = {(x, y) for x, y in BODY if y <= body_y1}
 assert all((31 - x, y) in body_proper for x, y in body_proper)
 air_above = FACE_TOP - body_y0
 air_below = body_y1 - (FACE_TOP + FACE_HEIGHT - 1)
-assert air_above == air_below == 5
+assert air_above == air_below == 6
 
 assert min(y for _, y in TAIL) == body_y1 + 1
 body_last = sorted(x for x, y in SHAPE if y == body_y1)
@@ -116,8 +122,8 @@ tail_first_c = (tail_first[0] + tail_first[-1] + 1) / 2
 assert body_last_c == 16 and tail_first_c == 14.5
 
 # A single keyline encloses the combined mark, so no line can close across the
-# body-to-tail join. A second dark ring gives the small mark weight; a pale
-# meniscus then falls through three substantially deeper steps to the core.
+# body-to-tail join. Only two one-pixel body bands sit inside it; both live in
+# the outer quarter, leaving one calm violet field around the face.
 outer_rings, _ = rings(SHAPE, 1)
 outline = outer_rings[0]
 open_join = [
@@ -126,23 +132,24 @@ open_join = [
     if (x, body_y1) in SHAPE - outline
     and (x, body_y1 + 1) in TAIL - outline
 ]
-assert len(open_join) == 5
-body_rings, body_core = rings(BODY, 6)
+assert len(open_join) >= 5
+body_rings, body_core = rings(BODY, 3)
 tail_rings, tail_core = rings(TAIL, 2)
-assert len(body_rings) == 6 and body_core
+assert len(body_rings) == 3 and body_core
 assert len(tail_rings) == 2 and tail_core
 
 body_owned = BODY - TAIL
 body_join = (body_rings[0] & body_owned) - outline
+inner_rim = (body_rings[1] & body_owned) - outline
+rim_highlight = {(x, y) for x, y in inner_rim if y <= 13}
+rim_return = inner_rim - rim_highlight
 layers = [
     (outline, KEY),
-    ((body_rings[1] & body_owned) - outline, SURFACE[0]),
-    ((body_rings[2] & body_owned) - outline, SURFACE[1]),
-    ((body_rings[3] & body_owned) - outline, SURFACE[2]),
-    ((body_rings[4] & body_owned) - outline, SURFACE[3]),
-    ((body_rings[5] & body_owned) - outline, SURFACE[4]),
-    ((body_core & body_owned) - outline, SURFACE[5]),
-    ((tail_rings[0] - outline) | body_join, SURFACE[3]),
+    (rim_highlight, SURFACE[0]),
+    (rim_return, SURFACE[1]),
+    ((body_rings[2] & body_owned) - outline, SURFACE[2]),
+    ((body_core & body_owned) - outline, SURFACE[3]),
+    ((tail_rings[0] - outline) | body_join, SURFACE[2]),
     (tail_rings[1] - outline, SURFACE[4]),
     (tail_core - outline, SURFACE[5]),
 ]
@@ -190,18 +197,21 @@ paths = "\n".join(
 /**
  * t16 · Round Reply
  *
- * A complete canonical 22-pixel circle overlaps a compact lower-left wedge by
- * two rows. One outer keyline encloses both, leaving a five-pixel-wide open join
- * with no pale or dark seam to turn the tail into a floating shape.
+ * The body is 28 pixels wide, built from the shipped Mozz circle profile with
+ * only three duplicate equator rows removed to reserve room for the tail. It is
+ * visibly rounder than the sibling bubbles while matching their full width.
  *
- * A near-black keyline and dark inner ring hold at small size. Inside them, a
- * pale meniscus falls through three deeper violet steps to the core; the tail
- * reuses the deepest three so the join cannot dissolve against white.
+ * The ramp occupies only the keyline and next two pixels: one split rim and one
+ * mid tone, then a broad plain violet field. The face lives entirely on that
+ * field instead of inside a stack of collars.
  *
- * The lg face matches the body's even parity and occupies y7-16 on the visibly
- * symmetric body at y2-21: 5 pixels of air above and 5 below. The white face
- * clears 4.5:1 against every tone beneath its full box. Eight tones including
- * face.
+ * A straight-left, right-tapered wedge overlaps the final two body rows. One
+ * outer keyline encloses both, leaving no seam at the join.
+ *
+ * The lg face matches the body's even parity and occupies y8-18 on the visibly
+ * symmetric body at y2-24: 6 pixels of air above and 6 below, plus 9 on either
+ * side. The white face clears 4.5:1 against its full background box. Eight tones
+ * including face.
  */
 import MarkFrame from '../MarkFrame.astro';
 import {{ facePathsAt }} from '../../../data/mark';
@@ -226,7 +236,7 @@ palette = ", ".join(f"'{tone}'" for tone in [KEY, *SURFACE, FACE])
     f"""export default {{
   n: '16',
   name: 'Round Reply',
-  idea: 'A true circular body opens directly into a compact stepped tail, while a pale rim falls inward through anchored violet tones.',
+  idea: 'A full-width round body opens into a straight-edged stepped tail; a thin outer ramp leaves a calm violet field around the face.',
   ground: 'light',
   palette: [{palette}],
 }};
@@ -234,9 +244,10 @@ palette = ", ".join(f"'{tone}'" for tone in [KEY, *SURFACE, FACE])
 )
 
 print(
-    f"{SLUG}: round body {BODY_W}x22, centred body y{body_y0}-{body_y1}, "
+    f"{SLUG}: round body {BODY_W}x25, centred body y{body_y0}-{body_y1}, "
     f"air {air_above}/{air_below}, tones 8, bounds x{x0}-{x1} y{y0}-{y1}, "
-    f"open join {len(open_join)}px, face contrast {face_contrast:.2f}:1"
+    f"side air 9/9, open join {len(open_join)}px, "
+    f"face contrast {face_contrast:.2f}:1"
 )
 print(f"body widths: {body_widths}")
 print(f"silhouette widths: {silhouette_widths}")

@@ -24,10 +24,11 @@ const browser = await chromium.launch();
 const report = { widths: {}, contrast: [] };
 
 for (const w of WIDTHS) {
-  const page = await browser.newPage({ viewport: { width: w, height: w < 700 ? 844 : 1000 }, deviceScaleFactor: 2 });
+  const page = await browser.newPage({ viewport: { width: w, height: w < 700 ? 844 : 1000 }, deviceScaleFactor: 2, reducedMotion: 'reduce' });
   await page.goto(PAGE_URL, { waitUntil: 'networkidle' });
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.waitForTimeout(400);
+  await page.evaluate(() => document.fonts.ready);
+  await page.waitForTimeout(700);
 
   const m = await page.evaluate(() => {
     const de = document.documentElement;
@@ -51,14 +52,15 @@ for (const w of WIDTHS) {
   });
   report.widths[w] = m;
 
-  await page.screenshot({ path: `${OUT}w11-${w}-hero.png`, clip: { x: 0, y: 0, width: w, height: w < 700 ? 1700 : 1000 } });
+  await page.screenshot({ path: `${OUT}w11-${w}-hero.png`, clip: { x: 0, y: 0, width: w, height: w < 1200 ? 2100 : 1150 } });
   await page.screenshot({ path: `${OUT}w11-${w}-full.png`, fullPage: true });
   await page.close();
 }
 
 // ---- rendered-pixel contrast: sample text glyph pixels vs their local background
-const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 2 });
+const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 2, reducedMotion: 'reduce' });
 await page.goto(PAGE_URL, { waitUntil: 'networkidle' });
+await page.waitForTimeout(300);
 
 const targets = await page.evaluate(() => {
   const sel = [
@@ -67,9 +69,10 @@ const targets = await page.evaluate(() => {
     ['hero eyebrow', '.stage-land .eyebrow'],
     ['hero key label', '.key li b'],
     ['hero key note', '.key li span'],
-    ['hero chip id', '.stage-land .chip b'],
-    ['hero chip sample', '.stage-land .chip em'],
-    ['hero band name', '.stage-land .band-name'],
+    ['hero chip format', '.stage-land .chip-fmt b'],
+    ['hero chip keeps', '.stage-land .chip-fmt em'],
+    ['hero chip id', '.stage-land .chip-type b'],
+    ['hero chip sample', '.stage-land .chip-type em'],
     ['hero plate title', '.stage-land .plate b'],
     ['hero plate fact', '.stage-land .plate .mono'],
     ['hero source kicker', '.stage-land .src-k'],

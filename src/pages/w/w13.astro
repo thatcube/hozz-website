@@ -86,7 +86,7 @@ const SHORT: Record<string, string> = {
 /* Angles measured from three o'clock, clockwise, so 90deg is straight down —
    away from the drop at the top of the stage. */
 const DEST_A = ['130deg', '18deg', '112deg', '62deg', '166deg', '38deg'];
-const DEST_A_P = ['96deg', '14deg', '117deg', '66deg', '110deg', '78deg'];
+const DEST_A_P = ['122deg', '14deg', '117deg', '116deg', '112deg', '78deg'];
 
 /* What rides the rings: real HealthKit identifiers, coloured by the category
    they belong to. The readings are examples and the caption says so. */
@@ -100,10 +100,10 @@ const RIDERS = [
 ];
 
 const RIDERS_P = [
-  { ring: 2, a: '58deg', category: 'heart', id: 'heartRateVariabilitySDNN', sample: '48 ms' },
-  { ring: 3, a: '96deg', category: 'sleep', id: 'sleepAnalysis', sample: '7h 12m' },
+  { ring: 2, a: '39deg', category: 'heart', id: 'heartRateVariabilitySDNN', sample: '48 ms' },
+  { ring: 3, a: '62deg', category: 'sleep', id: 'sleepAnalysis', sample: '7h 12m' },
   { ring: 4, a: '68deg', category: 'heart', id: 'electrocardiogram', sample: 'sinus rhythm' },
-  { ring: 5, a: '108deg', category: 'mind', id: 'stateOfMind', sample: 'pleasant' },
+  { ring: 5, a: '76deg', category: 'mind', id: 'stateOfMind', sample: 'pleasant' },
 ];
 
 const allTypes = STREAM_LANES.flat();
@@ -1200,7 +1200,7 @@ const jsonLd = {
         --ox: 50%;
         --oy: 20%;
         --disc: clamp(76px, 20vw, 104px);
-        height: clamp(580px, 154vw, 740px);
+        height: clamp(680px, 182vw, 880px);
       }
 
       /* Landscape is the default; the phone gets its own composition. */
@@ -1216,10 +1216,13 @@ const jsonLd = {
           display: block;
         }
         .stage-p .pin-ride {
-          max-width: 11.5rem;
+          max-width: 9.6rem;
         }
         .stage-p .pin-dest {
-          max-width: 10rem;
+          max-width: 8.6rem;
+        }
+        .stage-p .pin {
+          padding: 0.36rem 0.54rem;
         }
       }
 

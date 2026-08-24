@@ -1,6 +1,6 @@
 export default {
-  n: 't12', name: 'Canopy',
-  idea: 'Six close violet steps follow the top-facing contour, so the crown catches light while the hanging tail keeps its weight.',
+  n: 't12', name: 'Phosphor',
+  idea: 'A tiny live screen emits violet light from behind the face, fading through elliptical bands into dark corners and tail.',
   ground: 'light',
-  palette: ['#ddc0f6', '#d0b1f0', '#c3a2ea', '#b693e4', '#a984de', '#9c75d8', '#321842', '#fff9fb'],
+  palette: ['#47205f', '#52266f', '#5c2d7e', '#67338e', '#713a9d', '#7c40ad', '#8647bc', '#924ecd', '#24102f', '#fff9fb'],
 };

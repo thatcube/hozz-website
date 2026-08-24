@@ -1,0 +1,122 @@
+23:32:48 [types] Generated 26ms
+23:32:48 [build] output: "static"
+23:32:48 [build] mode: "static"
+23:32:48 [build] directory: /Users/brandon/Development/copilot-worktrees/hozz-website/thatcube-curly-dollop/dist/
+23:32:48 [build] Collecting build info...
+23:32:48 [build] ✓ Completed in 59ms.
+23:32:48 [build] Building static entrypoints...
+23:32:48 [vite] ✓ built in 425ms
+23:32:48 [vite] ✓ built in 16ms
+23:32:48 [build] Rearranging server assets...
+
+ generating static routes 
+23:32:48   ├─ /404.html (+6ms) 
+23:32:48   ├─ /directions/index.html (+1ms) 
+23:32:48   ├─ /f/index.html (+17ms) 
+23:32:48   ├─ /id/index.html (+2ms) 
+23:32:48   ├─ /lab/index.html (+2ms) 
+23:32:48   ├─ /lab2/index.html (+9ms) 
+23:32:48   ├─ /logos/index.html (+25ms) 
+23:32:48   ├─ /privacy/index.html (+2ms) 
+23:32:48   ├─ /sketch/a/index.html (+2ms) 
+23:32:48   ├─ /sketch/b/index.html (+1ms) 
+23:32:48   ├─ /sketch/c/index.html (+1ms) 
+23:32:48   ├─ /sketch/d/index.html (+1ms) 
+23:32:48   ├─ /sketch/e/index.html (+1ms) 
+23:32:48   ├─ /sketch/f/index.html (+1ms) 
+23:32:48   ├─ /sketch/g/index.html (+1ms) 
+23:32:48   ├─ /sketch/h/index.html (+1ms) 
+23:32:48   ├─ /sketch/j/index.html (+1ms) 
+23:32:48   ├─ /sketch/k/index.html (+1ms) 
+23:32:48   ├─ /sketch/m/index.html (+2ms) 
+23:32:48   ├─ /sketch/n/index.html (+1ms) 
+23:32:48   ├─ /sketch/o/index.html (+1ms) 
+23:32:48   ├─ /sketch/p/index.html (+1ms) 
+23:32:48   ├─ /sketch/q/index.html (+1ms) 
+23:32:48   ├─ /sketch/r/index.html (+1ms) 
+23:32:48   ├─ /sketch/s/index.html (+1ms) 
+23:32:48   ├─ /sketch/t/index.html (+1ms) 
+23:32:48   ├─ /sketch/u/index.html (+1ms) 
+23:32:48   ├─ /sketch/w/index.html (+1ms) 
+23:32:48   ├─ /sketch/x/index.html (+1ms) 
+23:32:48   ├─ /sketch/y/index.html (+1ms) 
+23:32:48   ├─ /sketch/z/index.html (+1ms) 
+23:32:48   ├─ /v2/index.html (+24ms) 
+23:32:48   ├─ /w/w01/index.html (+1ms) 
+23:32:48   ├─ /w/w01.meta23:32:48 [WARN] [router] No API Route handler exists for the method "GET" for the route "/w/w01.meta".
+Found handlers: "default"
+
+ (+2ms) 
+23:32:48   ├─ /w/w02/index.html (+1ms) 
+23:32:48   ├─ /w/w02.meta23:32:48 [WARN] [router] No API Route handler exists for the method "GET" for the route "/w/w02.meta".
+Found handlers: "default"
+
+ (+1ms) 
+23:32:48   ├─ /w/w03/index.html (+1ms) 
+23:32:48   ├─ /w/w03.meta23:32:48 [WARN] [router] No API Route handler exists for the method "GET" for the route "/w/w03.meta".
+Found handlers: "default"
+
+ (+1ms) 
+23:32:48   ├─ /w/w04/index.html (+1ms) 
+23:32:48   ├─ /w/w04.meta23:32:48 [WARN] [router] No API Route handler exists for the method "GET" for the route "/w/w04.meta".
+Found handlers: "default"
+
+ (+1ms) 
+23:32:48   ├─ /w/w05/index.html (+1ms) 
+23:32:48   ├─ /w/w05.meta23:32:48 [WARN] [router] No API Route handler exists for the method "GET" for the route "/w/w05.meta".
+Found handlers: "default"
+
+ (+1ms) 
+23:32:48   ├─ /w/w06/index.html (+1ms) 
+23:32:48   ├─ /w/w06.meta23:32:48 [WARN] [router] No API Route handler exists for the method "GET" for the route "/w/w06.meta".
+Found handlers: "default"
+
+ (+1ms) 
+23:32:48   ├─ /w/w07/index.html (+1ms) 
+23:32:48   ├─ /w/w07.meta23:32:48 [WARN] [router] No API Route handler exists for the method "GET" for the route "/w/w07.meta".
+Found handlers: "default"
+
+ (+1ms) 
+23:32:48   ├─ /w/w08/index.html (+1ms) 
+23:32:48   ├─ /w/w08.meta23:32:48 [WARN] [router] No API Route handler exists for the method "GET" for the route "/w/w08.meta".
+Found handlers: "default"
+
+ (+1ms) 
+23:32:48   ├─ /w/w09/index.html (+1ms) 
+23:32:48   ├─ /w/w09.meta23:32:48 [WARN] [router] No API Route handler exists for the method "GET" for the route "/w/w09.meta".
+Found handlers: "default"
+
+ (+1ms) 
+23:32:48   ├─ /w/w10/index.html (+1ms) 
+23:32:48   ├─ /w/w10.meta23:32:48 [WARN] [router] No API Route handler exists for the method "GET" for the route "/w/w10.meta".
+Found handlers: "default"
+
+ (+1ms) 
+23:32:48   ├─ /w/w11/index.html (+2ms) 
+23:32:48   ├─ /w/w11.meta23:32:48 [WARN] [router] No API Route handler exists for the method "GET" for the route "/w/w11.meta".
+Found handlers: "default"
+
+ (+1ms) 
+23:32:48   ├─ /w/w12/index.html (+1ms) 
+23:32:48   ├─ /w/w12.meta23:32:48 [WARN] [router] No API Route handler exists for the method "GET" for the route "/w/w12.meta".
+Found handlers: "default"
+
+ (+1ms) 
+23:32:48   ├─ /w/w13/index.html (+2ms) 
+23:32:48   ├─ /w/w13.meta23:32:48 [WARN] [router] No API Route handler exists for the method "GET" for the route "/w/w13.meta".
+Found handlers: "default"
+
+ (+1ms) 
+23:32:48   ├─ /w/w14/index.html (+1ms) 
+23:32:48   ├─ /w/w14.meta23:32:48 [WARN] [router] No API Route handler exists for the method "GET" for the route "/w/w14.meta".
+Found handlers: "default"
+
+ (+1ms) 
+23:32:48   ├─ /w/index.html (+1ms) 
+23:32:48   ├─ /index.html (+2ms) 
+23:32:48 ✓ Completed in 153ms.
+
+23:32:48 [build] ✓ Completed in 622ms.
+23:32:48 [@astrojs/sitemap] `sitemap-index.xml` created at `dist`
+23:32:48 [build] 48 page(s) built in 697ms
+23:32:48 [build] Complete!

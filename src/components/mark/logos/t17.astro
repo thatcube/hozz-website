@@ -3,24 +3,39 @@
  * t17 · Depth
  *
  * The bubble as a physical object with thickness, rather than a flat shape
- * with light on it. Three planes, built the way the shipped Plozz mark builds
- * its case, its bezel and its screen:
+ * with light on it.
+ *
+ * The shipped Twozz mark already claims thickness — of its five tones, two do
+ * nothing but assert an edge: one row of #ad84ec along the top of the bubble
+ * and one of #7243c3 along the bottom, with the tail filled in that same deep
+ * tone as though it were folded away from you. It is a slab. What it has not
+ * got is anything behind it. Plozz has: a case, a bezel, and a screen one
+ * plane further back. This keeps the shipped mark's claim and adds the plane.
  *
  *     keyline -> rim (2px) -> fold -> recessed panel -> face
  *
  * It turns on one inversion. The **rim is proud**, so light lands on its top
  * edge and misses its underside: light at the top, mid at the sides, dark
- * along the bottom. The **panel is recessed**, so it runs the other way — the
- * near wall throws a shadow across the top of the floor, and the light that
- * cleared that wall pools at the bottom. Read down the middle and the tone
- * reverses twice, at exactly the two rows where the plane changes.
+ * along the bottom — the shipped mark's two rows, widened to two pixels so
+ * there is something to see. The **panel is recessed**, so it runs the other
+ * way. It sits a plane further from the light to begin with, and the near wall
+ * throws a shadow across the top of it, so it is darkest at the top and
+ * brightens downward.
  *
- * That reversal is the argument. A drop shadow only darkens in one direction
+ * That reversal is the argument. A drop shadow darkens in one direction only
  * and lives outside the silhouette; every pixel here is inside it. A bevel
  * filter runs light top-left to dark bottom-right across everything at once;
  * here the two planes disagree on purpose, and the light is straight top-down
  * rather than diagonal, which is what a rounded rim under a ceiling light
  * actually does.
+ *
+ * The fold is not one surface either. Its top arc is the near wall, leaning
+ * away from the light, and it is the darkest thing in the mark. Its bottom arc
+ * is the far wall, tipped up into it, and it takes the *same tone as the top
+ * of the rim* — a surface that faces the same way should be the same colour
+ * wherever it occurs. That costs no extra tone and it makes the bright shelf
+ * at the bottom of the recess feel like part of the object rather than a
+ * highlight painted onto it.
  *
  * The floor's grading is carried by two contour rings graded by height, not by
  * horizontal bands. Bands were tried first and were invisible at 96px, which
@@ -33,21 +48,24 @@
  * emboss.
  *
  * No step inside either ramp moves any channel by more than 18, inside the 21
- * the shipped Plozz screen already spends. The only large jumps are the two
- * structural lines, keyline and fold — and Plozz draws its fold in pure black,
- * so a deep violet is the quieter choice.
+ * the shipped Plozz screen already spends. The only jumps larger than that are
+ * plane changes, where a jump is the point.
  *
- * The tail is the same object, with the same rim and the same underside shade.
- * Being narrow it never reaches panel depth, so it stays solid wall: a body
- * with a window in it, a tail without one, one material.
+ * Silhouette and tail are the shipped bubble's own, measured off the raster —
+ * the same six-row corner arc, the same narrow tail on a vertical left edge.
+ * One row taller in the body, which is what lets a full-size face clear the
+ * floor's grading and still leave equal air.
  *
  * Violet, pulled toward indigo from the shipped #8f52f6, which sits too near
- * the top of its own range to leave a ramp anywhere to go.
+ * the top of its own range to leave a ramp anywhere to go. White ink, as the
+ * shipped mark has, which is what fixes the polarity: the floor has to stay
+ * dark enough to carry it, and a hollow being darker than the face around it
+ * is the honest reading anyway.
  *
  * 13 tones. Body y2-25, 28 wide, symmetric about x=16;
- * the tail is asymmetric by design and exempt. Face md/wide/gap1 on the plain
- * core at 5.2:1, with 7 rows of air above it and 7 below,
- * measured on the body.
+ * the tail is asymmetric by design and exempt. Face lg/wide/gap1 on the
+ * plain core at 5.8:1, with 7 rows of air above it and 7 below,
+ * measured on the body, not on the tail.
  */
 import MarkFrame from '../MarkFrame.astro';
 import { facePathsAt } from '../../../data/mark';
@@ -57,19 +75,19 @@ const { size = 128 } = Astro.props;
 ---
 
 <MarkFrame size={size} title="Twozz — Depth">
-  <path d="M7 2h18v1h-18z M5 3h2v1h-2z M25 3h2v1h-2z M4 4h1v1h-1z M27 4h1v1h-1z M3 5h1v1h-1z M28 5h1v1h-1z M3 6h1v1h-1z M28 6h1v1h-1z M2 7h1v1h-1z M29 7h1v1h-1z M2 8h1v1h-1z M29 8h1v1h-1z M2 9h1v1h-1z M29 9h1v1h-1z M2 10h1v1h-1z M29 10h1v1h-1z M2 11h1v1h-1z M29 11h1v1h-1z M2 12h1v1h-1z M29 12h1v1h-1z M2 13h1v1h-1z M29 13h1v1h-1z M2 14h1v1h-1z M29 14h1v1h-1z M2 15h1v1h-1z M29 15h1v1h-1z M2 16h1v1h-1z M29 16h1v1h-1z M2 17h1v1h-1z M29 17h1v1h-1z M2 18h1v1h-1z M29 18h1v1h-1z M2 19h1v1h-1z M29 19h1v1h-1z M2 20h1v1h-1z M29 20h1v1h-1z M2 21h1v1h-1z M29 21h1v1h-1z M3 22h1v1h-1z M28 22h1v1h-1z M3 23h1v1h-1z M28 23h1v1h-1z M4 24h3v1h-3z M25 24h3v1h-3z M7 25h1v1h-1z M13 25h12v1h-12z M7 26h1v1h-1z M12 26h1v1h-1z M7 27h1v1h-1z M10 27h2v1h-2z M7 28h1v1h-1z M9 28h1v1h-1z M7 29h2v1h-2z" fill="#261347" />
-  <path d="M7 3h18v1h-18z M5 4h2v1h-2z M25 4h2v1h-2z M4 5h1v1h-1z M27 5h1v1h-1z M3 7h1v1h-1z M28 7h1v1h-1z M6 21h1v1h-1z M25 21h1v1h-1z M7 22h18v1h-18z" fill="#ac8ae6" />
-  <path d="M7 4h18v1h-18z M5 5h2v1h-2z M25 5h2v1h-2z M4 6h2v1h-2z M26 6h2v1h-2z M4 7h1v1h-1z M27 7h1v1h-1z M3 8h2v1h-2z M27 8h2v1h-2z M3 9h2v1h-2z M27 9h2v1h-2z M3 10h2v1h-2z M27 10h2v1h-2z M3 11h2v1h-2z M27 11h2v1h-2z M3 12h2v1h-2z M27 12h2v1h-2z M3 13h2v1h-2z M27 13h2v1h-2z M3 14h2v1h-2z M27 14h2v1h-2z M3 15h2v1h-2z M27 15h2v1h-2z M3 16h2v1h-2z M27 16h2v1h-2z M3 17h2v1h-2z M27 17h2v1h-2z M3 18h2v1h-2z M27 18h2v1h-2z M3 19h2v1h-2z M27 19h2v1h-2z M3 20h2v1h-2z M27 20h2v1h-2z M4 21h1v1h-1z M27 21h1v1h-1z M4 22h3v1h-3z M25 22h3v1h-3z M7 23h18v1h-18z M8 24h5v1h-5z M8 25h4v1h-4z M8 26h2v1h-2z M8 27h1v1h-1z" fill="#9d79db" />
-  <path d="M3 21h1v1h-1z M28 21h1v1h-1z M4 23h3v1h-3z M25 23h3v1h-3z M7 24h1v1h-1z M13 24h12v1h-12z M12 25h1v1h-1z M10 26h2v1h-2z M9 27h1v1h-1z M8 28h1v1h-1z" fill="#8e68d0" />
-  <path d="M5 7h1v1h-1z M26 7h1v1h-1z M5 8h1v1h-1z M26 8h1v1h-1z M5 9h1v1h-1z M26 9h1v1h-1z M5 10h1v1h-1z M26 10h1v1h-1z M5 11h1v1h-1z M26 11h1v1h-1z M5 12h1v1h-1z M26 12h1v1h-1z M5 13h1v1h-1z M26 13h1v1h-1z M5 14h1v1h-1z M26 14h1v1h-1z M5 15h1v1h-1z M26 15h1v1h-1z M5 16h1v1h-1z M26 16h1v1h-1z M5 17h1v1h-1z M26 17h1v1h-1z M5 18h1v1h-1z M26 18h1v1h-1z M5 19h1v1h-1z M26 19h1v1h-1z M5 20h1v1h-1z M26 20h1v1h-1z M5 21h1v1h-1z M26 21h1v1h-1z" fill="#7f57c5" />
-  <path d="M7 5h18v1h-18z M6 6h1v1h-1z M25 6h1v1h-1z" fill="#7046ba" />
-  <path d="M7 6h18v1h-18z M6 7h1v1h-1z M25 7h1v1h-1z" fill="#5435a2" />
-  <path d="M7 7h18v1h-18z M6 8h1v1h-1z M25 8h1v1h-1z M6 9h1v1h-1z M25 9h1v1h-1z" fill="#6141af" />
-  <path d="M7 8h1v1h-1z M24 8h1v1h-1z M7 9h1v1h-1z M24 9h1v1h-1z M6 10h2v1h-2z M24 10h2v1h-2z M6 11h2v1h-2z M24 11h2v1h-2z M6 12h1v1h-1z M25 12h1v1h-1z" fill="#6e4dbb" />
-  <path d="M8 8h16v1h-16z M8 9h16v1h-16z M8 10h16v1h-16z M8 11h16v1h-16z M7 12h18v1h-18z M6 13h20v1h-20z M6 14h20v1h-20z M7 15h18v1h-18z M8 16h16v1h-16z M8 17h16v1h-16z M8 18h16v1h-16z M8 19h16v1h-16z" fill="#7b58c8" />
-  <path d="M6 15h1v1h-1z M25 15h1v1h-1z M6 16h2v1h-2z M24 16h2v1h-2z M6 17h2v1h-2z M24 17h2v1h-2z M7 18h1v1h-1z M24 18h1v1h-1z M7 19h1v1h-1z M24 19h1v1h-1z" fill="#8864d5" />
-  <path d="M6 18h1v1h-1z M25 18h1v1h-1z M6 19h1v1h-1z M25 19h1v1h-1z M7 20h18v1h-18z" fill="#9570e1" />
-  <path d="M6 20h1v1h-1z M25 20h1v1h-1z M7 21h18v1h-18z" fill="#a27cee" />
+  <path d="M7 2h18v1h-18z M5 3h2v1h-2z M25 3h2v1h-2z M4 4h1v1h-1z M27 4h1v1h-1z M3 5h1v1h-1z M28 5h1v1h-1z M3 6h1v1h-1z M28 6h1v1h-1z M2 7h1v1h-1z M29 7h1v1h-1z M2 8h1v1h-1z M29 8h1v1h-1z M2 9h1v1h-1z M29 9h1v1h-1z M2 10h1v1h-1z M29 10h1v1h-1z M2 11h1v1h-1z M29 11h1v1h-1z M2 12h1v1h-1z M29 12h1v1h-1z M2 13h1v1h-1z M29 13h1v1h-1z M2 14h1v1h-1z M29 14h1v1h-1z M2 15h1v1h-1z M29 15h1v1h-1z M2 16h1v1h-1z M29 16h1v1h-1z M2 17h1v1h-1z M29 17h1v1h-1z M2 18h1v1h-1z M29 18h1v1h-1z M2 19h1v1h-1z M29 19h1v1h-1z M2 20h1v1h-1z M29 20h1v1h-1z M2 21h1v1h-1z M29 21h1v1h-1z M3 22h1v1h-1z M28 22h1v1h-1z M3 23h1v1h-1z M28 23h1v1h-1z M4 24h3v1h-3z M25 24h3v1h-3z M7 25h1v1h-1z M13 25h12v1h-12z M7 26h1v1h-1z M12 26h1v1h-1z M7 27h1v1h-1z M10 27h2v1h-2z M7 28h1v1h-1z M9 28h1v1h-1z M7 29h2v1h-2z" fill="#22103f" />
+  <path d="M7 3h18v1h-18z M5 4h2v1h-2z M25 4h2v1h-2z M4 5h1v1h-1z M27 5h1v1h-1z M3 7h1v1h-1z M28 7h1v1h-1z M6 21h1v1h-1z M25 21h1v1h-1z M7 22h18v1h-18z" fill="#b184f6" />
+  <path d="M7 4h18v1h-18z M5 5h2v1h-2z M25 5h2v1h-2z M4 6h2v1h-2z M26 6h2v1h-2z M4 7h1v1h-1z M27 7h1v1h-1z M3 8h2v1h-2z M27 8h2v1h-2z M3 9h2v1h-2z M27 9h2v1h-2z M3 10h2v1h-2z M27 10h2v1h-2z M3 11h2v1h-2z M27 11h2v1h-2z M3 12h2v1h-2z M27 12h2v1h-2z M3 13h2v1h-2z M27 13h2v1h-2z M3 14h2v1h-2z M27 14h2v1h-2z M3 15h2v1h-2z M27 15h2v1h-2z M3 16h2v1h-2z M27 16h2v1h-2z M3 17h2v1h-2z M27 17h2v1h-2z M3 18h2v1h-2z M27 18h2v1h-2z M3 19h2v1h-2z M27 19h2v1h-2z M3 20h2v1h-2z M27 20h2v1h-2z M4 21h1v1h-1z M27 21h1v1h-1z M4 22h3v1h-3z M25 22h3v1h-3z M7 23h18v1h-18z M8 24h5v1h-5z M8 25h4v1h-4z M8 26h2v1h-2z M8 27h1v1h-1z" fill="#a072eb" />
+  <path d="M3 21h1v1h-1z M28 21h1v1h-1z M4 23h3v1h-3z M25 23h3v1h-3z M7 24h1v1h-1z M13 24h12v1h-12z M12 25h1v1h-1z M10 26h2v1h-2z M9 27h1v1h-1z M8 28h1v1h-1z" fill="#8f60e0" />
+  <path d="M5 7h1v1h-1z M26 7h1v1h-1z M5 8h1v1h-1z M26 8h1v1h-1z M5 9h1v1h-1z M26 9h1v1h-1z M5 10h1v1h-1z M26 10h1v1h-1z M5 11h1v1h-1z M26 11h1v1h-1z M5 12h1v1h-1z M26 12h1v1h-1z M5 13h1v1h-1z M26 13h1v1h-1z M5 14h1v1h-1z M26 14h1v1h-1z M5 15h1v1h-1z M26 15h1v1h-1z M5 16h1v1h-1z M26 16h1v1h-1z M5 17h1v1h-1z M26 17h1v1h-1z M5 18h1v1h-1z M26 18h1v1h-1z M5 19h1v1h-1z M26 19h1v1h-1z M5 20h1v1h-1z M26 20h1v1h-1z M5 21h1v1h-1z M26 21h1v1h-1z" fill="#7e4ed5" />
+  <path d="M7 5h18v1h-18z M6 6h1v1h-1z M25 6h1v1h-1z" fill="#6d3cca" />
+  <path d="M7 6h18v1h-18z M6 7h1v1h-1z M25 7h1v1h-1z" fill="#4a249c" />
+  <path d="M7 7h18v1h-18z M6 8h1v1h-1z M25 8h1v1h-1z M6 9h1v1h-1z M25 9h1v1h-1z" fill="#5931aa" />
+  <path d="M7 8h1v1h-1z M24 8h1v1h-1z M7 9h1v1h-1z M24 9h1v1h-1z M6 10h2v1h-2z M24 10h2v1h-2z M6 11h2v1h-2z M24 11h2v1h-2z M6 12h1v1h-1z M25 12h1v1h-1z" fill="#683fb8" />
+  <path d="M8 8h16v1h-16z M8 9h16v1h-16z M8 10h16v1h-16z M8 11h16v1h-16z M7 12h18v1h-18z M6 13h20v1h-20z M6 14h20v1h-20z M7 15h18v1h-18z M8 16h16v1h-16z M8 17h16v1h-16z M8 18h16v1h-16z M8 19h16v1h-16z" fill="#774cc6" />
+  <path d="M6 15h1v1h-1z M25 15h1v1h-1z M6 16h2v1h-2z M24 16h2v1h-2z M6 17h2v1h-2z M24 17h2v1h-2z M7 18h1v1h-1z M24 18h1v1h-1z M7 19h1v1h-1z M24 19h1v1h-1z" fill="#8659d4" />
+  <path d="M6 18h1v1h-1z M25 18h1v1h-1z M6 19h1v1h-1z M25 19h1v1h-1z M7 20h18v1h-18z" fill="#9567e2" />
+  <path d="M6 20h1v1h-1z M25 20h1v1h-1z M7 21h18v1h-18z" fill="#a474f0" />
   <g fill="#ffffff" shape-rendering="crispEdges">
     {facePathsAt({ cx: 16, cy: 14, size: 'lg', smile: 'wide', gap: 1 }).map((d) => (
       <path d={d} />

@@ -32,9 +32,15 @@ is the whole idea:
      doing the work. Bright, dark, then field: that three-part profile is the
      difference between glass and paint;
   4. the cast and the pool — the field falls from deep violet under the entering
-     edge to a pale lilac gathering low in the body, which spills down the tail.
-     That pool is the part no opaque mark can show: a bright region that is not
-     attached to the lit edge and is not explained by the shape's curvature.
+     edge to a pale lilac gathering low in the body, and rakes slightly across
+     as it falls, because light enters at a corner rather than everywhere at
+     once. That pool is the part no opaque mark can show: a bright region not
+     attached to the lit edge and not explained by the shape's curvature.
+
+Pure white is the face's alone. The catch is a violet-white a step off it, so
+the ZZ stays the brightest thing on the glass — and so that measuring the white
+pixels measures the face, rather than the face plus whatever else was painted
+#ffffff.
 
 The cast is biased so the face's nine rows stay on the deep half of the ramp — a
 white ZZ needs something to sit on at 24px — and spends the pale end below it.
@@ -42,9 +48,16 @@ Same system as c45, a fine ramp with no step louder than its neighbours, put to
 the opposite use.
 
 Silhouette: the shipped bubble at its full 28 across, rounder over the top
-(insets 6,4,2,1,0 rather than 5,3,2,1,0), flatter underneath so the light has a
-base to gather in, and the tail leaving from the bottom-left corner. The body is
-symmetric about x=16; the tail is not, and is exempt.
+(insets 6,4,2,1,0 rather than 5,3,2,1,0) and flatter underneath, so the light has
+a base to gather in. The tail is four rows and six wide at most, flush with the
+body's bottom-left corner: the shipped tail is small relative to the body and
+unmistakably a separate part, and a tail that grows into a second mass stops
+being a tail. The body is symmetric about x=16; the tail is not, and is exempt.
+
+Face: the shipped size, lg, 10 wide on a 28-wide body — both even, which is the
+only way a face can centre on a body at all — placed against the *body*, not the
+mark. The tail and the pool are not the object; centring on the lit field is how
+a mark ends up looking broken.
 """
 import json
 import re
@@ -412,19 +425,26 @@ rows = '\n'.join(f'  <path d="{" ".join(to_paths(p))}" fill="{f}" />' for p, f i
  * dark, then field: that profile is the difference between glass and paint.
  *
  * The field itself falls from deep violet under the entering edge to a pale
- * pool low in the body that spills down the tail — a bright region not attached
- * to the lit edge and not explained by the curvature, which is the one thing an
- * opaque mark cannot show. The cast is biased so the face's nine rows stay on
- * the deep half; a white ZZ needs something to sit on at 24px. Nothing is
- * cleared for the letterforms; the bands pass behind them, as they do on both
- * shipped marks.
+ * pool low in the body, raking slightly across as it falls because light enters
+ * at a corner rather than everywhere at once. That pool is the one thing an
+ * opaque mark cannot show: a bright region not attached to the lit edge and not
+ * explained by the curvature. The cast is held back so every tone under the
+ * letterforms stays on the deep half of the ramp; a white ZZ needs something to
+ * sit on at 24px. Nothing is cleared for the face — the bands pass behind it,
+ * as they do on both shipped marks — and pure white is the face's alone, the
+ * catch being a violet-white one step off it.
  *
  * The silhouette is the shipped bubble at its full 28 across, rounder over the
  * top (insets 6,4,2,1,0 rather than 5,3,2,1,0) and flatter underneath, so the
- * light has a base to gather in and the tail leaves from a corner rather than
- * hanging off a curve. The body is symmetric about x=16 and the face is centred
- * on the body, not the whole mark: {above} rows of air above, {below} below, measured.
- * The tail is deliberately asymmetric and is exempt.
+ * light has a base to gather in. The tail is four rows, six wide at most, flush
+ * with the body's bottom-left corner — small relative to the body and plainly a
+ * separate part, and given its own mid tone so it does not dissolve into the
+ * pool. The body is symmetric about x=16, every row of it; the tail is not, and
+ * is exempt.
+ *
+ * The face is the shipped size — lg, 10 wide, from the shared module untouched
+ * — and it is centred on the *body*: {above} rows of air above it, {below} below,
+ * measured. 10 on 28 is the parity that lets it centre at all.
  *
  * {len(TONES)} tones, no step louder than {MAX_STEP} on any channel.
  */

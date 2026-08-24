@@ -188,18 +188,44 @@ BODY = SHELLS[0]
 for i in range(INSETS):
     assert SHELLS[i + 1] < SHELLS[i], f'shell {i + 1} is not inside shell {i}'
 
-# The parts, by how many pixels in a pixel is. The keyline eats depth 0 almost
-# everywhere; depth 1 is the rim; 2-4 are the bevel; 5 is the groove; everything
-# deeper is the field. Note the groove is RAMP[5], the darkest stop, and the
-# field is RAMP[4] — a step back *up*. Six stops that only ever darken read as a
-# gradient no matter how many there are; one reversal gives the eye a seam.
-PART = {0: 'rim', 1: 'rim', 2: 'bevel-1', 3: 'bevel-2', 4: 'bevel-3',
-        5: 'groove', 6: 'field'}
-TONE = {'rim': RAMP[0], 'bevel-1': RAMP[1], 'bevel-2': RAMP[2],
-        'bevel-3': RAMP[3], 'groove': RAMP[5], 'field': RAMP[4]}
-ORDER_PARTS = ['rim', 'bevel-1', 'bevel-2', 'bevel-3', 'groove', 'field']
+# The parts, by how many pixels in a pixel is — and, below the equator, by the
+# fact that light comes from above. An even ramp inward is a wash however many
+# stops it has: every step does the same thing as the one before, so the eye
+# finds no seam. These stops are clustered instead.
+#
+#   depth 1   rim        RAMP[0]   the lit outer edge, 1 px
+#   depth 2   bevel      RAMP[1]   the wall, 1 px
+#   depth 3   upper      RAMP[2]   the wall stepping down into the plate
+#             lower      RAMP[5]   ...or, below, dropping three stops into shadow
+#   depth 4   upper      RAMP[3]   plate
+#             lower      RAMP[4]   the shadow lifting back toward the plate
+#   depth 5+             RAMP[3]   the plate: one flat tone, the brand purple,
+#                                  the largest area in the mark, carrying the face
+#
+# So the top of the bubble steps gently — three subtle stops and then flat — and
+# the bottom drops hard into a two-pixel shadow and comes back up. Same six
+# stops, same step size between neighbours; what changed is that they are spent
+# where a surface actually changes instead of being spread evenly.
+def part_of(p):
+    d = depth[p]
+    upper = p[1] + 0.5 < CYY
+    if d <= 1:
+        return 'rim'
+    if d == 2:
+        return 'bevel'
+    if d == 3:
+        return 'step' if upper else 'shadow'
+    if d == 4 and not upper:
+        return 'floor'
+    return 'plate'
+
+
+TONE = {'rim': RAMP[0], 'bevel': RAMP[1], 'step': RAMP[2], 'plate': RAMP[3],
+        'floor': RAMP[4], 'shadow': RAMP[5]}
+ORDER_PARTS = ['rim', 'bevel', 'step', 'shadow', 'floor', 'plate']
 assert set(TONE.values()) == set(RAMP), 'a stop is going unused'
-assert lab(TONE['groove'])[0] < lab(TONE['field'])[0], 'the groove must be the darker of the two'
+assert lab(TONE['shadow'])[0] < lab(TONE['floor'])[0] < lab(TONE['plate'])[0], \
+    'the shadow must be the darkest of the three and lift back toward the plate'
 
 # The tail. Mass is stubbiness, not length: the shipped tail is 6 across and 4
 # rows deep. This one is 8 across and 4 deep, straight down the left the way the
@@ -257,14 +283,19 @@ assert max(DEPTH[p] for p in TAIL) <= 4, 'the tail is deep enough to need the ra
 
 OUTLINE = keyline(SIL)
 depth = {p: max(i for i in range(INSETS + 1) if p in SHELLS[i]) for p in BODY}
-part = {p: PART[depth[p]] for p in BODY}
+part = {p: part_of(p) for p in BODY}
 paint = {p: TONE[part[p]] for p in BODY}
 for p in TAIL:
     part[p] = 'rim'
     paint[p] = RAMP[min(max(DEPTH[p] - 2, 0), INSETS - 1)] if '--ramp-tail' in sys.argv \
         else RAMP[0]
-JUNCTION = {p for p in BODY if depth[p] == 0 and p not in OUTLINE}
+# The only asymmetry the mark is allowed: where the tail hangs off it, the body's
+# bottom row keeps the rim tone instead of turning into keyline. Exactly those
+# pixels and their mirrors are exempt from the symmetry check — nothing else.
+JUNCTION = {(x, Y1) for x in range(TAIL_ROWS[TOP][0], TAIL_ROWS[TOP][1] + 1)} & BODY
 EXEMPT = JUNCTION | {(31 - x, y) for x, y in JUNCTION}
+assert len(EXEMPT) <= 2 * TW, f'{len(EXEMPT)} px exempted, more than the tail is wide'
+assert all(y == Y1 for _, y in EXEMPT), 'the exemption has crept off the tail row'
 for p in OUTLINE:
     paint[p] = KEY
     part[p] = 'keyline'
@@ -278,22 +309,24 @@ for p, f in paint.items():
 
 assert set(paint) == SIL, 'the silhouette is not exactly covered'
 assert len(layers) == INSETS + 1, f'{len(layers)} fills, expected {INSETS + 1}'
-FIELD = parts['field']
-assert not is_slab(FIELD, BODY), 'the field reads as a box dropped in the bubble'
+PLATE = parts['plate']
+assert not is_slab(PLATE, BODY), 'the plate reads as a box dropped in the bubble'
 for nm in ORDER_PARTS:                       # every part, inside the body, mirrors
     assert all((31 - x, y) in parts[nm] for x, y in parts[nm] & BODY if (x, y) not in EXEMPT), \
         f'{nm} is not symmetric'
 body_only = {p: f for p, f in paint.items() if p in BODY and p not in EXEMPT}
 assert all(body_only.get((31 - x, y)) == f for (x, y), f in body_only.items()), \
     'the body is not symmetric about x=16'
-assert len(EXEMPT) < 24, f'{len(EXEMPT)} px exempted for the tail is too many'
+
 # the bevel must read as a run of even steps, and the rim and groove as single
 # lines, or "parts" is just a word
-assert len(parts['rim'] & BODY) > len(parts['bevel-1']), 'the rim has lost the outside'
-for nm in ('bevel-1', 'bevel-2', 'bevel-3'):
-    assert 40 <= len(parts[nm]) <= 110, f'{nm} is {len(parts[nm])} px — not a 1 px step'
-assert len(parts['groove']) < len(parts['bevel-3']), 'the groove is wider than a line'
-assert len(FIELD) > 1.5 * len(parts['groove']), 'the field is not the biggest part'
+assert len(parts['rim'] & BODY) > len(parts['bevel']), 'the rim has lost the outside'
+assert len(PLATE) > 2 * max(len(parts[nm] & BODY) for nm in ORDER_PARTS if nm != 'plate'), \
+    'the plate is not decisively the largest area — the interior is a ramp again'
+assert len(parts['shadow']) > 20 and len(parts['floor']) > 20, \
+    'the shadow is too thin to read as a part'
+for nm in ('shadow', 'floor'):
+    assert all(y + 0.5 > CYY for _, y in parts[nm]), f'{nm} has crept above the equator'
 
 # ---------------------------------------------------------------------------
 # The face. lg/compact/gap2 — 10 wide, the shipped mark's ratio to this body.
@@ -338,17 +371,17 @@ ABOVE, BELOW = box['y'] - Y0, Y1 - box['bottom']
 assert ABOVE == BELOW, f'air {ABOVE}/{BELOW} on the body'
 assert box['x'] + box['right'] == 31, 'face is not centred on x=16'
 assert FACE <= BODY and not (FACE & TAIL), 'the face is not on the body'
-assert FACE <= FIELD, 'the face does not sit entirely on the field'
+assert FACE <= PLATE, 'the face does not sit entirely on the plate'
 assert FACE_W / body_w >= 0.35, 'the face is small for the body again'
 eyes = {p for p in FACE if p[1] < box['y'] + 5}
-smile = {p for p in FACE if p[1] >= box['bottom'] - 1}
+smile = {p for p in FACE if p[1] >= box['bottom'] - 2}
 assert eyes | smile == FACE, 'unexpected rows between the eyes and the smile'
+assert {(x + 6, y) for x, y in eyes if x < 16} == {p for p in eyes if p[0] >= 16}, \
+    'the two Zs are not the same letter'
 assert all((31 - x, y) in smile for x, y in smile), 'smile is not symmetric'
 
 # ---------------------------------------------------------------------------
-ORDER = [(layers[TONE['field']], TONE['field'])]
-ORDER += [(layers[TONE[nm]], TONE[nm]) for nm in ('groove', 'bevel-3', 'bevel-2',
-                                                  'bevel-1', 'rim')]
+ORDER = [(layers[c], c) for c in RAMP[::-1]]
 ORDER += [(layers[KEY], KEY)]
 
 print(f'{SLUG} {NAME}')
@@ -361,11 +394,11 @@ print(f'  steps ΔE {" ".join(f"{d:.2f}" for d in STEP_DE)}  mean {MEAN:.2f} '
       f'(c45 {C45_STEP})  total {TOTAL:.2f} (c45 {C45_TOTAL})')
 print('  parts ' + ' · '.join(f'{nm} {len(parts[nm])}' for nm in ORDER_PARTS)
       + f' · keyline {len(parts["keyline"])}')
-print(f'  face {len(FACE)} px on a {len(FIELD)} px field · {len(layers) + 1} tones')
+print(f'  face {len(FACE)} px on a {len(PLATE)} px plate · {len(layers) + 1} tones')
 
 if '--show' in sys.argv:
     show([parts['keyline']] + [parts[nm] for nm in ORDER_PARTS] + [FACE],
-         ['0', '1', '2', '3', '4', 'g', 'F', '@'])
+         ['0', '.', ':', '-', 'S', 's', 'P', '@'])
 
 # ---------------------------------------------------------------------------
 rows_svg = '\n'.join(f'  <path d="{" ".join(to_paths(p))}" fill="{f}" />' for p, f in ORDER)
@@ -397,7 +430,7 @@ if '--svg' in sys.argv:
  * soft oval inside a squarish bubble rather than another parallel band.
  *
  * The face is lg — 10 wide in a 28-wide body, the shipped mark's own ratio,
- * {len(FACE)} px of ink on a {len(FIELD)} px field. It is the subject of the mark, not
+ * {len(FACE)} px of ink on a {len(PLATE)} px plate. It is the subject of the mark, not
  * something the mark contains. The body is 24 rows so a 10-row face still
  * splits its air {ABOVE}/{BELOW}.
  *
@@ -434,7 +467,7 @@ const {{ size = 128 }} = Astro.props;
 palette = ', '.join(f"'{c}'" for c in [KEY, *RAMP[::-1], INK])
 (OUT / f'{SLUG}.meta.ts').write_text(f'''export default {{
   n: '{SLUG}', name: '{NAME}',
-  idea: 'c45\\u2019s ramp measured off the grid and rebuilt in purple, then spent on parts \\u2014 rim, three-step bevel, a groove at the darkest stop, and the field a step back up. The reversal is what lets the eye find the seams. Face is lg, {len(FACE)} px of ink on a {len(FIELD)} px field, air {ABOVE}/{BELOW}; the tail is {TW}x{len(TAIL_ROWS)}, stubby like the shipped one. Stop 3 is #8f52f6 exactly.',
+  idea: 'c45\\u2019s ramp measured off the grid and rebuilt in purple, then spent on parts \\u2014 rim, three-step bevel, a groove at the darkest stop, and the field a step back up. The reversal is what lets the eye find the seams. Face is lg, {len(FACE)} px of ink on a {len(PLATE)} px plate, air {ABOVE}/{BELOW}; the tail is {TW}x{len(TAIL_ROWS)}, stubby like the shipped one. Stop 3 is #8f52f6 exactly.',
   ground: 'light',
   palette: [{palette}],
 }};
