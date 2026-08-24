@@ -1,0 +1,86 @@
+/* ==========================================================================
+   Foundation — the typefaces and tokens every surface of this site shares.
+
+   Lifted out of OpenCurrent.astro when /docs was added, because two surfaces
+   hard-coding the same eleven colours is how a palette drifts. The homepage
+   and the documentation import this file, so a token changes in one place.
+
+   Sentient carries headings, General Sans carries reading, and IBM Plex Mono
+   is for machine facts only — identifiers, formats, states, header names.
+   Mono in prose is a bug. All three are self-hosted: a site arguing that Hozz
+   does not hand your data to anyone has no business handing your visit to a
+   font CDN.
+   ========================================================================== */
+
+@font-face {
+  font-family: 'Sentient';
+  src: url('/fonts/sentient-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Sentient';
+  src: url('/fonts/sentient-400-italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Sentient';
+  src: url('/fonts/sentient-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'General Sans';
+  src: url('/fonts/general-sans-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'General Sans';
+  src: url('/fonts/general-sans-600.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  src: url('/fonts/ibm-plex-mono-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  src: url('/fonts/ibm-plex-mono-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --air: #f8fbfd;
+  --white: #ffffff;
+  --mist: #edf6fc;
+  --blue-wash: #dcecf6;
+  --blue-light: #cae1f1;
+  --blue: #5d8cb0;
+  --ink: #132638;
+  --ink-soft: #3f5568;
+  --ink-muted: #4e6274;
+  --line: #cbdce7;
+  --line-soft: #deebf2;
+  --max: 1280px;
+  --gutter: clamp(1.2rem, 4vw, 4rem);
+  --section-space: clamp(5.5rem, 10vw, 10rem);
+}

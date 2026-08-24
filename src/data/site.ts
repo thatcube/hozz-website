@@ -225,7 +225,7 @@ export const WORKING = [
   'Mac app: receives, stores, charts',
   'Read-only MCP server for assistants',
   'Shortcuts and a home-screen widget',
-  '475 XCTest tests',
+  '520 XCTest tests',
 ];
 
 export const NOT_YET = [

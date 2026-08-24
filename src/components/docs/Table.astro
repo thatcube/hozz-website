@@ -1,0 +1,35 @@
+---
+/**
+ * A table in the site's frame, with its own horizontal scroller so a wide
+ * table on a 390px screen scrolls inside its border rather than pushing the
+ * whole page sideways.
+ *
+ * The caption is for screen readers; it is clipped visually, because on screen
+ * the surrounding prose already says what the table is.
+ */
+interface Props {
+  caption: string;
+  /** Column headings. */
+  columns: string[];
+  /** True when the first column is a machine string and wants mono. */
+  mono?: boolean;
+}
+
+const { caption, columns, mono = false } = Astro.props;
+---
+
+<div class={`table-wrap${mono ? ' table-wrap--mono' : ''}`}>
+  <div class="table-scroll">
+    <table>
+      <caption>{caption}</caption>
+      <thead>
+        <tr>
+          {columns.map((column) => <th scope="col">{column}</th>)}
+        </tr>
+      </thead>
+      <tbody>
+        <slot />
+      </tbody>
+    </table>
+  </div>
+</div>

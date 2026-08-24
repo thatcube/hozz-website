@@ -1,0 +1,179 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Callout from '../../components/docs/Callout.astro';
+import Table from '../../components/docs/Table.astro';
+import { page } from '../../data/docs-nav';
+import { CADENCES, DELIVERY_STATES } from '../../data/docs';
+
+const entry = page('/docs/background-sync/');
+---
+
+<DocsLayout page={entry} section="Start here">
+  <p>
+    This is the most common disappointment with every app in this category, and it is almost never
+    the app's fault. It is worth understanding once, because the alternative is assuming something
+    is broken every time iOS makes an ordinary scheduling decision.
+  </p>
+
+  <h2>The short version</h2>
+
+  <p>
+    A cadence in Hozz is a <em>request</em>, not a schedule. iOS decides when a background app
+    actually runs, based on battery, charging state, network, how recently you opened the app, and
+    its own model of when you tend to use your phone. Nothing an app does overrides that.
+  </p>
+
+  <p>
+    So Hozz does not claim a delivery happened when it did not. It reports the state it is actually
+    in, including the boring ones like "there is data to send and I am waiting for iOS".
+  </p>
+
+  <h2>The three constraints</h2>
+
+  <h3>Health cannot be read while the phone is locked</h3>
+
+  <p>
+    The Health database is encrypted and unavailable until the first unlock after a reboot, and
+    protected again in ways that can make reads fail while the device is locked. If iOS wakes Hozz
+    on a locked phone, the read fails and Hozz shows:
+  </p>
+
+  <blockquote>Health data is locked. Unlock this iPhone and Hozz will continue.</blockquote>
+
+  <p>
+    Nothing is lost. The cursor for that type only advances after its records are durably staged, so
+    a pass that could not read anything simply did not advance, and the next one picks up the same
+    records.
+  </p>
+
+  <h3>Most Health types are capped at hourly</h3>
+
+  <p>
+    Hozz asks HealthKit for <code>.immediate</code> background delivery on every type it observes.
+    HealthKit silently lowers that to hourly for the types that require it — which is most of them.
+    Asking for a lower frequency would make the types that <em>can</em> be immediate slower for no
+    benefit, so Hozz asks for immediate and accepts what it gets.
+  </p>
+
+  <p>
+    This is why "When new data arrives" does not mean "within seconds" for a step count.
+  </p>
+
+  <h3>Force-quitting the app stops background launches</h3>
+
+  <p>
+    If you swipe Hozz out of the app switcher, iOS stops launching it in the background until you
+    open it again. This applies to every iOS app and there is no way around it. If automatic sync
+    has stopped entirely and nothing else explains it, this is the first thing to check.
+  </p>
+
+  <Callout kind="warn" title="Low Power Mode and Background App Refresh">
+    <p>
+      Low Power Mode suspends background refresh. So does turning off <strong>
+        Settings → General → Background App Refresh</strong
+      >, globally or for Hozz specifically. Both are outside the app's control and both look
+      identical to the app being broken.
+    </p>
+  </Callout>
+
+  <h2>What the cadences actually mean</h2>
+
+  <p>
+    A cadence sets the <em>floor</em> — the shortest gap Hozz will leave between two deliveries to
+    that destination. It does not set a ceiling, because iOS owns the ceiling.
+  </p>
+
+  <Table
+    caption="Sync cadences and the minimum interval each enforces"
+    columns={['Cadence', 'What it means', 'Floor']}
+  >
+    {
+      CADENCES.map((cadence) => (
+        <tr>
+          <th scope="row">{cadence.name}</th>
+          <td>
+            {cadence.id === 'manual'
+              ? 'Only when you tap Sync now, or a Shortcut runs.'
+              : 'Deliver when iOS next wakes Hozz and this much time has passed.'}
+          </td>
+          <td>{cadence.floor}</td>
+        </tr>
+      ))
+    }
+  </Table>
+
+  <p>
+    Behind them, Hozz asks iOS for a background refresh opportunity roughly every fifteen minutes,
+    and asks again after every run — a task request is consumed when it fires, so without
+    re-requesting, automatic export would happen exactly once. Whether iOS grants any given request
+    is up to iOS.
+  </p>
+
+  <h2>How to make it run right now</h2>
+
+  <p>
+    Open Hozz and tap <strong>Sync now</strong>. Opening the app is itself the most reliable way to
+    get a sync: an automatic sync starts whenever the app is opened. There are also two Shortcuts —{' '}
+    <strong>Sync Health Data</strong> and <strong>Check Health Sync Status</strong> — so a personal
+    automation can trigger one on your terms rather than iOS's.
+  </p>
+
+  <Callout kind="note" title="Why “Export now” sometimes waits">
+    <p>
+      One thing writes an export's spool at a time, because two writers would pick the same next
+      part sequence and unlink each other's open file. An automatic sync takes that same writer, and
+      one starts when the app opens — so tapping <strong>Export now</strong> a moment later finds it
+      busy. Hozz waits for it and names the activity it is waiting for, rather than refusing with a
+      message about an export that is not running.
+    </p>
+  </Callout>
+
+  <h2>Reading the dashboard</h2>
+
+  <p>
+    The dashboard shows one of seven states per destination. Five of them are healthy; only two mean
+    something is wrong.
+  </p>
+
+  <Table
+    caption="Delivery states and what each means"
+    columns={['State', 'Healthy', 'Meaning']}
+    mono
+  >
+    {
+      DELIVERY_STATES.map((state) => (
+        <tr>
+          <th scope="row">{state.id}</th>
+          <td>{state.healthy ? 'Yes' : 'No'}</td>
+          <td>{state.meaning}</td>
+        </tr>
+      ))
+    }
+  </Table>
+
+  <p>
+    <code>waitingForSystem</code> and <code>waitingForUnlock</code> are the two that get mistaken for
+    faults. Both resolve themselves. <code>retrying</code> means Hozz will keep trying on its own;{' '}
+    <code>needsAttention</code> means it has stopped and wants you.
+  </p>
+
+  <h2>What Hozz guarantees regardless</h2>
+
+  <p>
+    Scheduling is best-effort, but correctness is not. Each Health type has its own opaque,
+    device-local anchor, and an anchor advances only after the records it covers have been durably
+    staged. Each destination keeps its own cursor, so a destination that failed cannot advance past
+    data it did not accept, and one broken destination does not hold up a healthy one.
+  </p>
+
+  <p>
+    The property that matters is this: <strong>an interruption can repeat work, but it cannot skip
+      records.</strong> A background window that expires, a crash, or a reboot costs you time, never
+    data. Repeats are safe to accept because batch identifiers are derived from the payload bytes
+    and sent as an <code>Idempotency-Key</code>.
+  </p>
+
+  <p>
+    <a href="/docs/troubleshooting/">Troubleshooting</a> covers what to do when a state is genuinely stuck.
+  </p>
+</DocsLayout>

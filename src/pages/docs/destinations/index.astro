@@ -1,0 +1,145 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import Callout from '../../../components/docs/Callout.astro';
+import Table from '../../../components/docs/Table.astro';
+import { page, DOC_PAGES } from '../../../data/docs-nav';
+import { DESTINATIONS, DELIVERY_FORMATS } from '../../../data/docs';
+
+const entry = page('/docs/destinations/');
+
+/** Pair each destination with its own page, so neither list can go stale. */
+const cards = DESTINATIONS.map((destination) => ({
+  ...destination,
+  doc: DOC_PAGES.find((doc) => doc.href === `/docs/destinations/${destination.slug}/`)!,
+}));
+
+const formatName = (id: string) => DELIVERY_FORMATS.find((f) => f.id === id)?.name ?? id;
+---
+
+<DocsLayout page={entry} section="Destinations">
+  <p>
+    A destination is somewhere Hozz sends new Health records on its own. You can have several at
+    once, each with its own set of Health types, its own format, its own schedule, and its own place
+    in the queue — so a destination that is failing cannot hold up one that is working.
+  </p>
+
+  <p>
+    Nothing is sent anywhere until you add one and confirm it. There is no default, because a
+    default would be a place someone else chose.
+  </p>
+
+  <h2>The six</h2>
+
+  <ul class="card-grid card-grid--2">
+    {
+      cards.map((destination) => (
+        <li>
+          <a class="doc-card" href={destination.doc.href}>
+            <span class="doc-card-tag">
+              {destination.recommended ? 'Recommended' : formatName(destination.defaultFormat)}
+            </span>
+            <h3>{destination.name}</h3>
+            <p>{destination.summary}</p>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+
+  <h2>Choosing between them</h2>
+
+  <Table
+    caption="Each destination, who it suits, and the format it starts with"
+    columns={['Destination', 'Choose it when', 'Default format']}
+  >
+    {
+      cards.map((destination) => (
+        <tr>
+          <th scope="row">
+            <a href={destination.doc.href}>{destination.name}</a>
+          </th>
+          <td>{destination.who}</td>
+          <td>
+            <code>{formatName(destination.defaultFormat)}</code>
+          </td>
+        </tr>
+      ))
+    }
+  </Table>
+
+  <Callout kind="note" title="If you have no strong preference, pick a folder">
+    <p>
+      <a href="/docs/destinations/folder/">Folder</a> is the one Hozz recommends first, and it is the
+      only one with no failure mode of its own. It needs no server, no open ports and no VPN, the sync
+      client already on your computer does the networking, and it keeps working while that computer is
+      switched off — which a push to a local receiver cannot.
+    </p>
+  </Callout>
+
+  <h2>Three of these are the same thing underneath</h2>
+
+  <p>
+    Home Assistant, InfluxDB and Web address are all HTTPS endpoints. They are listed separately on
+    purpose: the most common question for a tool like this is "how do I connect it to Home
+    Assistant", and answering "use the REST option, choose that format, and put this in that field"
+    is the difference between a capability existing and a capability being found.
+  </p>
+
+  <p>
+    Your Mac is an HTTPS endpoint too. It gets its own flow because Hozz discovers the computer over
+    Bonjour and fills in the address and token for you, so you never have to know it was a web
+    address.
+  </p>
+
+  <h2>What every destination has</h2>
+
+  <ul>
+    <li>
+      <strong>Health types.</strong> Limit a destination to the types you want it to receive, rather
+      than everything.
+    </li>
+    <li>
+      <strong>A format.</strong> Five are available; which ones make sense depends on the
+      destination. <a href="/docs/delivery-schema/">The delivery schema</a> documents all of them.
+    </li>
+    <li>
+      <strong>A cadence.</strong> On arrival, hourly, daily, or manual only. These are requests —{' '}
+      <a href="/docs/background-sync/">iOS decides when a background app runs</a>.
+    </li>
+    <li>
+      <strong>Send a test.</strong> A small probe in the destination's own format, reporting exactly
+      what came back. It contains no Health data.
+    </li>
+    <li>
+      <strong>Its own cursor.</strong> A destination only advances past records it actually
+      accepted.
+    </li>
+  </ul>
+
+  <h2>Formats, briefly</h2>
+
+  <Table
+    caption="Delivery formats and what each keeps"
+    columns={['Format', 'Media type', 'Keeps everything?']}
+    mono
+  >
+    {
+      DELIVERY_FORMATS.map((format) => (
+        <tr>
+          <th scope="row">{format.name}</th>
+          <td>
+            <code>{format.contentType}</code>
+          </td>
+          <td>{format.lossless ? 'Yes' : 'No — ' + format.note.split('. ').pop()}</td>
+        </tr>
+      ))
+    }
+  </Table>
+
+  <p>
+    Neither SQLite nor Markdown is offered to a destination. A delivery is an append of new records,
+    a database file is not appendable over HTTP, and a day's note rewritten from one batch would
+    replace a whole day with a fraction of it. Both are available for{' '}
+    <a href="/docs/formats/">manual export</a>.
+  </p>
+</DocsLayout>

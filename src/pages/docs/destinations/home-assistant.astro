@@ -1,0 +1,175 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import Callout from '../../../components/docs/Callout.astro';
+import Code from '../../../components/docs/Code.astro';
+import DeviceConstraints from '../../../components/docs/DeviceConstraints.astro';
+import { page } from '../../../data/docs-nav';
+
+const entry = page('/docs/destinations/home-assistant/');
+
+const webhookYaml = `# configuration.yaml — or an automation created in the UI
+automation:
+  - alias: Receive Hozz health data
+    trigger:
+      - platform: webhook
+        webhook_id: hozz
+        allowed_methods: [POST]
+        local_only: true
+    action:
+      - variables:
+          metrics: "{{ trigger.json.data.metrics }}"`;
+
+const payload = `{
+  "data": {
+    "metrics": [
+      {
+        "name": "heart_rate",
+        "units": "count/min",
+        "data": [
+          {
+            "date": "2026-08-22T21:10:46.500Z",
+            "qty": 62.5,
+            "units": "count/min",
+            "source": "Apple Watch"
+          }
+        ]
+      }
+    ],
+    "deletions": []
+  }
+}`;
+---
+
+<DocsLayout page={entry} section="Destinations">
+  <div class="fact-strip">
+    <div>
+      <dt>Format</dt>
+      <dd>Metrics JSON</dd>
+    </div>
+    <div>
+      <dt>Underneath</dt>
+      <dd>An ordinary HTTPS POST</dd>
+    </div>
+    <div>
+      <dt>Needs</dt>
+      <dd>The phone to reach your HA</dd>
+    </div>
+  </div>
+
+  <p>
+    Hozz posts <a href="/docs/delivery-schema/#metrics-json">Metrics JSON</a> to Home Assistant,
+    either to a webhook trigger or to the REST API. It is an ordinary HTTPS endpoint underneath —
+    the preset exists so you do not have to work out that it was one.
+  </p>
+
+  <h2>Setting it up</h2>
+
+  <ol class="steps">
+    <li>
+      <h3>Decide: webhook or REST API</h3>
+      <p>
+        A <strong>webhook</strong> needs no token and is the simpler of the two. The{' '}
+        <strong>REST API</strong> needs a long-lived access token, and suits you if you are already
+        posting to it from other things.
+      </p>
+    </li>
+    <li>
+      <h3>For a webhook, add the trigger</h3>
+      <p>
+        Create an automation with a webhook trigger and note its ID. The address Hozz shows as a
+        placeholder is{' '}
+        <code>http://homeassistant.local:8123/api/webhook/hozz</code>.
+      </p>
+    </li>
+    <li>
+      <h3>For the REST API, create a token</h3>
+      <p>
+        Under your Home Assistant profile, create a long-lived access token. In the Hozz
+        destination's secret field, write <code>Bearer</code> followed by a space and the token
+        itself — the field holds the whole header value, not just the credential.
+      </p>
+    </li>
+    <li>
+      <h3>Send a test</h3>
+      <p>Home Assistant will show the request arriving. The probe contains no Health data.</p>
+    </li>
+  </ol>
+
+  <Callout kind="warn" title="Your phone has to be able to reach the address">
+    <p>
+      On a home network that means being on the same Wi-Fi. A <code>.local</code> address will not
+      resolve over cellular, so if you want deliveries while you are out, use an address that is
+      reachable from outside — and put it behind TLS if it is.
+    </p>
+  </Callout>
+
+  <h2>The webhook trigger</h2>
+
+  <Code caption="Home Assistant automation" code={webhookYaml} />
+
+  <p>
+    <code>local_only: true</code> is worth keeping unless you deliberately want the webhook exposed.
+    Hozz sends the batch as a single POST with <code>Content-Type: application/json</code>.
+  </p>
+
+  <h2>What arrives</h2>
+
+  <Code caption="POST body — Metrics JSON" code={payload} />
+
+  <p>
+    Points are grouped by metric name, in lowercase snake_case. Curated names are used where one
+    exists — <code>HKQuantityTypeIdentifierStepCount</code> becomes <code>step_count</code>,{' '}
+    <code>HKQuantityTypeIdentifierActiveEnergyBurned</code> becomes <code>active_energy</code> —
+    and anything uncurated has its identifier prefix removed and the rest snake cased, so a type
+    Hozz has never heard of still gets a stable, predictable name rather than being dropped.
+  </p>
+
+  <p>Two things about this shape that differ from what you may expect:</p>
+
+  <ul>
+    <li>
+      <strong>Hozz sends individual samples, not hourly or daily rollups.</strong> That is the only
+      shape that can honestly claim no gaps and no duplicates. It also means more points than a
+      summarising exporter would send.
+    </li>
+    <li>
+      <strong>An interval sample carries <code>endDate</code>.</strong> Sleep and exercise samples
+      cover a span, and flattening one to an instant loses it. This key is a Hozz addition; a
+      consumer that ignores it behaves exactly as though it were not there.
+    </li>
+  </ul>
+
+  <p>
+    <a href="/docs/delivery-schema/#metrics-json">The delivery schema</a> documents every field, including
+    the <code>deletions</code> array — tombstones for records you removed in Health, which that format
+    has no equivalent of and which Hozz carries rather than dropping.
+  </p>
+
+  <h2>Coming from Health Auto Export</h2>
+
+  <p>
+    If your automations are already keyed to Health Auto Export's field names, Hozz has an{' '}
+    <strong>opt-in compatibility mode</strong> on this destination that emits those names instead.
+    It is offered when the format is Metrics JSON.{' '}
+    <a href="/docs/switching-from-health-auto-export/">Switching from Health Auto Export</a> covers what
+    maps to what, and the three things it deliberately does not claim.
+  </p>
+
+  <h2>Telling it is working</h2>
+
+  <ul>
+    <li>
+      <strong>Send a test</strong> reports the status Home Assistant returned. Anything <code>2xx</code
+      > is an acceptance.
+    </li>
+    <li>
+      In Home Assistant, a webhook automation's trace shows the payload it received.
+    </li>
+    <li>
+      On the phone, the destination shows <code>delivered</code> once everything staged has been
+      accepted. <a href="/docs/background-sync/">The other six states</a> are all explained.
+    </li>
+  </ul>
+
+  <DeviceConstraints />
+</DocsLayout>

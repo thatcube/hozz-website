@@ -1,0 +1,108 @@
+---
+/**
+ * The documentation index.
+ *
+ * The competing product's docs root is close to empty, so a new visitor lands
+ * on nothing and has to guess. This page instead answers "what am I trying to
+ * do" first and lists the sections second.
+ */
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import { DOC_SECTIONS, type DocPage } from '../../data/docs-nav';
+import { GITHUB_URL } from '../../data/site';
+
+const page: DocPage = {
+  href: '/docs/',
+  nav: 'Documentation',
+  heading: 'Hozz documentation',
+  title: 'Hozz documentation — export Apple Health data to somewhere you own',
+  description:
+    'Guides for exporting Apple Health data with Hozz: getting started, every destination, every format, the delivery schema, the MCP server, and troubleshooting.',
+  lede: 'How to get your Apple Health data out of your phone and into somewhere you control — and what Hozz will and will not promise about it.',
+};
+
+/** The three things people actually arrive wanting. */
+const paths = [
+  {
+    href: '/docs/getting-started/',
+    tag: 'Start here',
+    title: 'I just want my data out',
+    body: 'Install, grant Health access, pick a destination, run the first export. Four steps, plus what happens afterwards.',
+  },
+  {
+    href: '/docs/destinations/',
+    tag: 'Destinations',
+    title: 'I know where I want it to go',
+    body: 'A Mac, a folder, Home Assistant, InfluxDB, your own endpoint, or an MQTT broker. One page each.',
+  },
+  {
+    href: '/docs/mcp/',
+    tag: 'Assistants',
+    title: 'I want to ask questions about it',
+    body: 'A read-only MCP server over a database your phone keeps current, so an assistant queries live data rather than a stale XML dump.',
+  },
+  {
+    href: '/docs/delivery-schema/',
+    tag: 'Reference',
+    title: 'I am building the receiving end',
+    body: 'Every field of every delivery format, with a worked example payload and the exact headers.',
+  },
+];
+---
+
+<DocsLayout page={page}>
+  <p>
+    Hozz is a free, open-source iPhone app with a companion Mac receiver. The phone reads the Health
+    data Apple lets an app read and sends it to destinations <em>you</em> configure. There is no
+    account, no subscription, no analytics, and no server run by its maintainer — so these pages
+    have no billing section and no privacy policy to apologise for.
+  </p>
+
+  <p>
+    Hozz is <strong>early alpha</strong> and not in the App Store yet. Everything documented here is
+    checkable in <a href={GITHUB_URL}>the source</a>; where something is not built, or is built and
+    switched off, these pages say so rather than leaving it implied.
+  </p>
+
+  <h2>Where to start</h2>
+
+  <ul class="card-grid card-grid--2">
+    {
+      paths.map((path) => (
+        <li>
+          <a class="doc-card" href={path.href}>
+            <span class="doc-card-tag">{path.tag}</span>
+            <h3>{path.title}</h3>
+            <p>{path.body}</p>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+
+  <h2>Everything here</h2>
+
+  {
+    DOC_SECTIONS.map((section) => (
+      <>
+        <h3>{section.title}</h3>
+        <ul>
+          {section.pages.map((entry) => (
+            <li>
+              <a href={entry.href}>{entry.nav}</a> — {entry.lede}
+            </li>
+          ))}
+        </ul>
+      </>
+    ))
+  }
+
+  <h2>If something here is wrong</h2>
+
+  <p>
+    These pages are written against the app's own source, and the lists on them — destinations,
+    formats, MCP tools — are checked against it mechanically rather than copied by hand. If you find
+    a claim that does not match what the app does, that is a bug in the documentation and worth <a
+      href={`${GITHUB_URL}/issues`}>raising as an issue</a
+    >.
+  </p>
+</DocsLayout>

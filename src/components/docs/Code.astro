@@ -1,0 +1,21 @@
+---
+/**
+ * A code sample with a label saying what it is.
+ *
+ * The content is passed as a `code` prop rather than through a slot so that
+ * braces, backticks and angle brackets in a payload survive being written in
+ * an .astro file without being mistaken for expressions.
+ */
+interface Props {
+  /** The label above the block — a filename, a media type, a shell. */
+  caption?: string;
+  code: string;
+}
+
+const { caption, code } = Astro.props;
+---
+
+<figure class="code-block">
+  {caption && <figcaption>{caption}</figcaption>}
+  <pre><code>{code.replace(/\n+$/, '')}</code></pre>
+</figure>

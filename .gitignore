@@ -28,3 +28,6 @@ pnpm-debug.log*
 
 # agent scratch briefs
 .briefs/
+
+# Local review screenshots
+.shots/

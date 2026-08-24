@@ -1,0 +1,34 @@
+---
+/**
+ * The three iOS facts that decide whether an automatic destination appears to
+ * work, repeated on every destination page.
+ *
+ * Repeating this is deliberate. Someone setting up MQTT reads the MQTT page
+ * and nothing else, and "your export did not run" is the most common
+ * disappointment in this category of app. A link they will not follow is not
+ * an explanation.
+ */
+import Callout from './Callout.astro';
+---
+
+<Callout kind="warn" title="Three things iOS decides, not Hozz">
+  <ul>
+    <li>
+      <strong>Health cannot be read while the phone is locked.</strong> The database is encrypted
+      until first unlock. If iOS wakes Hozz on a locked phone, the pass waits rather than
+      reporting a delivery it did not make.
+    </li>
+    <li>
+      <strong>iOS chooses when a background app runs.</strong> A cadence is a request. Most Health
+      types are capped at hourly delivery by HealthKit regardless of what is asked for.
+    </li>
+    <li>
+      <strong>Force-quitting Hozz stops background launches</strong> until you open the app again.
+      That is an iOS rule that applies to every app, and there is no way around it.
+    </li>
+  </ul>
+  <p>
+    <a href="/docs/background-sync/">Background sync, explained honestly</a> covers what Hozz does
+    about each of these.
+  </p>
+</Callout>
