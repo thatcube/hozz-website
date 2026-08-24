@@ -13,13 +13,13 @@ from shade import edge, keyline, rings, to_paths  # noqa: E402
 OUT = ROOT / "src/components/mark/logos"
 
 KEY = "#54258f"
-RIM_SHADOW = "#ad84dc"
-RIM_BASE = "#b795e1"
+RIM_SHADOW = "#7545b9"
+RIM_BASE = "#9a70ce"
 RIM_LIGHT = "#d2c0ed"
-WALL_SHADOW = "#925bd1"
-WALL_MID = "#9f6fd6"
+WALL_SHADOW = "#6730a9"
+WALL_MID = "#7b42b9"
 WALL_LIGHT = "#c3a8e7"
-CORE = "#a77bdd"
+CORE = "#8250c5"
 FACE = "#fffaf3"
 PALETTE = [
     KEY,
@@ -135,6 +135,11 @@ air_left = face_left - body_left
 air_right = body_right - face_right
 assert air_above == air_below == 6
 assert air_left == air_right == 9
+assert {
+    (x, y)
+    for x in range(face_left, face_right + 1)
+    for y in range(face_top, face_bottom + 1)
+} <= CORE_FIELD
 
 # Paint assertions: disjoint layers cover the silhouette, the recessed plane is
 # symmetric, and all nine intended tones are present.
@@ -148,24 +153,34 @@ for layer in (wall_top, wall_middle, wall_bottom, CORE_FIELD):
 assert len(set(PALETTE)) == 9
 
 
-def hsl_lightness(colour):
-    red, green, blue = (
-        int(colour[i : i + 2], 16) / 255 for i in (1, 3, 5)
+def rgb(colour):
+    return tuple(int(colour[i : i + 2], 16) / 255 for i in (1, 3, 5))
+
+
+def relative_luminance(colour):
+    linear = [
+        value / 12.92
+        if value <= 0.04045
+        else ((value + 0.055) / 1.055) ** 2.4
+        for value in rgb(colour)
+    ]
+    return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2]
+
+
+def contrast(first, second):
+    high, low = sorted(
+        (relative_luminance(first), relative_luminance(second)), reverse=True
     )
-    return colorsys.rgb_to_hls(red, green, blue)[1]
+    return (high + 0.05) / (low + 0.05)
 
 
-interior_colours = [
-    RIM_SHADOW,
-    RIM_BASE,
-    RIM_LIGHT,
-    WALL_SHADOW,
-    WALL_MID,
-    WALL_LIGHT,
-    CORE,
-]
-interior_lightness = [hsl_lightness(colour) for colour in interior_colours]
-assert min(interior_lightness) >= 0.58
+purple_colours = PALETTE[:-1]
+for colour in purple_colours:
+    hue, _, saturation = colorsys.rgb_to_hls(*rgb(colour))
+    assert 0.69 <= hue <= 0.78
+    assert saturation >= 0.45
+face_contrast = contrast(FACE, CORE)
+assert face_contrast >= 4.5
 
 paths = "\n".join(
     f'  <path d="{" ".join(to_paths(pixels))}" fill="{fill}" />'
@@ -222,7 +237,7 @@ print(
     f"tones={len(PALETTE)} · body={body_width}×{body_bottom - body_top + 1} · "
     f"face=x{face_left}–{face_right} y{face_top}–{face_bottom} · "
     f"air=v{air_above}/{air_below} h{air_left}/{air_right} · "
-    f"interior-L={min(interior_lightness):.3f}–{max(interior_lightness):.3f} · "
+    f"face/core contrast={face_contrast:.2f}:1 · "
     "bounds=x2–29 y2–29 · "
     f"body rows={body_widths} · silhouette rows={silhouette_widths}"
 )

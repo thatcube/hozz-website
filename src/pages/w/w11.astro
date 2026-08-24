@@ -69,70 +69,102 @@ const keeps = (note: string) =>
  * note, a number in a grid rides CSV.
  */
 const BANDS = [
-  { name: 'NDJSON', tone: '#4c7da4', weight: 1, angle: -27, port: 100, type: 'stateOfMind', why: 'an encoded field survives whole' },
-  { name: 'SQLite', tone: '#5d8cb0', weight: 0.87, angle: -17, port: 96.7, type: 'electrocardiogram', why: 'the waveform keeps its original record' },
-  { name: 'JSON', tone: '#7ba7c9', weight: 0.75, angle: -8, port: 93.3, type: 'dietaryProtein', why: 'one document, whole records' },
-  { name: 'Metrics JSON', tone: '#96c2e0', weight: 0.6, angle: 2, port: 90, type: 'respiratoryRate', why: 'a value over time is all a metric is' },
-  { name: 'GPX', tone: '#a7cce6', weight: 0.48, angle: 12, port: 86.7, type: 'workoutRoute', why: 'GPX carries routes and nothing else' },
-  { name: 'CSV', tone: '#b3d2e9', weight: 0.38, angle: 22, port: 83.3, type: 'walkingSpeed', why: 'a grid holds a number and loses the rest' },
-  { name: 'Markdown', tone: '#c3dcef', weight: 0.3, angle: 32, port: 80, type: 'sleepAnalysis', why: 'a day’s total, never the records behind it' },
+  { name: 'NDJSON', tone: '#4c7da4', weight: 1, type: 'stateOfMind' },
+  { name: 'SQLite', tone: '#5d8cb0', weight: 0.87, type: 'electrocardiogram' },
+  { name: 'JSON', tone: '#7ba7c9', weight: 0.75, type: 'dietaryProtein' },
+  { name: 'Metrics JSON', tone: '#96c2e0', weight: 0.6, type: 'respiratoryRate' },
+  { name: 'GPX', tone: '#a7cce6', weight: 0.48, type: 'workoutRoute' },
+  { name: 'CSV', tone: '#b3d2e9', weight: 0.38, type: 'walkingSpeed' },
+  { name: 'Markdown', tone: '#c3dcef', weight: 0.3, type: 'sleepAnalysis' },
 ].map((b) => {
   const f = format(b.name);
   const l = lane(b.type);
   return { ...b, use: f.use, note: f.note, keeps: keeps(f.note), id: l.id, sample: l.sample, category: l.category };
 });
 
+const OUT = ['Your Mac', 'Folder', 'Home Assistant', 'Web address', 'InfluxDB', 'MQTT'].map(
+  (title) => DESTINATIONS.find((d) => d.title === title)!
+);
+
 /**
- * Destinations sit on the outer ring, on dotted hairlines back to the lens.
- * `a` is the angle out of the lens, `r` how far along it, in the landscape
- * composition's own units; `px`/`py` place the same six in the portrait one.
+ * Both compositions are laid out by naming the point on the stage a thing should
+ * land on and solving for the spoke that reaches it, rather than by guessing
+ * angles. Units are percentages of the stage; `aspect` converts the horizontal
+ * ones so a degree means the same thing in both axes.
  */
-const OUT = [
-  { title: 'Your Mac', a: -26, r: 68, px: 25, py: 76 },
-  { title: 'Folder', a: -15, r: 78, px: 75, py: 76 },
-  { title: 'Home Assistant', a: -4, r: 78, px: 25, py: 86 },
-  { title: 'Web address', a: 8, r: 80, px: 75, py: 86 },
-  { title: 'InfluxDB', a: 21, r: 64, px: 25, py: 96 },
-  { title: 'MQTT', a: 31, r: 64, px: 75, py: 96 },
-].map((o) => {
-  const d = DESTINATIONS.find((x) => x.title === o.title)!;
-  return { ...o, fact: d.fact, body: d.body, category: d.category };
-});
-
-/* ---- landscape geometry: lens at 52% / 40% of a 1600 × 820 stage ---- */
-const AL = 1600 / 820;
-const LX = 52;
-const LY = 40;
-/** Band length, as a share of stage width. Long enough that every band leaves the frame. */
-const LEN_L = 66;
-/** All seven chips ride at the same radius, so they read as one sorted ladder. */
-const CHIP_R = 30;
-
-const spokeL = (a: number, r: number) => ({ a, len: +((r / AL / 100) * 100).toFixed(2) });
-const outL = OUT.map((o) => ({ ...o, ...spokeL(o.a, o.r) }));
-
-/** The undispersed beam, running back up out of the lens to the archive it came from. */
-const BEAM_L = { a: -129.1, len: 19.5 };
-const CHIP_D_L = +((CHIP_R / ((LEN_L / 100) * AL * 100)) * 100).toFixed(2);
-
-/* ---- portrait geometry: lens at 50% / 13% of a 390 × 880 stage ---- */
-const AP = 390 / 880;
-const LEN_P = 132;
-/** Chip radii stagger down the portrait fan so seven cards stack rather than crowd. */
-const CHIP_Y_P = [23, 30, 37, 44, 51, 58, 65];
-const bandsP = BANDS.map((b, i) => {
-  const r = (CHIP_Y_P[i] - 13) / Math.sin((b.port * Math.PI) / 180);
-  return { ...b, d: +((r / ((LEN_P / 100) * AP * 100)) * 100).toFixed(2) };
-});
-const outP = OUT.map((o) => {
-  const dx = (o.px - 50) * AP;
-  const dy = o.py - 13;
+const rad = (deg: number) => (deg * Math.PI) / 180;
+const spokeTo = (aspect: number, lx: number, ly: number, x: number, y: number) => {
+  const dx = (x - lx) * aspect;
+  const dy = y - ly;
   return {
-    ...o,
-    a: +((Math.atan2(dy, dx) * 180) / Math.PI).toFixed(2),
-    len: +((Math.hypot(dx, dy) / AP)).toFixed(2),
+    a: +((Math.atan2(dy, dx) * 180) / Math.PI).toFixed(3),
+    len: +(Math.hypot(dx, dy) / aspect).toFixed(3),
   };
+};
+/** How far along a band of length `len` a rider must sit to land on row `y`. */
+const rideTo = (aspect: number, ly: number, len: number, angle: number, y: number, fallbackR: number) => {
+  const s = Math.sin(rad(angle));
+  const r = Math.abs(s) < 1e-6 ? fallbackR : (y - ly) / s;
+  return +((r / ((len / 100) * aspect * 100)) * 100).toFixed(3);
+};
+
+/* ---- landscape: lens at 50% / 40% of a 1600 × 980 stage ---- */
+const AL = 1600 / 980;
+const LX = 50;
+const LY = 40;
+/** Bands stop short of the destination ring; the hairlines finish the journey. */
+const LEN_L = 34;
+/** Seven evenly spaced rows, so the chips read as one sorted ladder. */
+const CHIP_STEP = 6.5;
+
+const bandsL = BANDS.map((b, i) => {
+  const angle = (i - 3) * 10;
+  const y = LY + (i - 3) * CHIP_STEP;
+  return { ...b, angle, d: rideTo(AL, LY, LEN_L, angle, y, 37.3) };
 });
+
+/** Where each destination sits on the stage, chosen to clear the chip ladder. */
+const platesL = [
+  { d: OUT[0], x: 88, y: 10 },
+  { d: OUT[1], x: 92, y: 22 },
+  { d: OUT[2], x: 93, y: 35 },
+  { d: OUT[3], x: 93, y: 50 },
+  { d: OUT[4], x: 90, y: 65 },
+  { d: OUT[5], x: 89, y: 80 },
+].map((p) => ({ ...p.d, ...spokeTo(AL, LX, LY, p.x, p.y) }));
+
+/** The archive, up and left of the lens, and the undispersed beam back to it. */
+const SRC_L = { x: 40, y: 9 };
+const beamL = (() => {
+  const s = spokeTo(AL, LX, LY, SRC_L.x, SRC_L.y);
+  return { a: s.a, len: +(s.len * 0.72).toFixed(3) };
+})();
+
+/* ---- portrait: lens at 50% / 18% of a 390 × 940 stage ---- */
+const AP = 390 / 940;
+const PLY = 18;
+const LEN_P = 215;
+const CARD_Y_P = [24, 30.5, 37, 43.5, 50, 56.5, 63];
+
+const bandsP = BANDS.map((b, i) => {
+  const angle = +(98 - i * (16 / 6)).toFixed(3);
+  return { ...b, angle, d: rideTo(AP, PLY, LEN_P, angle, CARD_Y_P[i], 25.5) };
+});
+
+const platesP = [
+  { d: OUT[0], x: 25, y: 76 },
+  { d: OUT[1], x: 75, y: 76 },
+  { d: OUT[2], x: 25, y: 85 },
+  { d: OUT[3], x: 75, y: 85 },
+  { d: OUT[4], x: 25, y: 94 },
+  { d: OUT[5], x: 75, y: 94 },
+].map((p) => ({ ...p.d, ...spokeTo(AP, 50, PLY, p.x, p.y) }));
+
+const SRC_P = { x: 50, y: 5.5 };
+const beamP = (() => {
+  const s = spokeTo(AP, 50, PLY, SRC_P.x, SRC_P.y);
+  return { a: s.a, len: +(s.len * 0.66).toFixed(3) };
+})();
 
 /** Every identifier the site documents, for the section that grounds the hero chips. */
 const allTypes = STREAM_LANES.flat();

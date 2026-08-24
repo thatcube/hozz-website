@@ -53,23 +53,23 @@ const hue = (key: string) => CATEGORIES.find((c) => c.key === key)?.hue ?? '#5d8
    the room it needs and every label stays on its own ring. Stroke tones step
    through the mark's water colours, palest furthest from the drop. */
 const RINGS = [
-  { d: '15%', cap: '216px', stroke: '#5d8cb0' },
-  { d: '26%', cap: '374px', stroke: '#6b98ba' },
-  { d: '39%', cap: '562px', stroke: '#79a4c4' },
-  { d: '54%', cap: '778px', stroke: '#87b0ce' },
-  { d: '71%', cap: '1022px', stroke: '#96bcd6' },
-  { d: '90%', cap: '1300px', stroke: '#a6c8de' },
+  { d: '21%', cap: '272px', stroke: '#5d8cb0' },
+  { d: '32%', cap: '420px', stroke: '#6b98ba' },
+  { d: '45%', cap: '600px', stroke: '#79a4c4' },
+  { d: '59%', cap: '810px', stroke: '#87b0ce' },
+  { d: '74%', cap: '1044px', stroke: '#96bcd6' },
+  { d: '92%', cap: '1320px', stroke: '#a6c8de' },
 ];
 
 /* Portrait rings are wider than the phone on purpose — the outer two run off
    both edges, which is what a ripple does when you are standing in it. */
 const RINGS_P = [
-  { d: '34%', cap: '190px', stroke: '#5d8cb0' },
-  { d: '58%', cap: '324px', stroke: '#6b98ba' },
-  { d: '86%', cap: '480px', stroke: '#79a4c4' },
-  { d: '120%', cap: '670px', stroke: '#87b0ce' },
-  { d: '160%', cap: '892px', stroke: '#96bcd6' },
-  { d: '206%', cap: '1150px', stroke: '#a6c8de' },
+  { d: '46%', cap: '258px', stroke: '#5d8cb0' },
+  { d: '68%', cap: '380px', stroke: '#6b98ba' },
+  { d: '94%', cap: '524px', stroke: '#79a4c4' },
+  { d: '126%', cap: '704px', stroke: '#87b0ce' },
+  { d: '164%', cap: '916px', stroke: '#96bcd6' },
+  { d: '208%', cap: '1162px', stroke: '#a6c8de' },
 ];
 
 /* Ring n carries destination n. Short facts here, full facts in the section
@@ -85,24 +85,24 @@ const SHORT: Record<string, string> = {
 
 /* Angles measured from three o'clock, clockwise, so 90deg is straight down —
    away from the drop at the top of the stage. */
-const DEST_A = ['125deg', '52deg', '112deg', '62deg', '141deg', '38deg'];
-const DEST_A_P = ['118deg', '62deg', '115deg', '66deg', '110deg', '78deg'];
+const DEST_A = ['130deg', '18deg', '112deg', '62deg', '166deg', '38deg'];
+const DEST_A_P = ['96deg', '14deg', '117deg', '66deg', '110deg', '78deg'];
 
 /* What rides the rings: real HealthKit identifiers, coloured by the category
    they belong to. The readings are examples and the caption says so. */
 const RIDERS = [
-  { ring: 1, a: '96deg', category: 'heart', id: 'heartRateVariabilitySDNN', sample: '48 ms' },
-  { ring: 2, a: '62deg', category: 'sleep', id: 'sleepAnalysis', sample: '7h 12m' },
-  { ring: 3, a: '96deg', category: 'activity', id: 'workoutRoute', sample: '6.2 mi' },
-  { ring: 4, a: '68deg', category: 'heart', id: 'electrocardiogram', sample: 'sinus rhythm' },
-  { ring: 4, a: '120deg', category: 'mind', id: 'stateOfMind', sample: 'pleasant' },
-  { ring: 5, a: '130deg', category: 'respiratory', id: 'vo2Max', sample: '44.1' },
+  { ring: 3, a: '50deg', category: 'heart', id: 'heartRateVariabilitySDNN', sample: '48 ms' },
+  { ring: 4, a: '116deg', category: 'sleep', id: 'sleepAnalysis', sample: '7h 12m' },
+  { ring: 5, a: '62deg', category: 'activity', id: 'workoutRoute', sample: '6.2 mi' },
+  { ring: 5, a: '138deg', category: 'heart', id: 'electrocardiogram', sample: 'sinus rhythm' },
+  { ring: 6, a: '20deg', category: 'respiratory', id: 'vo2Max', sample: '44.1' },
+  { ring: 6, a: '126deg', category: 'mind', id: 'stateOfMind', sample: 'pleasant' },
 ];
 
 const RIDERS_P = [
   { ring: 2, a: '58deg', category: 'heart', id: 'heartRateVariabilitySDNN', sample: '48 ms' },
-  { ring: 3, a: '118deg', category: 'sleep', id: 'sleepAnalysis', sample: '7h 12m' },
-  { ring: 4, a: '66deg', category: 'heart', id: 'electrocardiogram', sample: 'sinus rhythm' },
+  { ring: 3, a: '96deg', category: 'sleep', id: 'sleepAnalysis', sample: '7h 12m' },
+  { ring: 4, a: '68deg', category: 'heart', id: 'electrocardiogram', sample: 'sinus rhythm' },
   { ring: 5, a: '108deg', category: 'mind', id: 'stateOfMind', sample: 'pleasant' },
 ];
 
@@ -232,7 +232,7 @@ const jsonLd = {
                     </div>
                   </div>
                 </div>
-                {RIDERS.filter((r) => r.ring === i).map((r) => (
+                {RIDERS.filter((r) => r.ring === i + 1).map((r) => (
                   <div class="arm arm-ride" style={`--a:${r.a}`}>
                     <div class="tip">
                       <div class="pin pin-ride" style={`--c:${hue(r.category)}`}>
@@ -267,7 +267,7 @@ const jsonLd = {
                     </div>
                   </div>
                 </div>
-                {RIDERS_P.filter((r) => r.ring === i).map((r) => (
+                {RIDERS_P.filter((r) => r.ring === i + 1).map((r) => (
                   <div class="arm arm-ride" style={`--a:${r.a}`}>
                     <div class="tip">
                       <div class="pin pin-ride" style={`--c:${hue(r.category)}`}>
@@ -1198,9 +1198,9 @@ const jsonLd = {
 
       .stage-p {
         --ox: 50%;
-        --oy: 17%;
+        --oy: 20%;
         --disc: clamp(76px, 20vw, 104px);
-        height: clamp(560px, 150vw, 720px);
+        height: clamp(580px, 154vw, 740px);
       }
 
       /* Landscape is the default; the phone gets its own composition. */
@@ -1365,7 +1365,7 @@ const jsonLd = {
 
       .pin-src {
         left: var(--ox);
-        top: clamp(18px, 3vw, 30px);
+        top: clamp(28px, 3vw, 32px);
         z-index: 3;
       }
 

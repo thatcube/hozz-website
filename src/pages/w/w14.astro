@@ -293,13 +293,12 @@ const structuredData = {
 
           <ul class="destination-grid">
             {
-              DESTINATIONS.map((destination, index) => (
+              DESTINATIONS.map((destination) => (
                 <li style={`--category:${hue[destination.category]}`}>
                   <div class="destination-top">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                       <path d={destinationIcons[destination.icon]} />
                     </svg>
-                    <span>{String(index + 1).padStart(2, '0')} / 06</span>
                   </div>
                   <h3>{destination.title}</h3>
                   <p>{destination.body}</p>
@@ -1118,7 +1117,7 @@ const structuredData = {
       .destination-grid li {
         position: relative;
         display: flex;
-        min-height: 18rem;
+        min-height: 15.5rem;
         padding: 1.4rem;
         flex-direction: column;
         overflow: hidden;
@@ -1127,24 +1126,8 @@ const structuredData = {
         background: rgba(255, 255, 255, 0.72);
         box-shadow: 0 1.2rem 2.5rem -2.2rem rgba(0, 0, 0, 0.22);
       }
-      .destination-grid li::after {
-        content: '';
-        position: absolute;
-        right: -3rem;
-        bottom: -4rem;
-        width: 9rem;
-        height: 9rem;
-        border: 1px solid color-mix(in srgb, var(--category) 38%, transparent);
-        border-radius: 50%;
-        box-shadow:
-          0 0 0 1.25rem color-mix(in srgb, var(--category) 8%, transparent),
-          0 0 0 2.5rem color-mix(in srgb, var(--category) 5%, transparent);
-      }
       .destination-top {
-        display: flex;
-        justify-content: space-between;
-        align-items: start;
-        margin-bottom: auto;
+        margin-bottom: 1.2rem;
       }
       .destination-top svg {
         width: 1.7rem;
@@ -1155,13 +1138,8 @@ const structuredData = {
         stroke-linecap: round;
         stroke-linejoin: round;
       }
-      .destination-top span {
-        color: var(--ink-muted);
-        font-family: var(--mono);
-        font-size: 0.64rem;
-      }
       .destination-grid h3 {
-        margin: 3rem 0 0.45rem;
+        margin: 0 0 0.45rem;
         font-size: 1.55rem;
       }
       .destination-grid p {
@@ -1173,6 +1151,7 @@ const structuredData = {
         position: relative;
         z-index: 1;
         display: block;
+        margin-top: auto;
         padding-top: 0.8rem;
         border-top: 1px solid var(--line);
         color: #294d69;
@@ -1290,17 +1269,6 @@ const structuredData = {
       }
       .durability-grid li:last-child {
         border-radius: 0 1.4rem 1.4rem 0;
-      }
-      .durability-grid li::after {
-        content: '';
-        position: absolute;
-        right: -3rem;
-        bottom: -4rem;
-        width: 10rem;
-        height: 10rem;
-        border: 1px solid rgba(202, 225, 241, 0.16);
-        border-radius: 50%;
-        box-shadow: 0 0 0 1.8rem rgba(202, 225, 241, 0.04);
       }
       .ripple-index {
         display: block;
@@ -1804,13 +1772,6 @@ const structuredData = {
         .hero-copy .actions {
           justify-content: flex-start;
         }
-        .conditions {
-          display: grid;
-          gap: 0.2rem;
-        }
-        .conditions .condition-separator {
-          display: none;
-        }
         .crossing-landscape {
           display: none;
         }
@@ -1882,7 +1843,7 @@ const structuredData = {
           grid-template-columns: 1fr;
         }
         .destination-grid li {
-          min-height: 16rem;
+          min-height: 15rem;
         }
         .format-table {
           overflow: visible;

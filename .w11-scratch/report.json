@@ -89,22 +89,22 @@
     {
       "name": "hero lede",
       "fg": "rgb(47 74 99)",
-      "bg": "rgb(249 252 254)",
-      "ratio": 8.94,
+      "bg": "rgb(250 253 254)",
+      "ratio": 9.01,
       "pass": true
     },
     {
       "name": "hero figcaption",
       "fg": "rgb(47 74 99)",
-      "bg": "rgb(244 250 253)",
-      "ratio": 8.74,
+      "bg": "rgb(238 246 252)",
+      "ratio": 8.43,
       "pass": true
     },
     {
       "name": "hero eyebrow",
       "fg": "rgb(58 90 118)",
-      "bg": "rgb(248 252 254)",
-      "ratio": 7.01,
+      "bg": "rgb(250 253 254)",
+      "ratio": 7.08,
       "pass": true
     },
     {
@@ -123,23 +123,23 @@
     },
     {
       "name": "hero chip id",
-      "fg": "rgb(21 39 57)",
+      "fg": "rgb(19 38 56)",
       "bg": "rgb(254 255 255)",
-      "ratio": 15.18,
+      "ratio": 15.39,
       "pass": true
     },
     {
       "name": "hero chip sample",
-      "fg": "rgb(69 93 115)",
+      "fg": "rgb(72 96 118)",
       "bg": "rgb(254 255 255)",
-      "ratio": 6.84,
+      "ratio": 6.53,
       "pass": true
     },
     {
       "name": "hero band name",
-      "fg": "rgb(168 180 190)",
+      "fg": "rgb(201 216 228)",
       "bg": "rgb(252 253 254)",
-      "ratio": 2.08,
+      "ratio": 1.43,
       "pass": false
     },
     {
@@ -151,10 +151,10 @@
     },
     {
       "name": "hero plate fact",
-      "fg": "rgb(70 93 116)",
+      "fg": "rgb(247 249 251)",
       "bg": "rgb(253 254 255)",
-      "ratio": 6.76,
-      "pass": true
+      "ratio": 1.05,
+      "pass": false
     },
     {
       "name": "hero source kicker",
@@ -193,10 +193,10 @@
     },
     {
       "name": "dest fact",
-      "fg": "rgb(97 120 141)",
+      "fg": "rgb(47 74 99)",
       "bg": "rgb(230 241 250)",
-      "ratio": 4,
-      "pass": false
+      "ratio": 8.04,
+      "pass": true
     },
     {
       "name": "format cell",
@@ -249,23 +249,23 @@
     },
     {
       "name": "status not-yet",
-      "fg": "rgb(55 81 105)",
+      "fg": "rgb(47 74 99)",
       "bg": "rgb(246 251 254)",
-      "ratio": 7.92,
+      "ratio": 8.83,
       "pass": true
     },
     {
       "name": "mcp tool",
-      "fg": "rgb(130 145 157)",
+      "fg": "rgb(19 38 56)",
       "bg": "rgb(230 241 250)",
-      "ratio": 2.83,
-      "pass": false
+      "ratio": 13.46,
+      "pass": true
     },
     {
       "name": "caveat",
-      "fg": "rgb(47 74 99)",
+      "fg": "rgb(19 38 56)",
       "bg": "rgb(255 255 255)",
-      "ratio": 9.21,
+      "ratio": 15.42,
       "pass": true
     },
     {
@@ -284,10 +284,10 @@
     },
     {
       "name": "state cell",
-      "fg": "rgb(114 134 151)",
+      "fg": "rgb(47 74 99)",
       "bg": "rgb(246 251 254)",
-      "ratio": 3.62,
-      "pass": false
+      "ratio": 8.83,
+      "pass": true
     }
   ]
 }

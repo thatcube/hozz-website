@@ -1,0 +1,51 @@
+assert RAMP, 'no in-gamut ramp'
+RAMP[ANCHOR] = BRAND                        # exact, not merely rounded to it
+
+STEP_DE = [de(a, b) for a, b in zip(RAMP, RAMP[1:])]
+MEAN = sum(STEP_DE) / len(STEP_DE)
+TOTAL = de(RAMP[0], RAMP[-1])
+assert abs(MEAN - C45_STEP) < 0.35, f'step {MEAN:.2f} is not c45\'s {C45_STEP}'
+assert abs(TOTAL - C45_TOTAL) < 1.5, f'total {TOTAL:.2f} is not c45\'s {C45_TOTAL}'
+assert max(STEP_DE) - min(STEP_DE) < 0.9, 'one step is louder than the others'
+for a, b in zip(RAMP, RAMP[1:]):
+    d = max(abs(int(a[i:i + 2], 16) - int(b[i:i + 2], 16)) for i in (1, 3, 5))
+    assert d <= 18, f'{a}->{b} steps by {d} on a channel, which reads as a band'
+assert lab(RAMP[0])[0] > lab(RAMP[-1])[0], 'the rim must be the lighter end'
+
+# ---------------------------------------------------------------------------
+# Geometry. Body 28x22 on x2-29 / y2-23; tail below it, to y29.
+# ---------------------------------------------------------------------------
+X0, X1, Y0, Y1 = 2, 29, 2, 23
+CX, CYY = (X0 + X1 + 1) / 2, (Y0 + Y1 + 1) / 2
+N = 3.0                     # superellipse exponent: rounder than the shipped
+                            # rounded rect, still unmistakably a bubble body
+
+
+def shell(inset):
+    """The body, `inset` pixels in. Centred on x=16.0, so it mirrors exactly."""
+    a, b = (X1 + 1 - X0) / 2 - inset, (Y1 + 1 - Y0) / 2 - inset
+    return {(x, y)
+            for y in range(Y0, Y1 + 1) for x in range(X0, X1 + 1)
+            if (abs(x + 0.5 - CX) / a) ** N + (abs(y + 0.5 - CYY) / b) ** N <= 1 + 1e-9}
+
+
+LEVELS = [shell(i) for i in range(STEPS + 1)]
+BODY = LEVELS[0]
+if '--rings' in sys.argv:
+    # The alternative, kept runnable so the choice can be re-checked: peel
+    # 4-neighbour contour rings the way the disc takes them.
+    LEVELS, cur = [set(BODY)], set(BODY)
+    for _ in range(STEPS):
+        _r, cur = rings(cur, 1)
+        LEVELS.append(set(cur))
+for i in range(STEPS):
+    assert LEVELS[i + 1] < LEVELS[i], f'level {i + 1} is not inside level {i}'
+
+# The tail: a wedge off the bottom-left, built the way the shipped mark builds
+# its own — one straight left edge continuing the body's bottom-left curve, the
+# taper taken entirely from the right. A tail that narrows on both sides at once
+# turns into a diagonal stroke; this one stays a piece of the bubble. Once the
+# keyline has taken the outer ring the fill inside runs 6-5-4-3-2 and only the
+# last row is pure line.
+TAIL_ROWS = {24: (9, 17), 25: (8, 15), 26: (8, 13), 27: (8, 12), 28: (8, 11), 29: (8, 10)}
+TAIL = {(x, y) for y, (a, b) in TAIL_ROWS.items() for x in range(a, b + 1)}

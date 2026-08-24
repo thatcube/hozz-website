@@ -1,11 +1,10 @@
 """
 t13 — Glass, cast. A speech bubble made of something the light goes *through*.
 
-The chosen Hozz mark (c45) is opaque: a monotonic ramp, light rim falling to a
-deeper core, which is what light *falling on* a curved surface looks like. Glass
-is the other case — light enters an edge, crosses the body and leaves somewhere
-else — and the way you tell the two apart in a picture is that a transmitting
-object is not monotonic:
+The chosen Hozz mark (c45) is opaque: one monotonic ramp, light rim falling to a
+deeper core, which is what light *landing on* a curved surface does. Glass is the
+other case — light enters an edge, crosses the body, gathers, and leaves
+somewhere else — and the tell is that a transmitting object is not monotonic.
 
   measured off Plozz's screen, the only glass in the shipped family:
     #97e3fe  brightest, a 1px inset ring on all four sides
@@ -15,29 +14,37 @@ object is not monotonic:
   the glass edge is not a brighter blue, it is a whiter one. Desaturation, not
   luminance, is what reads as an edge catching light.
 
-So this mark spends its tones on three things Plozz spends two on:
+Plozz rings all four sides equally, which is a lit *frame*. Light does not arrive
+from four directions at once, so this mark splits the ring in two and that split
+is the whole idea:
 
-  1. the lit edge — a desaturated ring right inside the keyline, all the way
-     round, including round the tail, with a pure-white catch on the upper-left
-     shoulder where the light gets in;
-  2. the thickness — the ring just inside that one is a step *deeper* than the
-     field it borders, everywhere except the top, where the light is arriving
-     and bleeds two steps lighter instead. Bright, dark, then field: that
-     three-part edge is the whole difference between glass and paint, and it is
-     the profile no opaque mark has;
-  3. the cast — nine tones falling top to bottom, deep violet under the entering
-     edge to a pale lilac pool where the light gathers and leaves through the
-     tail. The tail is thin, so it is nearly all edge, and it glows.
+  1. the lit edge — desaturated rather than brightened, across the top and down
+     the upper left, with a pure-white catch on the shoulder where the light gets
+     in. It does not stop dead: over four rows down each side it gutters back
+     into the field, because a rim that ends on a hard row reads as a border
+     somebody drew half of;
+  2. the wall — the rest of that ring, which is glass seen edge-on and therefore
+     *deeper* than the field it borders, not lighter. It is what keeps the pool
+     of light inside the bubble instead of letting it run out of the bottom, and
+     it is what holds the silhouette on a white page at 24px;
+  3. the thickness — every pixel in from the lit edge is a step deeper again,
+     fading out toward the base where transmission rather than reflection is
+     doing the work. Bright, dark, then field: that three-part profile is the
+     difference between glass and paint;
+  4. the cast and the pool — the field falls from deep violet under the entering
+     edge to a pale lilac gathering low in the body, which spills down the tail.
+     That pool is the part no opaque mark can show: a bright region that is not
+     attached to the lit edge and is not explained by the shape's curvature.
 
-The ramp is biased low (u**1.5), which keeps the face's nine rows on the deep
-half so a white ZZ still has something to sit on at 24px, and puts the pale
-tones under it where the tail is. Same system as c45 — a fine ramp, no step
-louder than its neighbours — running the other way.
+The cast is biased so the face's nine rows stay on the deep half of the ramp — a
+white ZZ needs something to sit on at 24px — and spends the pale end below it.
+Same system as c45, a fine ramp with no step louder than its neighbours, put to
+the opposite use.
 
-Silhouette: the shipped bubble, rounder (corner radius 6 rather than 5) and
-narrowed to 26 so the tail can leave from a squared bottom-left corner rather
-than being hung off a curve. Body symmetric about x=16; the tail is not, and is
-exempt.
+Silhouette: the shipped bubble at its full 28 across, rounder over the top
+(insets 6,4,2,1,0 rather than 5,3,2,1,0), flatter underneath so the light has a
+base to gather in, and the tail leaving from the bottom-left corner. The body is
+symmetric about x=16; the tail is not, and is exempt.
 """
 import json
 import re
@@ -75,12 +82,13 @@ for i, w in enumerate(WIDTHS):
 
 BODY_Y0, BODY_Y1 = BODY_TOP, BODY_TOP + len(WIDTHS) - 1
 
-# The tail hangs off the bottom-left corner, its left wall carrying straight down
-# from x6 where the body's last row starts. Row widths below the body fall
-# monotonically, so the silhouette carries no spur.
+# The tail hangs off the bottom-left corner, its left wall flush with where the
+# body's last row starts, as the shipped one is. Four rows, six wide at most: the
+# shipped tail is small relative to the body and unmistakably a separate part,
+# and a tail that grows into a second mass stops reading as a tail. Row widths
+# below the body fall monotonically, so the silhouette carries no spur.
 TAIL = set()
-for y, (a, b) in {23: (6, 12), 24: (6, 11), 25: (6, 10),
-                  26: (6, 8), 27: (6, 7)}.items():
+for y, (a, b) in {23: (6, 11), 24: (6, 10), 25: (6, 9), 26: (6, 7)}.items():
     TAIL |= {(x, y) for x in range(a, b + 1)}
 
 SHAPE = BODY | TAIL
@@ -131,7 +139,10 @@ assert seen == SHAPE, 'the silhouette is not one connected shape'
 # ---------------------------------------------------------------------------
 INK = '#1d0a3b'      # keyline: a near-black of the hue, Mozz's rule, not pure black
 RIM = '#e9dcff'      # the lit edge, desaturated rather than brightened — Plozz's trick
-SPEC = '#ffffff'     # the catch on the upper-left shoulder, where the light gets in
+SPEC = '#f6efff'     # the catch on the upper-left shoulder, where the light gets in
+# ...and it is *not* #ffffff. Pure white belongs to the ZZ and the smile alone: a
+# second pure-white mass elsewhere in the mark measures as part of the face and,
+# worse, competes with it — the face stops being the brightest thing on the glass.
 
 DEEP, MID, POOL = (0x5d, 0x27, 0xb0), (0x9a, 0x68, 0xf2), (0xc9, 0xb0, 0xf9)
 SEG = 6              # steps per segment; 13 stops in all
@@ -200,14 +211,15 @@ iy0 = min(y for _, y in inner)
 iy1 = max(y for _, y in inner)
 
 FLOOR = 3.6      # the top of the cast, leaving room for the bevel under the rim
-CAP = 11.0          # the bottom of it: the palest four stops belong to the light
+CAP = 9.6          # the bottom of it: the palest four stops belong to the light
 BEVEL = 1.15     # stops of darkening per pixel in from the lit edge
 DEEPEST = 3      # how far that reaches before the field goes flat
 FADE = 0.75      # ...and how much of it survives by the time it reaches the base
-BIAS = 0.95       # the cast, held back so the pale end lands under the face
-GLOW = (16, 20.8)      # where the transmitted light gathers
-GLOW_R = 4.4
-GLOW_LIFT = 8.2
+BIAS = 1.0       # the cast, held back so the pale end lands under the face
+GLOW = (16, 21.5)      # where the transmitted light gathers
+GLOW_R = 3.8
+GLOW_LIFT = 8.5
+TILT = 1.1             # the cast rakes across as well as down: light enters a corner
 WALL_FRAC = 0.45       # the unlit ring, as a fraction deeper than what it holds
 GUTTER = 4             # rows over which the lit edge gutters out down the side
 
@@ -217,7 +229,10 @@ def field(p):
 
     cast      the light arriving at the top edge, reaching further down the body
               the deeper it goes, biased low so the pale end lands under the face
-              rather than behind it.
+              rather than behind it, and raking slightly across as it falls,
+              because light enters at a corner rather than everywhere at once. A
+              cast that only falls makes flat horizontal bands; one that rakes
+              makes an edge you can read the direction of.
     thickness every pixel in from the lit edge is a step deeper — Plozz's inset
               bevel, and what makes an edge read as an edge. It fades toward the
               base, where transmission rather than reflection is doing the work.
@@ -227,15 +242,21 @@ def field(p):
     """
     x, y = p
     u = (y - iy0) / (iy1 - iy0)
-    cast = FLOOR + (CAP - FLOOR) * u ** BIAS
+    cast = FLOOR + (CAP - FLOOR) * u ** BIAS + TILT * (x - 2) / 27
     thick = BEVEL * min(DEPTH.get(p, 0), DEEPEST) * (1 - FADE * u)
     d = ((x + 0.5 - GLOW[0]) ** 2 + (y + 0.5 - GLOW[1]) ** 2) ** 0.5
     glow = max(0.0, (GLOW_R - d) / GLOW_R) * GLOW_LIFT
     return cast - thick + glow
 
 
+TAIL_CAP = 9.6   # the tail is lit from within, but it is not the pool
+
+
 def index(p, drop=0.0):
-    return max(0, min(N - 1, round(field(p) - drop)))
+    v = field(p) - drop
+    if p[1] > BODY_Y1:
+        v = min(v, TAIL_CAP)
+    return max(0, min(N - 1, round(v)))
 
 
 def wall_index(p):
@@ -262,7 +283,7 @@ for p in WALL:
 
 # The catch: the stretch of lit edge on the upper-left shoulder, where a curved
 # glass surface turns away from a light above and to the left.
-CATCH = {p for p in LIT if 3 <= p[1] <= 7 and p[0] <= 10}
+CATCH = {p for p in LIT if 3 <= p[1] <= 6 and p[0] <= 9}
 LIT -= CATCH
 
 LAYERS = [(BANDS[i], RAMP[i]) for i in range(N) if BANDS[i]]
@@ -279,6 +300,9 @@ assert covered == SHAPE, 'the bubble is not exactly covered by its layers'
 TONES = [f for _, f in LAYERS]
 assert len(set(TONES)) == len(TONES), 'a tone is used twice'
 assert len(TONES) >= 8, f'only {len(TONES)} tones'
+# Pure white is the face's, and only the face's. Anything else painted #ffffff
+# both measures as part of the face and competes with it for the eye.
+assert '#ffffff' not in {t.lower() for t in TONES}, 'the bubble is using the face white'
 
 # ---------------------------------------------------------------------------
 # The face. md/wide/gap2 — 8 wide, 9 rows.
@@ -287,8 +311,8 @@ assert len(TONES) >= 8, f'only {len(TONES)} tones'
 # x=16 exactly. A 7-wide `sm` face would sit on x=16.5.
 # Placement is measured out of mark.ts, not computed here.
 # ---------------------------------------------------------------------------
-FACE_W, GAP = 8, 2
-CY = 12.5
+FACE_W, GAP = 10, 2
+CY = 12
 
 
 def pixels(d):
@@ -314,13 +338,13 @@ def measure(cx, cy, size, smile, gap):
     return got['box'], face
 
 
-box, FACE = measure(16, CY, 'md', 'wide', GAP)
+box, FACE = measure(16, CY, 'lg', 'wide', GAP)
 body_w = max(x for x, _ in BODY) - min(x for x, _ in BODY) + 1
 body_h = BODY_Y1 - BODY_Y0 + 1
 assert (body_w - box['w']) % 2 == 0, (
     f"a {box['w']}-wide face cannot centre on a {body_w}-wide body")
 assert (body_h - box['h']) % 2 == 0, f"a {box['h']}-row face cannot split {body_h} rows"
-assert box['w'] == FACE_W and box['h'] == 9, f"mark.ts says {box['w']}x{box['h']}"
+assert box['w'] == FACE_W and box['h'] == 11, f"mark.ts says {box['w']}x{box['h']}"
 assert box['x'] + box['right'] == 31, 'face is not centred on x=16'
 
 above, below = box['y'] - BODY_Y0, BODY_Y1 - box['bottom']
@@ -328,13 +352,15 @@ assert above == below, f'air {above}/{below} on the body'
 assert FACE <= BODY, 'face hangs off the body'
 assert not (FACE & RING) and not (FACE & K), 'the face touches the edge of the glass'
 
-# The Zs do not mirror — they are one letter repeated by translation (5 on md).
+# The Zs do not mirror — they are one letter repeated by translation (6 on lg).
 # The smile does mirror. Assert what is true rather than what is convenient.
-eyes = {p for p in FACE if p[1] < box['y'] + 4}
-smile = {p for p in FACE if p[1] >= box['bottom'] - 2}
+eyes = {p for p in FACE if p[1] < box['y'] + 5}
+smile = {p for p in FACE if p[1] >= box['bottom'] - 3}
 assert eyes | smile == FACE, 'unexpected rows between the eyes and the smile'
-assert {(x + 5, y) for x, y in eyes if x < 16} == {p for p in eyes if p[0] >= 16}, (
-    'the two Zs are not the same letter')
+left = {p for p in eyes if p[0] < 16}
+right = {p for p in eyes if p[0] >= 16}
+off = min(x for x, _ in right) - min(x for x, _ in left)
+assert {(x + off, y) for x, y in left} == right, 'the two Zs are not the same letter'
 assert all((31 - x, y) in smile for x, y in smile), 'smile is not symmetric about x=16'
 
 # Contrast under the face: a white ZZ needs a ground dark enough to hold it at
@@ -345,7 +371,7 @@ assert max(under) <= (N - 1) // 2, (
 
 print(f'{SLUG} {NAME}')
 print(f'  body {body_w}x{body_h} y{BODY_Y0}-{BODY_Y1} · tail to y{ys[-1]} · '
-      f'face md/wide gap{GAP} = {box["w"]}x{box["h"]} at x{box["x"]}-{box["right"]}, '
+      f'face lg/wide gap{GAP} = {box["w"]}x{box["h"]} at x{box["x"]}-{box["right"]}, '
       f'y{box["y"]}-{box["bottom"]}')
 print(f'  air {above} above / {below} below · {len(TONES)} tones · '
       f'face on stops {sorted(under)} of 0-{N - 1}')
@@ -370,26 +396,35 @@ rows = '\n'.join(f'  <path d="{" ".join(to_paths(p))}" fill="{f}" />' for p, f i
  * does. This is glass, so the light also comes *through*, and the tell is that
  * the tones stop being monotonic.
  *
- * Three things carry it. A lit edge, desaturated rather than brightened —
- * Plozz's screen ramps #97e3fe → #82deff → #72daff almost entirely in the red
- * channel, so its glass front reads as glass because the edge goes *whiter*,
- * not bluer. A thickness: the ring just inside that edge is one step deeper
- * than the field it borders, except across the top, where the light is arriving
- * and bleeds two steps lighter instead. And a cast: nine stops falling from
- * deep violet under the entering edge to a pale pool at the bottom, where the
- * light gathers and leaves through the tail. The tail is thin, so it is very
- * nearly all edge, and it glows.
+ * Plozz, the only glass in the shipped family, rings its screen on all four
+ * sides — #97e3fe → #82deff → #72daff, a ramp almost entirely in the red
+ * channel, so the edge reads as catching light because it goes *whiter*, not
+ * bluer. Desaturation is the trick and it is borrowed here. The frame is not:
+ * light does not arrive from four directions at once, so the ring is split.
  *
- * The ramp is biased low, which keeps the face's nine rows on the deep half —
- * a white ZZ needs something to sit on at 24px — and spends the pale end below
- * it, where the tail is. Nothing is cleared for the letterforms; the bands pass
- * behind them, as they do on both shipped marks.
+ * Across the top and down the upper left it is lit, with a white catch on the
+ * shoulder where the light gets in, guttering back into the field over four
+ * rows rather than stopping on a hard line. The rest of the ring is the wall —
+ * glass seen edge-on, a step *deeper* than the field it borders, which is what
+ * keeps the light pooled inside the bubble rather than running out of the
+ * bottom, and what holds the silhouette on a white page at 24px. Inside the lit
+ * edge the tone steps deeper again per pixel, fading toward the base. Bright,
+ * dark, then field: that profile is the difference between glass and paint.
  *
- * The silhouette is the shipped bubble, rounder (radius 6, not 5) and narrowed
- * to 26 so the tail leaves from a squared bottom-left corner instead of hanging
- * off a curve. The body is symmetric about x=16 and the face is centred on the
- * body, not the whole mark: {above} rows of air above, {below} below, measured. The
- * tail is deliberately asymmetric and is exempt.
+ * The field itself falls from deep violet under the entering edge to a pale
+ * pool low in the body that spills down the tail — a bright region not attached
+ * to the lit edge and not explained by the curvature, which is the one thing an
+ * opaque mark cannot show. The cast is biased so the face's nine rows stay on
+ * the deep half; a white ZZ needs something to sit on at 24px. Nothing is
+ * cleared for the letterforms; the bands pass behind them, as they do on both
+ * shipped marks.
+ *
+ * The silhouette is the shipped bubble at its full 28 across, rounder over the
+ * top (insets 6,4,2,1,0 rather than 5,3,2,1,0) and flatter underneath, so the
+ * light has a base to gather in and the tail leaves from a corner rather than
+ * hanging off a curve. The body is symmetric about x=16 and the face is centred
+ * on the body, not the whole mark: {above} rows of air above, {below} below, measured.
+ * The tail is deliberately asymmetric and is exempt.
  *
  * {len(TONES)} tones, no step louder than {MAX_STEP} on any channel.
  */
@@ -403,17 +438,17 @@ const {{ size = 128 }} = Astro.props;
 <MarkFrame size={{size}} title="Twozz — {NAME}">
 {rows}
   <g fill="#ffffff" shape-rendering="crispEdges">
-    {{facePathsAt({{ cx: 16, cy: {CY}, size: 'md', smile: 'wide', gap: {GAP} }}).map((d) => (
+    {{facePathsAt({{ cx: 16, cy: {CY}, size: 'lg', smile: 'wide', gap: {GAP} }}).map((d) => (
       <path d={{d}} />
     ))}}
   </g>
 </MarkFrame>
 ''')
 
-palette = ', '.join(f"'{c}'" for c in [INK, *RAMP, RIM, SPEC, '#ffffff'])
+palette = ', '.join(f"'{c}'" for c in dict.fromkeys([INK, *RAMP, RIM, SPEC, '#ffffff']))
 (OUT / f'{SLUG}.meta.ts').write_text(f'''export default {{
   n: '{SLUG}', name: '{NAME}',
-  idea: 'Glass rather than paint: a desaturated lit edge all the way round, a step-deeper ring behind it for thickness, and nine stops falling from deep violet at the top to a pale pool that leaves through the tail.',
+  idea: 'Glass rather than paint. The ring inside the keyline is lit only where the light actually strikes — desaturated, Plozz\\'s trick — and is a step deeper everywhere else, because glass seen edge-on is darker than the field behind it. That dark wall holds a pool of transmitted light low in the body, which spills down the tail: a bright region not attached to the lit edge, which is the one thing an opaque mark cannot show.',
   ground: 'light',
   palette: [{palette}],
 }};

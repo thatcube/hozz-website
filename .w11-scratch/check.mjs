@@ -96,8 +96,22 @@ const targets = await page.evaluate(() => {
     .map(([name, s]) => {
       const el = document.querySelector(s);
       if (!el) return null;
-      const r = el.getBoundingClientRect();
-      return { name, s, x: r.x, y: r.y + window.scrollY, w: r.width, h: r.height };
+      // Tightest possible box around actual glyphs: a Range over the element's
+      // first non-empty text node. Excludes the element's own borders and rules.
+      const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+      let node;
+      let rect = null;
+      while ((node = walker.nextNode())) {
+        if (!node.nodeValue.trim()) continue;
+        const rng = document.createRange();
+        rng.selectNodeContents(node);
+        const rects = [...rng.getClientRects()].filter((r) => r.width > 6 && r.height > 4);
+        if (!rects.length) continue;
+        rect = rects.sort((x, y) => y.width * y.height - x.width * x.height)[0];
+        break;
+      }
+      if (!rect) return null;
+      return { name, s, x: rect.x, y: rect.y + window.scrollY, w: rect.width, h: rect.height };
     })
     .filter(Boolean);
 });
@@ -137,8 +151,6 @@ const sampled = await page.evaluate(
         };
         return 0.2126 * f(p[0]) + 0.7152 * f(p[1]) + 0.0722 * f(p[2]);
       };
-      const sorted = px.map((p) => [L(p), p]).sort((a, b) => a[0] - b[0]);
-      // background = modal (median of the majority side); pick by counting
       const counts = new Map();
       for (const p of px) {
         const k = p.join(',');
@@ -148,11 +160,22 @@ const sampled = await page.evaluate(
       let best = -1;
       for (const [k, n] of counts) if (n > best) ((best = n), (bg = k.split(',').map(Number)));
       const bgL = L(bg);
-      // text = extreme opposite the background, using the 2nd percentile so
-      // antialiased edge pixels don't dominate
-      const idx = bgL > 0.4 ? Math.floor(sorted.length * 0.02) : Math.floor(sorted.length * 0.98);
-      const fg = sorted[idx][1];
-      out.push({ name: t.name, fg, bg, cover: best / px.length });
+      // Foreground = the colour furthest from the background that still occupies a
+      // real share of the patch. That is the glyph core a reader actually sees:
+      // single antialiased edge pixels are excluded by the count floor, and
+      // rules or rails behind the text lose to the darker ink.
+      const floor = Math.max(4, px.length * 0.004);
+      let fg = null;
+      let fd = -1;
+      let fbest = 0;
+      for (const [k, n] of counts) {
+        if (n < floor) continue;
+        const p = k.split(',').map(Number);
+        const d = Math.abs(L(p) - bgL);
+        if (d > fd) ((fd = d), (fg = p), (fbest = n));
+      }
+      if (!fg) ((fg = bg), (fbest = best));
+      out.push({ name: t.name, fg, bg, glyphPx: fbest });
     }
     return out;
   },

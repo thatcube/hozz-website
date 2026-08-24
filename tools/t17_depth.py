@@ -94,7 +94,7 @@ NAME = 'Depth'
 # would land on x=16.5 — the half-pixel error the brief warns about.
 # ---------------------------------------------------------------------------
 BODY_TOP = 2
-BODY_WIDTHS = [12, 18, 20, 22, 24, 24] + [26] * 12 + [24, 22, 20, 16]
+BODY_WIDTHS = [18, 22, 24, 26, 26] + [28] * 15 + [26, 26, 24, 18]
 
 BODY = set()
 for i, w in enumerate(BODY_WIDTHS):
@@ -112,12 +112,10 @@ BODY_W = max(BODY_WIDTHS)
 # than its neighbour is a new upward-facing surface, and the lighting rule
 # correctly lights it — one stray pale pixel halfway down the tail.
 TAIL_ROWS = {
-    24: (8, 15),
-    25: (8, 13),
-    26: (8, 11),
-    27: (8, 10),
-    28: (8, 9),
-    29: (8, 9),
+    26: (7, 12),
+    27: (7, 11),
+    28: (7, 9),
+    29: (7, 8),
 }
 TAIL = {(x, y) for y, (a, b) in TAIL_ROWS.items() for x in range(a, b + 1)}
 
@@ -279,12 +277,12 @@ P_LAYERS.setdefault(CORE_I, set()).update(P_CORE)
 # and fold are lines rather than ramp steps, and are allowed to jump.
 # ---------------------------------------------------------------------------
 KEY = '#261347'
-WALL = ['#8358d4', '#7349c4', '#633bb2']        # lit, mid, shaded
-F_SIDE_C = '#532ca2'                            # the wall, one step deeper
-F_TOP_C = '#4a2794'                             # deeper again: the near wall
-F_BOT_C = '#d1b7f8'                             # the far wall, angled up
+WALL = ['#ac8ae6', '#9d79db', '#8e68d0']        # up-facing, mid, down-facing
+F_SIDE_C = '#7f57c5'                            # the wall, one step deeper
+F_TOP_C = '#7046ba'                             # deeper again: the near wall
 
-FLOOR_LO, FLOOR_HI = (0x7a, 0x56, 0xbf), (0xc6, 0xa9, 0xf3)
+FLOOR_LO, FLOOR_HI = (0x54, 0x35, 0xa2), (0xa2, 0x7c, 0xee)
+INK = '#ffffff'                                 # Twozz's own ink, per FAMILY
 
 
 def lerp(a, b, t):
@@ -296,24 +294,24 @@ FLOOR = ['#%02x%02x%02x' % tuple(lerp(FLOOR_LO[c], FLOOR_HI[c], i / (STEPS - 1))
          for i in range(STEPS)]
 
 MAX_STEP = 18  # Plozz's own widest interior step is 21, so this is inside it.
-# Two ramps, each continued by the half of the fold that belongs to it: the
-# near wall and the sides are wall carrying on down into shadow, the far wall
-# is the one surface tipped up into the light, so it reads off the top of the
-# floor.
+# Two ramps, continued by the parts of the fold that belong to them. The near
+# wall and the sides are the front face carrying on down into shadow. The far
+# wall is tipped up into the light exactly as the top of the rim is, so it
+# takes the rim's own lit tone and the floor ramps up into it — the same
+# surface orientation gets the same tone wherever it occurs.
 for ramp, what in ((WALL + [F_SIDE_C, F_TOP_C], 'wall'),
-                   (FLOOR + [F_BOT_C], 'floor')):
+                   (FLOOR + [WALL[0]], 'floor')):
     for a, b in zip(ramp, ramp[1:]):
         d = max(abs(int(a[i:i + 2], 16) - int(b[i:i + 2], 16)) for i in (1, 3, 5))
         assert d <= MAX_STEP, f'{what}: {a}->{b} steps by {d}, which reads as a band'
 
 LAYERS = [
     (KEY_PX, KEY),
-    (W_LIT, WALL[0]),
+    (W_LIT | F_BOT, WALL[0]),
     (W_MID, WALL[1]),
     (W_SHAD, WALL[2]),
     (F_SIDE, F_SIDE_C),
     (F_TOP, F_TOP_C),
-    (F_BOT, F_BOT_C),
 ] + [(P_LAYERS[i], FLOOR[i]) for i in sorted(P_LAYERS)]
 
 # ---------------------------------------------------------------------------
@@ -344,10 +342,10 @@ for px, fill in LAYERS:
 #     top - y0 == y1 - (top + h - 1)   ->   top = (y0 + y1 - h + 1) / 2
 # With the body at y2-y23 and h = 8 that is top = 9, so cy = 13.
 # ---------------------------------------------------------------------------
-FACE_SIZE, FACE_SMILE, FACE_GAP = 'md', 'wide', 1
-FACE_W, FACE_H = 8, 8
-FACE_CY = 13
-FACE_TOP = FACE_CY - 4              # the table's offset for an 8-row face
+FACE_SIZE, FACE_SMILE, FACE_GAP = 'lg', 'wide', 1
+FACE_W, FACE_H = 10, 10
+FACE_CY = 14
+FACE_TOP = FACE_CY - 5              # the table's offset for a 10-row face
 FACE_LEFT = 16 - FACE_W // 2
 
 assert BODY_W % 2 == FACE_W % 2, (
@@ -363,14 +361,16 @@ assert AIR_ABOVE == AIR_BELOW, f'air {AIR_ABOVE} above vs {AIR_BELOW} below'
 # mark.ts purely so the assertions below can be made; the mark itself always
 # imports the real thing.
 FACE_ROWS = [
-    [(0, 2), (5, 7)],
-    [(1, 2), (6, 7)],
-    [(0, 1), (5, 6)],
-    [(0, 2), (5, 7)],
-    [],                              # gap 1
-    [(0, 0), (7, 7)],
+    [(0, 3), (6, 9)],
+    [(2, 3), (8, 9)],
+    [(1, 2), (7, 8)],
     [(0, 1), (6, 7)],
-    [(1, 6)],
+    [(0, 3), (6, 9)],
+    [],                              # gap 1
+    [(0, 0), (9, 9)],
+    [(0, 1), (8, 9)],
+    [(1, 8)],
+    [(2, 7)],
 ]
 assert len(FACE_ROWS) == FACE_H
 FACE_PX = {(FACE_LEFT + x, FACE_TOP + i)
@@ -388,8 +388,8 @@ def luminance(hexc):
     return 0.2126 * ch(r) + 0.7152 * ch(g) + 0.0722 * ch(b)
 
 
-CONTRAST = (max(luminance(FLOOR[CORE_I]), luminance(KEY)) + 0.05) / \
-           (min(luminance(FLOOR[CORE_I]), luminance(KEY)) + 0.05)
+CONTRAST = (max(luminance(FLOOR[CORE_I]), luminance(INK)) + 0.05) / \
+           (min(luminance(FLOOR[CORE_I]), luminance(INK)) + 0.05)
 assert CONTRAST >= 4.5, f'face contrast only {CONTRAST:.2f}:1 on the core'
 
 # ---------------------------------------------------------------------------
@@ -460,7 +460,7 @@ const {{ size = 128 }} = Astro.props;
 
 <MarkFrame size={{size}} title="Twozz — {NAME}">
 {chr(10).join(body_lines)}
-  <g fill="{KEY}" shape-rendering="crispEdges">
+  <g fill="{INK}" shape-rendering="crispEdges">
     {{facePathsAt({{ cx: 16, cy: {FACE_CY}, size: '{FACE_SIZE}', smile: '{FACE_SMILE}', gap: {FACE_GAP} }}).map((d) => (
       <path d={{d}} />
     ))}}
@@ -468,7 +468,7 @@ const {{ size = 128 }} = Astro.props;
 </MarkFrame>
 '''
 
-palette = [KEY, F_TOP_C, F_SIDE_C] + WALL[::-1] + FLOOR + [F_BOT_C]
+palette = [KEY, F_TOP_C, F_SIDE_C] + WALL[::-1] + FLOOR
 meta = f'''export default {{
   n: '{SLUG}', name: '{NAME}',
   idea: 'A rim with real thickness — lit on top, shaded underneath — folding into a recessed floor lit the other way round, so the tone reverses exactly where the plane does.',
@@ -497,5 +497,5 @@ print(f'  parity      body {BODY_W} / face {FACE_W} — both even')
 print(f'  air         {AIR_ABOVE} above, {AIR_BELOW} below (on the body)')
 print('  layers      ' + ', '.join(f'{f}:{len(p)}' for p, f in LAYERS))
 print()
-marks = ['K', 'L', 'M', 'S', 'f', 'v', '^'] + [str(i) for i in sorted(P_LAYERS)]
+marks = ['K', 'L', 'M', 'S', 'f', 'v'] + [str(i) for i in sorted(P_LAYERS)]
 show([p for p, _ in LAYERS] + [FACE_PX], marks + ['#'])

@@ -28,9 +28,14 @@
  * runs out into the tail with no seam. Ramp tone 6 is #8f52f6 — the shipped
  * body colour — and that is what the face sits on.
  *
- * The face is the shipped one: lg, wide smile, family gap. Ten on twenty-eight
- * is the same face-to-body ratio as Hozz's eight on twenty-two. Centred on the
- * **body**, tail ignored: 6 rows of air above, 6 below, measured.
+ * The face is `lg` with the wide smile, ten wide on twenty-eight — the same
+ * face-to-body ratio as Hozz's eight on twenty-two — at gap 1, so it is ten
+ * rows on a twenty-row field, which is the arithmetic the family default gets
+ * wrong here: eleven rows cannot split twenty evenly and lands the mark a row
+ * top-heavy. Centred on the **field** the eye reads (the violet, y3-22:
+ * keyline ring out, tail-junction rows out, tail out): 5 above, 5 below.
+ * Against the whole outline that leaves 6 above and 7 below — the extra
+ * row falls under the face, where the tail already carries the weight.
  */
 import MarkFrame from '../MarkFrame.astro';
 import { facePathsAt } from '../../../data/mark';
@@ -53,7 +58,7 @@ const { size = 128 } = Astro.props;
   <path d="M26 19h1v1h-1z M24 20h2v1h-2z M23 21h2v1h-2z M22 22h2v1h-2z M20 23h2v1h-2z M8 25h5v1h-5z M8 26h4v1h-4z M8 27h3v1h-3z M9 28h1v1h-1z" fill="#6633bb" />
   <path d="M10 2h12v1h-12z M8 3h2v1h-2z M22 3h2v1h-2z M7 4h1v1h-1z M24 4h1v1h-1z M6 5h1v1h-1z M25 5h1v1h-1z M5 6h1v1h-1z M26 6h1v1h-1z M4 7h1v1h-1z M27 7h1v1h-1z M4 8h1v1h-1z M27 8h1v1h-1z M3 9h1v1h-1z M28 9h1v1h-1z M3 10h1v1h-1z M28 10h1v1h-1z M2 11h1v1h-1z M29 11h1v1h-1z M2 12h1v1h-1z M29 12h1v1h-1z M2 13h1v1h-1z M29 13h1v1h-1z M2 14h1v1h-1z M29 14h1v1h-1z M2 15h1v1h-1z M29 15h1v1h-1z M3 16h1v1h-1z M28 16h1v1h-1z M3 17h1v1h-1z M28 17h1v1h-1z M4 18h1v1h-1z M27 18h1v1h-1z M4 19h1v1h-1z M27 19h1v1h-1z M5 20h1v1h-1z M26 20h1v1h-1z M6 21h1v1h-1z M25 21h1v1h-1z M7 22h1v1h-1z M24 22h1v1h-1z M7 23h1v1h-1z M22 23h2v1h-2z M7 24h1v1h-1z M15 24h7v1h-7z M7 25h1v1h-1z M13 25h2v1h-2z M7 26h1v1h-1z M12 26h1v1h-1z M7 27h1v1h-1z M11 27h1v1h-1z M8 28h1v1h-1z M10 28h1v1h-1z M8 29h2v1h-2z" fill="#241056" />
   <g fill="#ffffff" shape-rendering="crispEdges">
-    {facePathsAt({ cx: 16, cy: 13.5, size: 'lg', smile: 'wide', gap: 2 }).map((d) => (
+    {facePathsAt({ cx: 16, cy: 13, size: 'lg', smile: 'wide', gap: 1 }).map((d) => (
       <path d={d} />
     ))}
   </g>

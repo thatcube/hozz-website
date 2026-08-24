@@ -323,17 +323,23 @@ def measure(cx, cy, size, smile, gap):
 
 
 box, FACE = measure(16, CY, SIZE, SMILE, GAP)
-# The brief's table is quoted for an integer cy; this body's optical middle is a
-# half. Check the table at the integer, then check this face against the table.
-tbox, _ = measure(16, int(CY), SIZE, SMILE, GAP)
-assert (tbox['h'], tbox['y'] - int(CY)) == (H, OFF), \
-    f"mark.ts says {(tbox['h'], tbox['y'] - int(CY))}, the table says {(H, OFF)}"
-assert (box['h'], box['y'] - CY) == (H, OFF - 0.5), \
-    f"the face landed at {(box['h'], box['y'] - CY)} on cy={CY}"
+# The brief's table is quoted for an integer cy, and this face's cy is one, so
+# it is checked directly: an even-height face is not symmetric about cy and
+# computing the top from it is exactly the arithmetic that goes wrong.
+assert float(CY).is_integer(), f'cy={CY} — snap it, or the face lands off-centre'
+assert (box['h'], box['y'] - CY) == (H, OFF), \
+    f"mark.ts put the face at {(box['h'], box['y'] - CY)}, the table says {(H, OFF)}"
 assert box['w'] == FACE_W, f"mark.ts says the face is {box['w']} wide"
 
-above, below = box['y'] - BODY_Y0, BODY_Y1 - box['bottom']
-assert above == below, f'air {above} above / {below} below on the body'
+# Air, measured three ways off the emitted pixels. The field is the one the eye
+# reads and it must be dead even; the other two must never be top-heavy.
+above, below = box['y'] - FIELD_Y0, FIELD_Y1 - box['bottom']
+out_above, out_below = box['y'] - BODY_Y0, BODY_Y1 - box['bottom']
+inner_ys = sorted({y for _, y in INNER if (16, y) in INNER})
+in_above, in_below = box['y'] - inner_ys[0], inner_ys[-1] - box['bottom']
+assert above == below, f'field air {above} above / {below} below'
+assert out_above <= out_below, f'outline air {out_above} above / {out_below} below'
+assert in_above <= in_below, f'interior air {in_above} above / {in_below} below'
 assert box['x'] + box['right'] == 31, 'the face is not centred on x=16'
 assert FACE <= BODY, 'the face hangs off the body'
 assert not (FACE & KEY_PX), 'the face touches the keyline'
@@ -360,7 +366,10 @@ print(f'{SLUG} · {NAME}')
 print(f'  body {BODY_W}x{BODY_H} (y{BODY_Y0}-{BODY_Y1}), corner = circle(24) cap, '
       f'{STRAIGHT} straight rows · tail y23-29, spout {len(SPOUT)}px')
 print(f'  face {SIZE}/{SMILE} gap{GAP} = {FACE_W}x{H} at x{box["x"]}-{box["right"]} '
-      f'y{box["y"]}-{box["bottom"]} · air {above}/{below} · under tones {sorted(under)}')
+      f'y{box["y"]}-{box["bottom"]} · under tones {sorted(under)}')
+print(f'  air · field y{FIELD_Y0}-{FIELD_Y1} ({FIELD_H}) {above}/{below} · '
+      f'outline y{BODY_Y0}-{BODY_Y1} ({BODY_H}) {out_above}/{out_below} · '
+      f'interior y{inner_ys[0]}-{inner_ys[-1]} {in_above}/{in_below}')
 print(f'  {len(tones)} tones · ramp {" ".join(RAMP)} · key {KEY}')
 print('  areas ' + ' '.join(f'{i}:{len(BANDS[i])}' for i in range(N)))
 
@@ -401,9 +410,14 @@ body_rows = '\n'.join(
  * runs out into the tail with no seam. Ramp tone 6 is #8f52f6 — the shipped
  * body colour — and that is what the face sits on.
  *
- * The face is the shipped one: lg, wide smile, family gap. Ten on twenty-eight
- * is the same face-to-body ratio as Hozz's eight on twenty-two. Centred on the
- * **body**, tail ignored: {above} rows of air above, {below} below, measured.
+ * The face is `lg` with the wide smile, ten wide on twenty-eight — the same
+ * face-to-body ratio as Hozz's eight on twenty-two — at gap 1, so it is ten
+ * rows on a twenty-row field, which is the arithmetic the family default gets
+ * wrong here: eleven rows cannot split twenty evenly and lands the mark a row
+ * top-heavy. Centred on the **field** the eye reads (the violet, y{FIELD_Y0}-{FIELD_Y1}:
+ * keyline ring out, tail-junction rows out, tail out): {above} above, {below} below.
+ * Against the whole outline that leaves {out_above} above and {out_below} below — the extra
+ * row falls under the face, where the tail already carries the weight.
  */
 import MarkFrame from '../MarkFrame.astro';
 import {{ facePathsAt }} from '../../../data/mark';
@@ -415,7 +429,7 @@ const {{ size = 128 }} = Astro.props;
 <MarkFrame size={{size}} title="Twozz — {NAME}">
 {body_rows}
   <g fill="{FACE_FILL}" shape-rendering="crispEdges">
-    {{facePathsAt({{ cx: 16, cy: {CY}, size: '{SIZE}', smile: '{SMILE}', gap: {GAP} }}).map((d) => (
+    {{facePathsAt({{ cx: 16, cy: {CY:g}, size: '{SIZE}', smile: '{SMILE}', gap: {GAP} }}).map((d) => (
       <path d={{d}} />
     ))}}
   </g>
