@@ -11,7 +11,7 @@
  * rides the face high, because the chin eats rows off the field's bottom — Mozz
  * centres on the record and lets its shading pass behind the ZZ, and that is
  * what makes the face read as the middle of the thing rather than as something
- * dropped on it. Measured air on the disc: 7 above, 7 below.
+ * dropped on it. Measured air on the disc: 6 above, 6 below.
  */
 import MarkFrame from '../MarkFrame.astro';
 import { facePathsAt } from '../../../data/mark';
@@ -28,7 +28,7 @@ const { size = 128 } = Astro.props;
   <path d="M13 3h6v1h-6z M10 4h3v1h-3z M19 4h3v1h-3z M9 5h1v1h-1z M22 5h1v1h-1z M8 6h1v1h-1z M23 6h1v1h-1z M7 7h1v1h-1z M24 7h1v1h-1z M6 10h1v1h-1z M25 10h1v1h-1z" fill="#eaf5fb" />
   <path d="M13 2h6v1h-6z M10 3h3v1h-3z M19 3h3v1h-3z M9 4h1v1h-1z M22 4h1v1h-1z M8 5h1v1h-1z M23 5h1v1h-1z M7 6h1v1h-1z M24 6h1v1h-1z M6 7h1v1h-1z M25 7h1v1h-1z M6 8h1v1h-1z M25 8h1v1h-1z M6 9h1v1h-1z M25 9h1v1h-1z M5 10h1v1h-1z M26 10h1v1h-1z M5 11h1v1h-1z M26 11h1v1h-1z M5 12h1v1h-1z M26 12h1v1h-1z M5 13h1v1h-1z M26 13h1v1h-1z M5 14h1v1h-1z M26 14h1v1h-1z M5 15h1v1h-1z M26 15h1v1h-1z M6 16h1v1h-1z M25 16h1v1h-1z M6 17h1v1h-1z M25 17h1v1h-1z M6 18h1v1h-1z M25 18h1v1h-1z M7 19h1v1h-1z M24 19h1v1h-1z M8 20h1v1h-1z M23 20h1v1h-1z M9 21h1v1h-1z M22 21h1v1h-1z M10 22h3v1h-3z M19 22h3v1h-3z M13 23h6v1h-6z" fill="#132638" />
   <g fill="#132638" shape-rendering="crispEdges">
-    {facePathsAt({ cx: 16, cy: 13, size: 'sm', smile: 'wide', gap: 2 }).map((d) => (
+    {facePathsAt({ cx: 16, cy: 13, size: 'md', smile: 'wide', gap: 3 }).map((d) => (
       <path d={d} />
     ))}
   </g>

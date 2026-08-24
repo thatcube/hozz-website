@@ -274,17 +274,24 @@ def symmetric(s):
 # face placement
 # --------------------------------------------------------------------------- #
 
-def place_face(field, body, sizes=('md', 'sm', 'lg'), gaps=(2, 3, 1, 4), pad_min=1):
-    """Find a face size and gap whose height splits *both* the field it sits on
-    and the whole silhouette into exactly equal air. Returns None if nothing
-    fits — the caller then changes the geometry, never the offset."""
-    fr = rows_of(field)
-    fys = sorted(fr)
-    if not fys or fys[-1] - fys[0] + 1 != len(fys):
-        return None
-    span = fys[-1] - fys[0] + 1
+def place_face(body, sizes=('lg', 'md', 'sm'), gaps=(2, 3, 1, 4), bands=None):
+    """Place the face on the *whole mark*, not on a cleared patch inside it.
+
+    The old contract was that the face had to fit inside a plain circular field
+    — which is exactly what made it look hemmed into a pale hole. Now the only
+    requirements are that the letterforms land on the mark rather than on paper,
+    that their height splits the silhouette into equal air, and that the face is
+    big enough to read as the centre of the flower rather than as a detail in
+    it. The petal bands are left alone and run straight behind it.
+
+    `bands` is the depth banding; when given, the face has to cross at least two
+    of them, which is the mechanical form of "the structure runs behind it".
+    """
     bys = sorted({y for _, y in body})
     btop, bbot = bys[0], bys[-1]
+    span = bbot - btop + 1
+    rows = rows_of(body)
+    best = None
     for size in sizes:
         w = FACE_W[size]
         lo, hi = 16 - w // 2, 16 + (w - w // 2) - 1
@@ -293,28 +300,62 @@ def place_face(field, body, sizes=('md', 'sm', 'lg'), gaps=(2, 3, 1, 4), pad_min
             if span <= h or (span - h) % 2:
                 continue
             pad = (span - h) // 2
-            if pad < pad_min:
+            if pad < 1:
                 continue
-            top = fys[0] + pad
-            if any((x, y) not in field for y in range(top, top + h)
+            top = btop + pad
+            if any((x, y) not in body for y in range(top, top + h)
                    for x in range(lo, hi + 1)):
                 continue
-            above, below = top - btop, bbot - (top + h - 1)
-            if above != below:
-                continue
-            return dict(size=size, gap=gap, h=h, cy=top - off, top=top,
-                        pad=pad, above=above, below=below, span=span)
-    return None
+            crossed, hit = 0, ()
+            if bands is not None:
+                box = {(x, y) for y in range(top, top + h)
+                       for x in range(lo, hi + 1)}
+                hit = tuple(sorted(b for b, px in bands.items() if px & box))
+                crossed = len(hit)
+                if crossed < 2:
+                    continue
+            cand = dict(size=size, gap=gap, h=h, cy=top - off, top=top,
+                        pad=pad, above=top - btop, below=bbot - (top + h - 1),
+                        span=span, width=w, crossed=crossed, bands_crossed=hit,
+                        share=round(w / float(max(
+                            r[-1] - r[0] + 1 for r in rows.values())), 3))
+            assert cand['above'] == cand['below']
+            if best is None or (cand['width'], cand['h']) > (best['width'], best['h']):
+                best = cand
+    return best
 
 
 # --------------------------------------------------------------------------- #
 # marks
 # --------------------------------------------------------------------------- #
 
-def ramp(pal, m):
+def relum(c):
+    """sRGB relative luminance, so contrast is measured rather than guessed."""
+    def lin(v):
+        v /= 255.0
+        return v / 12.92 if v <= 0.04045 else ((v + 0.055) / 1.055) ** 2.4
+    r, g, b = (int(c[i:i + 2], 16) for i in (1, 3, 5))
+    return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b)
+
+
+def contrast(a, b):
+    la, lb = relum(a), relum(b)
+    hi, lo = max(la, lb), min(la, lb)
+    return (hi + 0.05) / (lo + 0.05)
+
+
+def ramp(pal, m, flip=False):
     """m tones spread evenly across the ramp's tail, so a spec can change how
-    many depth bands it keeps without needing a new palette."""
-    tail = pal[1:]
+    many depth bands it keeps without needing a new palette.
+
+    `flip` runs the ramp the other way: light at the rim, saturated at the
+    heart. Either direction is a legitimate reading of the overlap rule — one
+    says more petals means more light, the other says more petals means more
+    pigment — and which one a mark wants depends on whether its middle has to
+    carry white letterforms.
+    """
+    tail = pal[1:-1]           # the last entry is the face's, never a band's
+    tail = tail[::-1] if flip else tail
     if len(tail) == m:
         return tail
     if m == 1:
@@ -349,47 +390,38 @@ def build(spec):
     core = (petal(ctr, 0, 0, (ys[0] + ys[-1] + 1 - ctr) // 2 + spec.get('core_dy', 0))
             & inner if ctr else set())
 
-    if spec['mode'] == 'lattice':
-        rdep = depth_map(n, dist, size, phase, top, ring=spec['ring'])
-        rdep = {(x, y + dy0): v for (x, y), v in rdep.items()}
-        rdep = {p: v for p, v in rdep.items() if p in inner}
-        # Plain concentric centre so the face has clean ground; the ring arcs
-        # that would cross it are absorbed into it.
-        lattice2 = {p for p, v in rdep.items() if v >= 2} - core
-        lattice1 = {p for p, v in rdep.items() if v == 1} - core
-        ground = inner - core - lattice1 - lattice2
-        field = core
-        # Crossings glow brighter than the centre, as in the reference.
-        g, l1, fd, l2 = spec.get('lat', (1, 3, 4, 5))
-        layers = [(ground, pal[g]), (lattice1, pal[l1]), (field, pal[fd]),
-                  (lattice2, pal[l2]), (key, pal[0])]
-    else:
-        K = spec['K']
-        # A plain concentric circle when `core` is given, so the face never sits
-        # on a ragged star; otherwise the deep-overlap region itself.
-        field = core if ctr else ({p for p, v in dep.items() if v >= K} & inner)
-        merge = spec.get('merge')  # optional depth->band grouping for flat reads
-        bands = {}
-        for p in inner - field:
-            d = min(dep.get(p, 1), K)  # a filled row-gap counts as rim depth
-            b = merge[min(d, len(merge) - 1)] if merge else d
-            bands.setdefault(b, set()).add(p)
-        tones = ramp(pal, len(bands) + 1)
-        layers = [(bands[b], tones[i]) for i, b in enumerate(sorted(bands))]
-        layers.append((field, tones[-1]))
-        layers.append((key, pal[0]))
+    K = spec['K']
+    merge = spec.get('merge')
+    # Bands are the depth map and nothing else. There is no cleared circle in
+    # the middle any more: the deepest overlap *is* the heart of the flower, so
+    # it comes out petal-shaped rather than as a disc laid on top.
+    bands = {}
+    for p in inner:
+        d = min(dep.get(p, 1), K)  # a filled row-gap counts as rim depth
+        b = merge[min(d, len(merge) - 1)] if merge else d
+        bands.setdefault(b, set()).add(p)
+    order = sorted(bands)
+    # One extra step on the ramp, and the face takes it. The letterforms are
+    # therefore the tone the next overlap would have been — cut from the same
+    # material as the flower rather than painted on top of it.
+    tones = ramp(pal, len(order) + 1, flip=spec.get('flip', False))
+    layers = [(bands[b], tones[i]) for i, b in enumerate(order)]
+    layers.append((key, pal[0]))
+    face_fill = spec.get('face_fill') or pal[-1]
 
-    fit = place_face(field, body, sizes=spec.get('sizes', ('md', 'sm', 'lg')),
+    fit = place_face(body, sizes=spec.get('sizes', ('lg', 'md', 'sm')),
                      gaps=spec.get('gaps', (2, 3, 1, 4)),
-                     pad_min=spec.get('pad_min', 1))
-    return dict(layers=layers, body=body, field=field, key=key, dep=dep, fit=fit,
+                     bands={i: bands[b] for i, b in enumerate(order)})
+    return dict(layers=layers, body=body, key=key, dep=dep, fit=fit, key_fill=pal[0],
+                bands={i: bands[b] for i, b in enumerate(order)},
+                tones=tones, face_fill=face_fill,
                 bite=bool(spec.get('bite')))
 
 
 def check(slug, r):
     """Every hard requirement, asserted. Returns a one-line report."""
     body, fit = r['body'], r['fit']
-    assert fit, f'{slug}: no face size/gap splits both the field and the mark evenly'
+    assert fit, f'{slug}: no face size/gap sits on the mark with equal air'
     for px, fill in r['layers']:
         assert px, f'{slug}: empty layer {fill}'
         assert symmetric(px), f'{slug}: layer {fill} is not symmetric about x=16'
@@ -414,15 +446,35 @@ def check(slug, r):
     ys = [p[1] for p in body]
     assert min(xs) >= 2 and max(xs) <= 29, f'{slug}: x {min(xs)}..{max(xs)} outside 2..29'
     assert min(ys) >= 2 and max(ys) <= 29, f'{slug}: y {min(ys)}..{max(ys)} outside 2..29'
-    tones = len({f for _, f in r['layers']})
+    shown = {f for _, f in r['layers']} | {r['face_fill']}
+    tones = len(shown)
     assert tones >= 5, f'{slug}: only {tones} tones'
+    # The face is the brightest thing in the mark and it clears a real contrast
+    # ratio against every band it crosses — that is the contrast flip: light
+    # letterforms on the flower, not a dark face in a hole cut out of it.
+    fc = r['face_fill']
+    for px, fill in r['layers']:
+        if fill == r['key_fill']:
+            continue
+        assert relum(fc) > relum(fill), (f'{slug}: face {fc} is not brighter than '
+                                         f'band {fill}')
+    worst = min(contrast(fc, r['tones'][b]) for b in fit['bands_crossed'])
+    assert worst >= 2.4, (f'{slug}: face {fc} only reaches {worst:.2f}:1 against a '
+                          f'band it actually crosses')
+    # ...and the flower runs behind it rather than stopping at its edge.
+    assert fit['crossed'] >= 2, (f'{slug}: face crosses only {fit["crossed"]} band, '
+                                 f'so the petals stop at its edge')
+    # ...and it is a real fraction of the mark, not a detail in the middle.
+    assert fit['share'] >= 0.33, (f'{slug}: face is {fit["share"]:.0%} of the mark, '
+                                  f'too small to read as its centre')
     covered = set().union(*[p for p, _ in r['layers']])
     assert covered == body, f'{slug}: {len(body - covered)} pixels unpainted'
     assert fit['above'] == fit['below'], f'{slug}: mark air {fit["above"]}/{fit["below"]}'
     return (f'{slug}  {tones} tones · {max(xs) - min(xs) + 1}x{max(ys) - min(ys) + 1} '
             f'at x{min(xs)}-{max(xs)} y{min(ys)}-{max(ys)} · face {fit["size"]} gap'
-            f'{fit["gap"]} ({fit["h"]} rows) at cy {fit["cy"]} · field air '
-            f'{fit["pad"]}/{fit["pad"]} · mark air {fit["above"]}/{fit["below"]}'
+            f'{fit["gap"]} ({fit["h"]} rows) at cy {fit["cy"]} · face {fit["share"]:.0%} '
+            f'of width across {fit["crossed"]} bands · face {worst:.1f}:1 · '
+            f'mark air {fit["above"]}/{fit["below"]}'
             f' · max width step {max_step(body)}')
 
 
@@ -477,7 +529,7 @@ const {{ size = 128 }} = Astro.props;
 
 <MarkFrame size={{size}} title="Hozz — {name}">
 {body}
-  <g fill="{spec['palette'][0]}" shape-rendering="crispEdges">
+  <g fill="{r['face_fill']}" shape-rendering="crispEdges">
     {{facePathsAt({{ cx: 16, cy: {fit['cy']}, size: '{fit['size']}', smile: 'wide', gap: {fit['gap']} }}).map((d) => (
       <path d={{d}} />
     ))}}
@@ -485,7 +537,8 @@ const {{ size = 128 }} = Astro.props;
 </MarkFrame>
 ''')
     lum = lambda c: (int(c[1:3], 16) * 2 + int(c[3:5], 16) * 5 + int(c[5:7], 16))
-    ordered = sorted((t for t in tones if t != spec['palette'][0]), key=lum)
+    shown = {f for _, f in r['layers']} | {r['face_fill']}
+    ordered = sorted((t for t in shown if t != spec['palette'][0]), key=lum)
     swatch = ', '.join(f"'{c}'" for c in [spec['palette'][0]] + ordered[:4])
     (OUT / f'{slug}.meta.ts').write_text(f'''export default {{
   n: '{slug[1:]}', name: '{name}',
@@ -497,15 +550,15 @@ const {{ size = 128 }} = Astro.props;
     return line
 
 
-# Light-forward ramps. The first entry is the keyline and the face; everything
-# after it is the mark itself, and it starts at a *mid* teal rather than a dark
-# one. The reference flowers are pale shapes glowing out of a mid ground, so the
-# darkest thing inside any of these marks is its outermost band, and the deepest
-# overlap — the calm middle where the face goes — is very nearly white.
-SEA = ['#06282e', '#2f948f', '#54b3a6', '#87d0c1', '#b8e6da', '#eefaf5']
-GLACIER = ['#062632', '#2f8ca4', '#54acbc', '#8bcbd5', '#bde5ea', '#eef9fb']
-LAGOON = ['#04222a', '#2a9b91', '#57bcaa', '#8ed8c3', '#c0ebdd', '#f0fbf6']
-MINT = ['#08302f', '#35a08e', '#5fbfa8', '#95dac2', '#c4ecdc', '#f1fbf6']
+# Six entries each. The first is the keyline, the last belongs to the face and
+# is never used as a band, and the four between them are the depth ramp. The
+# gap between the fourth and the face is deliberately the largest step in the
+# palette: that is what lets white letterforms sit on the flower instead of in
+# a hole cut out of it, exactly as Mozz's white ZZ sits on its red label.
+SEA = ['#05262b', '#06735f', '#0b9077', '#14ad90', '#8fe0cc', '#f4fffb']
+GLACIER = ['#062632', '#065f78', '#0a7d96', '#1099b4', '#8ed3e4', '#f2fdff']
+LAGOON = ['#04222a', '#067567', '#0b9380', '#12b09a', '#8ce3d2', '#f1fef9']
+MINT = ['#08302f', '#0a7a68', '#109882', '#1ab498', '#96e3cf', '#f3fdf8']
 
 MARKS = [
     ('c22', 'Rosette, Six', SEA,

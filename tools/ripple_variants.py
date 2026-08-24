@@ -79,10 +79,13 @@ def build(slug, name, mode, size, idea, note):
     elif mode == 'above':
         # Two rows of chin, not four. A deep crescent three rows tall reads as
         # a heavy jaw and drags the whole mark downward.
+        # One row of lit at the top and one of shade at the bottom, matched.
+        # Any deeper and the chin eats the light under the smile, which reads as
+        # uneven even when the face is dead centre.
         lit = edge(inner, 0, -1, 1)
         deep = crescent(inner, 0, -1)
-        shade = crescent(inner, 0, -2) - deep
-        field = clear(inner, lit, shade, deep)
+        shade = set()
+        field = clear(inner, lit, deep)
     else:  # soft — one thin rim of each and nothing more
         lit = edge(inner, 0, -1, 1)
         deep = crescent(inner, 0, -1)
@@ -99,6 +102,15 @@ def build(slug, name, mode, size, idea, note):
     # something dropped on top of it. Same here.
     dys = sorted({p[1] for p in DISC})
     disc_mid2 = dys[0] + dys[-1] + 1          # twice the disc's centre line
+
+    # Face widths: lg 10, md 8, sm 7. The disc is 22 across — an even width —
+    # so only an even-width face can sit on x=16. `sm` is 7 wide and lands at
+    # 16.5 no matter what cx you give it, which is the half-pixel lean Brandon
+    # spotted. Even widths only.
+    WIDTH = {'lg': 10, 'md': 8, 'sm': 7}
+    disc_w = max(p[0] for p in DISC) - min(p[0] for p in DISC) + 1
+    assert (disc_w - WIDTH[size]) % 2 == 0, (
+        f'{slug}: a {WIDTH[size]}-wide face cannot centre on a {disc_w}-wide disc')
 
     GEOM = {
         'lg': {1: (10, -5), 2: (11, -5), 3: (12, -6), 4: (13, -6)},
@@ -184,10 +196,10 @@ build('c18', 'Ripple, Centred', 'above', 'md',
 build('c19', 'Ripple, Even', 'even', 'md',
       'Lit from no direction at all — one rim right the way round, so the field is uniform.',
       'The shading is concentric.')
-build('c20', 'Ripple, Quiet', 'soft', 'sm',
+build('c20', 'Ripple, Quiet', 'soft', 'md',
       'The small face, and the lightest touch of shading on the disc.',
       'One thin rim of light, one of shade.')
-build('c21', 'Ripple, Small', 'above', 'sm',
+build('c21', 'Ripple, Small', 'above', 'md',
       'The small face with the fuller shading — the most air of the set.',
       'Two steps of shade, small face.')
 print('done')
