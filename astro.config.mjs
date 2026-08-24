@@ -4,7 +4,7 @@ import sitemap from '@astrojs/sitemap';
 import icon from 'astro-icon';
 
 export default defineConfig({
-  site: 'https://hozz.brandomoore.com',
+  site: 'https://hozz.brando.page',
   integrations: [
     sitemap({
       // The variations and sketches are for review, not for search results. They

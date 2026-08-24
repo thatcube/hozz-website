@@ -1,4 +1,4 @@
-export const SITE = 'https://hozz.brandomoore.com';
+export const SITE = 'https://hozz.brando.page';
 export const GITHUB_URL = 'https://github.com/thatcube/hozz';
 export const DONATE_URL = 'https://github.com/sponsors/thatcube';
 export const LICENSE_URL = 'https://github.com/thatcube/hozz/blob/main/LICENSE';
