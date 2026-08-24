@@ -22,14 +22,14 @@ import {
 const hueByCategory = Object.fromEntries(CATEGORIES.map((category) => [category.key, category.hue]));
 
 const heroRecords = [
-  { ...STREAM_LANES[0][0], x: 19, y: 17, scale: 0.94, delay: -1.2 },
-  { ...STREAM_LANES[0][2], x: 50, y: 8, scale: 0.86, delay: -4.8 },
-  { ...STREAM_LANES[1][0], x: 81, y: 19, scale: 0.9, delay: -7.1 },
-  { ...STREAM_LANES[0][3], x: 15, y: 49, scale: 0.84, delay: -3.4 },
-  { ...STREAM_LANES[0][4], x: 85, y: 50, scale: 0.84, delay: -5.6 },
-  { ...STREAM_LANES[3][4], x: 19, y: 81, scale: 0.92, delay: -8.4 },
-  { ...STREAM_LANES[2][0], x: 50, y: 91, scale: 0.86, delay: -2.6 },
-  { ...STREAM_LANES[2][1], x: 81, y: 82, scale: 0.96, delay: -6.2 },
+  { ...STREAM_LANES[0][0], x: 22, y: 18, scale: 1.06, delay: -1.2 },
+  { ...STREAM_LANES[0][2], x: 53, y: 7, scale: 0.76, delay: -4.8 },
+  { ...STREAM_LANES[1][0], x: 86, y: 22, scale: 0.9, delay: -7.1 },
+  { ...STREAM_LANES[0][3], x: 18, y: 48, scale: 0.78, delay: -3.4 },
+  { ...STREAM_LANES[0][4], x: 88, y: 53, scale: 0.72, delay: -5.6 },
+  { ...STREAM_LANES[3][4], x: 25, y: 76, scale: 1, delay: -8.4 },
+  { ...STREAM_LANES[2][0], x: 52, y: 90, scale: 0.78, delay: -2.6 },
+  { ...STREAM_LANES[2][1], x: 83, y: 84, scale: 1.08, delay: -6.2 },
 ];
 
 const categorySamples = CATEGORIES.map((category) => ({
@@ -135,14 +135,16 @@ const structuredData = {
                   </radialGradient>
                 </defs>
                 <circle cx="350" cy="350" r="174" fill="url(#w12-lens-glow)" />
-                <ellipse cx="350" cy="350" rx="252" ry="226" />
+                <ellipse cx="350" cy="350" rx="238" ry="218" />
                 <ellipse class="inner-line" cx="350" cy="350" rx="145" ry="132" />
-                <path d="M350 350 C265 264 176 195 70 107" />
-                <path d="M350 350 C432 262 526 187 630 110" />
-                <path d="M350 350 C268 442 171 522 71 601" />
-                <path d="M350 350 C432 444 528 522 634 605" />
-                <path class="faint-line" d="M350 350 C347 238 350 120 350 20" />
-                <path class="faint-line" d="M350 350 C353 466 350 582 350 684" />
+                <path d="M350 350 C310 285 235 190 154 126" />
+                <path class="faint-line" d="M350 350 C360 245 372 140 371 49" />
+                <path d="M350 350 C420 310 515 220 602 154" />
+                <path class="faint-line" d="M350 350 C275 335 205 325 126 336" />
+                <path class="faint-line" d="M350 350 C445 340 525 370 616 371" />
+                <path d="M350 350 C290 405 230 470 175 532" />
+                <path class="faint-line" d="M350 350 C350 445 370 540 364 630" />
+                <path d="M350 350 C430 420 515 520 581 588" />
               </svg>
 
               <div class="source-orb">
@@ -275,9 +277,8 @@ const structuredData = {
 
           <ul class="destination-grid">
             {
-              DESTINATIONS.map((destination, index) => (
+              DESTINATIONS.map((destination) => (
                 <li style={`--cat:${hueByCategory[destination.category]};`}>
-                  <span class="destination-number">{String(index + 1).padStart(2, '0')}</span>
                   <span class="destination-line" aria-hidden="true"></span>
                   <h3>{destination.title}</h3>
                   <p>{destination.body}</p>
@@ -669,7 +670,6 @@ const structuredData = {
 
   code,
   .eyebrow,
-  .destination-number,
   .step-number,
   footer h2 {
     font-family: 'IBM Plex Mono', monospace;
@@ -1254,13 +1254,6 @@ const structuredData = {
     box-shadow: 0 18px 50px -42px rgba(19, 38, 56, 0.36);
   }
 
-  .destination-number {
-    position: relative;
-    z-index: 1;
-    color: var(--ink-muted);
-    font-size: 0.64rem;
-  }
-
   .destination-line {
     position: absolute;
     width: 12rem;
@@ -1360,6 +1353,7 @@ const structuredData = {
   }
 
   .how-section {
+    padding-bottom: clamp(4rem, 6vw, 6rem);
     background:
       linear-gradient(rgba(255, 255, 255, 0.44), rgba(255, 255, 255, 0.44)),
       var(--blue-wash);

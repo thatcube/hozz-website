@@ -1,0 +1,458 @@
+[
+  {
+    "width": 1920,
+    "external": [],
+    "overflow": 0,
+    "pageHeight": 9901,
+    "collisions": [],
+    "visibleAboveFold": [
+      {
+        "name": "origin float",
+        "top": 816,
+        "bottom": 903,
+        "fullyVisible": false
+      },
+      {
+        "name": "foothold foothold-1 float",
+        "top": 625,
+        "bottom": 810,
+        "fullyVisible": true
+      },
+      {
+        "name": "foothold foothold-2 float",
+        "top": 808,
+        "bottom": 968,
+        "fullyVisible": false
+      },
+      {
+        "name": "foothold foothold-3 float",
+        "top": 641,
+        "bottom": 781,
+        "fullyVisible": true
+      },
+      {
+        "name": "foothold foothold-4 float",
+        "top": 799,
+        "bottom": 960,
+        "fullyVisible": false
+      },
+      {
+        "name": "arrival float",
+        "top": 526,
+        "bottom": 617,
+        "fullyVisible": true
+      }
+    ],
+    "conditions": "No account · No subscription · No default destination"
+  },
+  {
+    "width": 1440,
+    "external": [],
+    "overflow": 0,
+    "pageHeight": 9552,
+    "collisions": [],
+    "visibleAboveFold": [
+      {
+        "name": "origin float",
+        "top": 816,
+        "bottom": 903,
+        "fullyVisible": false
+      },
+      {
+        "name": "foothold foothold-1 float",
+        "top": 625,
+        "bottom": 807,
+        "fullyVisible": true
+      },
+      {
+        "name": "foothold foothold-2 float",
+        "top": 808,
+        "bottom": 966,
+        "fullyVisible": false
+      },
+      {
+        "name": "foothold foothold-3 float",
+        "top": 641,
+        "bottom": 779,
+        "fullyVisible": true
+      },
+      {
+        "name": "foothold foothold-4 float",
+        "top": 799,
+        "bottom": 958,
+        "fullyVisible": false
+      },
+      {
+        "name": "arrival float",
+        "top": 526,
+        "bottom": 617,
+        "fullyVisible": true
+      }
+    ],
+    "conditions": "No account · No subscription · No default destination"
+  },
+  {
+    "width": 1121,
+    "external": [],
+    "overflow": 0,
+    "pageHeight": 8700,
+    "collisions": [],
+    "visibleAboveFold": [
+      {
+        "name": "origin float",
+        "top": 816,
+        "bottom": 903,
+        "fullyVisible": false
+      },
+      {
+        "name": "foothold foothold-1 float",
+        "top": 626,
+        "bottom": 801,
+        "fullyVisible": true
+      },
+      {
+        "name": "foothold foothold-2 float",
+        "top": 809,
+        "bottom": 963,
+        "fullyVisible": false
+      },
+      {
+        "name": "foothold foothold-3 float",
+        "top": 641,
+        "bottom": 793,
+        "fullyVisible": true
+      },
+      {
+        "name": "foothold foothold-4 float",
+        "top": 799,
+        "bottom": 955,
+        "fullyVisible": false
+      },
+      {
+        "name": "arrival float",
+        "top": 526,
+        "bottom": 617,
+        "fullyVisible": true
+      }
+    ],
+    "conditions": "No account · No subscription · No default destination"
+  },
+  {
+    "width": 1120,
+    "external": [],
+    "overflow": 0,
+    "pageHeight": 8697,
+    "collisions": [],
+    "visibleAboveFold": [
+      {
+        "name": "origin float",
+        "top": 817,
+        "bottom": 952,
+        "fullyVisible": false
+      },
+      {
+        "name": "foothold foothold-1 float",
+        "top": 626,
+        "bottom": 801,
+        "fullyVisible": true
+      },
+      {
+        "name": "foothold foothold-2 float",
+        "top": 809,
+        "bottom": 963,
+        "fullyVisible": false
+      },
+      {
+        "name": "foothold foothold-3 float",
+        "top": 641,
+        "bottom": 793,
+        "fullyVisible": true
+      },
+      {
+        "name": "foothold foothold-4 float",
+        "top": 851,
+        "bottom": 1025,
+        "fullyVisible": false
+      },
+      {
+        "name": "arrival float",
+        "top": 527,
+        "bottom": 631,
+        "fullyVisible": true
+      }
+    ],
+    "conditions": "No account · No subscription · No default destination"
+  },
+  {
+    "width": 1024,
+    "external": [],
+    "overflow": 0,
+    "pageHeight": 8471,
+    "collisions": [],
+    "visibleAboveFold": [
+      {
+        "name": "origin float",
+        "top": 817,
+        "bottom": 952,
+        "fullyVisible": false
+      },
+      {
+        "name": "foothold foothold-1 float",
+        "top": 626,
+        "bottom": 801,
+        "fullyVisible": true
+      },
+      {
+        "name": "foothold foothold-2 float",
+        "top": 809,
+        "bottom": 963,
+        "fullyVisible": false
+      },
+      {
+        "name": "foothold foothold-3 float",
+        "top": 641,
+        "bottom": 793,
+        "fullyVisible": true
+      },
+      {
+        "name": "foothold foothold-4 float",
+        "top": 851,
+        "bottom": 1025,
+        "fullyVisible": false
+      },
+      {
+        "name": "arrival float",
+        "top": 527,
+        "bottom": 631,
+        "fullyVisible": true
+      }
+    ],
+    "conditions": "No account · No subscription · No default destination"
+  },
+  {
+    "width": 901,
+    "external": [],
+    "overflow": 0,
+    "pageHeight": 8341,
+    "collisions": [],
+    "visibleAboveFold": [
+      {
+        "name": "origin float",
+        "top": 817,
+        "bottom": 952,
+        "fullyVisible": false
+      },
+      {
+        "name": "foothold foothold-1 float",
+        "top": 626,
+        "bottom": 801,
+        "fullyVisible": true
+      },
+      {
+        "name": "foothold foothold-2 float",
+        "top": 809,
+        "bottom": 962,
+        "fullyVisible": false
+      },
+      {
+        "name": "foothold foothold-3 float",
+        "top": 641,
+        "bottom": 793,
+        "fullyVisible": true
+      },
+      {
+        "name": "foothold foothold-4 float",
+        "top": 851,
+        "bottom": 1024,
+        "fullyVisible": false
+      },
+      {
+        "name": "arrival float",
+        "top": 527,
+        "bottom": 631,
+        "fullyVisible": true
+      }
+    ],
+    "conditions": "No account · No subscription · No default destination"
+  },
+  {
+    "width": 900,
+    "external": [],
+    "overflow": 0,
+    "pageHeight": 9990,
+    "collisions": [],
+    "visibleAboveFold": [
+      {
+        "name": "origin float",
+        "top": 817,
+        "bottom": 952,
+        "fullyVisible": false
+      },
+      {
+        "name": "foothold foothold-1 float",
+        "top": 626,
+        "bottom": 800,
+        "fullyVisible": true
+      },
+      {
+        "name": "foothold foothold-2 float",
+        "top": 809,
+        "bottom": 962,
+        "fullyVisible": false
+      },
+      {
+        "name": "foothold foothold-3 float",
+        "top": 641,
+        "bottom": 793,
+        "fullyVisible": true
+      },
+      {
+        "name": "foothold foothold-4 float",
+        "top": 852,
+        "bottom": 1024,
+        "fullyVisible": false
+      },
+      {
+        "name": "arrival float",
+        "top": 683,
+        "bottom": 786,
+        "fullyVisible": true
+      }
+    ],
+    "conditions": "No account · No subscription · No default destination"
+  },
+  {
+    "width": 701,
+    "external": [],
+    "overflow": 0,
+    "pageHeight": 9973,
+    "collisions": [],
+    "visibleAboveFold": [
+      {
+        "name": "origin float",
+        "top": 817,
+        "bottom": 952,
+        "fullyVisible": false
+      },
+      {
+        "name": "foothold foothold-1 float",
+        "top": 626,
+        "bottom": 800,
+        "fullyVisible": true
+      },
+      {
+        "name": "foothold foothold-2 float",
+        "top": 809,
+        "bottom": 962,
+        "fullyVisible": false
+      },
+      {
+        "name": "foothold foothold-3 float",
+        "top": 641,
+        "bottom": 792,
+        "fullyVisible": true
+      },
+      {
+        "name": "foothold foothold-4 float",
+        "top": 852,
+        "bottom": 1024,
+        "fullyVisible": false
+      },
+      {
+        "name": "arrival float",
+        "top": 683,
+        "bottom": 786,
+        "fullyVisible": true
+      }
+    ],
+    "conditions": "No account · No subscription · No default destination"
+  },
+  {
+    "width": 700,
+    "external": [],
+    "overflow": 0,
+    "pageHeight": 13277,
+    "collisions": [],
+    "visibleAboveFold": [
+      {
+        "name": "origin float",
+        "top": 665,
+        "bottom": 743,
+        "fullyVisible": true
+      },
+      {
+        "name": "foothold portrait-step-1 float",
+        "top": 798,
+        "bottom": 945,
+        "fullyVisible": false
+      }
+    ],
+    "conditions": "No account No subscription No default destination"
+  },
+  {
+    "width": 431,
+    "external": [],
+    "overflow": 0,
+    "pageHeight": 13861,
+    "collisions": [],
+    "visibleAboveFold": [
+      {
+        "name": "origin float",
+        "top": 665,
+        "bottom": 743,
+        "fullyVisible": true
+      },
+      {
+        "name": "foothold portrait-step-1 float",
+        "top": 798,
+        "bottom": 945,
+        "fullyVisible": false
+      }
+    ],
+    "conditions": "No account No subscription No default destination"
+  },
+  {
+    "width": 430,
+    "external": [],
+    "overflow": 0,
+    "pageHeight": 13907,
+    "collisions": [],
+    "visibleAboveFold": [
+      {
+        "name": "origin float",
+        "top": 713,
+        "bottom": 791,
+        "fullyVisible": true
+      },
+      {
+        "name": "foothold portrait-step-1 float",
+        "top": 846,
+        "bottom": 993,
+        "fullyVisible": false
+      }
+    ],
+    "conditions": "No account No subscription No default destination"
+  },
+  {
+    "width": 390,
+    "external": [],
+    "overflow": 0,
+    "pageHeight": 14291,
+    "collisions": [],
+    "visibleAboveFold": [
+      {
+        "name": "origin float",
+        "top": 713,
+        "bottom": 791,
+        "fullyVisible": true
+      },
+      {
+        "name": "foothold portrait-step-1 float",
+        "top": 846,
+        "bottom": 992,
+        "fullyVisible": false
+      }
+    ],
+    "conditions": "No account No subscription No default destination"
+  }
+]

@@ -149,6 +149,14 @@ DEPTH = depth_map(SHAPE)
 KEY_PX = {p for p, k in DEPTH.items() if k == 0}
 INNER = SHAPE - KEY_PX
 
+# Peel depth is an integer and wobbles by a pixel along a diagonal, which makes a
+# rim light drawn from it speckle. This is the same measurement taken smoothly:
+# the true distance from a pixel to the nearest pixel outside the mark, so it
+# changes gradually as the contour turns.
+OUTSIDE = [(x, y) for x in range(-2, 34) for y in range(-2, 34)
+           if (x, y) not in SHAPE]
+EDGE = {p: min(hypot(p[0] - q[0], p[1] - q[1]) for q in OUTSIDE) for p in INNER}
+
 # ---------------------------------------------------------------------------
 # The ramp. Eleven tones through the shipped body colour.
 #
@@ -193,12 +201,12 @@ FACE_FILL = '#ffffff'
 # they do on something round instead of running in straight bands.
 #
 # The rim lift is the glass edge — the outline lightened by up to three steps,
-# c45's meniscus. It is scaled by `1 − nd`, so it is strongest where the surface
-# faces the light and has faded to nothing by the time it wraps underneath. An
-# earlier pass added the meniscus flat, at full strength all the way round; it
-# put a bright band along the inside of the bottom edge that fought the falling
-# gradient and read as blotching at large sizes. A rim light that goes out as it
-# turns away is both what glass does and monotone, so the interior stays smooth.
+# c45's meniscus. It is drawn from a true distance to the edge rather than the
+# integer peel depth, and it tapers with `nd`, so it is strongest where the
+# surface faces the light and has gone out by the time it wraps underneath. Two
+# earlier passes got this wrong: a flat full-strength meniscus put a bright band
+# along the inside of the bottom edge that fought the falling gradient, and one
+# keyed to peel depth speckled single pixels wherever that integer wobbled.
 #
 # The fold lifts the free part of the tail past the body it hangs off, so it
 # reads as a plane turned under rather than a spike of the same colour.
@@ -209,10 +217,10 @@ FACE_FILL = '#ffffff'
 # ---------------------------------------------------------------------------
 LIGHT_AT = (5.0, -2.0)
 D0, D1 = 6.0, 30.0
-MENISCUS = 3
-BASE = 2.0
-SPREAD = 8.0
-RIM = 3.0
+BASE = 2.8
+SPREAD = 6.8
+RIM = 3.4          # how far the meniscus lifts the surface at the outline
+MEN = 3.0          # how many pixels it takes to fall back to the interior
 FOLD = 1.6
 
 
@@ -220,9 +228,12 @@ def tone_index(p):
     x, y = p
     d = hypot(x + 0.5 - LIGHT_AT[0], y + 0.5 - LIGHT_AT[1])
     nd = min(1.0, max(0.0, (d - D0) / (D1 - D0)))
-    inward = min(DEPTH[p] - 1, MENISCUS) / MENISCUS     # 0 on the outline, 1 deep
-    lift = RIM * (1 - inward) * (1 - nd)
-    s = BASE + SPREAD * nd - lift + (FOLD if p in SPOUT else 0.0)
+    s = BASE + SPREAD * nd
+    if p in SPOUT:
+        s += FOLD
+    else:
+        near = max(0.0, 1.0 - (EDGE[p] - 2.0) / MEN)
+        s -= RIM * near * (1 - nd)
     return max(0, min(N - 1, int(round(s))))
 
 

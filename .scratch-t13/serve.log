@@ -1,2 +1,15 @@
 ::ffff:127.0.0.1 - - [23/Aug/2026 23:10:40] "GET /t13-preview.html HTTP/1.1" 200 -
 ::ffff:127.0.0.1 - - [23/Aug/2026 23:10:55] "GET /t13-preview.html HTTP/1.1" 200 -
+::ffff:127.0.0.1 - - [23/Aug/2026 23:12:59] "GET /t13-preview.html HTTP/1.1" 200 -
+::ffff:127.0.0.1 - - [23/Aug/2026 23:14:18] "GET /t13-preview.html HTTP/1.1" 200 -
+::ffff:127.0.0.1 - - [23/Aug/2026 23:14:44] "GET /t13-preview.html HTTP/1.1" 200 -
+::ffff:127.0.0.1 - - [23/Aug/2026 23:15:20] "GET /t13-preview.html HTTP/1.1" 200 -
+::ffff:127.0.0.1 - - [23/Aug/2026 23:17:13] "GET /logos/ HTTP/1.1" 200 -
+::ffff:127.0.0.1 - - [23/Aug/2026 23:17:19] "GET /logos/ HTTP/1.1" 200 -
+::ffff:127.0.0.1 - - [23/Aug/2026 23:17:19] "GET /_astro/logos.DDjFoBSq.css HTTP/1.1" 200 -
+::ffff:127.0.0.1 - - [23/Aug/2026 23:17:19] "GET /fonts/ibm-plex-mono-400.woff2 HTTP/1.1" 200 -
+::ffff:127.0.0.1 - - [23/Aug/2026 23:17:19] "GET /fonts/ibm-plex-mono-500.woff2 HTTP/1.1" 200 -
+::ffff:127.0.0.1 - - [23/Aug/2026 23:17:19] "GET /fonts/switzer-400.woff2 HTTP/1.1" 200 -
+::ffff:127.0.0.1 - - [23/Aug/2026 23:17:19] "GET /fonts/switzer-700.woff2 HTTP/1.1" 200 -
+::ffff:127.0.0.1 - - [23/Aug/2026 23:17:19] "GET /fonts/switzer-800.woff2 HTTP/1.1" 200 -
+::ffff:127.0.0.1 - - [23/Aug/2026 23:17:19] "GET /fonts/switzer-600.woff2 HTTP/1.1" 200 -

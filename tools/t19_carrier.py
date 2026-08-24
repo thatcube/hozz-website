@@ -75,15 +75,15 @@ BODY_TOP = 2
 # y24) instead of dropping vertically the way the shipped wedge does; the right
 # edge eases 16,13,11,9 so the taper decelerates into the tip.
 TAIL_ROWS = {
-    25: (6, 16),
-    26: (6, 13),
-    27: (6, 11),
-    28: (7, 9),
+    25: (7, 14),
+    26: (7, 12),
+    27: (7, 10),
+    28: (8, 9),
 }
 
 # Where the voice enters. Half a pixel below the tip, so the innermost arc
 # closes around the tail rather than sitting on it.
-SOURCE = (8.0, 29.0)
+SOURCE = (8.5, 29.0)
 
 
 def body():
@@ -114,10 +114,10 @@ SHAPE = BODY | tail()
 # the white face clears more contrast here than it does on the shipped mark.
 # ---------------------------------------------------------------------------
 
-STEPS = 8
-TARGET_LUM = [0.44, 0.33, 0.25, 0.185, 0.145, 0.117, 0.097, 0.082]
-HUE = (272, 258)        # crest -> deep
-SAT = (0.80, 0.58)
+STEPS = 9
+TARGET_LUM = [0.420, 0.345, 0.285, 0.232, 0.180, 0.152, 0.131, 0.114, 0.099]
+HUE = (274, 256)        # crest -> deep
+SAT = (0.74, 0.62)
 KEY = '#190f31'
 FACE = '#ffffff'
 
@@ -172,21 +172,56 @@ def contrast(a, b):
 # the deep half of the ramp without anything being cleared for it.
 # ---------------------------------------------------------------------------
 
-RADII = [5.0, 8.6, 12.3, 16.0, 19.6, 23.2, 27.0]
+RADII = [5.0, 8.6, None, 16.0, 19.6, 23.2, 27.0]
 
 
 def dist(p):
     return math.hypot(p[0] + 0.5 - SOURCE[0], p[1] + 0.5 - SOURCE[1])
 
 
+def _close_third_arc():
+    """The third arc closes exactly on the face's nearest corner.
+
+    c45 called this the arithmetic being kind; here it is chosen. Setting the
+    radius at the face's own edge is what puts every pixel the face sits on
+    into the deep half of the ramp, so nothing has to be cleared for it and the
+    white still clears more contrast than it does on the shipped mark.
+    """
+    face = {(x, y) for x in range(FACE_LEFT, FACE_LEFT + FACE_W)
+            for y in range(FACE_TOP, FACE_TOP + FACE_H)}
+    RADII[2] = min(dist(p) for p in face) - 0.05
+
+
 def build():
+    _close_third_arc()
     key = keyline(SHAPE)
     inner = SHAPE - key
+    # The wall. One pixel just inside the keyline, where you are looking
+    # through the most material — the truest thing about a bubble, and the
+    # lit edge every sibling carries. It is not a separate colour: it takes
+    # whichever tone the wave has reached there, one step lighter. So the
+    # highlight is bright where the wave has just passed the mouth and has
+    # nearly died out by the far shoulder.
+    wall = keyline(inner)
+
     bands = [set() for _ in range(STEPS)]
     for p in inner:
         d = dist(p)
-        t = sum(1 for r in RADII if d >= r)
-        bands[t].add(p)
+        t = 1 + sum(1 for r in RADII if d >= r)
+        bands[t - 1 if p in wall else t].add(p)
+
+    # The crest. Mozz names its whole idea with twelve pixels of #c10026 —
+    # one lighter line reading as the groove. This is the same move: a single
+    # arc at full strength, the wavefront itself, struck from the same centre
+    # as every other tone in the mark. It rises out of the tail, breaks on the
+    # left edge and sweeps down under the chin, through the one part of this
+    # mark that has been empty in every version of it. It borrows the wall's
+    # tone rather than introducing a colour, and it closes a whole pixel short
+    # of the face, so nothing is cleared for the letterforms.
+    crest = {p for p in inner if abs(dist(p) - (RADII[2] - 0.6)) <= 0.5}
+    for t in bands:
+        t -= crest
+    bands[0] |= crest
     return key, bands
 
 

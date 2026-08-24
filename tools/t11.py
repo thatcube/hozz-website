@@ -185,9 +185,13 @@ if '--rings' in sys.argv:
 for i in range(STEPS):
     assert LEVELS[i + 1] < LEVELS[i], f'level {i + 1} is not inside level {i}'
 
-# The tail: a pennant off the bottom-left, its outer edge continuing the body's
-# corner, its inner edge falling twice as fast, to a two-pixel tip on y29.
-TAIL_ROWS = {24: (9, 15), 25: (8, 13), 26: (7, 11), 27: (6, 9), 28: (6, 7), 29: (6, 6)}
+# The tail: a wedge off the bottom-left, built the way the shipped mark builds
+# its own — one straight left edge continuing the body's bottom-left curve, the
+# taper taken entirely from the right. A tail that narrows on both sides at once
+# turns into a diagonal stroke; this one stays a piece of the bubble. Once the
+# keyline has taken the outer ring the fill inside runs 6-5-4-3-2 and only the
+# last row is pure line.
+TAIL_ROWS = {24: (9, 17), 25: (8, 15), 26: (8, 13), 27: (8, 12), 28: (8, 11), 29: (8, 10)}
 TAIL = {(x, y) for y, (a, b) in TAIL_ROWS.items() for x in range(a, b + 1)}
 SIL = BODY | TAIL
 
@@ -213,11 +217,25 @@ for y in sorted(TAIL_ROWS):
         assert a >= prev[0] - 1 and b <= prev[1], 'the tail flares instead of tapering'
         assert a <= prev[1] and b >= prev[0] - 1, 'the tail breaks contact with itself'
     prev = (a, b)
-assert set(range(*TAIL_ROWS[24])) <= {x for x in rows[23]}, 'tail overhangs the body'
+assert set(range(TAIL_ROWS[24][0], TAIL_ROWS[24][1] + 1)) <= set(rows[23]), \
+    'tail overhangs the body'
+# The tail is not a separate object with its own colour scheme: it is skin, and
+# it takes the same law the body takes — tone by distance from the edge. Peel
+# the whole silhouette and read the tail's depth off it. It is thin, so the law
+# only ever hands it the first three tones, and mostly the rim.
+DEPTH = {}
+_r, _rem = rings(SIL, STEPS)
+for _i, _ring in enumerate(_r, 1):
+    for _p in _ring:
+        DEPTH[_p] = _i
+for _p in _rem:
+    DEPTH[_p] = STEPS + 1
+assert max(DEPTH[p] for p in TAIL) <= 4, 'the tail has more depth than a flap should'
 
 # ---------------------------------------------------------------------------
 # Paint. One outline around the whole silhouette; the ramp inside the body by
-# level; the tail flat at the rim tone.
+# shell, down the tail by depth — the same tone for the same distance from the
+# edge, so the join is a continuation and not a seam.
 # ---------------------------------------------------------------------------
 OUTLINE = keyline(SIL)
 level = {}
@@ -229,7 +247,8 @@ paint = {}
 for p in BODY:
     paint[p] = RAMP[min(max(level[p] - 1, 0), STEPS - 1)]
 for p in TAIL:
-    paint[p] = RAMP[0]
+    paint[p] = RAMP[min(max(DEPTH[p] - 2, 0), STEPS - 1)] if '--flat' not in sys.argv \
+        else RAMP[0]
 JUNCTION = {p for p in BODY if level[p] == 0 and p not in OUTLINE}
 EXEMPT = JUNCTION | {(31 - x, y) for x, y in JUNCTION}   # the tail's own rows
 for p in OUTLINE:
@@ -246,8 +265,9 @@ if '--rings' in sys.argv:
     print(f'  [rings] core slab={is_slab(CORE, BODY)}')
 else:
     assert not is_slab(CORE, BODY), 'the core reads as a box dropped in the bubble'
-for i, c in enumerate(RAMP[1:], 1):          # rim band is broken by the join
-    assert all((31 - x, y) in layers[c] for x, y in layers[c]), f'{c} is not symmetric'
+for i, c in enumerate(RAMP[1:], 1):          # every band, inside the body, mirrors
+    assert all((31 - x, y) in layers[c] for x, y in layers[c] & BODY), \
+        f'{c} is not symmetric'
 body_only = {p: f for p, f in paint.items() if p in BODY and p not in EXEMPT}
 assert all(body_only.get((31 - x, y)) == f for (x, y), f in body_only.items()), \
     'the body is not symmetric about x=16'

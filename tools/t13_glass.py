@@ -59,8 +59,10 @@ NAME = 'Glass, cast'
 # Silhouette.
 # ---------------------------------------------------------------------------
 BODY_TOP = 2
-# radius-6 shoulders in the shipped idiom (insets 6,4,3,2,1,0), 26 across.
-WIDTHS = ([14, 18, 20, 22, 24, 26] + [26] * 9 + [24, 22, 20, 18, 16, 14])
+# 26 across. Round on top (radius 5, insets 5,3,2,1,0 — the shipped idiom) and
+# flatter underneath (radius 4), because a bubble needs a base to sit on and a
+# tail needs a corner to leave from, not a curve to slide off.
+WIDTHS = ([16, 20, 22, 24, 26] + [26] * 13 + [24, 22, 18])
 
 BODY = set()
 LEFT = {}
@@ -76,10 +78,10 @@ BODY_Y0, BODY_Y1 = BODY_TOP, BODY_TOP + len(WIDTHS) - 1
 # straight down to x4 — and then tapers to a blunt tip. Row widths below the
 # body fall monotonically, so the silhouette carries no spur.
 TAIL = set()
-for y in range(17, BODY_Y1 + 1):
+for y in range(19, BODY_Y1 + 1):
     TAIL |= {(x, y) for x in range(4, LEFT[y])}
 for y, (a, b) in {23: (4, 11), 24: (4, 10), 25: (4, 9),
-                  26: (5, 9), 27: (5, 8), 28: (6, 7)}.items():
+                  26: (5, 8), 27: (5, 7), 28: (6, 7)}.items():
     TAIL |= {(x, y) for x in range(a, b + 1)}
 
 SHAPE = BODY | TAIL
@@ -175,12 +177,14 @@ for p in rest:
 iy0 = min(y for _, y in INT)
 iy1 = max(y for _, y in INT)
 
-FLOOR = 4       # where the ramp starts at the top, so the top still has a bevel
-BEVEL = 1.2     # stops of darkening per pixel inward — Plozz's inset, with room
-BIAS = 1.35     # the cast, held back so the pale end lands under the face
-GLOW = (16, 20.5)
-GLOW_R = 6.0
-GLOW_LIFT = 6.0
+FLOOR = 2       # where the ramp starts at the top, so the top still has a bevel
+CAP = 8         # and where it stops: the palest four stops belong to the glow
+BEVEL = 1.4     # stops of darkening per pixel inward — Plozz's inset, with room
+DEEPEST = 3     # how far in the bevel reaches before the field goes flat
+BIAS = 1.3      # the cast, held back so the pale end lands under the face
+GLOW = (16, 19.5)
+GLOW_R = 5.5
+GLOW_LIFT = 6.5
 
 
 def index(p):
@@ -197,8 +201,8 @@ def index(p):
     """
     x, y = p
     u = (y - iy0) / (iy1 - iy0)
-    cast = FLOOR + (N - 1 - FLOOR) * u ** BIAS
-    thick = BEVEL * min(DEPTH[p], 4)
+    cast = FLOOR + (CAP - FLOOR) * u ** BIAS
+    thick = BEVEL * min(DEPTH[p], DEEPEST)
     d = ((x + 0.5 - GLOW[0]) ** 2 + (y + 0.5 - GLOW[1]) ** 2) ** 0.5
     glow = max(0.0, (GLOW_R - d) / GLOW_R) * GLOW_LIFT
     return max(0, min(N - 1, round(cast - thick + glow)))
@@ -300,8 +304,9 @@ print(f'  air {above} above / {below} below · {len(TONES)} tones · '
 print('  ramp ' + ' '.join(RAMP))
 
 if '--show' in sys.argv:
+    n_bands = len(LAYERS) - 3
     show([p for p, _ in LAYERS] + [FACE],
-         [str(i % 10) for i in range(N)] + ['+', '*', '#', '@'])
+         [str(i % 10) for i in range(n_bands)] + ['+', '*', '#', '@'])
 
 # ---------------------------------------------------------------------------
 # Emit.

@@ -33,7 +33,7 @@ shipped = re.sub(r'width="\d+" height="\d+"', '', shipped, count=1)
 a = (SC / 'a-shells.svg').read_text()
 b = (SC / 'b-rings.svg').read_text()
 
-MARKS = [('c45 (Hozz)', c45), ('t11 shells', a), ('t11 rings', b), ('shipped', shipped)]
+MARKS = [('c45 (Hozz)', c45), ('t11 ramped tail', a), ('t11 flat tail', b), ('shipped', shipped)]
 
 
 def sized(svg, px):

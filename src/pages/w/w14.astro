@@ -157,8 +157,9 @@ const structuredData = {
             <a class="button secondary" href="#how">Follow the crossing</a>
           </div>
           <p class="conditions">
-            No account <span aria-hidden="true">·</span> No subscription <span aria-hidden="true">·</span>
-            No default destination
+            No account{' '}<span aria-hidden="true">·</span>{' '}No subscription{' '}<span
+              aria-hidden="true">·</span
+            >{' '}No default destination
           </p>
         </div>
 
@@ -765,7 +766,7 @@ const structuredData = {
 
       .hero {
         position: relative;
-        min-height: 70rem;
+        min-height: 62.5rem;
         overflow: hidden;
         background:
           radial-gradient(60% 55% at 50% 48%, rgba(202, 225, 241, 0.58), transparent 74%),
@@ -782,12 +783,13 @@ const structuredData = {
       .hero-copy {
         position: relative;
         z-index: 3;
-        padding-top: clamp(4rem, 8vw, 7rem);
+        padding-top: clamp(3rem, 5.5vw, 5.25rem);
         text-align: center;
       }
       .hero-copy h1 {
-        max-width: 12ch;
+        max-width: 15ch;
         margin-inline: auto;
+        font-size: clamp(3.25rem, 6.1vw, 5.8rem);
       }
       .hero-copy .lede {
         max-width: 44rem;
@@ -858,7 +860,7 @@ const structuredData = {
       .crossing {
         position: absolute;
         z-index: 2;
-        inset: 43rem 0 auto;
+        inset: 34rem 0 auto;
         height: 27rem;
         margin: 0;
       }
@@ -905,7 +907,7 @@ const structuredData = {
       }
       .arrival {
         right: 2.5%;
-        top: 23%;
+        top: -20%;
         display: grid;
         gap: 0.12rem;
         rotate: 2deg;
@@ -953,8 +955,8 @@ const structuredData = {
         transform: scaleX(1.14);
       }
       .foothold-1 {
-        left: 18%;
-        top: 22%;
+        left: 13%;
+        top: 3%;
         rotate: -2.5deg;
       }
       .foothold-2 {
@@ -963,13 +965,13 @@ const structuredData = {
         rotate: 1.6deg;
       }
       .foothold-3 {
-        left: 57%;
-        top: 14%;
+        left: 65%;
+        top: 6%;
         rotate: -1deg;
       }
       .foothold-4 {
-        left: 75%;
-        top: 38%;
+        left: 77%;
+        top: 43%;
         rotate: 2deg;
       }
       .step-number {
@@ -1661,23 +1663,24 @@ const structuredData = {
 
       @media (max-width: 70rem) {
         .foothold {
-          width: 13rem;
+          width: 11.5rem;
         }
         .foothold-1 {
-          left: 16%;
+          left: 5%;
         }
         .foothold-2 {
-          left: 36%;
+          left: 28%;
         }
         .foothold-3 {
-          left: 56%;
+          left: 57%;
         }
         .foothold-4 {
-          left: 73%;
+          left: 75%;
+          top: 55%;
         }
         .origin,
         .arrival {
-          width: 13.5rem;
+          width: 11.5rem;
         }
       }
 
@@ -1689,31 +1692,32 @@ const structuredData = {
           display: none;
         }
         .hero {
-          min-height: 70rem;
+          min-height: 64rem;
         }
         .foothold {
-          width: 12rem;
+          width: 11.25rem;
           min-width: 0;
         }
         .foothold-1 {
-          left: 14%;
+          left: 5%;
         }
         .foothold-2 {
-          left: 35%;
+          left: 28%;
         }
         .foothold-3 {
-          left: 55%;
+          left: 43%;
         }
         .foothold-4 {
-          left: 70%;
+          left: 75%;
         }
         .origin {
           left: 1%;
-          width: 12rem;
+          width: 11.25rem;
         }
         .arrival {
           right: 1%;
-          width: 12rem;
+          top: 16%;
+          width: 11.25rem;
         }
         .thesis-grid,
         .split-head,
@@ -1799,6 +1803,10 @@ const structuredData = {
         .hero-copy h1,
         .hero-copy .lede {
           margin-inline: 0;
+        }
+        .hero-copy h1 {
+          max-width: 12ch;
+          font-size: clamp(3.05rem, 14vw, 4.35rem);
         }
         .hero-copy .actions {
           justify-content: flex-start;
