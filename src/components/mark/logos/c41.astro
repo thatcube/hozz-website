@@ -1,0 +1,71 @@
+---
+/**
+ * 41 · Ripple, Inset
+ *
+ * The whole disc is the fade: eight steps of the Plozz inset bevel, palest at the rim and bluest in the middle, every step too small to see alone.
+ *
+ * Brandon asked for "more gradual fade from the edges ... instead of 1 pixel of
+ * lighting/shading, we have 3px of it", pointing at the Plozz TV, where the
+ * screen "has more white around the edges and it gradually gets more blue
+ * towards the center ... you barely notice it change colors ... and yet theyre
+ * completely different colors."
+ *
+ * Plozz was rasterised to this grid and measured. Its screen carries three
+ * tones — #97e3fe, #82deff, #72daff — one pixel a step on the flanks and two at
+ * the corners, wrapping all four sides. The steps are 0.026 and 0.019 apart in
+ * Oklab, and that step size is the thing worth copying, not the step count.
+ *
+ * So this keeps Plozz's step and lengthens the run: 8 tones, every neighbouring
+ * pair 0.021 apart — inside Plozz's own range — over a total travel of
+ * 0.150, 3.4x Plozz's. Imperceptible steps, genuinely
+ * different ends. The tone at each pixel is its distance to the outside of the
+ * disc, cut at half-integers so one pixel of travel is always exactly one step;
+ * on the diagonals the bands double to two, which is the corner thickening
+ * measured off Plozz arriving on its own rather than being drawn in.
+ *
+ * A fade wrapping in from every edge of a circle is concentric, and concentric
+ * bands are how a target is drawn. Two things stop it: the ramp is monotone, so
+ * no ring is lighter than the rings either side of it, and the step is below
+ * the size at which a band edge shows. Both are asserted in the generator —
+ * every row and every column of the disc is checked to rise then fall with no
+ * dip and no skipped tone.
+ *
+ * The ramp is positioned by its average, not by its ends. Hung off a near-white
+ * rim it looked right at 96px and went ghostly at 24, because the pale outer
+ * bands cover far more of the disc than the deep inner ones — 76 visible
+ * pixels of the lightest against 22 of the darkest — so the whole mark averaged
+ * lighter than the flat #cfe3ef its siblings use, and at small sizes the average
+ * is all you get. It is now slid along its own axis until the area-weighted
+ * mean of what you can actually see is exactly #cfe3ef. c41 weighs the same as
+ * the marks beside it; what differs is the distribution, not the level.
+ *
+ * The disc, the water and the size are c10's, untouched. The face is centred on
+ * the disc rather than on the lit area, so the deepest blue pools under it the
+ * way Mozz's banding runs behind its ZZ. Measured air on the disc: 6 above,
+ * 6 below. 8 wide on a 22 wide disc, so it sits on x=16 whole.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Hozz — Ripple, Inset">
+  <path d="M13 20h6v1h-6z M7 21h18v1h-18z M4 22h4v1h-4z M24 22h4v1h-4z M3 23h2v1h-2z M27 23h2v1h-2z M2 24h2v1h-2z M28 24h2v1h-2z M2 25h2v1h-2z M28 25h2v1h-2z M3 26h2v1h-2z M27 26h2v1h-2z M4 27h4v1h-4z M24 27h4v1h-4z M7 28h18v1h-18z M13 29h6v1h-6z" fill="#96bcd6" />
+  <path d="M12 22h8v1h-8z M9 23h3v1h-3z M20 23h3v1h-3z M7 24h2v1h-2z M23 24h2v1h-2z M7 25h2v1h-2z M23 25h2v1h-2z M9 26h3v1h-3z M20 26h3v1h-3z M12 27h8v1h-8z" fill="#5d8cb0" />
+  <path d="M13 3h6v1h-6z M11 4h3v1h-3z M18 4h3v1h-3z M9 5h3v1h-3z M20 5h3v1h-3z M8 6h2v1h-2z M22 6h2v1h-2z M8 7h1v1h-1z M23 7h1v1h-1z M7 8h2v1h-2z M23 8h2v1h-2z M7 9h1v1h-1z M24 9h1v1h-1z M6 10h2v1h-2z M24 10h2v1h-2z M6 11h1v1h-1z M25 11h1v1h-1z M6 12h1v1h-1z M25 12h1v1h-1z M6 13h1v1h-1z M25 13h1v1h-1z M6 14h1v1h-1z M25 14h1v1h-1z M6 15h2v1h-2z M24 15h2v1h-2z M7 16h1v1h-1z M24 16h1v1h-1z M7 17h2v1h-2z M23 17h2v1h-2z M8 18h1v1h-1z M23 18h1v1h-1z M8 19h2v1h-2z M22 19h2v1h-2z M9 20h3v1h-3z M20 20h3v1h-3z M11 21h3v1h-3z M18 21h3v1h-3z M13 22h6v1h-6z" fill="#e7f1f6" />
+  <path d="M14 4h4v1h-4z M12 5h2v1h-2z M18 5h2v1h-2z M10 6h2v1h-2z M20 6h2v1h-2z M9 7h1v1h-1z M22 7h1v1h-1z M9 8h1v1h-1z M22 8h1v1h-1z M8 9h1v1h-1z M23 9h1v1h-1z M8 10h1v1h-1z M23 10h1v1h-1z M7 11h1v1h-1z M24 11h1v1h-1z M7 12h1v1h-1z M24 12h1v1h-1z M7 13h1v1h-1z M24 13h1v1h-1z M7 14h1v1h-1z M24 14h1v1h-1z M8 15h1v1h-1z M23 15h1v1h-1z M8 16h1v1h-1z M23 16h1v1h-1z M9 17h1v1h-1z M22 17h1v1h-1z M9 18h1v1h-1z M22 18h1v1h-1z M10 19h2v1h-2z M20 19h2v1h-2z M12 20h2v1h-2z M18 20h2v1h-2z M14 21h4v1h-4z" fill="#ddebf3" />
+  <path d="M14 5h4v1h-4z M12 6h2v1h-2z M18 6h2v1h-2z M10 7h2v1h-2z M20 7h2v1h-2z M10 8h1v1h-1z M21 8h1v1h-1z M9 9h1v1h-1z M22 9h1v1h-1z M9 10h1v1h-1z M22 10h1v1h-1z M8 11h1v1h-1z M23 11h1v1h-1z M8 12h1v1h-1z M23 12h1v1h-1z M8 13h1v1h-1z M23 13h1v1h-1z M8 14h1v1h-1z M23 14h1v1h-1z M9 15h1v1h-1z M22 15h1v1h-1z M9 16h1v1h-1z M22 16h1v1h-1z M10 17h1v1h-1z M21 17h1v1h-1z M10 18h2v1h-2z M20 18h2v1h-2z M12 19h2v1h-2z M18 19h2v1h-2z M14 20h4v1h-4z" fill="#d2e5f0" />
+  <path d="M14 6h4v1h-4z M12 7h3v1h-3z M17 7h3v1h-3z M11 8h2v1h-2z M19 8h2v1h-2z M10 9h2v1h-2z M20 9h2v1h-2z M10 10h1v1h-1z M21 10h1v1h-1z M9 11h2v1h-2z M21 11h2v1h-2z M9 12h1v1h-1z M22 12h1v1h-1z M9 13h1v1h-1z M22 13h1v1h-1z M9 14h2v1h-2z M21 14h2v1h-2z M10 15h1v1h-1z M21 15h1v1h-1z M10 16h2v1h-2z M20 16h2v1h-2z M11 17h2v1h-2z M19 17h2v1h-2z M12 18h3v1h-3z M17 18h3v1h-3z M14 19h4v1h-4z" fill="#c8dfed" />
+  <path d="M15 7h2v1h-2z M13 8h2v1h-2z M17 8h2v1h-2z M12 9h1v1h-1z M19 9h1v1h-1z M11 10h1v1h-1z M20 10h1v1h-1z M11 11h1v1h-1z M20 11h1v1h-1z M10 12h1v1h-1z M21 12h1v1h-1z M10 13h1v1h-1z M21 13h1v1h-1z M11 14h1v1h-1z M20 14h1v1h-1z M11 15h1v1h-1z M20 15h1v1h-1z M12 16h1v1h-1z M19 16h1v1h-1z M13 17h2v1h-2z M17 17h2v1h-2z M15 18h2v1h-2z" fill="#bed9ea" />
+  <path d="M15 8h2v1h-2z M13 9h2v1h-2z M17 9h2v1h-2z M12 10h1v1h-1z M19 10h1v1h-1z M12 11h1v1h-1z M19 11h1v1h-1z M11 12h1v1h-1z M20 12h1v1h-1z M11 13h1v1h-1z M20 13h1v1h-1z M12 14h1v1h-1z M19 14h1v1h-1z M12 15h1v1h-1z M19 15h1v1h-1z M13 16h2v1h-2z M17 16h2v1h-2z M15 17h2v1h-2z" fill="#b3d3e7" />
+  <path d="M15 9h2v1h-2z M13 10h2v1h-2z M17 10h2v1h-2z M13 11h1v1h-1z M18 11h1v1h-1z M12 12h1v1h-1z M19 12h1v1h-1z M12 13h1v1h-1z M19 13h1v1h-1z M13 14h1v1h-1z M18 14h1v1h-1z M13 15h2v1h-2z M17 15h2v1h-2z M15 16h2v1h-2z" fill="#a9cde4" />
+  <path d="M15 10h2v1h-2z M14 11h4v1h-4z M13 12h6v1h-6z M13 13h6v1h-6z M14 14h4v1h-4z M15 15h2v1h-2z" fill="#9ec7e1" />
+  <path d="M13 2h6v1h-6z M11 3h2v1h-2z M19 3h2v1h-2z M9 4h2v1h-2z M21 4h2v1h-2z M8 5h1v1h-1z M23 5h1v1h-1z M7 6h1v1h-1z M24 6h1v1h-1z M7 7h1v1h-1z M24 7h1v1h-1z M6 8h1v1h-1z M25 8h1v1h-1z M6 9h1v1h-1z M25 9h1v1h-1z M5 10h1v1h-1z M26 10h1v1h-1z M5 11h1v1h-1z M26 11h1v1h-1z M5 12h1v1h-1z M26 12h1v1h-1z M5 13h1v1h-1z M26 13h1v1h-1z M5 14h1v1h-1z M26 14h1v1h-1z M5 15h1v1h-1z M26 15h1v1h-1z M6 16h1v1h-1z M25 16h1v1h-1z M6 17h1v1h-1z M25 17h1v1h-1z M7 18h1v1h-1z M24 18h1v1h-1z M7 19h1v1h-1z M24 19h1v1h-1z M8 20h1v1h-1z M23 20h1v1h-1z M9 21h2v1h-2z M21 21h2v1h-2z M11 22h2v1h-2z M19 22h2v1h-2z M13 23h6v1h-6z" fill="#132638" />
+  <g fill="#132638" shape-rendering="crispEdges">
+    {facePathsAt({ cx: 16, cy: 13, size: 'md', smile: 'wide', gap: 3 }).map((d) => (
+      <path d={d} />
+    ))}
+  </g>
+</MarkFrame>

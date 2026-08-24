@@ -33,7 +33,9 @@ corners rather than being cleared for it.
 Nothing outside the disc changes: c10's two rings of water, lifted pixel for
 pixel, and the canonical 22-across circle.
 """
+import json
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -138,18 +140,41 @@ tones = {f for _, f in LAYERS}
 assert len(tones) >= 6, f'only {len(tones)} tones'
 
 # ---------------------------------------------------------------------------
-# The face. md, compact, gap 2 — measured with faceBoxAt, not computed, because
-# an even-height face is not symmetric about cy.
+# The face. md, compact, gap 2.
+#
+# The brief's height table covers md/**wide** only. These are the md/**compact**
+# numbers, measured here rather than computed, because an even-height face is
+# not symmetric about cy and computing it is how the off-by-one keeps happening:
 #
 #   md/compact:  gap1 (7, -3)  gap2 (8, -4)  gap3 (9, -4)  gap4 (10, -5)
 #
-# (height, top offset from cy) — measured in this repo with
-# `faceBoxAt({cx: 16, cy: 13, size: 'md', smile: 'compact', gap})`. The table in
-# the brief covers md/wide only; these are the compact numbers.
+# (height, top offset from cy). The disc is 22 rows, so only an even height can
+# split its air evenly: gap 2 and gap 4. Gap 2 is the family default and the
+# tighter of the two, which is the point of this mark, and it is a full two rows
+# shorter than the md/wide/gap3 the other Ripples had to use.
+#
+# `measure()` reads the numbers back out of mark.ts itself, so the table above
+# is checked rather than trusted.
 # ---------------------------------------------------------------------------
 GEOM_MD_COMPACT = {1: (7, -3), 2: (8, -4), 3: (9, -4), 4: (10, -5)}
 FACE_W = 8
 GAP = 2
+
+
+def measure(cx, cy, size, smile, gap):
+    """faceBoxAt/facePathsAt, straight out of mark.ts — never reimplemented."""
+    js = (f"import {{facePathsAt, faceBoxAt}} from '{ROOT}/src/data/mark.ts';"
+          f"const o={{cx:{cx},cy:{cy},size:'{size}',smile:'{smile}',gap:{gap}}};"
+          "console.log(JSON.stringify({box: faceBoxAt(o), paths: facePathsAt(o)}));")
+    out = subprocess.run(
+        ['node', '--experimental-strip-types', '--input-type=module', '--no-warnings', '-e', js],
+        capture_output=True, text=True, check=True).stdout
+    got = json.loads(out)
+    face = set()
+    for d in got['paths']:
+        face |= pixels(d)
+    return got['box'], face
+
 
 dxs = sorted({p[0] for p in DISC})
 dys = sorted({p[1] for p in DISC})
@@ -161,20 +186,38 @@ assert (disc_w - FACE_W) % 2 == 0, (
 H, OFF = GEOM_MD_COMPACT[GAP]
 assert (disc_h - H) % 2 == 0, f'a {H}-row face cannot split {disc_h} rows evenly'
 CY = (dys[0] + dys[-1] + 1 - H) // 2 - OFF
-top = CY + OFF
-above, below = top - dys[0], dys[-1] - (top + H - 1)
-assert above == below, f'air {above}/{below} on the disc'
 
-left = 16 - FACE_W // 2
-assert left + (FACE_W - 1) == 31 - left, 'face is not centred on x=16'
+box, FACE = measure(16, CY, 'md', 'compact', GAP)
+assert (box['h'], box['y'] - CY) == (H, OFF), (
+    f"mark.ts says {(box['h'], box['y'] - CY)}, the table says {(H, OFF)}")
+assert box['w'] == FACE_W, f"mark.ts says the face is {box['w']} wide"
+
+top = box['y']
+above, below = top - dys[0], dys[-1] - box['bottom']
+assert above == below, f'air {above}/{below} on the disc'
+assert box['x'] + box['right'] == 31, 'face is not centred on x=16'
+assert FACE <= DISC, 'face hangs off the disc'
+# The face is *not* a mirror-symmetric layer and must not be asserted as one: a
+# Z does not mirror. The family signature is two identical Zs repeated by
+# translation, and on md that translation is 5. The smile does mirror.
+eyes = {p for p in FACE if p[1] < top + 4}
+smile = {p for p in FACE if p[1] >= box['bottom'] - 1}
+assert eyes | smile == FACE, 'unexpected rows between the eyes and the smile'
+assert {(x + 5, y) for x, y in eyes if x < 16} == {p for p in eyes if p[0] >= 16}, (
+    'the two Zs are not the same letter')
+assert all((31 - x, y) in smile for x, y in smile), 'smile is not symmetric about x=16'
+# Both shipped marks keep the field under the face plain; the ramp passes
+# behind the disc, not under the letterforms.
+assert FACE <= core, 'the face does not sit entirely on the plain core'
 
 print(f'{SLUG} {NAME}')
 print(f'  disc {disc_w}x{disc_h} rows {dys[0]}-{dys[-1]} · face md/compact gap{GAP} '
-      f'= {FACE_W}x{H} at ({left}-{left + FACE_W - 1}, {top}-{top + H - 1}), cy={CY}')
+      f'= {FACE_W}x{H} at x{box["x"]}-{box["right"]}, y{top}-{box["bottom"]}, cy={CY}')
 print(f'  air {above} above / {below} below · {len(tones)} tones · ramp {" ".join(RAMP)}')
 
 if '--show' in sys.argv:
-    show([p for p, _ in LAYERS], ['~', '=', '6', '5', '4', '3', '2', '1', '#'])
+    show([p for p, _ in LAYERS] + [FACE],
+         ['~', '=', '6', '5', '4', '3', '2', '1', '#', '@'])
 
 # ---------------------------------------------------------------------------
 # Emit.
@@ -202,10 +245,12 @@ rows = '\n'.join(f'  <path d="{" ".join(to_paths(p))}" fill="{f}" />' for p, f i
  * The core has very nearly caught the colour of the water the disc is sitting
  * in, so the disc reads as something the light passes through.
  *
- * The ramp runs behind the face rather than being cleared for it, as on Mozz,
- * which is what makes the ZZ read as the middle of the object instead of
- * something dropped on top of it. The face is centred on the **disc**: {above}
- * rows of air above, {below} below, measured.
+ * Nothing is cleared for the letterforms — Mozz's rule, and the reason its ZZ
+ * reads as the middle of the record instead of something dropped on it. Here
+ * the arithmetic is kind: the compact face is exactly the size of the flat core
+ * the six rings enclose, so it sits on a plain field with the ramp starting at
+ * its edge. The face is centred on the **disc**: {above} rows of air above,
+ * {below} below, measured.
  *
  * {len(tones)} tones. c10's water, unchanged, and the canonical 22-across circle.
  */

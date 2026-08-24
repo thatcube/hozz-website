@@ -79,7 +79,7 @@ WATER_IN = set().union(*[pixels(d) for d, f in PATHS[:26] if f != '#96bcd6'])
 KEY = '#132638'
 
 # ---------------------------------------------------------------------------
-# The ramp: 9 body tones, in Mozz's idiom.
+# The ramp: Mozz's own count, eleven tones, built in Mozz's idiom.
 #
 # Mozz does not run a straight line from dark to light — it drifts in hue and
 # saturation as well, so the deep end is a colder, more purple red and the lit
@@ -87,14 +87,15 @@ KEY = '#132638'
 # towards the center, and yet theyre completely different colors."
 #
 # Same move here: the deep end is a duller, greyer slate; the lit end pulls
-# toward cyan, as a highlight picking up sky would. Ends differ by 27% of the
-# base luminance, delivered in eight steps of about 3.4% each — inside Mozz's
-# own 3-6% band, so no single step is a visible edge.
+# toward cyan, as a highlight picking up sky would. Consecutive steps sit at
+# 4-5% of the base luminance — inside the 3.3-9.1% band measured off Mozz — so
+# no single step is an edge you can point at, while the ends are 45% apart,
+# which is a different colour entirely. Mozz's own span is 56%.
 # ---------------------------------------------------------------------------
-N_TONES = 9
-L0, L1 = 0.742, 0.964     # HSL lightness, deepest -> lightest
-S0, S1 = 0.40, 0.86       # saturation: the deep end is duller, as Mozz's is
-H0, H1 = 206.0, 195.0     # hue drifts toward cyan as it lights
+N_TONES = 11
+L0, L1 = 0.685, 0.965     # HSL lightness, deepest -> lightest
+S0, S1 = 0.36, 0.88       # saturation: the deep end is duller, as Mozz's is
+H0, H1 = 208.0, 194.0     # hue drifts toward cyan as it lights
 
 
 def hsl(h, s, l):
@@ -117,93 +118,84 @@ def lum(hexv):
 
 
 # ---------------------------------------------------------------------------
-# The field.
+# The field: a lit body, plus a sheen that only ever *adds* light.
+#
+# The second half of that is the load-bearing idea. A reflection is light
+# arriving, never light removed, so the sheen is a non-negative offset laid
+# over the body. Written that way it cannot cut a dark notch into the disc —
+# the first version of this made the sheen bipolar and its dark lobe drove a
+# two-pixel spike out from under the chin, four tones away from its
+# surroundings. Additive, that whole class of defect is unreachable.
 # ---------------------------------------------------------------------------
 CX, CY, R = 16.0, 13.0, 11.0
 
-W_FORM = 1.00     # light from above — the part that survives 24px
-W_SHEEN = 0.66    # the crossed bands — the part that appears at 96px
-W_EDGE = 0.30     # the rim takes the light hardest, top and bottom both
+BASE = 3.2        # where the unlit body sits on the ramp
+W_KEY = 3.6       # light from above: the part that survives 24px
+W_DOME = 2.2      # the sphere's own falloff, so the shading follows the rim
+AMP = 3.0         # how far the sheen can lift a pixel, in ramp steps
+R0, R1 = 0.06, 0.70   # the sheen fades in away from the centre
 
-BAND = 7.2        # half-wavelength of a band, in pixels across the diagonal
-
-
-def wave(t):
-    """One band: bright on its axis, falling to dark a `BAND` away and holding.
-
-    A cosine rather than a step, because the whole brief is that you should not
-    be able to point at where one tone becomes the next.
-    """
-    return math.cos(math.pi * min(1.0, abs(t) / BAND))
+# The arm profile, indexed by distance from a band's axis in whole pixels.
+# Flat-topped and then easing off, so the bright core is wide enough to read as
+# a band rather than as a line, and the falloff is one ramp step at a time.
+ARM = [1.0, 1.0, 1.0, 1.0, 0.9, 0.7, 0.45, 0.2, 0.05, 0.0]
 
 
-def raw(x, y):
-    """Continuous lightness at a pixel, before smoothing and quantising.
+def arm(n):
+    return ARM[min(abs(n), len(ARM) - 1)]
 
-    x enters only through `dx`, and `dx` flips sign under x -> 31-x while every
-    use of it is even in the pair (u, v) — the two diagonals swap — so the
-    field is mirror-symmetric about x=16 by construction rather than by
-    correction afterwards.
+
+def field(x, y):
+    """The tone at a pixel, as a ramp index.
+
+    Symmetry is structural, not corrected afterwards. The two band indices are
+    n1 = x + y - 28 and n2 = x - y - 3; under x -> 31 - x they swap and negate
+    (n1 -> -n2, n2 -> -n1), and `arm` is even, so max(arm(n1), arm(n2)) is
+    invariant. Because they are integers the band boundaries land exactly on
+    pixel edges and come out as clean 45-degree staircases — which is how
+    Mozz's bands are actually drawn, one pixel of step per row.
     """
     dx = (x + 0.5) - CX
     dy = (y + 0.5) - CY
-    r = math.hypot(dx, dy) / R
+    r = min(1.0, math.hypot(dx, dy) / R)
 
-    form = -dy / R                                  # +1 at the top, -1 at the foot
+    # A sphere's own shading: brightest where the surface faces the light,
+    # falling off toward the rim in every direction. Iso-lines follow the
+    # circle, so quantising it gives contour bands rather than the horizontal
+    # stripes a plain top-to-bottom gradient produces.
+    dome = math.sqrt(max(0.0, 1.0 - r * r))
+    body = BASE + W_KEY * (-dy / R) + W_DOME * dome
 
-    # Mozz's bands are straight diagonals — they step one pixel per row and run
-    # right across the disc and out the other side. Two of them, crossed, so
-    # the pattern mirrors: u -> -v and v -> -u under the flip, and `wave` is
-    # even. An angular star was tried first and is wrong here — radial wedges
-    # converge, and the bottom one drove a dark spike out under the chin.
-    u = (dx + dy) * 0.7071
-    v = (dx - dy) * 0.7071
-    sheen = 0.5 * (wave(u) + wave(v))
-    sheen *= 1.0 - 0.35 * max(0.0, r - 0.76) / 0.24  # ease off at the keyline
+    # Four arms, on the diagonals. Mozz's are a single parallel family, which
+    # leaves it leaning; crossing two families keeps the straight diagonal
+    # edges and adds the mirror.
+    mask = min(1.0, max(0.0, (r - R0) / (R1 - R0)))
+    sheen = AMP * max(arm(x + y - 28), arm(x - y - 3)) * mask
 
-    edge = max(0.0, (r - 0.68) / 0.32)              # 0 inside, 1 at the rim
-    return W_FORM * form + W_SHEEN * sheen + W_EDGE * edge * form
-
-
-def smooth(body, passes=2):
-    """Blur the field before quantising, so band edges land as clean one-step
-    transitions instead of a sawtooth of single pixels."""
-    vals = {p: raw(*p) for p in body}
-    for _ in range(passes):
-        nxt = {}
-        for (x, y), v in vals.items():
-            ns = [vals[q] for q in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1))
-                  if q in vals]
-            nxt[(x, y)] = (2 * v + sum(ns)) / (2 + len(ns))
-        vals = nxt
-    return vals
+    return int(round(body)) + int(round(sheen))
 
 
 def quantise(body):
-    vals = smooth(body)
-    lo, hi = min(vals.values()), max(vals.values())
-    out = {}
-    for p, v in vals.items():
-        t = (v - lo) / (hi - lo)
-        out[p] = min(N_TONES - 1, int(t * N_TONES))
-    return out
+    tone = {p: max(0, min(N_TONES - 1, field(*p))) for p in body}
+    lo = min(tone.values())
+    return {p: t - lo for p, t in tone.items()}   # sit the field on the ramp
 
 
 def despeckle(tone, body):
     """Kill lone pixels so the field reads as bands, not as dither.
 
-    A pixel that disagrees with three or more of its four neighbours is noise
-    from quantising a smooth function, not a band. The rule looks at a
-    neighbourhood that is itself symmetric about x=16, so applying it cannot
-    break the symmetry the field was built with.
+    A pixel that matches none of its four neighbours is a rounding artefact,
+    not a band. The rule looks at a neighbourhood that is itself symmetric
+    about x=16, so applying it cannot break the symmetry the field was built
+    with — the assertions downstream re-check that.
     """
-    for _ in range(3):
+    for _ in range(4):
         nxt = dict(tone)
         for (x, y), t in tone.items():
             ns = [tone[q] for q in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1))
                   if q in tone]
-            if len(ns) == 4 and sum(1 for n in ns if n != t) >= 3:
-                nxt[(x, y)] = sorted(ns)[len(ns) // 2]
+            if len(ns) == 4 and t not in ns:
+                nxt[(x, y)] = sorted(ns)[2]
         if nxt == tone:
             break
         tone = nxt
@@ -291,31 +283,42 @@ def build():
  * 39 · {NAME}
  *
  * The Mozz reflection, measured and moved onto water. Rasterised to the 32
- * grid, Mozz's disc carries nine body tones between its keyline and its white
- * ZZ, and bucketing them by angle around the centre shows what they are: not
- * rings, but wedges. The tone swings right across the ramp as you go round the
- * compass and barely moves as you go out from the middle. That is light on a
- * spinning disc, and it is why Mozz reads as an object rather than as a circle
- * with a face on it.
+ * grid, Mozz's disc carries eleven colours: a near-black keyline, white for the
+ * ZZ, and nine body tones. Bucketing those by angle around the centre says what
+ * they are — not rings, but bands. The mean tone swings 2.3 to 7.4 right around
+ * the compass and moves only 6.0 to 4.4 from the centre out to the rim. Mozz's
+ * sheen is a function of angle, not of radius, which is what light on a
+ * spinning disc actually does, and it is why Mozz reads as an object rather
+ * than as a circle with a face on it.
  *
- * So this is nine tones in four arms. Mozz's wedges have two-fold rotational
- * symmetry, which leaves it leaning to one side; here they are built on
- * cos(4t) instead, which keeps the rotation and adds the mirror, so the sheen
- * is a four-armed star with no side to it. That matters on this mark and not
- * on Mozz, because the disc is sitting in a ring of water that is symmetric
- * about x=16, and a reflection leaning one way inside symmetric water reads as
- * an error rather than as light.
+ * So: eleven tones here too, in four straight-edged arms. The arms are built on
+ * the integer diagonals x+y and x-y, so their boundaries land on pixel edges
+ * and come out as 45-degree staircases stepping one pixel per row — Mozz's
+ * bands are drawn exactly that way. Where this departs from Mozz is on purpose.
+ * Mozz's bands are one parallel family with two-fold rotational symmetry, which
+ * leaves the whole mark leaning to one side. This disc sits in a pool of rings
+ * that are mirror-symmetric about x=16, and a sheen leaning one way inside
+ * symmetric water reads as a mistake rather than as light, so the two diagonal
+ * families are crossed. Under x -> 31-x they swap and negate and the arm
+ * profile is even, so every layer mirrors by construction.
  *
- * The steps are the point. Consecutive tones are about 3.4% of the base
- * luminance apart, inside the 3-6% band measured off Mozz, so no boundary is
- * an edge you can point at; the ends are 27% apart, which is a different
- * colour entirely. The ramp drifts in hue and saturation as well as
- * lightness — duller slate at the foot, cyan at the crest.
+ * The sheen only ever adds. A reflection is light arriving, never light
+ * removed, and writing it as a non-negative offset over the lit body makes a
+ * whole class of defect unreachable — the first cut of this was bipolar and its
+ * dark lobe punched a two-pixel notch out from under the chin.
  *
- * Underneath the arms is a plain top-to-bottom lightening. That is deliberate
- * insurance: at 24px a one-pixel wedge boundary is a third of a screen pixel
- * and gone, so what survives is simply a disc lit from above, which is a
- * correct reading of the same object.
+ * The steps are the point. Consecutive tones are 4.0-5.0% of the base
+ * luminance apart, inside the 3.3-9.1% band measured off Mozz, so no boundary
+ * is an edge you can point at, and no two touching pixels are ever more than
+ * two steps apart. The ends are 45% apart, which is a different colour
+ * entirely; Mozz's own span is 56%. The ramp drifts in hue and saturation as
+ * well as lightness — duller slate at the foot, cyan at the crest.
+ *
+ * Underneath the arms is a sphere's own falloff rather than a flat top-to-
+ * bottom gradient, so the shading follows the rim instead of banding into
+ * horizontal stripes. That is the part that survives 24px, where a one-pixel
+ * arm boundary is a third of a screen pixel and gone: downscaled, this is
+ * simply a disc lit from above, which is a correct reading of the same object.
  *
  * Nothing is cleared for the face. The arms run under the ZZ and out the other
  * side, exactly as Mozz's do, and the face is centred on the disc rather than
@@ -343,7 +346,7 @@ const {{ size = 128 }} = Astro.props;
     pal = [KEY, used[0], used[2], used[4], used[6], used[-1], '#96bcd6']
     (OUT / f'{SLUG}.meta.ts').write_text(f'''export default {{
   n: '{SLUG[1:]}', name: '{NAME}',
-  idea: "Mozz's reflection, measured: nine tones in four arms sweeping behind the face, and a plain lit disc when it shrinks.",
+  idea: "Mozz's reflection, measured: eleven tones in four straight-edged arms running behind the face, adding light and never taking it, and a plainly lit disc once it shrinks.",
   ground: 'light',
   palette: {pal!r},
 }};
