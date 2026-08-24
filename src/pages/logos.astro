@@ -44,6 +44,16 @@ const SIZES = [96, 48, 28, 16];
  */
 const SELECTED = 'c45';
 const chosen = all.find((i) => i.slug === SELECTED);
+
+/**
+ * The Twozz pick, on the same terms. Carrier earns it on the 28px row rather
+ * than the 150px one: the arcs stay legible when everything else in the set
+ * collapses to a plain bubble, and the idea behind them — a voice falling off
+ * across a room, struck around the off-frame speaker the tail points at — is
+ * the only one here that is about live audio rather than about chat.
+ */
+const TWOZZ_SELECTED = 't19';
+const twozzChosen = all.find((i) => i.slug === TWOZZ_SELECTED);
 ---
 
 <!doctype html>
@@ -178,6 +188,32 @@ const chosen = all.find((i) => i.slug === SELECTED);
                 and try to give it something to remember.
               </p>
             </header>
+            {twozzChosen && (
+              <section class="chosen">
+                <div class="chosen-art">
+                  <div class="chosen-ground chosen-ground--light">
+                    <twozzChosen.Comp size={128} />
+                  </div>
+                  <div class="chosen-ground chosen-ground--dark">
+                    <twozzChosen.Comp size={128} />
+                  </div>
+                </div>
+                <div class="chosen-note">
+                  <p class="eyebrow">Selected</p>
+                  <h2>
+                    {twozzChosen.meta.n} · {twozzChosen.meta.name}
+                  </h2>
+                  <p>{twozzChosen.meta.idea}</p>
+                  <p class="chosen-keep">
+                    Chosen on the 28px row, not the 150px one. Several below are
+                    better looking at full size — t13 does something with
+                    transmitted light that an opaque mark cannot — but that
+                    detail is gone by the time it is a favicon, and this one is
+                    still itself down there.
+                  </p>
+                </div>
+              </section>
+            )}
             {twozz.map((it) => {
               const C = it.Comp;
               const m = it.meta;
@@ -309,6 +345,81 @@ const chosen = all.find((i) => i.slug === SELECTED);
     max-width: 58ch;
     line-height: 1.55;
     color: #4d525a;
+  }
+
+  /**
+   * The Selected block. It gets the same pair of grounds as every card below,
+   * because the decision it records was made by looking at both — promoting a
+   * mark that had only ever been checked on white is precisely the mistake
+   * this page exists to catch.
+   */
+  .chosen {
+    display: grid;
+    gap: 1.5rem;
+    margin-block: clamp(1.25rem, 3vw, 2rem);
+    padding: clamp(1.35rem, 3vw, 2rem);
+    background: #fff;
+    border: 1px solid #d8dbe0;
+    border-radius: 18px;
+  }
+
+  @media (min-width: 940px) {
+    .chosen {
+      grid-template-columns: minmax(0, 19rem) minmax(0, 1fr);
+      gap: 2.25rem;
+      align-items: center;
+    }
+  }
+
+  .chosen-art {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .chosen-ground {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    border-radius: 14px;
+  }
+
+  /* The marks come in at a fixed 128px, so let them shrink with the column
+     instead of pushing it wider than the grid track. */
+  .chosen-ground :global(svg) {
+    width: 100%;
+    height: auto;
+    max-width: 128px;
+  }
+
+  .chosen-ground--light {
+    background: #fbfbfc;
+    border: 1px solid #eceef1;
+  }
+
+  .chosen-ground--dark {
+    background: #17181c;
+    border: 1px solid #17181c;
+  }
+
+  .chosen-note h2 {
+    font-size: clamp(1.25rem, 1rem + 1.2vw, 1.6rem);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+  }
+
+  .chosen-note p {
+    margin-top: 0.7rem;
+    max-width: 58ch;
+    line-height: 1.55;
+    color: #4d525a;
+  }
+
+  .chosen-file,
+  .chosen-keep {
+    font-size: 0.875rem;
+    color: #6a6f77;
   }
 
   .card {

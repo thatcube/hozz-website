@@ -4,7 +4,7 @@ Marketing site for [Hozz](https://github.com/thatcube/hozz) — a free,
 open-source iPhone and iPad app for exporting Apple Health data to destinations
 you own.
 
-Live at **[hozz.brandomoore.com](https://hozz.brandomoore.com)**.
+Live at **[hozz.brando.page](https://hozz.brando.page)**.
 
 ## Stack
 
@@ -94,9 +94,15 @@ npm run build
 npx wrangler deploy
 ```
 
-The Worker owns `hozz.brandomoore.com` as a custom domain. Declaring a route
-disables the `workers.dev` hostname, which is deliberate — the site is never
-served from two URLs.
+The Worker owns `hozz.brando.page` as a custom domain, and still answers on the
+former `hozz.brandomoore.com` so old links do not break. Only the first is
+canonical — every page declares `hozz.brando.page`, so the two hostnames are not
+competing for search results. Declaring any route disables the `workers.dev`
+hostname, which is deliberate.
+
+Both hostnames are listed in `wrangler.jsonc`. Wrangler reconciles custom
+domains against that list rather than merging with it, so a domain attached by
+hand in the dashboard and absent from the file is removed by the next deploy.
 
 ## Licence
 

@@ -19,7 +19,18 @@
     "not_found_handling": "404-page",
   },
 
-  // brandomoore.com now lives in this same account, so the Worker can own the
-  // hostname directly.
-  "routes": [{ "pattern": "hozz.brandomoore.com", "custom_domain": true }]
+  // Both hostnames are declared on purpose. hozz.brando.page is the canonical
+  // one and every page points at it; hozz.brandomoore.com stays attached so the
+  // handful of links that predate the move keep resolving instead of dying, and
+  // it serves the same pages with a canonical pointing at brando.page, which is
+  // how search engines are told which host is real. Once a 301 redirect rule
+  // exists in the brandomoore.com zone, the second entry can be dropped.
+  //
+  // Anything attached by hand in the dashboard but missing from this list gets
+  // silently detached by the next deploy — wrangler reconciles routes against
+  // this array, it does not merge with them.
+  "routes": [
+    { "pattern": "hozz.brando.page", "custom_domain": true },
+    { "pattern": "hozz.brandomoore.com", "custom_domain": true },
+  ]
 }

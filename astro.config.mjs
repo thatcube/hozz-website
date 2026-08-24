@@ -4,7 +4,7 @@ import sitemap from '@astrojs/sitemap';
 import icon from 'astro-icon';
 
 export default defineConfig({
-  site: 'https://hozz.brandomoore.com',
+  site: 'https://hozz.brando.page',
   // The privacy page used to live under /docs/ as well as at /privacy/, which
   // meant two pages saying half of the same thing each. There is now one, at
   // the address a store listing and this site's header already point at; the
