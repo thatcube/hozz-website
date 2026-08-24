@@ -770,23 +770,44 @@ const structuredData = {
       var(--air);
   }
 
+  /* The glow box used to begin hard at 38%, and 14px of blur could not hide a
+     box edge that size — it read as a seam down the middle of the hero. It now
+     starts at 20% and dissolves across a mask ramp instead. The gradient origins
+     moved 48% → 58% to compensate for the wider box, so the light still lands
+     in exactly the same place on the page. */
   .hero::before {
     content: '';
     position: absolute;
     z-index: -2;
-    inset: -15% -12% 0 38%;
+    inset: -15% -12% 0 20%;
     background:
-      radial-gradient(ellipse at 48% 44%, rgba(255, 255, 255, 0.94) 0 9%, transparent 38%),
+      radial-gradient(ellipse at 58% 44%, rgba(255, 255, 255, 0.94) 0 9%, transparent 38%),
       conic-gradient(
-        from 205deg at 48% 44%,
+        from 205deg at 58% 44%,
         rgba(237, 246, 252, 0) 0deg,
         rgba(202, 225, 241, 0.55) 29deg,
         rgba(255, 255, 255, 0) 58deg,
         rgba(185, 215, 235, 0.4) 90deg,
         rgba(255, 255, 255, 0) 124deg
       );
-    filter: blur(14px);
+    filter: blur(22px);
     transform: rotate(-8deg);
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      rgba(0, 0, 0, 0.18) 18%,
+      rgba(0, 0, 0, 0.55) 34%,
+      rgba(0, 0, 0, 0.85) 45%,
+      #000 56%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      rgba(0, 0, 0, 0.18) 18%,
+      rgba(0, 0, 0, 0.55) 34%,
+      rgba(0, 0, 0, 0.85) 45%,
+      #000 56%
+    );
   }
 
   .hero-glow {
@@ -1568,7 +1589,7 @@ const structuredData = {
   }
 
   .promise-grid li > span {
-    color: var(--blue);
+    color: #315f83;
   }
 
   .promise-grid h3 {

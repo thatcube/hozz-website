@@ -1175,13 +1175,40 @@ const jsonLd = {
         color: var(--ink);
       }
 
+      /* Narrow: the copy column dissolves so the ripple can rise to just under
+         the buttons. The statement, the thing spreading, what it means, then
+         the counts — the diagram is met, not described. */
       @media (max-width: 900px) {
+        .herogrid {
+          display: flex;
+          flex-direction: column;
+        }
+
         .hero-copy {
-          grid-template-columns: 1fr;
-          gap: 2.2rem;
+          display: contents;
+        }
+
+        .hero-say,
+        .hero-facts {
+          width: min(100% - 2.5rem, var(--shell));
+          margin-inline: auto;
+        }
+
+        .hero-say {
+          order: 1;
+        }
+
+        .stagewrap {
+          order: 2;
+        }
+
+        .notewrap {
+          order: 3;
         }
 
         .hero-facts {
+          order: 4;
+          margin-top: clamp(1.6rem, 1.1rem + 1.6vw, 2.4rem);
           margin-bottom: 0;
         }
       }
