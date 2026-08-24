@@ -1,6 +1,6 @@
 export default {
   n: '24', name: 'Rosette, Bloom',
-  idea: 'The same flower with everything small taken out of it — built to be read at 24 pixels.',
+  idea: 'The same flower stood upright and stripped of everything that dies at small size.',
   ground: 'light',
-  palette: ['#04222a', '#2a9b91', '#57bcaa', '#c0ebdd', '#f0fbf6'],
+  palette: ['#04222a', '#067567', '#0b9380', '#12b09a', '#f1fef9'],
 };

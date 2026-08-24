@@ -1,6 +1,6 @@
 export default {
   n: '25', name: 'Rosette, Five',
-  idea: 'Five breaths — the one count with no mirror pair, so the field itself is a five-pointed star.',
+  idea: 'Five breaths — the count with no mirror pair, opened up into a real bloom.',
   ground: 'light',
-  palette: ['#08302f', '#35a08e', '#5fbfa8', '#c4ecdc', '#f1fbf6'],
+  palette: ['#0a2e26', '#119a6d', '#1cb37f', '#9fe3c6', '#f3fdf7'],
 };

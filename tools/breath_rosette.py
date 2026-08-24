@@ -23,12 +23,40 @@ must be symmetric about x=16 and free of spurs, where a spur is a row wider than
 both its neighbours. `monotone()` below enforces exactly that and nothing more,
 so the four-steps survive.
 
-*Light runs outward, not inward.* The references are pale flowers glowing out of
-a mid ground, so depth is mapped to *brightness*: the pixel covered by every
-petal is nearly white, and the fringe covered by one is the darkest thing inside
-the keyline. Nothing in these marks is darker than its own rim except the
-keyline, which is the only dark tone and the only thing holding the mark off the
-paper. An earlier pass ran the ramp the other way and the overlaps read as dirt.
+*The whole disc is the face.* This is the note that shaped the current pass. The
+shipped Mozz mark draws its face in pure white on a red disc, exactly where a
+record's centre label sits, and lets the disc's sheen run straight behind the
+letterforms — so the ZZ *is* the middle of the record, not an object placed on
+it. The pass before this one did the opposite: it built a near-white core and put
+a dark face into it, which reads as a face hemmed into a pale hole in a busy
+flower. Suffocating was the word, and it was fair.
+
+So the contrast is flipped. There is no core layer at all now: the bands are the
+depth map and nothing else, which means the deepest overlap *is* the heart and
+comes out petal-shaped rather than circular. That heart is filled with a light
+*saturated* tone, not a washed-out one, and the face is drawn over it in the
+palest tone the ramp has — a tone reserved for the face alone, so the
+letterforms are effectively their own depth level, cut from the same material as
+the flower rather than painted onto it. Nothing is cleared to make room: every
+band runs under the face and out the far side. `place_face` asserts the face
+crosses at least two bands, so "the structure runs behind it" is measured rather
+than hoped for.
+
+*Contrast is the binding constraint, and it fights saturation.* White letterforms
+need a middling ground under them. Mozz gets away with 5.5:1 because red is dark.
+Saturated teal is not — Hozz's own #12b39a has a relative luminance of 0.35,
+which is only about 2.5:1 against near-white. So the palettes here are
+compressed: every band the face can actually reach is saturated enough to carry
+it, and the pale tone is only allowed out at the rim, where the face never
+reaches. `check` measures the real WCAG ratio against each crossed band and
+refuses anything under 2.4:1, so this cannot be wished away by picking nicer
+hex codes.
+
+*Both ramp directions are honest.* Running light outward gives pale petals round
+a saturated heart; running it inward gives a saturated ground with lighter rays
+through it, which is the closer reading of a record's sheen. Which one a mark
+wants depends on whether its middle has to carry white letterforms. Two of these
+four go each way.
 
 *Scallops are legal vertically and illegal horizontally.* The union of n discs
 has a cleft wherever two petals meet, and `bite` mode keeps those clefts instead
@@ -43,8 +71,9 @@ shortcoming of the search — c22 takes the two clefts that are available.
 symmetric about x=16, so every layer mirrors by construction, not by luck.
 
 *Centring.* The face is placed from the measured (height, offset) table, never
-computed, and both the air inside the field it sits on and the air inside the
-whole silhouette are asserted equal.
+computed, and the air above and below it inside the whole silhouette is asserted
+equal. There is no separate field to centre it in any more — that requirement was
+literally what produced the pale hole.
 
 The palette is deliberately a cooler, greyer sea-teal than Hozz's #12b39a,
 because the Apple reference is teal too and a straight copy of its hue would
@@ -77,6 +106,85 @@ FACE_W = {'lg': 10, 'md': 8, 'sm': 7}
 # --------------------------------------------------------------------------- #
 # geometry
 # --------------------------------------------------------------------------- #
+
+# The actual ZZ glyph, dumped from `facePathsAt` in src/data/mark.ts and
+# frozen here as (dx, dy) from (cx, top row). Measured, not derived — the
+# generator cannot run the TypeScript, and the face's *bounding box*
+# touches bands the letterforms never actually land on, so counting bands
+# against the box overstates how much structure runs behind the face.
+FACE_PX = {
+    ('lg', 1): (
+        (-5,0), (-4,0), (-3,0), (-2,0), (1,0), (2,0), (3,0), (4,0),
+        (-3,1), (-2,1), (3,1), (4,1), (-4,2), (-3,2), (2,2), (3,2),
+        (-5,3), (-4,3), (1,3), (2,3), (-5,4), (-4,4), (-3,4), (-2,4),
+        (1,4), (2,4), (3,4), (4,4), (-5,6), (4,6), (-5,7), (-4,7),
+        (3,7), (4,7), (-4,8), (-3,8), (-2,8), (-1,8), (0,8), (1,8),
+        (2,8), (3,8), (-3,9), (-2,9), (-1,9), (0,9), (1,9), (2,9)),
+    ('lg', 2): (
+        (-5,0), (-4,0), (-3,0), (-2,0), (1,0), (2,0), (3,0), (4,0),
+        (-3,1), (-2,1), (3,1), (4,1), (-4,2), (-3,2), (2,2), (3,2),
+        (-5,3), (-4,3), (1,3), (2,3), (-5,4), (-4,4), (-3,4), (-2,4),
+        (1,4), (2,4), (3,4), (4,4), (-5,7), (4,7), (-5,8), (-4,8),
+        (3,8), (4,8), (-4,9), (-3,9), (-2,9), (-1,9), (0,9), (1,9),
+        (2,9), (3,9), (-3,10), (-2,10), (-1,10), (0,10), (1,10), (2,10)),
+    ('lg', 3): (
+        (-5,0), (-4,0), (-3,0), (-2,0), (1,0), (2,0), (3,0), (4,0),
+        (-3,1), (-2,1), (3,1), (4,1), (-4,2), (-3,2), (2,2), (3,2),
+        (-5,3), (-4,3), (1,3), (2,3), (-5,4), (-4,4), (-3,4), (-2,4),
+        (1,4), (2,4), (3,4), (4,4), (-5,8), (4,8), (-5,9), (-4,9),
+        (3,9), (4,9), (-4,10), (-3,10), (-2,10), (-1,10), (0,10),
+        (1,10), (2,10), (3,10), (-3,11), (-2,11), (-1,11), (0,11),
+        (1,11), (2,11)),
+    ('lg', 4): (
+        (-5,0), (-4,0), (-3,0), (-2,0), (1,0), (2,0), (3,0), (4,0),
+        (-3,1), (-2,1), (3,1), (4,1), (-4,2), (-3,2), (2,2), (3,2),
+        (-5,3), (-4,3), (1,3), (2,3), (-5,4), (-4,4), (-3,4), (-2,4),
+        (1,4), (2,4), (3,4), (4,4), (-5,9), (4,9), (-5,10), (-4,10),
+        (3,10), (4,10), (-4,11), (-3,11), (-2,11), (-1,11), (0,11),
+        (1,11), (2,11), (3,11), (-3,12), (-2,12), (-1,12), (0,12),
+        (1,12), (2,12)),
+    ('md', 1): (
+        (-4,0), (-3,0), (-2,0), (1,0), (2,0), (3,0), (-3,1), (-2,1),
+        (2,1), (3,1), (-4,2), (-3,2), (1,2), (2,2), (-4,3), (-3,3),
+        (-2,3), (1,3), (2,3), (3,3), (-4,5), (3,5), (-4,6), (-3,6),
+        (2,6), (3,6), (-3,7), (-2,7), (-1,7), (0,7), (1,7), (2,7)),
+    ('md', 2): (
+        (-4,0), (-3,0), (-2,0), (1,0), (2,0), (3,0), (-3,1), (-2,1),
+        (2,1), (3,1), (-4,2), (-3,2), (1,2), (2,2), (-4,3), (-3,3),
+        (-2,3), (1,3), (2,3), (3,3), (-4,6), (3,6), (-4,7), (-3,7),
+        (2,7), (3,7), (-3,8), (-2,8), (-1,8), (0,8), (1,8), (2,8)),
+    ('md', 3): (
+        (-4,0), (-3,0), (-2,0), (1,0), (2,0), (3,0), (-3,1), (-2,1),
+        (2,1), (3,1), (-4,2), (-3,2), (1,2), (2,2), (-4,3), (-3,3),
+        (-2,3), (1,3), (2,3), (3,3), (-4,7), (3,7), (-4,8), (-3,8),
+        (2,8), (3,8), (-3,9), (-2,9), (-1,9), (0,9), (1,9), (2,9)),
+    ('md', 4): (
+        (-4,0), (-3,0), (-2,0), (1,0), (2,0), (3,0), (-3,1), (-2,1),
+        (2,1), (3,1), (-4,2), (-3,2), (1,2), (2,2), (-4,3), (-3,3),
+        (-2,3), (1,3), (2,3), (3,3), (-4,8), (3,8), (-4,9), (-3,9),
+        (2,9), (3,9), (-3,10), (-2,10), (-1,10), (0,10), (1,10), (2,10)),
+    ('sm', 1): (
+        (-3,0), (-2,0), (-1,0), (1,0), (2,0), (3,0), (-2,1), (-1,1),
+        (2,1), (3,1), (-3,2), (-2,2), (1,2), (2,2), (-3,3), (-2,3),
+        (-1,3), (1,3), (2,3), (3,3), (-3,5), (3,5), (-2,6), (-1,6),
+        (0,6), (1,6), (2,6)),
+    ('sm', 2): (
+        (-3,0), (-2,0), (-1,0), (1,0), (2,0), (3,0), (-2,1), (-1,1),
+        (2,1), (3,1), (-3,2), (-2,2), (1,2), (2,2), (-3,3), (-2,3),
+        (-1,3), (1,3), (2,3), (3,3), (-3,6), (3,6), (-2,7), (-1,7),
+        (0,7), (1,7), (2,7)),
+    ('sm', 3): (
+        (-3,0), (-2,0), (-1,0), (1,0), (2,0), (3,0), (-2,1), (-1,1),
+        (2,1), (3,1), (-3,2), (-2,2), (1,2), (2,2), (-3,3), (-2,3),
+        (-1,3), (1,3), (2,3), (3,3), (-3,7), (3,7), (-2,8), (-1,8),
+        (0,8), (1,8), (2,8)),
+    ('sm', 4): (
+        (-3,0), (-2,0), (-1,0), (1,0), (2,0), (3,0), (-2,1), (-1,1),
+        (2,1), (3,1), (-3,2), (-2,2), (1,2), (2,2), (-3,3), (-2,3),
+        (-1,3), (1,3), (2,3), (3,3), (-3,8), (3,8), (-2,9), (-1,9),
+        (0,9), (1,9), (2,9)),
+}
+
 
 def erode(shape):
     """Peel one pixel off every edge, four-connected."""
@@ -308,9 +416,8 @@ def place_face(body, sizes=('lg', 'md', 'sm'), gaps=(2, 3, 1, 4), bands=None):
                 continue
             crossed, hit = 0, ()
             if bands is not None:
-                box = {(x, y) for y in range(top, top + h)
-                       for x in range(lo, hi + 1)}
-                hit = tuple(sorted(b for b, px in bands.items() if px & box))
+                glyph = {(16 + dx, top + dy) for dx, dy in FACE_PX[(size, gap)]}
+                hit = tuple(sorted(b for b, px in bands.items() if px & glyph))
                 crossed = len(hit)
                 if crossed < 2:
                     continue
@@ -558,11 +665,11 @@ const {{ size = 128 }} = Astro.props;
 SEA = ['#05262b', '#06735f', '#0b9077', '#14ad90', '#8fe0cc', '#f4fffb']
 GLACIER = ['#062632', '#065f78', '#0a7d96', '#1099b4', '#8ed3e4', '#f2fdff']
 LAGOON = ['#04222a', '#067567', '#0b9380', '#12b09a', '#8ce3d2', '#f1fef9']
-MINT = ['#08302f', '#0a7a68', '#109882', '#1ab498', '#96e3cf', '#f3fdf8']
+JADE = ['#0a2e26', '#0c7a55', '#119a6d', '#1cb37f', '#9fe3c6', '#f3fdf7']
 
 MARKS = [
     ('c22', 'Rosette, Six', SEA,
-     'Six breaths overlapping, and you can count them round the rim.',
+     'Six breaths overlapping, counted round the rim, with the ZZ as the heart.',
      ' * Six identical circles, each one `circles.circle(14)` translated seven\n'
      ' * pixels off centre and nothing more. Not a radius test in sight: the\n'
      ' * petal profile is the one lifted off the shipped Mozz mark, so all six\n'
@@ -578,18 +685,15 @@ MARKS = [
      ' * or right side would be a fault by definition. Vertically it is legal,\n'
      ' * because a row is measured edge to edge and a notch does not widen it.\n'
      ' *\n'
-     ' * Tone runs the other way from a shadow: the more petals cover a pixel\n'
-     ' * the lighter it is, so the middle is nearly white and the single-petal\n'
-     ' * fringe is the darkest thing inside the keyline. The mark gives off\n'
-     ' * light instead of collecting dirt.\n'
-     ' *\n'
-     ' * The bright centre is another canonical circle, concentric, so the face\n'
-     ' * never sits on a ragged star. Its height and offset come from the\n'
-     ' * measured face table, never computed here.',
-     dict(mode='fill', n=6, dist=7.0, size=14, phase=0.0, K=4, core=12, bite=True,
-          merge=[0, 0, 1, 2, 2, 2, 2, 2, 2], palette=SEA)),
+     ' * The petals are pale and the place all six agree is saturated, so the\n'
+     ' * flower gathers colour toward its middle instead of bleaching out. The\n'
+     ' * face is then set in the palest tone the ramp has, straight on top of\n'
+     ' * that heart — the petal bands are not cleared to make room for it, they\n'
+     ' * run under the letterforms and out the other side.',
+     dict(mode='fill', n=6, dist=7.0, size=14, phase=0.0, bite=True, K=5,
+          merge=[0, 0, 1, 2, 2, 3, 3, 3, 3], flip=True, palette=SEA)),
     ('c23', 'Rosette, Eight', GLACIER,
-     'Eight breaths instead of six — finer petals, and a sunburst rather than a star.',
+     'Eight breaths, and the ZZ sits where the record label would be.',
      ' * Eight circles on a ring of six, each the same translated\n'
      ' * `circles.circle(14)`. Doubling the petal count from the six halves the\n'
      ' * angle between them, so the overlaps are narrower and the middle\n'
@@ -600,70 +704,69 @@ MARKS = [
      ' * disc with dents, and the widest row is still the centre one, so the\n'
      ' * profile rises once and falls once with no spur anywhere.\n'
      ' *\n'
-     ' * Depth is grouped into three broad bands rather than left as a gradient,\n'
-     ' * which is what keeps the rays legible once the mark is small enough that\n'
-     ' * individual petals stop resolving.\n'
-     ' *\n'
-     ' * Lit from the middle out: eight petals deep is almost white, one petal\n'
-     ' * deep is the mid teal the whole thing floats on. The rays are light\n'
-     ' * leaving the centre, which is the only way this reads as breathing\n'
-     ' * rather than as staining.\n'
+     ' * This is the most direct answer to the record: a saturated ground with\n'
+     ' * the eight rays running through it as lighter sheen, and the face laid\n'
+     ' * over the whole thing in the palest tone. Nothing is cut away for the\n'
+     ' * letterforms. The rays pass behind the ZZ and come out the far side, the\n'
+     ' * way the banding on a disc passes behind its label, and at twelve rows\n'
+     ' * and thirty-eight per cent of the width the face is big enough to be the\n'
+     ' * centre of the flower rather than a detail sitting in one.\n'
      ' *\n'
      ' * Glacier teal: pushed bluer than the six so the two do not read as the\n'
      ' * same mark twice.',
-     dict(mode='fill', n=8, dist=6.0, size=14, phase=-67.5, K=3, core=10,
-          merge=[0, 0, 1, 2, 2, 2, 2, 2, 2], palette=GLACIER)),
+     dict(mode='fill', n=8, dist=6.0, size=14, phase=-67.5, K=5,
+          merge=[0, 1, 1, 2, 2, 3, 3, 3, 3], flip=False, palette=GLACIER)),
     ('c24', 'Rosette, Bloom', LAGOON,
-     'The same flower with everything small taken out of it — built to be read at 24 pixels.',
+     'The same flower stood upright and stripped of everything that dies at small size.',
      ' * This replaces a lattice mark that was lovely at 96 pixels and mud at\n'
      ' * 24. An app icon lives at small sizes, so this one is designed at the\n'
      ' * small size and allowed to be plain at the large one.\n'
      ' *\n'
      ' * Six petals again, but bigger — `circles.circle(16)` on a ring of six —\n'
      ' * and turned point-up rather than flat-up, so it stands vertically where\n'
-     ' * the six lies horizontally and the two cannot be confused.\n'
+     ' * the six lies horizontally and the two cannot be confused. It is the\n'
+     ' * only portrait mark in the set.\n'
      ' *\n'
-     ' * Everything narrow has been merged away. Depths one and two are one\n'
-     ' * band, three is a second, and everything deeper is the centre, which is\n'
-     ' * a canonical circle of near-white. What is left is three areas, not a\n'
-     ' * gradient: a mid-teal rim, a pale six-pointed star where the petals\n'
-     ' * agree, and a light middle with the face on it. Three areas survive\n'
-     ' * being four pixels across; eight rays do not.\n'
+     ' * The banding is cut coarse on purpose: a one-pixel fringe, then two wide\n'
+     ' * steps, then everything from the fourth overlap inward as a single\n'
+     ' * lightest area. That last band is the six-pointed star, and cutting it\n'
+     ' * at four rather than five is what makes its points long enough to reach\n'
+     ' * out past the face instead of hiding behind it. Four areas survive being\n'
+     ' * four pixels across; a fine gradient does not.\n'
      ' *\n'
-     ' * At this ring distance the petals overlap too far to leave a cleft in the\n'
-     ' * outline, so unlike the six the flower is carried entirely by the star\n'
-     ' * inside it. That is the trade: a bitten rim is the first thing to go\n'
-     ' * when the mark has to survive being twenty-four pixels wide.',
-     dict(mode='fill', n=6, dist=6.0, size=16, phase=-90.0, K=3, core=12, bite=True,
-          merge=[0, 0, 1, 2, 2, 2, 2, 2, 2], palette=LAGOON)),
-    ('c25', 'Rosette, Five', MINT,
-     'Five breaths — the one count with no mirror pair, so the field itself is a five-pointed star.',
+     ' * At this ring distance the petals overlap too far to leave a cleft in\n'
+     ' * the outline, so unlike the six the flower is carried entirely by the\n'
+     ' * star inside it. That is the trade: a bitten rim is the first thing to\n'
+     ' * go when the mark has to survive being twenty-four pixels wide.',
+     dict(mode='fill', n=6, dist=6.0, size=16, phase=-90.0, bite=True, K=5,
+          merge=[0, 1, 1, 2, 2, 3, 3, 3, 3], flip=False, palette=LAGOON)),
+    ('c25', 'Rosette, Five', JADE,
+     'Five breaths — the count with no mirror pair, opened up into a real bloom.',
      ' * Five circles, which is the one count with no mirror pair top to bottom,\n'
-     ' * so the pentafoil sits point-up and the two halves of the mark are\n'
-     ' * genuinely different shapes.\n'
+     ' * so the two halves of the mark are genuinely different shapes and the\n'
+     ' * silhouette is a pentafoil rather than anything symmetrical twice over.\n'
      ' *\n'
-     ' * The odd count also rules out a circular centre: an odd-row silhouette\n'
-     ' * cannot hold an even-row circle with equal air above and below. So this\n'
-     ' * is the only one of the four whose bright field is the *deep overlap\n'
-     ' * itself* — the region all five petals cover. The five-pointed shape the\n'
-     ' * face sits on is the rule made visible, not a disc laid on top of it.\n'
+     ' * Five used to be the most constrained count on this grid, and the reason\n'
+     ' * was a rule rather than the geometry: while the face had to fit inside a\n'
+     ' * cleared circle in the middle, an odd-row silhouette could almost never\n'
+     ' * hold an even-row circle with equal air, and the only five that survived\n'
+     ' * had its petals pulled in so close that they stopped reading. Once the\n'
+     ' * face was allowed to sit on the flower itself that constraint went with\n'
+     ' * it, and the five opens up: this one carries its petals at a ring\n'
+     ' * distance of nearly four tenths of their diameter, which is the ratio\n'
+     ' * the reference uses, and the lobes come back.\n'
      ' *\n'
-     ' * Five is also the most constrained count on this grid. The face has to\n'
-     ' * split both the field and the whole mark into equal air, and with five\n'
-     ' * petals almost nothing does: a full sweep of petal size, ring distance,\n'
-     ' * phase, centre and depth threshold leaves one ring distance standing.\n'
-     ' * So the petals here sit closer in than the six or the eight, and the\n'
-     ' * mark earns its shape from the five-pointed field rather than from a\n'
-     ' * deeply lobed rim. That is a real limit of the geometry, not a choice.\n'
+     ' * The ring is rolled off the vertical, which is what keeps the shoulder\n'
+     ' * stepping four pixels at a time like the canonical circle instead of\n'
+     ' * jumping six.\n'
      ' *\n'
-     ' * What it does have is light. Four even steps run from a mid teal at the\n'
-     ' * rim to the palest tone in the set at the middle, and because the field\n'
-     ' * is the five-fold overlap rather than a disc, that palest tone arrives\n'
-     ' * in the shape of a five-pointed star.\n'
-     ' *\n'
-     ' * Soft mint — the least saturated of the set.',
-     dict(mode='fill', n=5, dist=4.0, size=20, phase=-54.0, K=5, core=None,
-          merge=[0, 1, 2, 3, 3, 3, 3, 3, 3], palette=MINT)),
+     ' * Calmest of the four. Pale petals, a saturated pentagon where all five\n'
+     ' * agree, and the face across it in the palest tone. The hue is pushed off\n'
+     ' * the sea-teal of the six and toward jade, because the two are the only\n'
+     ' * pale-petalled marks here and at 24 pixels a shared hue would make them\n'
+     ' * one mark seen twice.',
+     dict(mode='fill', n=5, dist=6.0, size=16, phase=-54.0, K=4,
+          merge=[0, 0, 1, 1, 2, 2, 3, 3, 3], flip=True, palette=JADE)),
 ]
 
 if __name__ == '__main__':
