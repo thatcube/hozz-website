@@ -1,0 +1,49 @@
+---
+/**
+ * 46 · Ripple, Close
+ *
+ * A compact ZZ face sits in the still centre of six barely stepped inner rings,
+ * so the space freed by the smaller face reads as ripple rather than empty disc.
+ *
+ * faceBoxAt measures md/compact/gap2 at 8×8 (x12–19, y9–16). That leaves seven
+ * rows of air above and below on the fixed y2–23 disc.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { faceBoxAt, facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+const face = { cx: 16, cy: 13, size: 'md', smile: 'compact', gap: 2 } as const;
+const box = faceBoxAt(face);
+if (box.x !== 12 || box.right !== 19 || box.y !== 9 || box.w !== 8 || box.h !== 8 || box.bottom !== 16) {
+  throw new Error(`c46 face geometry changed: ${JSON.stringify(box)}`);
+}
+const facePaths = facePathsAt(face);
+const facePixels = new Set<string>();
+for (const path of facePaths) {
+  const run = path.match(/^M(\d+) (\d+)h(\d+)/);
+  if (!run) throw new Error(`c46 cannot measure face path: ${path}`);
+  const [, x, y, width] = run.map(Number);
+  for (let offset = 0; offset < width; offset++) facePixels.add(`${x + offset},${y}`);
+}
+if (![...facePixels].every((pixel) => {
+  const [x, y] = pixel.split(',').map(Number);
+  return facePixels.has(`${31 - x},${y}`);
+})) throw new Error('c46 face lost x=16 symmetry');
+---
+
+<MarkFrame size={size} title="Hozz — Ripple, Close">
+  <path d="M13 20h6v1h-6z M7 21h18v1h-18z M4 22h4v1h-4z M24 22h4v1h-4z M3 23h2v1h-2z M27 23h2v1h-2z M2 24h2v1h-2z M28 24h2v1h-2z M2 25h2v1h-2z M28 25h2v1h-2z M3 26h2v1h-2z M27 26h2v1h-2z M4 27h4v1h-4z M24 27h4v1h-4z M7 28h18v1h-18z M13 29h6v1h-6z" fill="#96bcd6" />
+  <path d="M12 22h8v1h-8z M9 23h3v1h-3z M20 23h3v1h-3z M7 24h2v1h-2z M23 24h2v1h-2z M7 25h2v1h-2z M23 25h2v1h-2z M9 26h3v1h-3z M20 26h3v1h-3z M12 27h8v1h-8z" fill="#5d8cb0" />
+  <path d="M13 2h6v1h-6z M11 3h2v1h-2z M19 3h2v1h-2z M9 4h2v1h-2z M21 4h2v1h-2z M8 5h1v1h-1z M23 5h1v1h-1z M7 6h1v1h-1z M24 6h1v1h-1z M7 7h1v1h-1z M24 7h1v1h-1z M6 8h1v1h-1z M25 8h1v1h-1z M6 9h1v1h-1z M25 9h1v1h-1z M5 10h1v1h-1z M26 10h1v1h-1z M5 11h1v1h-1z M26 11h1v1h-1z M5 12h1v1h-1z M26 12h1v1h-1z M5 13h1v1h-1z M26 13h1v1h-1z M5 14h1v1h-1z M26 14h1v1h-1z M5 15h1v1h-1z M26 15h1v1h-1z M6 16h1v1h-1z M25 16h1v1h-1z M6 17h1v1h-1z M25 17h1v1h-1z M7 18h1v1h-1z M24 18h1v1h-1z M7 19h1v1h-1z M24 19h1v1h-1z M8 20h1v1h-1z M23 20h1v1h-1z M9 21h2v1h-2z M21 21h2v1h-2z M11 22h2v1h-2z M19 22h2v1h-2z M13 23h6v1h-6z" fill="#132638" />
+  <path d="M13 3h6v1h-6z M11 4h2v1h-2z M19 4h2v1h-2z M9 5h2v1h-2z M21 5h2v1h-2z M8 6h1v1h-1z M23 6h1v1h-1z M8 7h1v1h-1z M23 7h1v1h-1z M7 8h1v1h-1z M24 8h1v1h-1z M7 9h1v1h-1z M24 9h1v1h-1z M6 10h1v1h-1z M25 10h1v1h-1z M6 11h1v1h-1z M25 11h1v1h-1z M6 12h1v1h-1z M25 12h1v1h-1z M6 13h1v1h-1z M25 13h1v1h-1z M6 14h1v1h-1z M25 14h1v1h-1z M6 15h1v1h-1z M25 15h1v1h-1z M7 16h1v1h-1z M24 16h1v1h-1z M7 17h1v1h-1z M24 17h1v1h-1z M8 18h1v1h-1z M23 18h1v1h-1z M8 19h1v1h-1z M23 19h1v1h-1z M9 20h2v1h-2z M21 20h2v1h-2z M11 21h2v1h-2z M19 21h2v1h-2z M13 22h6v1h-6z" fill="#7da7c1" />
+  <path d="M13 4h6v1h-6z M11 5h2v1h-2z M19 5h2v1h-2z M9 6h2v1h-2z M21 6h2v1h-2z M9 7h1v1h-1z M22 7h1v1h-1z M8 8h1v1h-1z M23 8h1v1h-1z M8 9h1v1h-1z M23 9h1v1h-1z M7 10h1v1h-1z M24 10h1v1h-1z M7 11h1v1h-1z M24 11h1v1h-1z M7 12h1v1h-1z M24 12h1v1h-1z M7 13h1v1h-1z M24 13h1v1h-1z M7 14h1v1h-1z M24 14h1v1h-1z M7 15h1v1h-1z M24 15h1v1h-1z M8 16h1v1h-1z M23 16h1v1h-1z M8 17h1v1h-1z M23 17h1v1h-1z M9 18h1v1h-1z M22 18h1v1h-1z M9 19h2v1h-2z M21 19h2v1h-2z M11 20h2v1h-2z M19 20h2v1h-2z M13 21h6v1h-6z" fill="#84adc5" />
+  <path d="M13 5h6v1h-6z M11 6h2v1h-2z M19 6h2v1h-2z M10 7h1v1h-1z M21 7h1v1h-1z M9 8h1v1h-1z M22 8h1v1h-1z M9 9h1v1h-1z M22 9h1v1h-1z M8 10h1v1h-1z M23 10h1v1h-1z M8 11h1v1h-1z M23 11h1v1h-1z M8 12h1v1h-1z M23 12h1v1h-1z M8 13h1v1h-1z M23 13h1v1h-1z M8 14h1v1h-1z M23 14h1v1h-1z M8 15h1v1h-1z M23 15h1v1h-1z M9 16h1v1h-1z M22 16h1v1h-1z M9 17h1v1h-1z M22 17h1v1h-1z M10 18h1v1h-1z M21 18h1v1h-1z M11 19h2v1h-2z M19 19h2v1h-2z M13 20h6v1h-6z" fill="#8bb3c9" />
+  <path d="M13 6h6v1h-6z M11 7h2v1h-2z M19 7h2v1h-2z M10 8h1v1h-1z M21 8h1v1h-1z M10 9h1v1h-1z M21 9h1v1h-1z M9 10h1v1h-1z M22 10h1v1h-1z M9 11h1v1h-1z M22 11h1v1h-1z M9 12h1v1h-1z M22 12h1v1h-1z M9 13h1v1h-1z M22 13h1v1h-1z M9 14h1v1h-1z M22 14h1v1h-1z M9 15h1v1h-1z M22 15h1v1h-1z M10 16h1v1h-1z M21 16h1v1h-1z M10 17h1v1h-1z M21 17h1v1h-1z M11 18h2v1h-2z M19 18h2v1h-2z M13 19h6v1h-6z" fill="#92b9cd" />
+  <path d="M13 7h6v1h-6z M11 8h2v1h-2z M19 8h2v1h-2z M11 9h1v1h-1z M20 9h1v1h-1z M10 10h1v1h-1z M21 10h1v1h-1z M10 11h1v1h-1z M21 11h1v1h-1z M10 12h1v1h-1z M21 12h1v1h-1z M10 13h1v1h-1z M21 13h1v1h-1z M10 14h1v1h-1z M21 14h1v1h-1z M10 15h1v1h-1z M21 15h1v1h-1z M11 16h1v1h-1z M20 16h1v1h-1z M11 17h2v1h-2z M19 17h2v1h-2z M13 18h6v1h-6z" fill="#99bfd1" />
+  <path d="M13 8h6v1h-6z M12 9h1v1h-1z M19 9h1v1h-1z M11 10h1v1h-1z M20 10h1v1h-1z M11 11h1v1h-1z M20 11h1v1h-1z M11 12h1v1h-1z M20 12h1v1h-1z M11 13h1v1h-1z M20 13h1v1h-1z M11 14h1v1h-1z M20 14h1v1h-1z M11 15h1v1h-1z M20 15h1v1h-1z M12 16h1v1h-1z M19 16h1v1h-1z M13 17h6v1h-6z" fill="#a0c5d5" />
+  <path d="M13 9h6v1h-6z M12 10h8v1h-8z M12 11h8v1h-8z M12 12h8v1h-8z M12 13h8v1h-8z M12 14h8v1h-8z M12 15h8v1h-8z M13 16h6v1h-6z" fill="#a7cbd9" />
+  <g fill="#132638" shape-rendering="crispEdges">
+    {facePaths.map((d) => <path d={d} />)}
+  </g>
+</MarkFrame>

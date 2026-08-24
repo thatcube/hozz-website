@@ -50,7 +50,9 @@ def tone_index(x, y):
     while the long light tail is the cool reflection of the water below.
     """
     u2 = abs((2 * x + 1) - 32)
-    ridge2 = 38 - u2
+    # Hold the brightest row just above the contact point; on the outline it
+    # disappeared into the water at small sizes.
+    ridge2 = 36 - u2
     distance2 = 2 * y - ridge2
     if distance2 <= -12:
         return 3
