@@ -124,25 +124,8 @@ const payload = `{
     Hozz has never heard of still gets a stable, predictable name rather than being dropped.
   </p>
 
-  <p>Two things about this shape that differ from what you may expect:</p>
-
-  <ul>
-    <li>
-      <strong>Hozz sends individual samples, not hourly or daily rollups.</strong> That is the only
-      shape that can honestly claim no gaps and no duplicates. It also means more points than a
-      summarising exporter would send.
-    </li>
-    <li>
-      <strong>An interval sample carries <code>endDate</code>.</strong> Sleep and exercise samples
-      cover a span, and flattening one to an instant loses it. This key is a Hozz addition; a
-      consumer that ignores it behaves exactly as though it were not there.
-    </li>
-  </ul>
-
   <p>
-    <a href="/docs/delivery-schema/#metrics-json">The delivery schema</a> documents every field, including
-    the <code>deletions</code> array — tombstones for records you removed in Health, which that format
-    has no equivalent of and which Hozz carries rather than dropping.
+    See <a href="/docs/delivery-schema/#metrics-json">the delivery schema</a> for the full payload shape, including the <code>deletions</code> array.
   </p>
 
   <h2>Coming from Health Auto Export</h2>

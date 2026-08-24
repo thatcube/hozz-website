@@ -14,7 +14,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "verify:facts": "node tools/verify-facts.mjs",
-    "verify:links": "node tools/check-links.mjs"
+    "verify:links": "node tools/check-links.mjs",
+    "verify:layout": "node tools/audit-pages.mjs"
   },
   "devDependencies": {
     "@astrojs/sitemap": "^3.7.3",

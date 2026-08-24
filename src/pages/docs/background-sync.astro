@@ -3,18 +3,12 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
 import Callout from '../../components/docs/Callout.astro';
 import Table from '../../components/docs/Table.astro';
 import { page } from '../../data/docs-nav';
-import { CADENCES, DELIVERY_STATES } from '../../data/docs';
+import { CADENCES, DELIVERY_STATES, SYNC } from '../../data/docs';
 
 const entry = page('/docs/background-sync/');
 ---
 
-<DocsLayout page={entry} section="Start here">
-  <p>
-    This is the most common disappointment with every app in this category, and it is almost never
-    the app's fault. It is worth understanding once, because the alternative is assuming something
-    is broken every time iOS makes an ordinary scheduling decision.
-  </p>
-
+<DocsLayout page={entry}>
   <h2>The short version</h2>
 
   <p>
@@ -103,11 +97,36 @@ const entry = page('/docs/background-sync/');
   </Table>
 
   <p>
-    Behind them, Hozz asks iOS for a background refresh opportunity roughly every fifteen minutes,
-    and asks again after every run — a task request is consumed when it fires, so without
-    re-requesting, automatic export would happen exactly once. Whether iOS grants any given request
-    is up to iOS.
+    Behind them, Hozz asks iOS for a background refresh opportunity {SYNC.refreshMinutes} minutes
+    out, and asks again after every run — a task request is consumed when it fires, so without
+    re-requesting, automatic export would happen exactly once. {SYNC.refreshMinutes} minutes is the
+    earliest Hozz will accept, not a promise iOS makes.
   </p>
+
+  <h2>How long a first backfill takes</h2>
+
+  <p>
+    Longer than you expect. A sync pass reads <strong
+      >at most {SYNC.batchRecordLimit.toLocaleString('en-US')} records, or {
+        SYNC.batchMegabyteLimit
+      } MB</strong
+    >, whichever it reaches first, and every type gets a share of that before any one type gets the
+    remainder. So a pass is bounded, and how many passes you get in a day is iOS's decision.
+  </p>
+
+  <p>
+    A large Health archive is therefore a matter of <strong>days or weeks of real time</strong>, not
+    one run. Records keep arriving throughout; the archive is not withheld until it is complete.
+  </p>
+
+  <Callout kind="note" title="Why there is no percentage and no estimate">
+    <p>
+      HealthKit will not say how much a type holds without reading all of it, so a percentage and a
+      finish time would both be invented — and an invented estimate is a promise that gets broken.
+      Hozz shows types started, types finished, and records sent, which are the only figures it
+      actually knows.
+    </p>
+  </Callout>
 
   <h2>How to make it run right now</h2>
 

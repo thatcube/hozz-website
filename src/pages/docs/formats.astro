@@ -32,7 +32,7 @@ resting_heart_rate: 54
 ---`;
 ---
 
-<DocsLayout page={entry} section="The data">
+<DocsLayout page={entry}>
   <p>
     There are two different lists here, because there are two different things Hozz does. A{' '}
     <strong>manual export</strong> produces a file you save or share from the phone. An{' '}
@@ -41,12 +41,6 @@ resting_heart_rate: 54
   </p>
 
   <h2>Manual export formats</h2>
-
-  <p>
-    Every manual export is built from a canonical NDJSON spool. That spool is the durable format
-    because it streams, survives interruption, and can be assembled without recompressing.
-    Presentation formats are produced from it at the end.
-  </p>
 
   <Table
     caption="Manual export formats, what each is good for, and what each keeps"
@@ -170,8 +164,7 @@ resting_heart_rate: 54
 
   <p>
     Because a GPX run drains only workouts and workout routes, it avoids spending hours reading
-    types that could not appear in the output. A manual export's cursors are scoped to its own run,
-    so narrowing like this cannot advance a cursor a destination depends on.
+    types that could not appear in the output.
   </p>
 
   <Callout kind="note" title="Gaps in a route are shown as gaps">

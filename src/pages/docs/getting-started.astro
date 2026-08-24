@@ -17,7 +17,7 @@ echo "DEVELOPMENT_TEAM = YOURTEAMID" > Local.xcconfig
 tools/device-build.sh`;
 ---
 
-<DocsLayout page={entry} section="Start here">
+<DocsLayout page={entry}>
   <p>
     Hozz has two halves that can be used independently. The <strong>iPhone app</strong> reads Apple
     Health and sends it somewhere. The <strong>Mac app</strong> is one of the places it can send it
@@ -35,9 +35,7 @@ tools/device-build.sh`;
   <Code caption="Terminal" code={build} />
 
   <p>
-    The Xcode project is generated from <code>project.yml</code> rather than committed, which is why
-    the script rather than a double-click is the documented route. <code>tools/mac-build.sh</code> does
-    the same for the Mac app. Both scripts create <code>Local.xcconfig</code> if it is missing.
+    <code>tools/mac-build.sh</code> does the same for the Mac app.
   </p>
 
   <Callout kind="note" title="One thing that will bite you on a device build">
@@ -93,10 +91,6 @@ tools/device-build.sh`;
 
   <h2>4. Run the first export</h2>
 
-  <p>
-    There are two different things called "export", and they behave differently.
-  </p>
-
   <h3>Automatic sync</h3>
 
   <p>
@@ -132,8 +126,7 @@ tools/device-build.sh`;
   </p>
 
   <p>
-    Manual export does not depend on a destination and does not disturb one. Its cursors are scoped
-    to its own run, so it cannot advance a position an automatic destination is relying on.
+    Manual export does not depend on a destination and does not disturb one.
   </p>
 
   <h2>What to read next</h2>

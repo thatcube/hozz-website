@@ -10,18 +10,97 @@
 import '../styles/foundation.css';
 import '../styles/docs.css';
 import Mark from '../components/mark/logos/c45.astro';
-import { DOC_SECTIONS, neighbours, type DocPage } from '../data/docs-nav';
+import { DOC_SECTIONS, neighbours, sectionOf, type DocPage } from '../data/docs-nav';
 import { GITHUB_URL, SITE } from '../data/site';
 
 interface Props {
   /** The page's own entry, so nothing is written down twice. */
   page: DocPage;
-  /** Shown between "Docs" and the page name in the breadcrumb. */
-  section?: string;
 }
 
-const { page, section } = Astro.props;
+const { page } = Astro.props;
+const section = sectionOf(page.href);
 const { prev, next } = neighbours(page.href);
+
+/**
+ * Headings become linkable, and the page gets a contents list.
+ *
+ * These pages are hand-written HTML rather than Markdown, so nothing gives an
+ * <h2> an id on its own and a cross-page link to a fragment would land at the
+ * top. The slot is rendered to a string here, ids are added where one is not
+ * already written by hand, and the same pass collects the contents list — so a
+ * heading and its entry cannot disagree, and no script is needed to build it.
+ */
+const rendered = await Astro.slots.render('default');
+
+const slug = (text: string) =>
+  text
+    .toLowerCase()
+    .replace(/[’']/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+
+type Heading = { level: number; id: string; text: string };
+const headings: Heading[] = [];
+const seen = new Set<string>();
+
+/**
+ * Ranges of the rendered HTML that sit inside a link.
+ *
+ * A card on the index page is a link wrapping a heading. Putting an anchor
+ * inside that heading nests one <a> in another, which no browser will parse —
+ * it closes the outer link early and the card comes apart. Such headings are
+ * left exactly as they are: they are already a link to somewhere better.
+ */
+const linked: Array<[number, number]> = [];
+let depth = 0;
+let openedAt = 0;
+for (const tag of rendered.matchAll(/<a\b[^>]*>|<\/a\s*>/gi)) {
+  if (tag[0][1] === '/') {
+    depth -= 1;
+    if (depth === 0) linked.push([openedAt, tag.index + tag[0].length]);
+    if (depth < 0) depth = 0;
+  } else {
+    if (depth === 0) openedAt = tag.index;
+    depth += 1;
+  }
+}
+const insideLink = (at: number) => linked.some(([from, to]) => at >= from && at < to);
+
+const body = rendered.replace(
+  /<h([23])([^>]*)>([\s\S]*?)<\/h\1>/g,
+  (match: string, level: string, attrs: string, inner: string, offset: number) => {
+    if (insideLink(offset)) return match;
+
+    const text = inner
+      .replace(/<[^>]*>/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    // An id written by hand is load-bearing: other pages link to it.
+    const written = attrs.match(/\sid="([^"]+)"/);
+    let id = written ? written[1] : slug(text);
+    if (!id) return match;
+    while (seen.has(id)) id += '-x';
+    seen.add(id);
+
+    headings.push({ level: Number(level), id, text });
+
+    const rest = attrs.replace(/\sid="[^"]*"/, '');
+    return (
+      `<h${level} id="${id}"${rest}>${inner}` +
+      `<a class="heading-link" href="#${id}" aria-label="Link to ${text}">#</a>` +
+      `</h${level}>`
+    );
+  }
+);
+
+/**
+ * Below four headings a contents list is longer than the thing it indexes, and
+ * on a page that is mostly links it repeats the page.
+ */
+const contents = headings.filter((h) => h.level === 2);
+const showContents = contents.length >= 4;
 
 const canonical = new URL(Astro.url.pathname, Astro.site ?? SITE).href;
 const ogImage = new URL('/og-image.png', Astro.site ?? SITE).href;
@@ -126,6 +205,16 @@ const structured = {
       <details class="docs-sidebar" id="docs-sidebar" open>
         <summary>Documentation</summary>
         <nav class="docs-nav" aria-label="Documentation">
+          <!-- The index is reachable from the brand, but a reader looking at a
+               list of pages should not have to guess that the wordmark is the
+               way back to the top of it. -->
+          <div class="docs-nav-section">
+            <ul class="docs-nav-list">
+              <li>
+                <a href="/docs/" aria-current={isCurrent('/docs/') ? 'page' : undefined}>Overview</a>
+              </li>
+            </ul>
+          </div>
           {
             DOC_SECTIONS.map((group) => (
               <div class="docs-nav-section">
@@ -166,9 +255,24 @@ const structured = {
         <h1>{page.heading}</h1>
         <p class="docs-lede">{page.lede}</p>
 
-        <div class="prose">
-          <slot />
-        </div>
+        {
+          showContents && (
+            <nav class="docs-toc" aria-labelledby="docs-toc-title">
+              <h2 class="docs-toc-title" id="docs-toc-title">
+                On this page
+              </h2>
+              <ol>
+                {contents.map((heading) => (
+                  <li>
+                    <a href={`#${heading.id}`}>{heading.text}</a>
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          )
+        }
+
+        <div class="prose" set:html={body} />
 
         {
           (prev || next) && (

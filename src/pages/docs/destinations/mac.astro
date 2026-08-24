@@ -78,10 +78,8 @@ curl http://your-mac.local:54330/
     </li>
     <li>
       <strong>Your own iCloud Keychain.</strong> The Mac publishes a receiver record through a
-      shared Keychain access group. Two devices signed into the same Apple ID are already known to
-      belong to the same person, which is far stronger evidence than anything that could be
-      established over a home network — so if this is available, the token is used directly with no
-      pairing step.
+      shared Keychain access group. Two devices on the same Apple ID share the token with no pairing
+      step.
     </li>
     <li>
       <strong>A local sweep.</strong> If mDNS is blocked and no shared record exists, the phone
@@ -89,12 +87,6 @@ curl http://your-mac.local:54330/
       be asked.
     </li>
   </ol>
-
-  <p>
-    Every remembered address is probed before it is offered or reused, so a computer that does not
-    answer is shown as <strong>Offline — open Hozz on it</strong> rather than saved as a dead
-    destination and quietly failing later.
-  </p>
 
   <h2>Authentication</h2>
 
@@ -141,7 +133,7 @@ curl http://your-mac.local:54330/
   <h2>What the Mac app does with it</h2>
 
   <p>
-    Received batches go into <code>hozz-received.sqlite</code> (schema version 7) with idempotent
+    Received batches go into <code>hozz-received.sqlite</code> with idempotent
     batch records, deletions, characteristics, per-device "last heard from" state, and dedicated
     tables for ECGs, audiograms, State of Mind, medication doses and workout statistics.
   </p>

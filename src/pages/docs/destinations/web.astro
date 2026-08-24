@@ -149,17 +149,7 @@ const headers = [
     how a correctly written receiver ends up discarding records it has never seen.
   </p>
 
-  <p>
-    Keys within an NDJSON or JSON record are sorted, so the same records always produce the same
-    bytes. That is what makes deriving the identifier from the payload sound.
-  </p>
-
   <h2>A receiver, in full</h2>
-
-  <p>
-    This is genuinely all that is required. Everything else — deduplication across restarts,
-    storage, retries — is your side of the line.
-  </p>
 
   <Code caption="A minimal receiver" code={minimal} />
 

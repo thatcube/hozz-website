@@ -32,6 +32,7 @@ import {
   MCP,
   MCP_TOOLS,
   SOURCE_REF,
+  SYNC,
 } from '../src/data/docs.ts';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -47,6 +48,14 @@ const FILES = {
   exportFormat: 'Sources/HozzHealth/HealthExportFormat.swift',
   mcpServer: 'Sources/HozzMCP/MCPServer.swift',
   statistics: 'Sources/HozzMCP/HealthStatistics.swift',
+  credentials: 'Sources/HozzDeliver/DestinationCredentials.swift',
+  sharedReceiver: 'Sources/HozzDeliver/SharedReceiverStore.swift',
+  probe: 'Sources/HozzDeliver/DeliveryProbe.swift',
+  syncEngine: 'Sources/HozzHealth/HealthSyncEngine.swift',
+  storeLocation: 'Sources/HozzStore/StoreLocation.swift',
+  scheduler: 'App/BackgroundExportScheduler.swift',
+  manualExporter: 'Sources/HozzHealth/HealthKitManualExporter.swift',
+  stdio: 'Sources/HozzMCP/MCPStdioTransport.swift',
 };
 
 const problems = [];
@@ -73,6 +82,32 @@ function equal(label, expected, actual) {
     problems.push(`${label}\n    docs say ${expected}, the app says ${actual}\n`);
   } else {
     notes.push(`${label} — ${expected}`);
+  }
+}
+
+/**
+ * Asserts that `source` contains `needle`.
+ *
+ * The list checks above compare a list in the app with a list in the docs. The
+ * privacy page is not a list — it is a set of sentences about where a secret
+ * lives and what is written down — so what is checked is that the mechanism the
+ * sentence names is still the mechanism in the source. If somebody changes the
+ * Keychain accessibility, or gives the app a default destination, this fails and
+ * the sentence gets revisited rather than quietly becoming untrue.
+ */
+function contains(label, source, needle, why) {
+  if (source.includes(needle)) {
+    notes.push(`${label}`);
+  } else {
+    problems.push(`${label}\n    could not find ${JSON.stringify(needle)} — ${why}\n`);
+  }
+}
+
+function absent(label, source, needle, why) {
+  if (source.includes(needle)) {
+    problems.push(`${label}\n    found ${JSON.stringify(needle)}, which ${why}\n`);
+  } else {
+    notes.push(`${label}`);
   }
 }
 
@@ -119,12 +154,34 @@ console.log(
 );
 
 try {
-  const [preset, destination, exportFormat, mcpServer, statistics] = await Promise.all([
+  const [
+    preset,
+    destination,
+    exportFormat,
+    mcpServer,
+    statistics,
+    credentials,
+    sharedReceiver,
+    probe,
+    syncEngine,
+    storeLocation,
+    scheduler,
+    manualExporter,
+    stdio,
+  ] = await Promise.all([
     load('preset'),
     load('destination'),
     load('exportFormat'),
     load('mcpServer'),
     load('statistics'),
+    load('credentials'),
+    load('sharedReceiver'),
+    load('probe'),
+    load('syncEngine'),
+    load('storeLocation'),
+    load('scheduler'),
+    load('manualExporter'),
+    load('stdio'),
   ]);
 
   // --- Destinations -------------------------------------------------------
@@ -193,6 +250,113 @@ try {
     const match = statistics.match(new RegExp(`${key} = (\\d+)`));
     equal(label, MCP[key], match ? Number(match[1]) : 'not found');
   }
+
+  // The MCP server talks over a pipe to a process the assistant launched. If it
+  // ever grew a listener, "it opens no network port" would need retracting.
+  contains(
+    'MCP server speaks over stdio',
+    stdio,
+    'FileHandle.standardInput',
+    'the docs say the server opens no port and is launched as a subprocess'
+  );
+
+  // --- Privacy ------------------------------------------------------------
+  // These are sentences rather than lists, so what is checked is the mechanism
+  // each sentence names. See `contains` above for why.
+
+  contains(
+    'Destination secrets are device-only in the Keychain',
+    credentials,
+    'kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly',
+    'the privacy page names this constant and says a destination secret never leaves the device'
+  );
+
+  contains(
+    'Synchronised items relax to AfterFirstUnlock',
+    credentials,
+    'kSecAttrAccessibleAfterFirstUnlock\n',
+    'a synchronising item cannot be ThisDeviceOnly, which is what makes the receiver token the exception'
+  );
+
+  contains(
+    'The receiver token syncs through iCloud Keychain',
+    sharedReceiver,
+    'synchronizable: true',
+    'the privacy page says the Mac receiver token is the deliberate exception and syncs'
+  );
+
+  contains(
+    'The receiver token is confined to an access group',
+    sharedReceiver,
+    'accessGroup',
+    'the privacy page says the token is restricted to a shared Keychain group as well as synced'
+  );
+
+  contains(
+    'A connection test carries no Health data',
+    probe,
+    'hozzConnectionTest',
+    'the privacy page quotes this probe payload as proof a test sends nothing real'
+  );
+
+  contains(
+    'There is no default destination',
+    destination,
+    'no default destination',
+    'the whole privacy argument starts with nothing leaving until a destination exists'
+  );
+
+  contains(
+    'Health-derived files are excluded from backups',
+    storeLocation,
+    'isExcludedFromBackup',
+    'the privacy page says the store is kept out of device backups'
+  );
+
+  contains(
+    'The store carries file protection',
+    storeLocation,
+    'completeUnlessOpen',
+    'the privacy page names this protection class'
+  );
+
+  // Read-only access to Health is the claim the app can least afford to break.
+  contains(
+    'Health is asked for read access only',
+    manualExporter,
+    'toShare: nil',
+    'the privacy page says Hozz never requests permission to write to Health'
+  );
+
+  absent(
+    'Nothing is written back to Health',
+    manualExporter,
+    'HKHealthStore().save',
+    'would mean Hozz writes samples into Health, which the docs say it never does'
+  );
+
+  // --- What bounds a sync pass -------------------------------------------
+  // The honesty about a first backfill rests on these two numbers.
+  const recordLimit = syncEngine.match(/batchRecordLimit = ([\d_]+)/);
+  equal(
+    'Records per sync pass',
+    SYNC.batchRecordLimit,
+    recordLimit ? Number(recordLimit[1].replace(/_/g, '')) : 'not found'
+  );
+
+  const byteLimit = syncEngine.match(/batchByteLimit = (\d+) \* 1_024 \* 1_024/);
+  equal(
+    'Megabytes per sync pass',
+    SYNC.batchMegabyteLimit,
+    byteLimit ? Number(byteLimit[1]) : 'not found'
+  );
+
+  const refresh = scheduler.match(/scheduleRefresh\(after delay: TimeInterval = (\d+) \* 60\)/);
+  equal(
+    'Minutes before the next refresh is requested',
+    SYNC.refreshMinutes,
+    refresh ? Number(refresh[1]) : 'not found'
+  );
 } catch (error) {
   problems.push(`Could not read the app's source\n    ${error.message}\n`);
 }

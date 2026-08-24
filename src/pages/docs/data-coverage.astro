@@ -68,7 +68,7 @@ const coverage = [
 ];
 ---
 
-<DocsLayout page={entry} section="The data">
+<DocsLayout page={entry}>
   <p>
     Hozz is early alpha and its coverage is partial. This page says what is covered and what is not,
     because the alternative — implying completeness and letting you discover the gaps — is the thing
@@ -109,8 +109,7 @@ const coverage = [
     <p>
       HealthKit will list the objects belonging to a workout, but offers nothing in the other
       direction — a sample does not know its workout, and no workout identifier appears in its
-      metadata. Recording the link would mean a query per workout per type: tens of thousands of
-      them for a real history.
+      metadata. Recording the link would require a query per workout per type, which is prohibitive.
     </p>
   </Callout>
 

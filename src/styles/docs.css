@@ -1033,3 +1033,102 @@ kbd {
     transition-duration: 0.001ms !important;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   On this page, and linkable headings
+   ------------------------------------------------------------------------ */
+
+/*
+  The header is sticky, so a heading scrolled to by its own fragment would
+  otherwise arrive underneath it. This is the header's height plus air.
+*/
+.prose h2,
+.prose h3 {
+  scroll-margin-top: 6.5rem;
+}
+
+.docs-toc {
+  margin-bottom: 2.6rem;
+  padding: 1rem 1.15rem 1.05rem;
+  border: 1px solid var(--line-soft);
+  border-radius: 0.7rem;
+  background: var(--mist);
+}
+
+.docs-toc-title {
+  margin: 0 0 0.55rem;
+  color: var(--ink-muted);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.docs-toc ol {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  gap: 0.1rem;
+  list-style: none;
+}
+
+.docs-toc a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--ink-soft);
+  font-size: 0.94rem;
+  text-decoration: none;
+}
+
+.docs-toc a:hover {
+  color: var(--blue);
+  text-decoration: underline;
+}
+
+/*
+  A heading's own link is shown on hover on a mouse and is always present for a
+  keyboard, which is the only way to reach it without one.
+*/
+.heading-link {
+  margin-left: 0.4rem;
+  color: var(--line);
+  font-weight: 400;
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+
+.prose h2:hover .heading-link,
+.prose h3:hover .heading-link,
+.heading-link:focus-visible {
+  opacity: 1;
+}
+
+.heading-link:hover {
+  color: var(--blue);
+}
+
+/* ---------------------------------------------------------------------------
+   Touch targets
+   ------------------------------------------------------------------------ */
+
+/*
+  Apple's minimum is 44pt. These links are small on purpose — they are chrome,
+  not content — so the box is grown rather than the type. The header already
+  stands 4.4rem tall, so nothing moves there; the breadcrumb pulls its extra
+  height back with a negative margin so the row keeps the spacing it had.
+*/
+.docs-brand,
+.docs-header-links a,
+.docs-footer-inner nav a,
+.docs-breadcrumb a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.docs-breadcrumb a {
+  margin-block: -0.85rem;
+}

@@ -11,7 +11,7 @@ const probe = `curl -sv http://your-mac.local:54330/
 # {"service":"hozz-receiver","ready":true,"name":"Brandon's Mac"}`;
 ---
 
-<DocsLayout page={entry} section="When something is wrong">
+<DocsLayout page={entry}>
   <p>
     Most of what looks like a fault here is Hozz reporting a state honestly. The states that read
     worst — waiting, retrying, no data for a type — are usually the app declining to claim something
@@ -91,26 +91,11 @@ const probe = `curl -sv http://your-mac.local:54330/
     background time in short windows, so days is normal.
   </p>
 
-  <p>Two things make it look worse than it is:</p>
-
-  <ul>
-    <li>
-      <strong>There is no percentage and no time estimate.</strong> Health will not say how many
-      records a type holds without reading all of them, so any fraction would be invented. Hozz
-      shows how many types are complete instead, which is a number it can actually stand behind.
-    </li>
-    <li>
-      <strong>Progress is spread across types deliberately.</strong> Every selected type gets a share
-      of each pass rather than one being drained to exhaustion first — otherwise a phone with years
-      of stand hours would send nothing else for days, which is a working sync that reads exactly
-      like a broken one.
-    </li>
-  </ul>
-
   <p>
     <strong>How to tell it apart from stuck:</strong> the count of completed types should rise over
     a day or two, and the Mac's Data tab should show types reaching further back. If neither moves
     at all across several days <em>and</em> you have opened the app in that time, treat it as stuck.
+    See <a href="/docs/getting-started/">Getting started</a> for what to expect during a first sync.
   </p>
 
   <h2>An export came out empty, or smaller than expected</h2>
@@ -139,9 +124,7 @@ const probe = `curl -sv http://your-mac.local:54330/
   <h2>Background sync is not running on schedule</h2>
 
   <p>
-    This has <a href="/docs/background-sync/">a page of its own</a>, because it is the most common
-    complaint about every app in this category and it is nearly always iOS rather than the app. The
-    short checklist:
+    See <a href="/docs/background-sync/">Background sync</a>. The short checklist:
   </p>
 
   <ul>
@@ -179,9 +162,7 @@ const probe = `curl -sv http://your-mac.local:54330/
 
   <p>
     Editing and saving is the escape hatch, and the editor says plainly that saving is also the
-    moment the original setting is replaced. The alternative designs are worse: failing closed makes
-    the destination vanish silently, and falling back to a default would send Health data somewhere
-    real in a shape, on a schedule, or at a precision nobody chose — and report it as a success.
+    moment the original setting is replaced.
   </p>
 
   <h2>An unfinished export cannot be continued</h2>

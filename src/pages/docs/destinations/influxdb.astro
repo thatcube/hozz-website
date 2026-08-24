@@ -116,11 +116,6 @@ const fields = [
 
   <Code caption="Line protocol" code={lines} />
 
-  <p>
-    Those four lines are asserted verbatim in the app's own tests, so this page cannot drift from
-    what Hozz actually writes.
-  </p>
-
   <h3>Measurements</h3>
 
   <Table caption="Measurements and what each holds" columns={['Measurement', 'Holds']} mono>
@@ -203,36 +198,9 @@ const fields = [
     the cardinality on, and it is spent in a measurement nothing else queries.
   </p>
 
-  <h2>Escaping</h2>
-
-  <p>Hozz escapes exactly what InfluxDB requires, and no more:</p>
-
-  <ul>
-    <li>Measurement — comma and space.</li>
-    <li>Tag key, tag value and field key — comma, equals sign and space.</li>
-    <li>String field value — double quote and backslash.</li>
-  </ul>
-
   <p>
-    Every backslash is doubled in every position, because InfluxDB reads two contiguous backslashes
-    as one. That also removes the case that genuinely corrupts a line: a tag value ending in a
-    single backslash would escape the space separating the tag set from the field set, and the write
-    would fail.
-  </p>
-
-  <p>
-    Line protocol has no escape for a newline, so a newline or a null in any tag or value is
-    flattened to a space rather than being allowed to split the line in two. An empty tag value is
-    omitted, because InfluxDB rejects <code>source=</code>. A measurement name beginning with{' '}
-    <code>#</code> or <code>_</code> has that character removed — a leading <code>#</code> makes
-    InfluxDB read the whole line as a comment and discard it without an error, and <code>_</code> is
-    reserved for InfluxDB's own use.
-  </p>
-
-  <p>
-    Non-finite values never reach the wire as numbers. One <code>NaN</code> rejects the write and
-    takes every line that travelled with it, so a sample carrying one goes to{' '}
-    <code>&lt;measurement&gt;_events</code> rather than being invented or dropped.
+    Hozz escapes exactly what the InfluxDB line protocol requires; non-finite values go to{' '}
+    <code>&lt;measurement&gt;_events</code> rather than being dropped or invented.
   </p>
 
   <DeviceConstraints />

@@ -1,150 +1,203 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import SiteHeader from '../components/SiteHeader.astro';
-import SiteFooter from '../components/SiteFooter.astro';
-import { CATEGORIES, GITHUB_URL } from '../data/site';
+/**
+ * The privacy page, and the only one.
+ *
+ * It lives at /privacy/ rather than under /docs/ because that is the address a
+ * store listing, a repository and this site's own header already point at, and
+ * it is listed in the documentation navigation like any other page. It covers
+ * the app and this website, because splitting them produced two pages that
+ * each said half of the same thing.
+ *
+ * Every claim here is checked against the app's source by tools/verify-facts.mjs.
+ * If you change a sentence about behaviour, change the check with it.
+ */
+import DocsLayout from '../layouts/DocsLayout.astro';
+import Callout from '../components/docs/Callout.astro';
+import { page } from '../data/docs-nav';
+import { GITHUB_URL } from '../data/site';
 
-const hue = Object.fromEntries(CATEGORIES.map((c) => [c.key, c.hue]));
-const updated = 'August 2026';
+const entry = page('/privacy/');
 ---
 
-<Layout
-  title="Privacy — Hozz"
-  description="What this website collects (nothing) and what the Hozz app does with your Apple Health data (keeps it on your device until you send it somewhere you own)."
->
-  <SiteHeader />
+<DocsLayout page={entry}>
+  <h2>The one sentence that matters</h2>
 
-  <main id="main">
-    <section class="section prose-section" style={`--tint: ${hue.respiratory}`}>
-      <div class="wrap wrap--narrow">
-        <p class="eyebrow">Privacy</p>
-        <h1>The short version: nothing here is watching you.</h1>
-        <p class="lead">
-          This page covers two separate things — this website, and the Hozz app.
-          Neither collects anything about you.
-        </p>
+  <p>
+    <strong>Nothing leaves your iPhone until you add a destination and confirm it.</strong> There is
+    no default destination, no hosted relay, and no server belonging to the maintainer.
+  </p>
 
-        <div class="prose">
-          <h2>This website</h2>
-          <p>
-            The site is static files served by Cloudflare Pages. There is no
-            analytics script, no tag manager, no advertising pixel, no A/B testing
-            and no cookie of any kind. Nothing on the page tries to work out who
-            you are.
-          </p>
-          <p>
-            Typefaces are served from this domain rather than a font CDN, so
-            loading the page does not tell a third party that you visited. The
-            page loads no third-party resources at all.
-          </p>
-          <p>
-            Cloudflare handles the connection and keeps operational logs, the way
-            any web host does. That is outside my control and covered by
-            Cloudflare's own privacy policy. I do not receive per-visitor data from
-            it and have not enabled any visitor analytics.
-          </p>
-          <p>
-            If you follow a link to GitHub, that is GitHub's site under GitHub's
-            policies.
-          </p>
+  <h2>What leaves, and when</h2>
 
-          <h2>The Hozz app</h2>
-          <p>
-            Hozz is early alpha. It works, but its coverage is still partial.
-            Its design is already fixed on these points, and they are the reason
-            the project exists:
-          </p>
-          <ul>
-            <li>Hozz has no account system, because there is no service to sign in to.</li>
-            <li>
-              Hozz has no server, database or relay of mine. Your data never passes
-              through infrastructure I run.
-            </li>
-            <li>
-              Hozz collects no analytics, telemetry or crash reports. Diagnostics
-              stay on the device and redact sample values, credentials and
-              destination secrets.
-            </li>
-            <li>
-              Hozz never puts your Health data in iCloud. Health-derived files on
-              the device are protected and excluded from device backups.
-            </li>
-            <li>
-              Credentials for a destination you configure live in the Keychain on
-              that device and are not synced. They are scoped to one destination
-              and are never handed to a redirect that leaves the host you set up.
-            </li>
-            <li>
-              Nothing is sent anywhere until you have configured a destination and
-              confirmed it. There is no default destination, because a default
-              would be a place I chose.
-            </li>
-          </ul>
-          <p>
-            Once you export data to a destination, that copy is yours to look
-            after. If you send it to a server, that server's operator — probably
-            you — decides what happens to it next.
-          </p>
+  <ul>
+    <li>
+      <strong>Only to destinations you configured.</strong> Each destination can be limited to
+      specific Health types, so it receives what you scoped it to and nothing else.
+    </li>
+    <li>
+      <strong>Only when its cadence says so</strong>, or when you tap Sync now, or when a Shortcut
+      runs. A destination set to manual sends nothing on its own.
+    </li>
+    <li>
+      <strong>A connection test carries no Health data.</strong> It is a fixed probe in the
+      destination's own format — for JSON, literally
+      <code>{'{"kind":"hozzConnectionTest","schemaVersion":1}'}</code>.
+    </li>
+    <li>
+      <strong>Opening the destination picker looks for receivers on your local network.</strong>
+      Hozz browses for Bonjour services and, failing that, probes addresses on your own subnet. This
+      is discovery traffic on your network only; it carries no Health data and reaches nothing
+      outside it.
+    </li>
+    <li>
+      <strong>Nothing else makes a network request.</strong> No analytics endpoint, no crash
+      reporter, no update check, no feature flags — so there is no request to inspect and find
+      innocuous.
+    </li>
+  </ul>
 
-          <h2>Checking any of this</h2>
-          <p>
-            Hozz is GPL-3.0 and developed in the open, so none of the above has to
-            be taken on trust. The behaviour described here is meant to be proven
-            by tests rather than by this page.
-            <a href={GITHUB_URL} rel="noopener">Read the source</a>.
-          </p>
+  <h2>Credentials</h2>
 
-          <h2>Changes</h2>
-          <p>
-            If this policy changes, the updated date below changes with it. Last
-            updated {updated}.
-          </p>
-        </div>
-      </div>
-    </section>
-  </main>
+  <p>
+    Destination secrets — bearer tokens, API keys, MQTT passwords — are held in the device Keychain
+    as <code>kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly</code>. That accessibility is what lets
+    a background sync read them after the phone has been unlocked once since boot, and it also means
+    the item never syncs and is not carried in a backup. A test in the app asserts that constant
+    directly.
+  </p>
 
-  <SiteFooter />
-</Layout>
+  <p>
+    <strong>The Mac receiver's pairing token is the deliberate exception</strong>, and it is worth
+    being exact about the mechanism. The token is stored with
+    <code>kSecAttrSynchronizable</code> set, so it syncs through <em>your own</em> iCloud Keychain,{' '}
+    <em>and</em> it is confined to a shared Keychain access group that only Hozz's apps can claim.
+    Those are two different protections doing two different jobs: the first lets a phone and a Mac
+    signed into the same Apple ID find each other without you copying a token by hand, the second
+    stops any other app from reading it. If iCloud is unavailable or the devices are on different
+    Apple IDs, nothing is shared and the phone pairs over the local network instead.
+  </p>
 
-<style>
-  .prose-section h1 {
-    font-size: clamp(2.1rem, 1.5rem + 2.2vw, 3.1rem);
-    margin-block: 1.1rem 1.3rem;
-    max-width: 20ch;
-  }
+  <Callout kind="note" title="One thing that is not a secret">
+    <p>
+      An MQTT <strong>username</strong> is stored with the rest of a destination's settings, not in
+      the Keychain — only the password is. That matches how MQTT is normally treated, but it means
+      the username is readable in the app's own database rather than protected as a secret.
+    </p>
+  </Callout>
 
-  .prose {
-    margin-top: clamp(2.5rem, 5vw, 3.5rem);
-    display: grid;
-    gap: 1.1rem;
-  }
+  <h2>What is stored on the phone</h2>
 
-  .prose h2 {
-    font-size: var(--fs-h3);
-    margin-top: 1.6rem;
-  }
+  <p>
+    Read positions, per-type coverage state, destination configuration, delivery receipts and staged
+    data waiting to be sent. <strong
+      >Hozz does not keep a permanent local mirror of your Health history</strong
+    > — it reads from Health, stages what it is about to send, and lets that go.
+  </p>
 
-  .prose h2:first-child {
-    margin-top: 0;
-  }
+  <p>
+    That database is written with <code>completeUnlessOpen</code> file protection and
+    <strong>excluded from device backups</strong>. The protection is applied to each file rather than
+    only to the folder, because SQLite creates its <code>-wal</code> and <code>-shm</code> companions
+    after the folder already exists and they would otherwise be left out.
+  </p>
 
-  .prose p,
-  .prose li {
-    color: var(--ink-2);
-  }
+  <h2>What is stored on the Mac</h2>
 
-  .prose ul {
-    display: grid;
-    gap: 0.7rem;
-    padding-left: 1.15rem;
-  }
+  <p>
+    The Mac receiver keeps what the phone sends it in a SQLite database in its own application
+    support folder, and that database <strong>is</strong> a durable copy of your Health records —
+    that is the point of it. It is excluded from backups.
+  </p>
 
-  .prose li {
-    list-style: disc;
-  }
+  <Callout kind="warn" title="macOS has no equivalent of iOS file protection">
+    <p>
+      There is no per-file encryption class on the Mac tied to a passcode, so the receiver's database
+      is protected by FileVault or it is not protected at rest at all. Turning FileVault on is your
+      decision and Hozz cannot make it for you.
+    </p>
+  </Callout>
 
-  .prose li::marker {
-    color: var(--tint);
-  }
-</style>
+  <h2>What never reaches a log</h2>
+
+  <p>
+    Hozz logs through Apple's unified logging system: status events and failure descriptions. <strong
+      >No Health sample value, credential or destination secret appears in any log call</strong
+    >, and tests exist to fail if one ever does. There is no in-app log viewer and no way for the app
+    to collect or send a log — the only way to read one is through Console on your own machine.
+  </p>
+
+  <p>
+    One exception worth naming: when the Mac publishes itself for pairing it logs its own local
+    network addresses. Those are addresses on your network, not credentials and not Health data.
+  </p>
+
+  <Callout kind="note" title="Why response bodies are thrown away">
+    <p>
+      When an endpoint rejects a batch it frequently echoes the offending record back. So Hozz
+      records the status code and a human-readable failure state and <strong
+        >discards the body</strong
+      > — which is mildly inconvenient when debugging your own server, and the correct trade when the
+      body may contain a Health value.
+    </p>
+  </Callout>
+
+  <h2>Health access</h2>
+
+  <p>
+    Hozz asks Health for <strong>read access only</strong>; it never requests permission to write,
+    and it never writes back. Access is requested when you first export or sync, not at launch.
+    <a href="/docs/data-coverage/#what-hozz-will-never-do"
+      >Why it will never write back is on Data coverage.</a
+    >
+  </p>
+
+  <h2>What Hozz cannot promise</h2>
+
+  <p>
+    Once data reaches a destination, that copy is yours to look after, and Hozz has no further say.
+  </p>
+
+  <ul>
+    <li>
+      <strong>A server you point it at holds your Health data.</strong> If it is on the public
+      internet, it should be behind TLS and authentication, and its operator — probably you — decides
+      what happens next.
+    </li>
+    <li>
+      <strong>An assistant connected to <a href="/docs/mcp/">the MCP server</a> receives real
+        readings.</strong> The server runs locally and is read-only, but one of its tools returns
+      individual samples — timestamp, value, unit, source — to whatever assistant asked. If that
+      assistant is cloud-hosted, those readings go to its provider. That is the assistant's
+      behaviour, and no local read-only server can prevent it.
+    </li>
+    <li>
+      <strong>A synced folder goes wherever that folder syncs.</strong> Choosing iCloud Drive or
+      Dropbox means choosing their handling of it.
+    </li>
+  </ul>
+
+  <p>
+    Choosing destinations you actually control is the whole discipline this app is built around, and
+    it is the one part it cannot do for you.
+  </p>
+
+  <h2>This website</h2>
+
+  <p>
+    Static files on Cloudflare Pages. No analytics script, no tag manager, no advertising pixel, no
+    A/B testing, no cookie. Typefaces are served from this domain rather than a font CDN, so loading
+    a page tells no third party you were here; the page loads no third-party resources at all.
+    Cloudflare keeps operational logs the way any host does — that is outside my control and covered
+    by Cloudflare's own policy. Following a link to GitHub puts you on GitHub's site under GitHub's
+    policies.
+  </p>
+
+  <h2>How to check any of this</h2>
+
+  <p>
+    Everything above is a negative claim, and a negative claim cannot be demonstrated by using the
+    app — only by reading it. Hozz is GPL-3.0 and developed in the open, and the behaviour described
+    here is meant to be proven by tests rather than by this page.
+    <a href={GITHUB_URL} rel="noopener">Read the source.</a>
+  </p>
+</DocsLayout>

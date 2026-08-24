@@ -11,7 +11,7 @@
  */
 
 /** The app-repo commit these facts were last verified against. */
-export const SOURCE_REF = 'a7a2edb0f89e1633c3deb2f2fefde39735d79892';
+export const SOURCE_REF = 'b5b430a56494e0ea22898f0e8c6bf0833c6e6f0a';
 
 export const APP_REPO = 'https://github.com/thatcube/hozz';
 
@@ -496,3 +496,20 @@ export const APP_MESSAGES: AppMessage[] = [
     fix: 'Settings → Hozz → Local Network. You can also add the Mac by web address instead.',
   },
 ];
+
+/**
+ * What bounds a single background sync pass.
+ *
+ * These are the numbers behind "a first backfill takes days or weeks": a pass
+ * is capped, and iOS decides how many passes a day you get. They live here so
+ * the sentence on the background sync page and the check in
+ * tools/verify-facts.mjs read the same value.
+ */
+export const SYNC = {
+  /** HealthSyncEngine.batchRecordLimit */
+  batchRecordLimit: 5_000,
+  /** HealthSyncEngine.batchByteLimit, in megabytes. */
+  batchMegabyteLimit: 4,
+  /** BackgroundExportScheduler.scheduleRefresh's default delay, in minutes. */
+  refreshMinutes: 15,
+};

@@ -49,7 +49,7 @@ const byHand = `{
 }`;
 ---
 
-<DocsLayout page={entry} section="Going further">
+<DocsLayout page={entry}>
   <div class="fact-strip">
     <div>
       <dt>Transport</dt>
@@ -76,19 +76,13 @@ const byHand = `{
   <p>
     Most Apple Health MCP servers read the bulk XML file you get from Health's{' '}
     <strong>Export All Health Data</strong> button. That file is a snapshot: correct on the day you
-    export it and stale from the next morning, minutes to produce, and often hundreds of megabytes
-    of XML that has to be parsed in full before any question can be answered.
+    export it and stale from the next morning.
   </p>
 
   <p>
     Hozz queries a local SQLite database that <strong>your phone keeps current in the background</strong>.
-    Asking a question costs an indexed lookup rather than a re-parse, the answer reflects what
-    arrived this morning, and nothing had to be exported by hand.
-  </p>
-
-  <p>
-    That is an architectural difference rather than a feature, and it is the main reason to choose
-    this one.
+    Asking a question costs an indexed lookup rather than a re-parse, the answer reflects the last
+    sync rather than a hand-made export, and nothing had to be exported by hand.
   </p>
 
   <Callout kind="note" title="Read-only by construction, not by policy">
@@ -306,7 +300,7 @@ const byHand = `{
     <p>
       A locally-run model has no such problem. Either way, the choice is yours to make deliberately
       — which is the same discipline the rest of{' '}
-      <a href="/docs/privacy/">Hozz's privacy story</a> depends on.
+      <a href="/privacy/">Hozz's privacy story</a> depends on.
     </p>
   </Callout>
 

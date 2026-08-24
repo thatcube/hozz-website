@@ -7,16 +7,11 @@ import { GITHUB_URL, DONATE_URL, LICENSE_URL } from '../../data/site';
 const entry = page('/docs/free-and-open/');
 ---
 
-<DocsLayout page={entry} section="Start here">
+<DocsLayout page={entry}>
   <p>
     Most apps in this category have a free tier that cannot do the thing you installed them for, and
     a paid tier that can. Hozz does not have tiers. Every feature described anywhere in this
     documentation is in the app, and there is nothing to buy.
-  </p>
-
-  <p>
-    That is worth stating plainly rather than implying, because if you are comparing exporters it is
-    the difference that decides most of the others.
   </p>
 
   <h2>What there is none of</h2>
@@ -61,9 +56,8 @@ const entry = page('/docs/free-and-open/');
 
   <p>
     The remaining cost is one developer's time, which is donated. If you want to support that,{' '}
-    <a href={DONATE_URL}>GitHub Sponsors</a> exists, and it buys you nothing — there is no supporter
-    tier, no badge and no unlocked feature, because a feature unlocked by paying is exactly the
-    thing this page says does not exist.
+    <a href={DONATE_URL}>GitHub Sponsors</a> exists. It buys you nothing — there is no supporter
+    tier, no badge and no unlocked feature.
   </p>
 
   <h2>What "open source" gets you here</h2>
@@ -75,16 +69,14 @@ const entry = page('/docs/free-and-open/');
     negative claim cannot be demonstrated by using the app. You can only check it by reading it.
   </p>
 
-  <p>So the design tries to make it checkable rather than trustworthy-sounding:</p>
-
   <ul>
     <li>
       <a href={GITHUB_URL}>Every line is readable</a>, including the networking and the parts that
       touch the Keychain.
     </li>
     <li>
-      Privacy behaviours have tests, rather than being assertions on a page. There are 520 tests in
-      the suite, and some of them exist specifically to fail if a Health value ever reached a log.
+      Privacy behaviours have tests, rather than being assertions on a page. Some of them exist
+      specifically to fail if a Health value ever reached a log.
     </li>
     <li>
       This documentation is written against that source, and the lists in it are{' '}
@@ -117,6 +109,6 @@ const entry = page('/docs/free-and-open/');
   </p>
 
   <p>
-    <a href="/docs/privacy/">Privacy</a> sets out exactly what leaves the device, when, and to where.
+    <a href="/privacy/">Privacy</a> sets out exactly what leaves the device, when, and to where.
   </p>
 </DocsLayout>

@@ -7,7 +7,14 @@
  */
 
 export type DocPage = {
-  /** Path, always with a trailing slash to match Astro's directory routes. */
+  /**
+   * Path, always with a trailing slash to match Astro's directory routes.
+   *
+   * Nearly all of these live under /docs/. Privacy is the exception: it sits at
+   * /privacy/ because that is where an App Store listing, a repository and the
+   * site's own header already point, and a privacy policy that answers on a
+   * redirect is a worse answer than one that does not.
+   */
   href: string;
   /** Sidebar label — short. */
   nav: string;
@@ -43,6 +50,15 @@ export const DOC_SECTIONS: DocSection[] = [
         lede: 'Four steps to your first export, and an honest account of what happens after it.',
       },
       {
+        href: '/privacy/',
+        heading: 'Privacy',
+        nav: 'Privacy',
+        title: 'Hozz privacy — what leaves your device, and when',
+        description:
+          'Nothing leaves your iPhone until you add a destination and confirm it. Where credentials live, what Hozz never logs, and what it cannot promise once data reaches a destination you chose.',
+        lede: 'What leaves the device, when, and to where. This is the whole argument for the app.',
+      },
+      {
         href: '/docs/free-and-open/',
         heading: 'Free, and open source',
         nav: 'Free and open',
@@ -50,15 +66,6 @@ export const DOC_SECTIONS: DocSection[] = [
         description:
           'Hozz has no paid tier, no account, no analytics and no server run by its maintainer. What that means in practice, and why exporting your Apple Health data does not need any of them.',
         lede: 'There is no paid tier, no sign-in, and nowhere for your data to be collected. Here is why that is possible.',
-      },
-      {
-        href: '/docs/background-sync/',
-        heading: 'Why your export didn’t run',
-        nav: 'Background sync',
-        title: 'Why didn’t my Apple Health export run? iOS background limits explained',
-        description:
-          'iOS decides when a background app runs, most Health types are capped at hourly, and Health cannot be read while the phone is locked. What Hozz can promise and what it cannot.',
-        lede: 'Your 8am export did not run at 8am. That is usually iOS, and it is worth understanding why.',
       },
     ],
   },
@@ -189,6 +196,15 @@ export const DOC_SECTIONS: DocSection[] = [
     title: 'When something is wrong',
     pages: [
       {
+        href: '/docs/background-sync/',
+        heading: 'Why your export didn’t run',
+        nav: 'Background sync',
+        title: 'Why didn’t my Apple Health export run? iOS background limits explained',
+        description:
+          'iOS decides when a background app runs, most Health types are capped at hourly, and Health cannot be read while the phone is locked. What Hozz can promise and what it cannot.',
+        lede: 'Your 8am export did not run at 8am. That is usually iOS, and it is worth understanding why.',
+      },
+      {
         href: '/docs/troubleshooting/',
         heading: 'Troubleshooting',
         nav: 'Troubleshooting',
@@ -196,15 +212,6 @@ export const DOC_SECTIONS: DocSection[] = [
         description:
           'The Mac not appearing, a first backfill that looks stalled, an empty export, and background sync that is not running. Every message Hozz shows, and what it means.',
         lede: 'Every message Hozz can show you, what it actually means, and what to do about it.',
-      },
-      {
-        href: '/docs/privacy/',
-        heading: 'Privacy',
-        nav: 'Privacy',
-        title: 'Hozz privacy — what leaves your device, and when',
-        description:
-          'Nothing leaves your iPhone until you add a destination and confirm it. Where credentials live, what is excluded from backups, and what Hozz never logs.',
-        lede: 'What leaves the device, when, and to where. This is the whole argument for the app.',
       },
     ],
   },
@@ -228,4 +235,15 @@ export function page(href: string): DocPage {
   const found = DOC_PAGES.find((entry) => entry.href === href);
   if (!found) throw new Error(`No entry in DOC_SECTIONS for ${href}`);
   return found;
+}
+
+/**
+ * The section `href` belongs to, for the breadcrumb.
+ *
+ * Derived rather than passed in by each page: a page that names its own section
+ * can be moved in this file and go on claiming the old one, which is a wrong
+ * breadcrumb nobody notices until a reader does.
+ */
+export function sectionOf(href: string): string | undefined {
+  return DOC_SECTIONS.find((section) => section.pages.some((entry) => entry.href === href))?.title;
 }

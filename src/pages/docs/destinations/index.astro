@@ -76,21 +76,6 @@ const formatName = (id: string) => DELIVERY_FORMATS.find((f) => f.id === id)?.na
     </p>
   </Callout>
 
-  <h2>Three of these are the same thing underneath</h2>
-
-  <p>
-    Home Assistant, InfluxDB and Web address are all HTTPS endpoints. They are listed separately on
-    purpose: the most common question for a tool like this is "how do I connect it to Home
-    Assistant", and answering "use the REST option, choose that format, and put this in that field"
-    is the difference between a capability existing and a capability being found.
-  </p>
-
-  <p>
-    Your Mac is an HTTPS endpoint too. It gets its own flow because Hozz discovers the computer over
-    Bonjour and fills in the address and token for you, so you never have to know it was a web
-    address.
-  </p>
-
   <h2>What every destination has</h2>
 
   <ul>

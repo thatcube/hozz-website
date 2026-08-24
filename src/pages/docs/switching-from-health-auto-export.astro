@@ -70,7 +70,7 @@ const differences = [
 ];
 ---
 
-<DocsLayout page={entry} section="Going further">
+<DocsLayout page={entry}>
   <p>
     If you are moving from Health Auto Export, the thing most likely to break is not the export —
     it is everything downstream of it. Home Assistant automations, Node-RED flows, MQTT subscribers
@@ -181,32 +181,6 @@ const differences = [
     your automation depends on behaviour you discovered by observation rather than from their
     documentation, test it rather than assuming.
   </p>
-
-  <h2>Other differences worth knowing</h2>
-
-  <ul>
-    <li>
-      <strong>Hozz has no paid tier.</strong> Every destination and every format is available.{' '}
-      <a href="/docs/free-and-open/">Free and open source</a> covers what that does and does not mean.
-    </li>
-    <li>
-      <strong>Hozz publishes a schema.</strong> Every delivery format is documented field by field
-      with a worked example on <a href="/docs/delivery-schema/">the delivery schema page</a>.
-    </li>
-    <li>
-      <strong>Hozz writes InfluxDB line protocol directly</strong>, so a translator container between
-      the exporter and the database is not needed. See{' '}
-      <a href="/docs/destinations/influxdb/">InfluxDB</a>.
-    </li>
-    <li>
-      <strong>Hozz is early alpha and not in the App Store.</strong> Today you install it by building
-      it. That is the honest reason to stay where you are for now.
-    </li>
-    <li>
-      <strong>Coverage is partial.</strong> <a href="/docs/data-coverage/">Data coverage</a> is the current
-      boundary — check the types you care about are on it before switching anything important.
-    </li>
-  </ul>
 
   <h2>Running both at once</h2>
 
