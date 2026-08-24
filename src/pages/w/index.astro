@@ -14,7 +14,7 @@ import { SITE } from '../../data/site';
    page's CSS bundle, and they then fight the board's own styling. */
 const metas = import.meta.glob('./*.meta.ts', { eager: true }) as Record<
   string,
-  { default?: { n?: string; name?: string; mark?: string; idea?: string; palette?: string[] } }
+  { default?: { n?: string; name?: string; mark?: string; idea?: string; palette?: string[]; selected?: boolean } }
 >;
 
 const items = Object.entries(metas)
@@ -32,7 +32,7 @@ const items = Object.entries(metas)
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex, nofollow" />
     <title>Website concepts · Hozz</title>
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/logo.svg" type="image/svg+xml" />
     <link rel="canonical" href={`${SITE}/w/`} />
   </head>
   <body>
@@ -54,12 +54,13 @@ const items = Object.entries(metas)
     <main>
       {
         items.map((it) => (
-          <section class="item" id={it.slug}>
+          <section id={it.slug} class:list={['item', { 'is-selected': it.meta.selected }]}>
             <div class="meta">
               <p class="tag">
                 <b>{it.meta.n ?? it.slug}</b>
                 <span>{it.meta.name ?? it.slug}</span>
               </p>
+              {it.meta.selected && <p class="badge">Selected · live at /</p>}
               {it.meta.mark && <p class="mark">Mark {it.meta.mark}</p>}
               {it.meta.idea && <p class="idea">{it.meta.idea}</p>}
               {it.meta.palette && (
@@ -171,6 +172,28 @@ const items = Object.entries(metas)
     align-items: baseline;
     gap: 0.55rem;
     flex-wrap: wrap;
+  }
+
+  /* Marks the direction that actually shipped, so the board can't be mistaken
+     for a set of equal options once one of them is live. */
+  .badge {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.2rem 0.6rem;
+    border: 1px solid #6fd39a;
+    border-radius: 999px;
+    color: #a8f0c6;
+    background: rgba(111, 211, 154, 0.12);
+    font-family: var(--mono, ui-monospace, monospace);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .is-selected {
+    outline: 1px solid rgba(111, 211, 154, 0.45);
+    outline-offset: 10px;
+    border-radius: 4px;
   }
 
   .tag b {
