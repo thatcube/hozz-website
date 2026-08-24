@@ -36,6 +36,14 @@ const items = all.filter((i) => i.slug.startsWith('c'));
 const twozz = all.filter((i) => i.slug.startsWith('t'));
 
 const SIZES = [96, 48, 28, 16];
+
+/**
+ * The current pick. Nothing is deleted when a mark is chosen — the whole set
+ * stays on this page as a record of what was tried and rejected, which is worth
+ * more than a tidy page. This just floats the selection to the top.
+ */
+const SELECTED = 'c45';
+const chosen = all.find((i) => i.slug === SELECTED);
 ---
 
 <!doctype html>
@@ -85,6 +93,38 @@ const SIZES = [96, 48, 28, 16];
         </figcaption>
       </figure>
     </header>
+
+    {
+      chosen && (
+        <section class="chosen">
+          <div class="chosen-art">
+            <div class="chosen-ground chosen-ground--light">
+              <chosen.Comp size={128} />
+            </div>
+            <div class="chosen-ground chosen-ground--dark">
+              <chosen.Comp size={128} />
+            </div>
+          </div>
+          <div class="chosen-note">
+            <p class="eyebrow">Selected</p>
+            <h2>
+              {chosen.meta.n} · {chosen.meta.name}
+            </h2>
+            <p>{chosen.meta.idea}</p>
+            <p class="chosen-file">
+              <a href="/marks/hozz-lens.svg" download>
+                Download the SVG
+              </a>{' '}
+              — 32×32 grid, 4px padding, nine tones.
+            </p>
+            <p class="chosen-keep">
+              Everything else stays below. A rejected mark is a record of what
+              was tried, and that is worth keeping.
+            </p>
+          </div>
+        </section>
+      )
+    }
 
     <main>
       {

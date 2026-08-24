@@ -262,6 +262,16 @@ def build():
     jump = max(abs(tone[p] - tone[q])
                for p in tone for q in ((p[0] + 1, p[1]), (p[0], p[1] + 1))
                if q in tone)
+    lone = sum(1 for p, t in tone.items()
+               if all(tone.get(q, t) != t for q in
+                      ((p[0] + 1, p[1]), (p[0] - 1, p[1]),
+                       (p[0], p[1] + 1), (p[0], p[1] - 1))))
+
+    # The brief's floor, and Mozz's own numbers as the ceiling.
+    assert len(used) >= 6, f'only {len(used)} tones'
+    assert max(steps) <= 9.1, f'step of {max(steps):.1f}% is bigger than any of Mozz\'s'
+    assert jump <= 2, f'{jump} levels between touching pixels is a band edge'
+    assert lone == 0, f'{lone} pixels stand alone — that is dither, not a band'
     print(f'{SLUG} {NAME}')
     print(f'  disc {dys[-1] - dys[0] + 1} rows (y{dys[0]}-{dys[-1]}) · '
           f'face {SIZE} gap {gap} = {h} rows · air {above}/{below}')
@@ -269,7 +279,7 @@ def build():
     print(f'  steps: {" ".join(f"{s:.1f}%" for s in steps)}  '
           f'(max {max(steps):.1f}%, Mozz maxes at 9.1% ignoring its deep accent)')
     print(f'  biggest jump between neighbouring pixels: {jump} level(s) '
-          f'= {jump * max(steps):.1f}%')
+          f'= {jump * max(steps):.1f}%   lone pixels: {lone}')
     for i, f in enumerate(used):
         n = sum(1 for t in tone.values() if RAMP[t] == f)
         print(f'    {i} {f}  lum {lum(f):5.1f}  {n:3} px  ' + '#' * (n // 3))
