@@ -8,4 +8,17 @@
   # third-party site framing ours, which this still blocks outright. Allowing
   # our own origin is what lets /directions/ show the variations side by side.
   X-Frame-Options: SAMEORIGIN
-  Content-Security-Policy: frame-ancestors 'self'
+  # The site promises "no cookies, analytics, storage, or third-party requests"
+  # in its own footer, so the promise is enforced here rather than left to
+  # trust. Everything executable, connectable and loadable is 'self'.
+  #
+  # This is not theoretical: Cloudflare Web Analytics auto-injection was found
+  # adding a static.cloudflareinsights.com beacon to the live HTML for browser
+  # user agents only — invisible to curl and to any local build. 'self' means
+  # the browser refuses that script even while the edge keeps injecting it.
+  # Turning the injection off in the dashboard is still the real fix.
+  #
+  # 'unsafe-inline' is needed for the JSON-LD block and the inline style
+  # attributes the pages use. It permits inline code, never another origin,
+  # so it does not weaken the third-party guarantee this header exists for.
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src 'self'; frame-ancestors 'self'
