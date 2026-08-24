@@ -114,6 +114,21 @@ function absent(label, source, needle, why) {
   }
 }
 
+/**
+ * Compares two things inside this repository.
+ *
+ * `equal` frames a mismatch as the docs disagreeing with the app, which is the
+ * right story for a fact read out of Swift and the wrong one for two files here
+ * that should simply say the same thing as each other.
+ */
+function agree(label, expected, actual, expectedFrom) {
+  if (String(expected) !== String(actual)) {
+    problems.push(`${label}\n    says ${actual}, but ${expectedFrom} says ${expected}\n`);
+  } else {
+    notes.push(`${label} — ${expected}`);
+  }
+}
+
 async function load(name) {
   const path = FILES[name];
   if (localRepo) {
@@ -155,6 +170,53 @@ console.log(
     ? `Checking the docs against ${localRepo}\n`
     : `Checking the docs against thatcube/hozz@${ref}\n`
 );
+
+// --- The site's own address ------------------------------------------------
+// One hostname is written down in four places: the Astro config, which stamps
+// every canonical URL; src/data/site.ts, which the pages read; robots.txt,
+// which points a crawler at the sitemap; and wrangler.jsonc, which is what the
+// hostname actually resolves to. Nothing connected them, and this branch forked
+// before a domain move and quietly carried the old host in one of them. A
+// canonical that disagrees with the sitemap is invisible until the search
+// results are wrong, so it is checked here rather than noticed later.
+//
+// This one is local to this repository, so it runs whether or not the app's
+// source can be reached.
+{
+  const read = (path) => readFile(join(root, path), 'utf8');
+  const [config, siteData, robots, wrangler] = await Promise.all([
+    read('astro.config.mjs'),
+    read('src/data/site.ts'),
+    read('public/robots.txt'),
+    read('wrangler.jsonc'),
+  ]);
+
+  const host = (source, pattern, label) => {
+    const match = source.match(pattern);
+    if (!match) {
+      problems.push(`The site's address in ${label}\n    could not be read\n`);
+      return null;
+    }
+    return match[1];
+  };
+
+  const configured = host(config, /site:\s*'https:\/\/([^'/]+)'/, 'astro.config.mjs');
+  const declared = host(siteData, /SITE = 'https:\/\/([^'/]+)'/, 'src/data/site.ts');
+  const crawled = host(robots, /Sitemap:\s*https:\/\/([^/\s]+)/, 'public/robots.txt');
+  // The first route is the canonical one; a second may be attached to keep
+  // links that predate a move alive, and that is deliberate rather than drift.
+  const served = host(wrangler, /"pattern":\s*"([^"]+)"/, 'wrangler.jsonc');
+
+  for (const [label, value] of [
+    ['src/data/site.ts', declared],
+    ['public/robots.txt', crawled],
+    ['wrangler.jsonc (first route)', served],
+  ]) {
+    if (configured && value) {
+      agree(`The site's address in ${label}`, configured, value, 'astro.config.mjs');
+    }
+  }
+}
 
 try {
   const [
