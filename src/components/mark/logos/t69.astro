@@ -1,0 +1,55 @@
+---
+/**
+ * t69 · Arrival
+ *
+ * The tail is not decoration. It is the mouth the voice came out of, and it
+ * is the only part of a speech bubble that says which way the sound is going.
+ * So the light is struck from there.
+ *
+ * Tone is one monotonic falloff measured from a point just past the tip of
+ * the tail: deepest at the mouth, opening and brightening as it climbs
+ * through the body. That makes the level lines curved and concentric about
+ * the tail — tight and dark where the voice starts, wide and pale by the time
+ * they reach the shoulders, which they cross symmetrically because they are
+ * centred on the tail rather than on the bubble.
+ *
+ * It is monotonic, so there are no repeated rings and nothing here can be
+ * read as a signal glyph. One continuous swell, not a diagram.
+ *
+ * This also settles the usual complaint about tails. Where a tail is a wedge
+ * glued to a rounded rectangle, it looks glued on. Here every tone in the
+ * bubble is measured *from* the tail, so the tail is where the interior comes
+ * from, and body and tail share one exact outline.
+ *
+ * The carrier is an ordinary rounded chat bubble with a long stepped tail.
+ * The face is the family's md/compact/gap-2, sitting on a plateau the swell
+ * flattens into and then darkens for contrast.
+ *
+ * 11 tones, deep violet through to magenta.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Twozz — Arrival">
+  <path d="M8 22h1v1h-1z M8 23h4v1h-4z M8 24h4v1h-4z M8 25h2v1h-2z" fill="#42146d" />
+  <path d="M6 20h5v1h-5z M7 21h6v1h-6z M9 22h6v1h-6z M12 23h2v1h-2z" fill="#541785" />
+  <path d="M5 18h5v1h-5z M5 19h8v1h-8z M11 20h4v1h-4z M13 21h3v1h-3z M15 22h1v1h-1z" fill="#631a99" />
+  <path d="M4 16h4v1h-4z M4 17h6v1h-6z M4 18h1v1h-1z M15 20h3v1h-3z M16 21h3v1h-3z" fill="#731eac" />
+  <path d="M4 14h3v1h-3z M4 15h4v1h-4z M10 18h3v1h-3z M13 19h8v1h-8z M18 20h4v1h-4z M19 21h3v1h-3z" fill="#8021bd" />
+  <path d="M4 11h3v1h-3z M4 12h4v1h-4z M4 13h4v1h-4z M7 14h2v1h-2z M8 15h1v1h-1z M8 16h1v1h-1z M13 18h2v1h-2z M17 18h6v1h-6z M21 19h3v1h-3z M22 20h2v1h-2z M22 21h3v1h-3z" fill="#932ccb" />
+  <path d="M14 5h4v1h-4z M11 6h9v1h-9z M9 7h13v1h-13z M8 8h15v1h-15z M4 9h19v1h-19z M4 10h20v1h-20z M7 11h17v1h-17z M8 12h16v1h-16z M8 13h16v1h-16z M9 14h15v1h-15z M9 15h15v1h-15z M9 16h16v1h-16z M10 17h15v1h-15z M15 18h2v1h-2z M23 18h3v1h-3z M24 19h3v1h-3z M24 20h2v1h-2z" fill="#a334d8" />
+  <path d="M11 5h3v1h-3z M18 5h2v1h-2z M7 6h4v1h-4z M4 7h5v1h-5z M4 8h4v1h-4z M24 10h1v1h-1z M24 11h1v1h-1z M24 12h1v1h-1z M24 13h1v1h-1z M24 14h2v1h-2z M24 15h3v1h-3z M25 16h2v1h-2z M25 17h3v1h-3z M26 18h2v1h-2z" fill="#b245e1" />
+  <path d="M7 4h2v1h-2z M12 4h6v1h-6z M6 5h5v1h-5z M5 6h2v1h-2z M25 11h1v1h-1z M25 12h2v1h-2z M25 13h3v1h-3z M26 14h2v1h-2z M27 15h1v1h-1z M27 16h1v1h-1z" fill="#c052ea" />
+  <path d="M9 4h3v1h-3z M18 4h2v1h-2z M20 6h1v1h-1z M23 8h3v1h-3z M23 9h4v1h-4z M25 10h3v1h-3z M26 11h2v1h-2z M27 12h1v1h-1z" fill="#cd6aee" />
+  <path d="M20 4h5v1h-5z M20 5h6v1h-6z M21 6h6v1h-6z M22 7h6v1h-6z M26 8h2v1h-2z M27 9h1v1h-1z" fill="#d97cf2" />
+  <path d="M7 3h18v1h-18z M6 4h1v1h-1z M25 4h1v1h-1z M5 5h1v1h-1z M26 5h1v1h-1z M4 6h1v1h-1z M27 6h1v1h-1z M3 7h1v1h-1z M28 7h1v1h-1z M3 8h1v1h-1z M28 8h1v1h-1z M3 9h1v1h-1z M28 9h1v1h-1z M3 10h1v1h-1z M28 10h1v1h-1z M3 11h1v1h-1z M28 11h1v1h-1z M3 12h1v1h-1z M28 12h1v1h-1z M3 13h1v1h-1z M28 13h1v1h-1z M3 14h1v1h-1z M28 14h1v1h-1z M3 15h1v1h-1z M28 15h1v1h-1z M3 16h1v1h-1z M28 16h1v1h-1z M3 17h1v1h-1z M28 17h1v1h-1z M3 18h1v1h-1z M28 18h1v1h-1z M4 19h1v1h-1z M27 19h1v1h-1z M5 20h1v1h-1z M26 20h1v1h-1z M6 21h1v1h-1z M25 21h1v1h-1z M7 22h1v1h-1z M16 22h9v1h-9z M7 23h1v1h-1z M14 23h2v1h-2z M7 24h1v1h-1z M12 24h2v1h-2z M7 25h1v1h-1z M10 25h2v1h-2z M7 26h3v1h-3z M7 27h1v1h-1z" fill="#1c0838" />
+  <g fill="#ffffff" shape-rendering="crispEdges">
+    {facePathsAt({ cx: 16, cy: 12, size: 'md', smile: 'compact', gap: 2 }).map((d) => (
+      <path d={d} />
+    ))}
+  </g>
+</MarkFrame>

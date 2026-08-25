@@ -1,0 +1,50 @@
+---
+/**
+ * t70 · Live
+ *
+ * Mozz's disc is lit by something close to it, and that is why it reads as an
+ * object rather than a shape. The same lamp, moved to a bubble.
+ *
+ * The source is a near point held just off the top-right shoulder, so the
+ * falloff is inverse-square rather than linear: a tight bright hotspot, then a
+ * long fast drop into shadow across the far half of the mark. A distant light
+ * flattens everything; a near one makes a small surface look curved and makes
+ * the far side genuinely dark, which is where the sense of presence comes
+ * from — a lit thing in a room, caught mid-broadcast.
+ *
+ * The level lines are therefore circles centred outside the mark, which is the
+ * one arrangement none of the other three here use — a straight band, a
+ * silhouette contour and an arc struck from the tail. Body and tail take the
+ * same lamp and the same falloff, and share one exact outline, so the tail
+ * darkens as part of the object rather than as a shape appended to it.
+ *
+ * The carrier is a plain rounded bubble with a short stepped tail. The face is
+ * the family's md/compact/gap-2, flattened to one calm tone so the hotspot
+ * stops short of the eyes.
+ *
+ * 9 tones, deep violet to magenta.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Twozz — Live">
+  <path d="M4 13h1v1h-1z M4 14h1v1h-1z M4 15h2v1h-2z M4 16h2v1h-2z M4 17h3v1h-3z M4 18h4v1h-4z M5 19h4v1h-4z M6 20h4v1h-4z M7 21h4v1h-4z M8 22h4v1h-4z M8 23h5v1h-5z M8 24h3v1h-3z M8 25h1v1h-1z" fill="#37147a" />
+  <path d="M4 7h1v1h-1z M4 8h1v1h-1z M4 9h2v1h-2z M4 10h2v1h-2z M4 11h2v1h-2z M4 12h2v1h-2z M5 13h2v1h-2z M5 14h2v1h-2z M6 15h2v1h-2z M6 16h2v1h-2z M7 17h2v1h-2z M8 18h2v1h-2z M9 19h3v1h-3z M10 20h3v1h-3z M11 21h4v1h-4z M12 22h3v1h-3z" fill="#4b1d99" />
+  <path d="M6 5h1v1h-1z M5 6h2v1h-2z M5 7h3v1h-3z M5 8h3v1h-3z M6 9h2v1h-2z M6 10h1v1h-1z M6 11h1v1h-1z M6 12h2v1h-2z M7 13h1v1h-1z M7 14h1v1h-1z M8 15h1v1h-1z M8 16h2v1h-2z M9 17h2v1h-2z M10 18h2v1h-2z M12 19h3v1h-3z M13 20h6v1h-6z M15 21h7v1h-7z" fill="#5c24b1" />
+  <path d="M7 4h3v1h-3z M7 5h4v1h-4z M14 5h3v1h-3z M7 6h13v1h-13z M8 7h13v1h-13z M8 8h14v1h-14z M8 9h15v1h-15z M7 10h16v1h-16z M7 11h17v1h-17z M8 12h16v1h-16z M8 13h16v1h-16z M8 14h15v1h-15z M9 15h14v1h-14z M10 16h12v1h-12z M11 17h11v1h-11z M12 18h10v1h-10z M15 19h12v1h-12z M19 20h7v1h-7z M22 21h3v1h-3z" fill="#6c29c5" />
+  <path d="M10 4h6v1h-6z M11 5h3v1h-3z M17 5h2v1h-2z M23 9h1v1h-1z M23 10h1v1h-1z M24 12h1v1h-1z M24 13h1v1h-1z M23 14h2v1h-2z M23 15h2v1h-2z M27 15h1v1h-1z M22 16h6v1h-6z M22 17h6v1h-6z M22 18h6v1h-6z" fill="#8336d6" />
+  <path d="M16 4h4v1h-4z M19 5h1v1h-1z M24 10h1v1h-1z M24 11h1v1h-1z M25 12h3v1h-3z M25 13h3v1h-3z M25 14h3v1h-3z M25 15h2v1h-2z" fill="#9a44e4" />
+  <path d="M25 10h3v1h-3z M25 11h3v1h-3z" fill="#b256ec" />
+  <path d="M20 4h2v1h-2z M20 5h2v1h-2z M20 6h2v1h-2z M21 7h1v1h-1z M27 7h1v1h-1z M22 8h6v1h-6z M24 9h4v1h-4z" fill="#ca71f2" />
+  <path d="M22 4h3v1h-3z M22 5h4v1h-4z M22 6h5v1h-5z M22 7h5v1h-5z" fill="#e08cf6" />
+  <path d="M7 3h18v1h-18z M6 4h1v1h-1z M25 4h1v1h-1z M5 5h1v1h-1z M26 5h1v1h-1z M4 6h1v1h-1z M27 6h1v1h-1z M3 7h1v1h-1z M28 7h1v1h-1z M3 8h1v1h-1z M28 8h1v1h-1z M3 9h1v1h-1z M28 9h1v1h-1z M3 10h1v1h-1z M28 10h1v1h-1z M3 11h1v1h-1z M28 11h1v1h-1z M3 12h1v1h-1z M28 12h1v1h-1z M3 13h1v1h-1z M28 13h1v1h-1z M3 14h1v1h-1z M28 14h1v1h-1z M3 15h1v1h-1z M28 15h1v1h-1z M3 16h1v1h-1z M28 16h1v1h-1z M3 17h1v1h-1z M28 17h1v1h-1z M3 18h1v1h-1z M28 18h1v1h-1z M4 19h1v1h-1z M27 19h1v1h-1z M5 20h1v1h-1z M26 20h1v1h-1z M6 21h1v1h-1z M25 21h1v1h-1z M7 22h1v1h-1z M15 22h10v1h-10z M7 23h1v1h-1z M13 23h2v1h-2z M7 24h1v1h-1z M11 24h2v1h-2z M7 25h1v1h-1z M9 25h2v1h-2z M7 26h2v1h-2z" fill="#1a0937" />
+  <g fill="#ffffff" shape-rendering="crispEdges">
+    {facePathsAt({ cx: 16, cy: 12, size: 'md', smile: 'compact', gap: 2 }).map((d) => (
+      <path d={d} />
+    ))}
+  </g>
+</MarkFrame>
