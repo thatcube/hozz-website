@@ -1,0 +1,74 @@
+---
+/**
+ * p07 · Throw — a lamp at the back of a dark room and the shaft it throws.
+ *
+ * Three shapes: a body, an emitter, a shaft. The letters have no fill — they
+ * are light that did not arrive. The near letter sits where the shaft has not
+ * finished opening, so the shaft's own converging edge takes a slanted chamfer
+ * off the near ends of its bars; the far letter, out where the shaft is wide,
+ * is whole. Both stay joined. Take the shaft away and there is nothing left
+ * for the letters to be missing from.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.plozz;
+const uid = `p07-${Math.random().toString(36).slice(2, 9)}`;
+
+const AXIS = 24;
+const X_LENS = 2;
+const X_WALL = 46.6;
+const HALF = 2.2;
+const SPREAD = 0.42;
+const half = (x: number) => HALF + SPREAD * (x - X_LENS);
+
+const shaft =
+  `M${X_LENS} ${AXIS - half(X_LENS)}L${X_WALL} ${AXIS - half(X_WALL)}` +
+  `L${X_WALL} ${AXIS + half(X_WALL)}L${X_LENS} ${AXIS + half(X_LENS)}Z`;
+
+const Z = {
+  y: 16.5,
+  w: 14,
+  h: 15,
+  bar: 4.2,
+  diag: 7.9,
+  cap: 'flat' as const,
+};
+const zNear = 11.5;
+const zFar = 27.3;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: zNear })} fill="#000" />
+      <path d={zPath({ ...Z, x: zFar })} fill="#000" />
+    </mask>
+  </defs>
+
+  <path d={shaft} fill={app.hue} mask={`url(#${uid})`} />
+
+  <rect x="0.6" y="18.6" width="6.8" height="10.8" rx="2.6" fill={app.deep} />
+  <rect
+    x="5"
+    y="21.4"
+    width="2.8"
+    height="5.2"
+    rx="1.4"
+    fill={ground === 'dark' ? app.light : app.light}
+  />
+</svg>

@@ -1,0 +1,106 @@
+---
+import SketchLayout from '../../layouts/SketchLayout.astro';
+import '../../styles/sketch-d.css';
+---
+
+<SketchLayout title="Sketch D — Local Loop · Hozz" letter="D" name="Local Loop">
+  <main>
+    <section class="hero" aria-labelledby="hero-title">
+      <header class="masthead">
+        <a class="wordmark" href="#hero-title" aria-label="Hozz, back to top">HOZZ</a>
+        <p class="status"><span aria-hidden="true"></span> Early alpha · free &amp; open source</p>
+      </header>
+
+      <div class="hero-copy">
+        <p class="kicker">Your health data, as local context</p>
+        <h1 id="hero-title">Let your assistant read your health history.<br /><em>Without giving it away.</em></h1>
+        <p class="lede">
+          Hozz keeps what your iPhone sends in a SQLite file on your Mac, then exposes it through an
+          enforced read-only MCP server. Your assistant comes to the data—not the other way around.
+        </p>
+      </div>
+
+      <div class="local-loop" aria-label="Diagram: an AI assistant reads health data locally through Hozz's read-only MCP server">
+        <svg class="loop-line" viewBox="0 0 1200 380" role="img" aria-labelledby="loop-title loop-desc">
+          <title id="loop-title">The Hozz local data loop</title>
+          <desc id="loop-desc">Health data stays in a SQLite file on your Mac. An assistant can request read-only access through four MCP tools.</desc>
+          <path class="rail rail-shadow" d="M108 190 C260 16 410 16 552 190 S850 364 1092 190" />
+          <path class="rail rail-active" d="M108 190 C260 16 410 16 552 190 S850 364 1092 190" />
+        </svg>
+
+        <article class="node node-data">
+          <div class="node-index">LOCAL / 01</div>
+          <h2>Your Mac</h2>
+          <p class="file">hozz-received.sqlite</p>
+          <p class="node-note">The source file stays here.</p>
+        </article>
+
+        <div class="gate">
+          <p class="gate-label">READ ONLY</p>
+          <div class="gate-mark" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+          <p class="gate-protocol">MCP · stdio</p>
+        </div>
+
+        <article class="node node-assistant">
+          <div class="node-index">LOCAL / 02</div>
+          <h2>Your assistant</h2>
+          <p class="node-note">Reads only what you ask it to.</p>
+        </article>
+
+        <ul class="tools" aria-label="The four read-only tools">
+          <li>list_health_types</li>
+          <li>summarise_health_data</li>
+          <li>aggregate_health_data</li>
+          <li>list_health_samples</li>
+        </ul>
+      </div>
+
+      <div class="hero-foot">
+        <p class="proof"><strong>Cannot change. Cannot delete.</strong> Read-only is enforced in the server, not promised in copy.</p>
+        <a class="inspect-link" href="#inspect">Inspect the connection <span aria-hidden="true">↓</span></a>
+      </div>
+    </section>
+
+    <section class="inspect" id="inspect" aria-labelledby="inspect-title">
+      <div class="inspect-copy">
+        <p class="kicker">The whole connection</p>
+        <h2 id="inspect-title">A small config.<br />No hosted relay.</h2>
+        <p>
+          The Assistant tab in the Mac app generates this. Paste it into an MCP-compatible assistant
+          to point the assistant at the Hozz server and your local data directory.
+        </p>
+        <dl class="facts">
+          <div><dt>Protocol</dt><dd>JSON-RPC 2.0 · 2024-11-05</dd></div>
+          <div><dt>Server</dt><dd>hozz · 1.0.0</dd></div>
+          <div><dt>Licence</dt><dd>GPL-3.0 + App Store exception</dd></div>
+        </dl>
+      </div>
+
+      <figure class="config-card">
+        <figcaption><span>assistant-config.json</span><span>generated locally</span></figcaption>
+        <pre><code><span class="punct">&lbrace;</span>
+  <span class="key">"mcpServers"</span>: <span class="punct">&lbrace;</span>
+    <span class="key">"hozz"</span>: <span class="punct">&lbrace;</span>
+      <span class="key">"command"</span>:
+        <span class="string">"/Applications/Hozz.app/Contents/MacOS/hozz-mcp"</span>,
+      <span class="key">"args"</span>: <span class="punct">[</span>
+        <span class="string">"--data-dir"</span>,
+        <span class="string">"/Users/you/Library/.../Hozz/Received"</span>
+      <span class="punct">]</span>
+    <span class="punct">&rbrace;</span>
+  <span class="punct">&rbrace;</span>
+<span class="punct">&rbrace;</span></code></pre>
+      </figure>
+
+      <aside class="caveat">
+        <p class="caveat-label">One honest boundary</p>
+        <p>
+          If you connect Hozz to a cloud-hosted assistant, that assistant may upload whatever it reads.
+          That is the assistant’s behaviour, not Hozz’s.
+        </p>
+      </aside>
+    </section>
+  </main>
+</SketchLayout>

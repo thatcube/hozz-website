@@ -1,0 +1,507 @@
+---
+/**
+ * Sketch P — "Coverage"
+ *
+ * The argument: every other export tool asks you for a date range, and a date
+ * range is a promise you can break. Hozz's real product is *coverage* — an
+ * unbroken line of your health history landing somewhere you own.
+ *
+ * So the page is built on one device: a hairline capsule track standing for
+ * that history, filled with hatched segments standing for batches. When an
+ * export is interrupted, the next batch restarts before the last one ended and
+ * the hatching crosses — repeated work, visible as double density. The track
+ * never goes white, because records are never skipped. Stated in the hero,
+ * proved in the section below it, and used once more as an edge on the close.
+ *
+ * Everything else is near-monochrome hairlines so that one accent, taken from
+ * the Activity hue, only ever appears where data does.
+ */
+import SketchLayout from '../../layouts/SketchLayout.astro';
+import { GITHUB_URL, DONATE_URL } from '../../data/site';
+import '../../styles/sketch-p.css';
+
+/* Hero track: five batches landing one after another, then the tail that has
+   not happened yet. Percentages of the track width. */
+const HERO_SEGS = [
+  { from: 0, to: 19, dir: '45deg' },
+  { from: 19, to: 36, dir: '-45deg' },
+  { from: 36, to: 55, dir: '45deg' },
+  { from: 55, to: 71, dir: '-45deg' },
+  { from: 71, to: 86, dir: '45deg', head: true },
+];
+
+/* Proof track: batch three is cut off mid-flight, so batch four restarts from
+   the last durable anchor — before the cut. 46→58 is covered twice, and the
+   two hatch directions cross there. */
+const PROOF_SEGS = [
+  { from: 0, to: 24, dir: '45deg' },
+  { from: 24, to: 46, dir: '-45deg' },
+  { from: 46, to: 58, dir: '45deg' },
+  { from: 46, to: 76, dir: '-45deg' },
+  { from: 76, to: 91, dir: '45deg', head: true },
+];
+
+const DESTINATIONS = [
+  {
+    name: 'Your Mac',
+    short: 'Mac',
+    body: 'The companion Mac app receives batches over your local network and files them in a SQLite database you can open.',
+    meta: 'NDJSON · token auth · Bonjour _hozz._tcp · :54330',
+  },
+  {
+    name: 'Folder',
+    short: 'Folder',
+    body: 'Anywhere the Files picker reaches — iCloud Drive, Dropbox, OneDrive, Google Drive, an SMB share, or the phone itself.',
+    meta: 'Any format · no network needed',
+  },
+  {
+    name: 'Web address',
+    short: 'Web address',
+    body: 'POST to an endpoint you run. Retries are safe: every batch carries a content-derived id and an Idempotency-Key.',
+    meta: 'NDJSON · JSON · CSV · Metrics JSON',
+  },
+  {
+    name: 'Home Assistant',
+    short: 'Home Assistant',
+    body: 'Metrics JSON straight into a webhook, so your health numbers sit beside the rest of your house.',
+    meta: 'Webhook or REST',
+  },
+  {
+    name: 'MQTT',
+    short: 'MQTT',
+    body: 'Publish to your own broker and let anything on the network subscribe to it.',
+    meta: 'MQTT 3.1.1 · mqtt:// or mqtts:// · retained, QoS 0',
+  },
+];
+
+const FORMATS = [
+  {
+    id: 'NDJSON',
+    use: 'The default. One record per line, streamable, and what the Mac app expects.',
+    keep: 'Keeps everything',
+    lossy: false,
+  },
+  {
+    id: 'JSON',
+    use: 'One document per batch, when you would rather read it than pipe it.',
+    keep: 'Keeps everything',
+    lossy: false,
+  },
+  {
+    id: 'CSV',
+    use: 'Spreadsheets and anything that wants a grid.',
+    keep: 'Lossy by design — metadata and nested workout detail do not fit a grid',
+    lossy: true,
+  },
+  {
+    id: 'Metrics JSON',
+    use: 'Dashboards, Home Assistant, anything expecting named metrics.',
+    keep: 'Aggregated shape',
+    lossy: false,
+  },
+];
+
+const faq = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'How do I export my Apple Health data?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Install Hozz on your iPhone and add a destination you control — the companion Mac app on your local network, a folder in the Files app such as iCloud Drive or Dropbox, an HTTPS endpoint you run, an MQTT broker, or a Home Assistant webhook. Choose which Health types to include, send a test batch to confirm it arrives, then pick a schedule: on arrival, hourly, daily, or manual. From then on new records are exported automatically. Nothing leaves the phone until you add a destination and confirm it.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What file formats can Hozz export Apple Health data to?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'NDJSON (the default, one record per line and streamable), JSON, CSV, and Metrics JSON. CSV is lossy by design because metadata and nested workout detail do not fit a flat grid. Deletions are carried as tombstones rather than silently dropped, and encoding is deterministic so the same records produce byte-identical output regardless of locale or time zone.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can an export miss records if it is interrupted?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'No. Hozz uses no date windows. It keeps a per-type opaque anchor from HKAnchoredObjectQuery and only advances it once records are durably staged, and each destination keeps its own cursor so one broken destination cannot block or skip another. An interruption can repeat work, but it cannot skip records. Manual exports resume from the last durable checkpoint after a crash, a reboot, or backgrounding.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Does Hozz send my health data to a server?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'No. Hozz has no account, no analytics, no hosted relay and no default destination. Data goes only to destinations you add yourself. It is free and open source under GPL-3.0 with an App Store exception.',
+      },
+    },
+  ],
+};
+
+const app = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Hozz',
+  applicationCategory: 'HealthApplication',
+  operatingSystem: 'iOS, macOS',
+  description:
+    'Free, open-source app that exports Apple Health data from your iPhone to destinations you own: a Mac on your local network, a folder, an HTTP endpoint, MQTT, or Home Assistant. NDJSON, JSON, CSV and Metrics JSON.',
+  license: 'https://www.gnu.org/licenses/gpl-3.0.html',
+  isAccessibleForFree: true,
+  author: { '@type': 'Person', name: 'Brandon Moore' },
+  codeRepository: GITHUB_URL,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+---
+
+<SketchLayout title="Sketch P — Coverage · Hozz" letter="P" name="Coverage">
+  <main class="p">
+    <!-- ------------------------------------------------------------ hero -->
+    <header class="p-shell p-hero">
+      <div class="p-hero-top">
+        <div class="p-hero-grid">
+          <p class="p-eyebrow p-r">
+            <span class="p-chip">Early alpha</span>
+            <span>Free &amp; open source</span>
+          </p>
+          <h1 class="p-h1 p-r" style="--i:1">
+            Get your Apple Health data <span class="p-acc">out</span>.
+          </h1>
+          <p class="p-lead p-r" style="--i:2">
+            Hozz copies every new record from your iPhone to somewhere you already own — your Mac, a
+            folder, your own server. On its own, from now on.
+          </p>
+          <div class="p-acts p-r" style="--i:3">
+            <a class="p-btn p-btn--solid" href={GITHUB_URL} rel="noopener">
+              Get Hozz on GitHub
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+                <path
+                  d="M2.6 6.5h7.8M7.2 3.3l3.2 3.2-3.2 3.2"
+                  stroke="currentColor"
+                  stroke-width="1.4"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"></path>
+              </svg>
+            </a>
+            <a class="p-btn p-btn--ghost" href={DONATE_URL} rel="noopener">Sponsor the work</a>
+          </div>
+        </div>
+
+        <dl class="p-spec p-r" style="--i:4">
+          <div><dt>Runs on</dt><dd>iPhone + Mac</dd></div>
+          <div><dt>Price</dt><dd>Free, no account</dd></div>
+          <div><dt>Licence</dt><dd>GPL-3.0</dd></div>
+          <div><dt>Destinations</dt><dd>Five, all yours</dd></div>
+          <div><dt>Tests</dt><dd>475 XCTest</dd></div>
+        </dl>
+      </div>
+
+      <!-- The device, stated. A history filling up, and five places it lands. -->
+      <figure class="p-rig p-reveal p-r" style="--i:5">
+        <figcaption class="p-rig-label">
+          <span>your health history</span>
+          <span>now &rarr;</span>
+        </figcaption>
+        <div class="p-scale" aria-hidden="true"></div>
+        <div
+          class="p-track"
+          role="img"
+          aria-label="A track representing your health history, filled batch by batch with no gaps, feeding five destinations."
+        >
+          {
+            HERO_SEGS.map((s, i) => (
+              <div
+                class={`p-seg${s.head ? ' p-seg--head' : ''}`}
+                style={`--i:${i};--dir:${s.dir};left:${s.from}%;width:${s.to - s.from}%`}
+              />
+            ))
+          }
+        </div>
+        <div class="p-drops" aria-hidden="true">
+          {
+            DESTINATIONS.map((d, i) => (
+              <div class="p-drop" style={`--d:${i}`}>
+                <span class="p-pip" />
+                <span class="p-drop-name">{d.short}</span>
+              </div>
+            ))
+          }
+        </div>
+      </figure>
+    </header>
+
+    <!-- ----------------------------------------------------------- proof -->
+    <section class="p-section p-section--wash" aria-labelledby="p-proof">
+      <div class="p-shell">
+        <div class="p-head">
+          <p class="p-index p-r">01 — Coverage</p>
+          <h2 class="p-h2 p-r" id="p-proof" style="--i:1">
+            It can repeat. It <span class="p-acc">can&rsquo;t skip</span>.
+          </h2>
+          <p class="p-body p-r" style="--i:2">
+            No date windows to get wrong. Hozz keeps an anchor per Health type and only moves it
+            once records are safely written. Kill it mid-export and the next run starts before the
+            last one stopped.
+          </p>
+        </div>
+
+        <figure class="p-reveal p-r" style="--i:3">
+          <div class="p-proof-marks" aria-hidden="true">
+            <span class="p-mark" style="left:58%">&times; interrupted</span>
+            <span class="p-mark p-mark--ink" style="left:91%">now</span>
+          </div>
+          <div
+            class="p-track p-proof-track"
+            role="img"
+            aria-label="The same track after an interruption: the batch that follows restarts before the cut, so a stretch is covered twice and shows crossed hatching. No part of the track is left blank."
+          >
+            {
+              PROOF_SEGS.map((s, i) => (
+                <div
+                  class={`p-seg${s.head ? ' p-seg--head' : ''}`}
+                  style={`--i:${i};--dir:${s.dir};left:${s.from}%;width:${s.to - s.from}%`}
+                />
+              ))
+            }
+            <span class="p-band" style="--i:3;left:46%;width:12%"></span>
+            <span class="p-track-tick" style="left:58%"></span>
+          </div>
+          <div class="p-brackets" aria-hidden="true">
+            <span class="p-bracket" style="left:46%;width:12%"><span>sent twice</span></span>
+          </div>
+          <ul class="p-legend">
+            <li><span class="p-swatch" aria-hidden="true"></span> exported once</li>
+            <li><span class="p-swatch p-swatch--x" aria-hidden="true"></span> exported twice</li>
+            <li><span class="p-swatch p-swatch--empty" aria-hidden="true"></span> not recorded yet</li>
+          </ul>
+        </figure>
+
+        <div class="p-proof-note p-r" style="--i:4">
+          <p class="p-body">
+            Every destination keeps its own cursor, so a broken one can&rsquo;t hold up the rest.
+            Deletions travel as tombstones instead of quietly vanishing. Manual exports resume from
+            the last checkpoint after a crash or a reboot.
+          </p>
+          <p class="p-mono">HKAnchoredObjectQuery · content-derived ids · Idempotency-Key · 475 tests</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ----------------------------------------------------------- steps -->
+    <section class="p-section" aria-labelledby="p-how">
+      <div class="p-shell">
+        <div class="p-head">
+          <p class="p-index p-r">02 — Setup</p>
+          <h2 class="p-h2 p-r" id="p-how" style="--i:1">
+            How do I export my Apple Health data?
+          </h2>
+          <p class="p-body p-r" style="--i:2">
+            Four steps, once. Nothing leaves the phone until you finish them.
+          </p>
+        </div>
+
+        <ol class="p-steps p-r" style="--i:3">
+          <li>
+            <div>
+              <h3 class="p-h3">Add a destination</h3>
+              <p>A Mac on your network, a folder in Files, your own web endpoint, an MQTT broker, or Home Assistant.</p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <h3 class="p-h3">Pick your Health types</h3>
+              <p><code class="p-mono">heartRate</code>, <code class="p-mono">sleepAnalysis</code>, <code class="p-mono">stepCount</code>, <code class="p-mono">vo2Max</code> — or everything you have.</p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <h3 class="p-h3">Send a test batch</h3>
+              <p>Watch it arrive before you trust it. Hozz would rather show you a failure than a green tick.</p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <h3 class="p-h3">Choose a schedule</h3>
+              <p>On arrival, hourly, daily, or manual. After that it runs without you — Shortcuts and a home-screen widget if you want to check.</p>
+            </div>
+          </li>
+        </ol>
+
+        <figure class="p-artefact p-r" style="--i:4">
+          <figcaption class="p-artefact-bar">
+            <span>what lands</span>
+            <span>example</span>
+          </figcaption>
+          <pre><code>{'{"type":"heartRate","start":"…T07:12:19Z","value":58,"unit":"count/min"}\n{"type":"stepCount","start":"…T07:00:00Z","value":842,"unit":"count"}\n'}<b>{'{"type":"bodyMass","deleted":true,"id":"…"}'}</b>{'\n'}</code></pre>
+        </figure>
+        <p class="p-mono p-r" style="--i:5; margin-top:0.6rem">
+          Simplified for the page. The third line is a tombstone — a record you removed, carried
+          across instead of dropped.
+        </p>
+      </div>
+    </section>
+
+    <!-- ---------------------------------------------------- destinations -->
+    <section class="p-section p-section--wash" aria-labelledby="p-where">
+      <div class="p-shell">
+        <div class="p-head">
+          <p class="p-index p-r">03 — Destinations</p>
+          <h2 class="p-h2 p-r" id="p-where" style="--i:1">Five places. All of them yours.</h2>
+        </div>
+
+        <ul class="p-cards">
+          {
+            DESTINATIONS.map((d, i) => (
+              <li class="p-card p-r" style={`--i:${i}`}>
+                <div class="p-card-top">
+                  <span class="p-pip" aria-hidden="true" />
+                  <h3 class="p-h3">{d.name}</h3>
+                </div>
+                <p>{d.body}</p>
+                <p class="p-mono">{d.meta}</p>
+              </li>
+            ))
+          }
+          <li class="p-card p-card--void p-r" style="--i:5">
+            <b>No sixth</b>
+            <p>There is no Hozz cloud to pick. That is the whole point.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- --------------------------------------------------------- formats -->
+    <section class="p-section" aria-labelledby="p-formats">
+      <div class="p-shell">
+        <div class="p-head">
+          <p class="p-index p-r">04 — Formats</p>
+          <h2 class="p-h2 p-r" id="p-formats" style="--i:1">Four formats, one honest.</h2>
+          <p class="p-body p-r" style="--i:2">
+            Deterministic encoding: the same records produce byte-identical files, whatever your
+            locale or time zone.
+          </p>
+        </div>
+
+        <div class="p-table-wrap p-r" style="--i:3">
+          <table class="p-table">
+            <caption class="p-mono" style="text-align:left; padding:0.72rem 1rem 0;">
+              Export formats Hozz can write
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col">Format</th>
+                <th scope="col">Good for</th>
+                <th scope="col">Fidelity</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                FORMATS.map((f) => (
+                  <tr>
+                    <th scope="row" style="font-family:var(--mono);font-size:0.8125rem;font-weight:400;white-space:nowrap">
+                      {f.id}
+                    </th>
+                    <td data-label="Good for">{f.use}</td>
+                    <td data-label="Fidelity" class={f.lossy ? 'p-lossy' : ''}>{f.keep}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ------------------------------------------------------ mac + honest -->
+    <section class="p-section p-section--wash" aria-labelledby="p-after">
+      <div class="p-shell p-split">
+        <div>
+          <div class="p-head">
+            <p class="p-index p-r">05 — After it lands</p>
+            <h2 class="p-h2 p-r" id="p-after" style="--i:1">Then it&rsquo;s just yours to read.</h2>
+          </div>
+          <p class="p-body p-r" style="--i:2">
+            The Mac app stores batches in <code class="p-mono">hozz-received.sqlite</code> and charts
+            them by hour, day, week or month. A read-only MCP server lets an assistant query them —
+            four tools, none of which can change or delete anything.
+          </p>
+          <p class="p-mono p-r" style="--i:3; margin-top:0.9rem">
+            A cloud assistant may upload whatever it reads. That&rsquo;s the assistant, not Hozz.
+          </p>
+        </div>
+
+        <div>
+          <div class="p-head">
+            <p class="p-index p-r">06 — Limits</p>
+            <h2 class="p-h2 p-r" id="p-limits" style="--i:1">No tick it hasn&rsquo;t earned.</h2>
+          </div>
+          <ul class="p-plain p-r" style="--i:2">
+            <li>
+              <b>Denied or empty</b>
+              <span>Apple won&rsquo;t say which. Hozz reports both rather than pretending it got everything.</span>
+            </li>
+            <li>
+              <b>iOS picks the moment</b>
+              <span>Background work is the system&rsquo;s call. Most types land near hourly.</span>
+            </li>
+            <li>
+              <b>Locked means closed</b>
+              <span>Health can&rsquo;t be read while the phone is locked. Nothing gets around that.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ----------------------------------------------------------- close -->
+    <section class="p-shell p-close" aria-labelledby="p-close">
+      <div class="p-close-inner p-r">
+        <h2 class="p-h2" id="p-close">Free. And staying that way.</h2>
+        <p class="p-body">
+          One developer, GPL-3.0 with an App Store exception. No subscription, no account, no server
+          of mine in the middle of your health record.
+        </p>
+        <div class="p-acts">
+          <a class="p-btn p-btn--solid" href={GITHUB_URL} rel="noopener">Read the source</a>
+          <a class="p-btn p-btn--ghost" href={DONATE_URL} rel="noopener">Sponsor Hozz</a>
+        </div>
+      </div>
+      <p class="p-foot">
+        <span>Hozz · Brandon Moore</span>
+        <a href={GITHUB_URL} rel="noopener">github.com/thatcube/hozz</a>
+        <span>Early alpha — coverage is partial</span>
+      </p>
+    </section>
+  </main>
+
+  <script type="application/ld+json" set:html={JSON.stringify(faq)} />
+  <script type="application/ld+json" set:html={JSON.stringify(app)} />
+
+  <script is:inline>
+    (function () {
+      var items = document.querySelectorAll('.p-r, .p-reveal');
+      if (!('IntersectionObserver' in window)) {
+        items.forEach(function (el) {
+          el.classList.add('p-in');
+        });
+        return;
+      }
+      var io = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) {
+              e.target.classList.add('p-in');
+              io.unobserve(e.target);
+            }
+          });
+        },
+        { rootMargin: '0px 0px -8% 0px', threshold: 0.08 }
+      );
+      items.forEach(function (el) {
+        io.observe(el);
+      });
+    })();
+  </script>
+</SketchLayout>

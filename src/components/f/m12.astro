@@ -1,0 +1,48 @@
+---
+/**
+ * m12 · Repeat Tab
+ *
+ * A double bar opens into a repeat tab with a front face and a folded side.
+ * The second knockout Z crosses that corner, tying its placement to the depth.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.mozz;
+const uid = `m12-${Math.random().toString(36).slice(2, 9)}`;
+const Z = { y: 15, w: 11, h: 14, bar: 3.2, diag: 5.8, cap: 'angled' as const };
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} repeat tab mark`}
+>
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: 16 })} fill="#000" />
+      <path d={zPath({ ...Z, x: 29 })} fill="#000" />
+      <circle cx="14.2" cy="19.5" r="1.35" fill="#000" />
+      <circle cx="14.2" cy="26.5" r="1.35" fill="#000" />
+    </mask>
+  </defs>
+
+  <g mask={`url(#${uid})`}>
+    <path
+      d="M4 6H8V42H4ZM9.5 6H13.5V10H36.5V36H13.5V42H9.5Z"
+      fill={app.hue}
+    />
+    <path d="M36.5 10L44 14V32L36.5 36Z" fill={app.deep} />
+    <path d="M9.5 36H13.5V42H9.5ZM4 36H8V42H4Z" fill={app.deep} opacity="0.72" />
+  </g>
+</svg>

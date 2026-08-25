@@ -1,0 +1,91 @@
+---
+/**
+ * p01 · Scope — a screen with a scope picture on it, so the masking has closed
+ * in from the top and the bottom.
+ *
+ * The one structural dependency: **the picture is the letters' field, and its
+ * aspect is their aspect.** The Zs are the exemplar's letter put through the
+ * same anamorphic squeeze the picture is — width and letterspacing multiplied
+ * by 1.35, bar and height untouched, which is why they are wide letters with
+ * ordinary weight. Open the masking back up to 16:9 and they snap back to p00's.
+ *
+ * Cover the letters and a set playing a widescreen film is plainly there.
+ * Glance at it and you read ZZ: the letters are a full knockout, no fill of
+ * their own, the ground straight through.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.plozz;
+const uid = `p01-${Math.random().toString(36).slice(2, 9)}`;
+
+const PANEL = { x: 4, y: 12.75, w: 40, h: 22.5, r: 2.6 }; // 16:9
+const BEZEL = 1.2; // a hairline of set, so the picture never becomes the outline
+const PIC = {
+  x: PANEL.x + BEZEL,
+  y: PANEL.y + BEZEL,
+  w: PANEL.w - BEZEL * 2,
+  h: PANEL.h - BEZEL * 2,
+};
+// 37.6 wide at 2.39 leaves a picture 15.73 deep, so the masking is 2.19 each side.
+const MATTE = (PIC.h - PIC.w / 2.39) / 2;
+
+const H = 12;
+const K = H / 9.4; // the exemplar's letter, scaled
+const SQ = 1.35; // and squeezed, like the picture it is cut from
+
+const Z = {
+  y: 24 - H / 2,
+  w: 8.8 * K * SQ,
+  h: H,
+  bar: 2.7 * K,
+  diag: 4.8 * K * SQ,
+  cap: 'angled' as const,
+};
+const GAP = 2 * K * SQ; // the letterspacing stretches with the letters
+const PAIR = Z.w * 2 + GAP;
+const LX = 24 - PAIR / 2;
+const RX = LX + Z.w + GAP;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: LX })} fill="#000" />
+      <path d={zPath({ ...Z, x: RX })} fill="#000" />
+    </mask>
+    <clipPath id={`${uid}-p`}>
+      <rect x={PIC.x} y={PIC.y} width={PIC.w} height={PIC.h} rx={PANEL.r - BEZEL} />
+    </clipPath>
+  </defs>
+
+  <g mask={`url(#${uid})`}>
+    <rect
+      x={PANEL.x}
+      y={PANEL.y}
+      width={PANEL.w}
+      height={PANEL.h}
+      rx={PANEL.r}
+      fill={app.hue}
+    />
+    {/* The masking, closed in to scope. */}
+    <g clip-path={`url(#${uid}-p)`} fill={app.deep}>
+      <rect x={PIC.x} y={PIC.y} width={PIC.w} height={MATTE} />
+      <rect x={PIC.x} y={PIC.y + PIC.h - MATTE} width={PIC.w} height={MATTE} />
+    </g>
+  </g>
+</svg>

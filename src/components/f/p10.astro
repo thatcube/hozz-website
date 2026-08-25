@@ -1,0 +1,43 @@
+---
+/**
+ * p10 · Poster Stack
+ *
+ * Three portrait cards fan as one collection. The lighter card's side edges
+ * share the Z diagonals' angle, so the stack determines their stroke geometry.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96 } = Astro.props as Props;
+const app = APP_BY_KEY.plozz;
+const uid = `p10-${Math.random().toString(36).slice(2, 9)}`;
+const Z = { y: 15, w: 11.5, h: 17, bar: 3.2, diag: 7.2, cap: 'angled' as const };
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} poster-stack mark`}
+>
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: 11 })} fill="#000" />
+      <path d={zPath({ ...Z, x: 25.5 })} fill="#000" />
+    </mask>
+  </defs>
+
+  <g mask={`url(#${uid})`}>
+    <path d="M5 8L32 4L39 40L12 44Z" fill={app.deep} />
+    <path d="M18 6H46L31.4 42H3.4Z" fill={app.light} />
+    <path d="M10 7H38L41 10V39L38 42H10L7 39V10Z" fill={app.hue} />
+  </g>
+</svg>

@@ -1,0 +1,46 @@
+---
+/**
+ * 25 · Rosette, Five
+ *
+ * Five circles, which is the one count with no mirror pair top to bottom,
+ * so the two halves of the mark are genuinely different shapes and the
+ * silhouette is a pentafoil rather than anything symmetrical twice over.
+ *
+ * Five used to be the most constrained count on this grid, and the reason
+ * was a rule rather than the geometry: while the face had to fit inside a
+ * cleared circle in the middle, an odd-row silhouette could almost never
+ * hold an even-row circle with equal air, and the only five that survived
+ * had its petals pulled in so close that they stopped reading. Once the
+ * face was allowed to sit on the flower itself that constraint went with
+ * it, and the five opens up: this one carries its petals at a ring
+ * distance of nearly four tenths of their diameter, which is the ratio
+ * the reference uses, and the lobes come back.
+ *
+ * The ring is rolled off the vertical, which is what keeps the shoulder
+ * stepping four pixels at a time like the canonical circle instead of
+ * jumping six.
+ *
+ * Calmest of the four. Pale petals, a saturated pentagon where all five
+ * agree, and the face across it in the palest tone. The hue is pushed off
+ * the sea-teal of the six and toward jade, because the two are the only
+ * pale-petalled marks here and at 24 pixels a shared hue would make them
+ * one mark seen twice.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Hozz — Rosette, Five">
+  <path d="M9 3h6v1h-6z M17 3h6v1h-6z M7 4h7v1h-7z M18 4h7v1h-7z M7 5h7v1h-7z M18 5h7v1h-7z M6 6h7v1h-7z M19 6h7v1h-7z M6 7h7v1h-7z M19 7h7v1h-7z M5 8h7v1h-7z M20 8h7v1h-7z M5 9h2v1h-2z M25 9h2v1h-2z M4 13h1v1h-1z M27 13h1v1h-1z M4 14h2v1h-2z M26 14h2v1h-2z M3 15h3v1h-3z M26 15h3v1h-3z M3 16h4v1h-4z M25 16h4v1h-4z M3 17h6v1h-6z M23 17h6v1h-6z M3 18h6v1h-6z M23 18h6v1h-6z M4 19h4v1h-4z M24 19h4v1h-4z M4 20h4v1h-4z M24 20h4v1h-4z M5 21h3v1h-3z M24 21h3v1h-3z M5 22h3v1h-3z M24 22h3v1h-3z M7 23h2v1h-2z M15 23h2v1h-2z M23 23h2v1h-2z M13 24h6v1h-6z M11 25h10v1h-10z M11 26h10v1h-10z M13 27h6v1h-6z" fill="#9fe3c6" />
+  <path d="M15 3h2v1h-2z M14 4h4v1h-4z M14 5h4v1h-4z M13 6h6v1h-6z M13 7h6v1h-6z M12 8h8v1h-8z M7 9h18v1h-18z M5 10h22v1h-22z M5 11h22v1h-22z M5 12h22v1h-22z M5 13h8v1h-8z M19 13h8v1h-8z M6 14h8v1h-8z M18 14h8v1h-8z M6 15h8v1h-8z M18 15h8v1h-8z M7 16h7v1h-7z M18 16h7v1h-7z M9 17h5v1h-5z M15 17h2v1h-2z M18 17h5v1h-5z M9 18h14v1h-14z M8 19h16v1h-16z M8 20h16v1h-16z M8 21h16v1h-16z M8 22h16v1h-16z M9 23h6v1h-6z M17 23h6v1h-6z M10 24h3v1h-3z M19 24h3v1h-3z" fill="#1cb37f" />
+  <path d="M13 13h6v1h-6z M14 14h4v1h-4z M14 15h4v1h-4z M14 16h4v1h-4z M14 17h1v1h-1z M17 17h1v1h-1z" fill="#119a6d" />
+  <path d="M9 2h14v1h-14z M7 3h2v1h-2z M23 3h2v1h-2z M6 4h1v1h-1z M25 4h1v1h-1z M6 5h1v1h-1z M25 5h1v1h-1z M5 6h1v1h-1z M26 6h1v1h-1z M5 7h1v1h-1z M26 7h1v1h-1z M4 8h1v1h-1z M27 8h1v1h-1z M4 9h1v1h-1z M27 9h1v1h-1z M4 10h1v1h-1z M27 10h1v1h-1z M4 11h1v1h-1z M27 11h1v1h-1z M4 12h1v1h-1z M27 12h1v1h-1z M3 13h1v1h-1z M28 13h1v1h-1z M3 14h1v1h-1z M28 14h1v1h-1z M2 15h1v1h-1z M29 15h1v1h-1z M2 16h1v1h-1z M29 16h1v1h-1z M2 17h1v1h-1z M29 17h1v1h-1z M2 18h1v1h-1z M29 18h1v1h-1z M3 19h1v1h-1z M28 19h1v1h-1z M3 20h1v1h-1z M28 20h1v1h-1z M4 21h1v1h-1z M27 21h1v1h-1z M4 22h1v1h-1z M27 22h1v1h-1z M5 23h2v1h-2z M25 23h2v1h-2z M7 24h3v1h-3z M22 24h3v1h-3z M10 25h1v1h-1z M21 25h1v1h-1z M10 26h1v1h-1z M21 26h1v1h-1z M11 27h2v1h-2z M19 27h2v1h-2z M13 28h6v1h-6z" fill="#0a2e26" />
+  <g fill="#f3fdf7" shape-rendering="crispEdges">
+    {facePathsAt({ cx: 16, cy: 15, size: 'lg', smile: 'wide', gap: 4 }).map((d) => (
+      <path d={d} />
+    ))}
+  </g>
+</MarkFrame>

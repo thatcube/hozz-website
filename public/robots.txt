@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://hozz.brando.page/sitemap-index.xml

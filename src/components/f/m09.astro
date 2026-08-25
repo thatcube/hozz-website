@@ -1,0 +1,83 @@
+---
+/**
+ * m09 · Sleeve — a record halfway out of its cover.
+ *
+ * The dependency: **the sleeve's mouth is the top edge of both Zs**. The card
+ * is open along one line, the record is leaving through it, and the ZZ is the
+ * rest of that same cut — it hangs directly off the opening, so moving the
+ * mouth moves the letters and closing the sleeve would close them too.
+ *
+ * Everything visible is one hue and every pale shape is a hole, so the letters
+ * hold full tonal separation on either ground. Three shapes: the disc, one
+ * groove in its exposed rim, and the card.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.mozz;
+const uid = `m09-${Math.random().toString(36).slice(2, 9)}`;
+
+// A record is nearly as wide as its sleeve, so most of it stays inside and what
+// shows above the card is a broad shallow cap, not a tab.
+const DISC = { cx: 28, cy: 20, r: 16.5 };
+const SLEEVE = { x: 5.5, y: 13.5, w: 34, h: 29, r: 2.5 };
+
+// The open edge. The letters hang straight off it — one continuous cut.
+const MOUTH = { x: 7.6, y: 20.45, w: 30.8, h: 1.15, r: 0.575 };
+
+const Z = { y: 21.6, w: 12.4, h: 13.8, bar: 3.1, diag: 5, cap: 'angled' as const };
+// 12.4 + 3.3 + 12.4 = 28.1, running 8.5 to 36.6, centred on the card at 22.5.
+const ZX = [8.5, 24.2];
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      {ZX.map((zx) => <path d={zPath({ ...Z, x: zx })} fill="#000" />)}
+      <rect
+        x={MOUTH.x}
+        y={MOUTH.y}
+        width={MOUTH.w}
+        height={MOUTH.h}
+        rx={MOUTH.r}
+        fill="#000"
+      />
+      {/* The spindle is buried under the card; one groove in the exposed rim
+          carries the record instead. */}
+    </mask>
+  </defs>
+
+  <g mask={`url(#${uid})`}>
+    <circle cx={DISC.cx} cy={DISC.cy} r={DISC.r} fill={app.hue} />
+    <circle
+      cx={DISC.cx}
+      cy={DISC.cy}
+      r={DISC.r - 2.8}
+      fill="none"
+      stroke={app.deep}
+      stroke-width="1.1"
+    />
+    <rect
+      x={SLEEVE.x}
+      y={SLEEVE.y}
+      width={SLEEVE.w}
+      height={SLEEVE.h}
+      rx={SLEEVE.r}
+      fill={app.hue}
+    />
+  </g>
+</svg>

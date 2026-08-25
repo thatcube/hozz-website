@@ -1,0 +1,1582 @@
+---
+import Mark from '../../components/mark/logos/c12.astro';
+import {
+  COVERAGE_STATES,
+  DESTINATIONS,
+  DURABILITY,
+  FAQ,
+  FORMATS,
+  GITHUB_URL,
+  MCP_TOOLS,
+  NOT_YET,
+  PROMISES,
+  SITE,
+  STEPS,
+  WORKING,
+} from '../../data/site';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'SoftwareApplication',
+      name: 'Hozz',
+      url: SITE,
+      applicationCategory: 'HealthApplication',
+      operatingSystem: 'iOS, macOS',
+      description:
+        'A free, open-source iPhone app with a companion Mac app that exports Apple Health data to destinations you own.',
+      isAccessibleForFree: true,
+      license: 'https://www.gnu.org/licenses/gpl-3.0.html',
+      codeRepository: GITHUB_URL,
+      softwareVersion: 'Early alpha',
+      author: {
+        '@type': 'Person',
+        name: 'Brandon Moore',
+      },
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: FAQ.map(({ q, a }) => ({
+        '@type': 'Question',
+        name: q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: a,
+        },
+      })),
+    },
+  ],
+};
+
+const isLossy = (note: string) => note.startsWith('Lossy');
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta
+      name="description"
+      content="Hozz preserves your Apple Health history in files and systems you own. No account, no relay, no invented answers."
+    />
+    <meta name="theme-color" content="#eff4d2" />
+    <title>Hozz — Your health history, plainly preserved</title>
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="Hozz home">
+        <Mark size={28} />
+        <span>Hozz</span>
+      </a>
+      <nav aria-label="Main navigation">
+        <a href="#export">How it works</a>
+        <a href="#destinations">Destinations</a>
+        <a href="#honesty">Honesty</a>
+        <a class="source-link" href={GITHUB_URL}>View source <span aria-hidden="true">↗</span></a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="hero" id="top" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="overline"><span>Contents</span> Apple Health history</p>
+          <h1 id="hero-title">Your health history, <em>plainly preserved.</em></h1>
+          <p class="lede">
+            Hozz is an iPhone app that automatically exports your Apple Health data
+            to files and systems you own.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#export">See how to export</a>
+            <a class="button quiet" href={GITHUB_URL}>Read the source</a>
+          </div>
+          <dl class="plain-facts" aria-label="Hozz at a glance">
+            <div><dt>Account</dt><dd>None</dd></div>
+            <div><dt>Relay</dt><dd>None</dd></div>
+            <div><dt>Price</dt><dd>Free forever</dd></div>
+          </dl>
+        </div>
+
+        <div class="hero-jar" aria-label="A plainly labelled preserve jar for your health history">
+          <div class="jar-lid"><span></span></div>
+          <div class="jar-glass">
+            <span class="glint" aria-hidden="true"></span>
+            <div class="jar-label">
+              <p class="label-kicker">Hozz preserve no. 01</p>
+              <div class="label-mark"><Mark size={48} /></div>
+              <p class="label-title">Your history</p>
+              <p class="label-note">Kept whole. Sent only where you choose.</p>
+              <dl>
+                <div><dt>Source</dt><dd>Apple Health</dd></div>
+                <div><dt>Owner</dt><dd>You</dd></div>
+                <div><dt>Destination</dt><dd>Not set</dd></div>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="promise-strip" aria-label="Privacy promises">
+        <p class="strip-label">Nothing tucked behind the label</p>
+        <ul>
+          {PROMISES.map((promise) => <li>{promise.title}</li>)}
+        </ul>
+      </section>
+
+      <section class="section export" id="export" aria-labelledby="export-title">
+        <header class="section-heading">
+          <p class="overline"><span>Method</span> How to export Apple Health data</p>
+          <h2 id="export-title">Set it once. Let it <em>keep up.</em></h2>
+          <p>
+            Add somewhere you control, choose what belongs there, then let Hozz carry
+            new records as iOS permits.
+          </p>
+        </header>
+
+        <ol class="steps">
+          {STEPS.map((step, index) => (
+            <li>
+              <span class="step-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+              <div>
+                <p class="mini-label">Step {index + 1}</p>
+                <h3>{step.title}</h3>
+                <p>{step.body}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+
+        <aside class="answer-card" aria-labelledby="answer-title">
+          <p class="mini-label">Plain answer</p>
+          <h3 id="answer-title">How do I export my Apple Health data?</h3>
+          <p>
+            Install Hozz on your iPhone, add a destination you own, grant read access
+            to the Health types you want, and choose a schedule. Hozz stages each new
+            record safely, then delivers it in your chosen format. There is no default
+            destination, so nothing leaves until you confirm one.
+          </p>
+        </aside>
+      </section>
+
+      <section class="section destinations" id="destinations" aria-labelledby="destination-title">
+        <header class="section-heading split-heading">
+          <div>
+            <p class="overline"><span>Destination</span> Six choices, all yours</p>
+            <h2 id="destination-title">Put it somewhere you <em>own.</em></h2>
+          </div>
+          <p>
+            No hosted Hozz relay sits in the middle. Each destination has its own
+            schedule, selected types, and place in the queue.
+          </p>
+        </header>
+
+        <ul class="destination-grid">
+          {DESTINATIONS.map((destination, index) => (
+            <li>
+              <p class="mini-label">Destination {String(index + 1).padStart(2, '0')}</p>
+              <h3>{destination.title}</h3>
+              <p>{destination.body}</p>
+              <code>{destination.fact}</code>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section class="section formats" aria-labelledby="formats-title">
+        <header class="section-heading split-heading">
+          <div>
+            <p class="overline"><span>Contents</span> Seven honest formats</p>
+            <h2 id="formats-title">The label says what gets <em>lost.</em></h2>
+          </div>
+          <p>
+            A spreadsheet is useful. It is not an archive. Hozz names that trade-off
+            instead of pretending every export keeps the same detail.
+          </p>
+        </header>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Format</th>
+                <th scope="col">Best for</th>
+                <th scope="col">Honest label</th>
+              </tr>
+            </thead>
+            <tbody>
+              {FORMATS.map((format) => (
+                <tr>
+                  <th scope="row">{format.name}</th>
+                  <td>{format.use}</td>
+                  <td><span class:list={['format-label', { lossy: isLossy(format.note) }]}>{format.note}</span></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section trust" id="honesty" aria-labelledby="trust-title">
+        <header class="section-heading">
+          <p class="overline inverse"><span>Method</span> How the preserve stays whole</p>
+          <h2 id="trust-title">A retry may repeat work. It cannot <em>skip a record.</em></h2>
+          <p>
+            Each Health type keeps its own anchor. That anchor moves only after its
+            records are durably staged.
+          </p>
+        </header>
+
+        <div class="durability-grid">
+          {DURABILITY.map((item) => (
+            <article>
+              <p class="mini-label inverse">{item.fact}</p>
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </article>
+          ))}
+        </div>
+
+        <div class="test-seal" aria-label="475 XCTest tests">
+          <strong>475</strong>
+          <span>XCTest tests</span>
+          <small>Counted, not claimed</small>
+        </div>
+      </section>
+
+      <section class="section honesty" aria-labelledby="honesty-title">
+        <header class="section-heading split-heading">
+          <div>
+            <p class="overline"><span>State</span> Exactly what Apple permits</p>
+            <h2 id="honesty-title">No green tick for an <em>unknown.</em></h2>
+          </div>
+          <p>
+            Apple does not tell an app whether access was denied or there is simply no
+            data. Hozz will not invent the difference.
+          </p>
+        </header>
+
+        <ul class="state-list">
+          {COVERAGE_STATES.map((item) => (
+            <li class={`state-${item.tone}`}>
+              <span class="state-dot" aria-hidden="true"></span>
+              <strong>{item.state}</strong>
+              <p>{item.body}</p>
+            </li>
+          ))}
+        </ul>
+
+        <aside class="no-progress">
+          <p class="mini-label">Deliberately absent</p>
+          <h3>No invented progress percentage</h3>
+          <p>
+            Health will not say how many records a type holds without reading them all.
+            Hozz reports completed types and date coverage instead of making up a fraction.
+          </p>
+        </aside>
+      </section>
+
+      <section class="section assistant" aria-labelledby="assistant-title">
+        <div class="assistant-intro">
+          <p class="overline"><span>Access</span> Read-only on your Mac</p>
+          <h2 id="assistant-title">Ask your own archive.</h2>
+          <p>
+            The companion Mac app includes a read-only MCP server. Your assistant can
+            inspect the local database; it cannot change or delete anything.
+          </p>
+          <div class="caveat">
+            <p class="mini-label">Important label</p>
+            <p>
+              A cloud assistant may upload whatever it reads. That is the assistant’s
+              behaviour, not Hozz’s.
+            </p>
+          </div>
+        </div>
+        <div class="tool-label" aria-label="What the MCP server can read">
+          <p class="label-kicker">Contents available to query</p>
+          <ul>
+            {MCP_TOOLS.map((tool) => <li>{tool}</li>)}
+          </ul>
+          <p class="read-only-stamp">READ ONLY</p>
+        </div>
+      </section>
+
+      <section class="section status" id="status" aria-labelledby="status-title">
+        <header class="section-heading split-heading">
+          <div>
+            <p class="overline"><span>Status</span> Early alpha</p>
+            <h2 id="status-title">Working, with the <em>gaps named.</em></h2>
+          </div>
+          <p>
+            Hozz works today, and coverage is partial. The label should say both.
+          </p>
+        </header>
+
+        <div class="status-grid">
+          <article>
+            <p class="status-tag working">Working now</p>
+            <ul>
+              {WORKING.map((item) => <li>{item}</li>)}
+            </ul>
+          </article>
+          <article>
+            <p class="status-tag not-yet">Not yet</p>
+            <ul>
+              {NOT_YET.map((item) => <li>{item}</li>)}
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="section faq" aria-labelledby="faq-title">
+        <header class="section-heading">
+          <p class="overline"><span>Questions</span> Read the small print</p>
+          <h2 id="faq-title">Nothing under the <em>lid.</em></h2>
+        </header>
+        <div class="faq-list">
+          {FAQ.map((item) => (
+            <details>
+              <summary>{item.q}</summary>
+              <p>{item.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      <section class="closing" aria-labelledby="closing-title">
+        <div class="closing-mark"><Mark size={64} /></div>
+        <p class="overline inverse"><span>Licence</span> GPL-3.0 with an App Store exception</p>
+        <h2 id="closing-title">Keep your history. <em>Keep the proof.</em></h2>
+        <p>
+          Free forever. No account. No subscription. Built in the open by Brandon Moore.
+        </p>
+        <a class="button light" href={GITHUB_URL}>View Hozz on GitHub <span aria-hidden="true">↗</span></a>
+      </section>
+    </main>
+
+    <footer>
+      <a class="brand footer-brand" href="#top">
+        <Mark size={28} />
+        <span>Hozz</span>
+      </a>
+      <p>Apple Health export, plainly labelled.</p>
+      <a href={GITHUB_URL}>Source code</a>
+    </footer>
+  </body>
+</html>
+
+<style is:global>
+  @font-face {
+    font-family: 'Sentient';
+    src: url('/fonts/sentient-500.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Sentient';
+    src: url('/fonts/sentient-500-italic.woff2') format('woff2');
+    font-weight: 500;
+    font-style: italic;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'General Sans';
+    src: url('/fonts/general-sans-400.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'General Sans';
+    src: url('/fonts/general-sans-600.woff2') format('woff2');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'IBM Plex Mono';
+    src: url('/fonts/ibm-plex-mono-500.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  :root {
+    --ink: #203e37;
+    --forest: #31544b;
+    --leaf: #79a68d;
+    --glass: #cde2bd;
+    --pale: #eff4d2;
+    --paper: #f8f9e9;
+    --white: #fffef4;
+    --ochre: #b59b6a;
+    --ochre-dark: #6b552d;
+    --line: rgba(49, 84, 75, 0.28);
+    --serif: 'Sentient', Georgia, serif;
+    --sans: 'General Sans', Arial, sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: var(--paper);
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    overflow-x: hidden;
+    color: var(--ink);
+    background:
+      linear-gradient(90deg, transparent calc(50% - 0.5px), rgba(49, 84, 75, 0.05) 50%, transparent calc(50% + 0.5px)),
+      var(--paper);
+    font-family: var(--sans);
+    font-size: 1rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a {
+    color: inherit;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.22em;
+  }
+
+  a:focus-visible,
+  summary:focus-visible {
+    outline: 3px solid var(--ochre-dark);
+    outline-offset: 4px;
+    border-radius: 2px;
+  }
+
+  .skip-link {
+    position: fixed;
+    z-index: 100;
+    top: 0.75rem;
+    left: 0.75rem;
+    padding: 0.65rem 1rem;
+    color: var(--white);
+    background: var(--forest);
+    transform: translateY(-180%);
+  }
+
+  .skip-link:focus {
+    transform: translateY(0);
+  }
+
+  .site-header,
+  footer {
+    width: min(100% - 3rem, 86rem);
+    margin-inline: auto;
+  }
+
+  .site-header {
+    min-height: 5.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-family: var(--serif);
+    font-size: 1.25rem;
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .site-header nav {
+    display: flex;
+    align-items: center;
+    gap: clamp(1rem, 2.5vw, 2.25rem);
+    font-size: 0.84rem;
+    font-weight: 600;
+  }
+
+  .site-header nav a {
+    text-decoration: none;
+  }
+
+  .site-header nav a:not(.source-link):hover {
+    text-decoration: underline;
+  }
+
+  .source-link {
+    padding: 0.6rem 0.85rem;
+    border: 1px solid var(--forest);
+    border-radius: 2px;
+  }
+
+  .hero {
+    width: min(100% - 3rem, 86rem);
+    min-height: calc(100vh - 5.25rem);
+    margin-inline: auto;
+    padding: clamp(4.5rem, 9vw, 8.5rem) 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1.08fr) minmax(20rem, 0.72fr);
+    align-items: center;
+    gap: clamp(3rem, 7vw, 8rem);
+  }
+
+  .hero-copy {
+    max-width: 48rem;
+  }
+
+  .overline,
+  .mini-label,
+  .label-kicker,
+  .strip-label,
+  .status-tag {
+    margin: 0;
+    font-family: var(--mono);
+    font-size: 0.69rem;
+    font-weight: 500;
+    letter-spacing: 0.09em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  .overline {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #3b5b52;
+  }
+
+  .overline span {
+    padding: 0.28rem 0.48rem;
+    color: var(--paper);
+    background: var(--forest);
+  }
+
+  h1,
+  h2,
+  h3,
+  p {
+    overflow-wrap: break-word;
+  }
+
+  h1,
+  h2 {
+    margin: 0;
+    font-family: var(--serif);
+    font-weight: 500;
+    line-height: 0.99;
+    letter-spacing: -0.045em;
+  }
+
+  h1 {
+    max-width: 12ch;
+    margin-top: 1.35rem;
+    font-size: clamp(3.9rem, 7.2vw, 7.7rem);
+  }
+
+  h1 em,
+  h2 em {
+    color: var(--ochre-dark);
+    font-weight: inherit;
+  }
+
+  .lede {
+    max-width: 40rem;
+    margin: 2rem 0 0;
+    font-size: clamp(1.13rem, 1.5vw, 1.4rem);
+    line-height: 1.52;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3rem;
+    padding: 0.7rem 1.05rem;
+    border: 1px solid var(--forest);
+    border-radius: 2px;
+    font-size: 0.86rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .button.primary {
+    color: var(--white);
+    background: var(--forest);
+  }
+
+  .button.quiet:hover {
+    background: var(--pale);
+  }
+
+  .plain-facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem 2.5rem;
+    margin: 3rem 0 0;
+  }
+
+  .plain-facts div {
+    min-width: 6rem;
+  }
+
+  .plain-facts dt,
+  .jar-label dt {
+    color: #4a645d;
+    font-family: var(--mono);
+    font-size: 0.64rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .plain-facts dd,
+  .jar-label dd {
+    margin: 0.1rem 0 0;
+    font-weight: 600;
+  }
+
+  .hero-jar {
+    width: min(100%, 28rem);
+    justify-self: center;
+    filter: drop-shadow(0 2rem 2rem rgba(49, 84, 75, 0.12));
+  }
+
+  .jar-lid {
+    position: relative;
+    z-index: 2;
+    width: 68%;
+    height: 3rem;
+    margin: 0 auto -0.3rem;
+    border: 2px solid var(--forest);
+    border-radius: 0.35rem 0.35rem 0.1rem 0.1rem;
+    background:
+      repeating-linear-gradient(90deg, rgba(49, 84, 75, 0.18) 0 1px, transparent 1px 12px),
+      var(--ochre);
+  }
+
+  .jar-lid span {
+    position: absolute;
+    inset: 0.45rem -0.55rem -0.25rem;
+    border: 2px solid var(--forest);
+    background: var(--ochre);
+  }
+
+  .jar-glass {
+    position: relative;
+    min-height: 35rem;
+    padding: 5rem 2rem 3rem;
+    display: flex;
+    align-items: center;
+    border: 2px solid var(--forest);
+    border-radius: 3rem 3rem 4.6rem 4.6rem / 2.4rem 2.4rem 3rem 3rem;
+    background:
+      linear-gradient(90deg, rgba(255, 254, 244, 0.82), rgba(205, 226, 189, 0.46) 28%, rgba(121, 166, 141, 0.19) 74%, rgba(255, 254, 244, 0.65)),
+      var(--pale);
+    overflow: hidden;
+  }
+
+  .glint {
+    position: absolute;
+    inset: 2.5rem auto 4rem 1.15rem;
+    width: 0.7rem;
+    border-radius: 100%;
+    background: rgba(255, 254, 244, 0.88);
+  }
+
+  .jar-label {
+    position: relative;
+    width: 100%;
+    padding: 2.1rem 1.8rem 1.5rem;
+    border: 1px solid var(--forest);
+    background: var(--white);
+    text-align: center;
+    box-shadow: 0.6rem 0.6rem 0 rgba(49, 84, 75, 0.1);
+  }
+
+  .jar-label::before,
+  .jar-label::after {
+    content: '';
+    position: absolute;
+    top: 0.7rem;
+    bottom: 0.7rem;
+    width: 0.4rem;
+    border-block: 1px solid var(--ochre-dark);
+  }
+
+  .jar-label::before { left: 0.7rem; }
+  .jar-label::after { right: 0.7rem; }
+
+  .label-kicker {
+    color: var(--ochre-dark);
+  }
+
+  .label-mark {
+    margin: 1rem 0 0.6rem;
+  }
+
+  .label-title {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: clamp(2.25rem, 4vw, 3.1rem);
+    line-height: 1;
+  }
+
+  .label-note {
+    max-width: 22ch;
+    margin: 0.6rem auto 1.4rem;
+    line-height: 1.4;
+  }
+
+  .jar-label dl {
+    margin: 0;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .jar-label dl div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.2rem 0;
+    text-align: left;
+  }
+
+  .promise-strip {
+    padding: 1.4rem max(1.5rem, calc((100vw - 86rem) / 2));
+    color: var(--white);
+    background: var(--forest);
+  }
+
+  .strip-label {
+    margin-bottom: 0.7rem;
+    color: var(--pale);
+  }
+
+  .promise-strip ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .promise-strip li {
+    font-family: var(--serif);
+    font-size: clamp(1.05rem, 1.5vw, 1.35rem);
+  }
+
+  .promise-strip li::before {
+    content: '—';
+    margin-right: 0.45rem;
+    color: var(--ochre);
+  }
+
+  .section {
+    padding: clamp(5.5rem, 10vw, 10rem) max(1.5rem, calc((100vw - 76rem) / 2));
+  }
+
+  .section-heading {
+    max-width: 51rem;
+    margin-bottom: clamp(3rem, 6vw, 5rem);
+  }
+
+  .section-heading h2,
+  .closing h2 {
+    margin-top: 1.2rem;
+    font-size: clamp(3rem, 6vw, 6rem);
+  }
+
+  .section-heading > p:last-child,
+  .split-heading > p {
+    max-width: 42rem;
+    margin: 1.5rem 0 0;
+    font-size: clamp(1.05rem, 1.4vw, 1.25rem);
+  }
+
+  .split-heading {
+    max-width: none;
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(18rem, 0.75fr);
+    align-items: end;
+    gap: 3rem;
+  }
+
+  .split-heading > p {
+    padding-left: 1.5rem;
+    border-left: 1px solid var(--line);
+  }
+
+  .steps {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--line);
+  }
+
+  .steps li {
+    display: grid;
+    grid-template-columns: minmax(6rem, 0.35fr) 1fr;
+    gap: 2rem;
+    padding: clamp(1.5rem, 3vw, 2.4rem) 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .step-number {
+    color: var(--ochre-dark);
+    font-family: var(--serif);
+    font-size: clamp(3rem, 6vw, 5rem);
+    line-height: 0.85;
+  }
+
+  .steps h3,
+  .destination-grid h3,
+  .durability-grid h3,
+  .no-progress h3,
+  .answer-card h3 {
+    margin: 0.35rem 0 0.5rem;
+    font-family: var(--serif);
+    font-size: clamp(1.55rem, 2.5vw, 2.2rem);
+    font-weight: 500;
+    line-height: 1.1;
+  }
+
+  .steps p:last-child,
+  .destination-grid p,
+  .durability-grid p,
+  .no-progress p,
+  .answer-card p {
+    margin: 0;
+  }
+
+  .answer-card {
+    margin-top: 2.5rem;
+    padding: clamp(1.5rem, 4vw, 3rem);
+    border: 1px solid var(--forest);
+    background: var(--pale);
+  }
+
+  .answer-card p:last-child {
+    max-width: 66rem;
+  }
+
+  .destinations {
+    background: rgba(205, 226, 189, 0.34);
+  }
+
+  .destination-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--forest);
+    border-left: 1px solid var(--forest);
+    list-style: none;
+  }
+
+  .destination-grid li {
+    min-height: 18rem;
+    padding: clamp(1.4rem, 3vw, 2.25rem);
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--forest);
+    border-bottom: 1px solid var(--forest);
+    background: rgba(255, 254, 244, 0.46);
+  }
+
+  .destination-grid h3 {
+    margin-top: 1.4rem;
+  }
+
+  .destination-grid code {
+    display: block;
+    margin-top: auto;
+    padding-top: 1rem;
+    color: #344f48;
+    border-top: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 0.69rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+
+  .formats {
+    background: var(--white);
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--forest);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+
+  th,
+  td {
+    padding: 1.15rem 1.25rem;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+
+  thead th {
+    color: var(--paper);
+    background: var(--forest);
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  tbody th {
+    width: 15%;
+    font-family: var(--serif);
+    font-size: 1.25rem;
+    font-weight: 500;
+  }
+
+  tbody tr:last-child th,
+  tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .format-label {
+    display: inline-block;
+    padding: 0.22rem 0.5rem;
+    color: var(--ink);
+    background: var(--glass);
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    line-height: 1.5;
+  }
+
+  .format-label.lossy {
+    color: #3c2c11;
+    background: #e5d6ad;
+    box-shadow: inset 0 0 0 1px var(--ochre-dark);
+  }
+
+  .trust {
+    position: relative;
+    color: var(--white);
+    background: var(--forest);
+  }
+
+  .trust .section-heading > p:last-child {
+    color: #edf2dc;
+  }
+
+  .trust h2 em {
+    color: var(--pale);
+  }
+
+  .overline.inverse {
+    color: var(--pale);
+  }
+
+  .overline.inverse span {
+    color: var(--ink);
+    background: var(--pale);
+  }
+
+  .durability-grid {
+    max-width: 58rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: rgba(239, 244, 210, 0.38);
+    border: 1px solid rgba(239, 244, 210, 0.38);
+  }
+
+  .durability-grid article {
+    min-height: 14rem;
+    padding: clamp(1.5rem, 3vw, 2.3rem);
+    background: var(--forest);
+  }
+
+  .durability-grid h3 {
+    color: var(--white);
+  }
+
+  .durability-grid p:last-child {
+    color: #edf2dc;
+  }
+
+  .mini-label.inverse {
+    color: #dfeac8;
+  }
+
+  .test-seal {
+    position: absolute;
+    right: max(1.5rem, calc((100vw - 76rem) / 2));
+    bottom: clamp(5.5rem, 10vw, 10rem);
+    width: clamp(12rem, 18vw, 16rem);
+    aspect-ratio: 1;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--pale);
+    border-radius: 50%;
+    color: var(--forest);
+    background: var(--pale);
+    text-align: center;
+    transform: rotate(3deg);
+  }
+
+  .test-seal::before {
+    content: '';
+    position: absolute;
+    inset: 0.5rem;
+    border: 1px dashed var(--forest);
+    border-radius: inherit;
+  }
+
+  .test-seal strong {
+    position: relative;
+    font-family: var(--serif);
+    font-size: clamp(3rem, 6vw, 5rem);
+    line-height: 0.85;
+  }
+
+  .test-seal span,
+  .test-seal small {
+    position: relative;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+  }
+
+  .test-seal small {
+    margin-top: 0.6rem;
+  }
+
+  .honesty {
+    background: var(--pale);
+  }
+
+  .state-list {
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--forest);
+    list-style: none;
+  }
+
+  .state-list li {
+    display: grid;
+    grid-template-columns: 0.7rem minmax(9rem, 0.55fr) 1fr;
+    align-items: baseline;
+    gap: 1.25rem;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .state-list strong {
+    font-family: var(--mono);
+    font-size: 0.73rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .state-list p {
+    margin: 0;
+  }
+
+  .state-dot {
+    width: 0.7rem;
+    height: 0.7rem;
+    border: 1px solid var(--ink);
+    border-radius: 50%;
+    background: transparent;
+  }
+
+  .state-good .state-dot { background: var(--forest); }
+  .state-unknown .state-dot { background: var(--ochre); }
+  .state-bad .state-dot { background: #8d3d32; }
+
+  .no-progress {
+    max-width: 50rem;
+    margin: 3rem 0 0 auto;
+    padding: clamp(1.4rem, 3vw, 2rem);
+    border: 1px solid var(--ochre-dark);
+    background: var(--white);
+    box-shadow: 0.45rem 0.45rem 0 rgba(181, 155, 106, 0.34);
+  }
+
+  .assistant {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(19rem, 0.75fr);
+    gap: clamp(3rem, 9vw, 8rem);
+    background: rgba(121, 166, 141, 0.18);
+  }
+
+  .assistant-intro h2 {
+    margin: 1.2rem 0 1.5rem;
+    font-family: var(--serif);
+    font-size: clamp(3rem, 6vw, 6rem);
+    font-weight: 500;
+    line-height: 0.99;
+    letter-spacing: -0.045em;
+  }
+
+  .assistant-intro > p:last-of-type {
+    max-width: 42rem;
+    font-size: 1.16rem;
+  }
+
+  .caveat {
+    max-width: 42rem;
+    margin-top: 2.5rem;
+    padding: 1.35rem;
+    border: 1px solid var(--ochre-dark);
+    background: var(--paper);
+  }
+
+  .caveat p:last-child {
+    margin: 0.55rem 0 0;
+  }
+
+  .tool-label {
+    position: relative;
+    padding: 2rem 2rem 5rem;
+    border: 1px solid var(--forest);
+    background: var(--white);
+    box-shadow: 0.7rem 0.7rem 0 var(--glass);
+  }
+
+  .tool-label ul {
+    margin: 1.5rem 0 0;
+    padding: 0;
+    list-style: none;
+    columns: 2;
+    column-gap: 2rem;
+  }
+
+  .tool-label li {
+    padding: 0.5rem 0;
+    break-inside: avoid;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.9rem;
+  }
+
+  .read-only-stamp {
+    position: absolute;
+    right: 1.5rem;
+    bottom: 1.4rem;
+    margin: 0;
+    padding: 0.25rem 0.6rem;
+    border: 2px solid var(--ochre-dark);
+    color: var(--ochre-dark);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    transform: rotate(-3deg);
+  }
+
+  .status {
+    background: var(--white);
+  }
+
+  .status-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border: 1px solid var(--forest);
+  }
+
+  .status-grid article {
+    padding: clamp(1.5rem, 4vw, 3rem);
+  }
+
+  .status-grid article + article {
+    border-left: 1px solid var(--forest);
+  }
+
+  .status-tag {
+    display: inline-block;
+    padding: 0.35rem 0.55rem;
+  }
+
+  .status-tag.working {
+    color: var(--white);
+    background: var(--forest);
+  }
+
+  .status-tag.not-yet {
+    color: #35270f;
+    background: #dfc98f;
+  }
+
+  .status-grid ul {
+    margin: 1.5rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .status-grid li {
+    position: relative;
+    padding: 0.55rem 0 0.55rem 1.5rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .status-grid li::before {
+    position: absolute;
+    left: 0;
+    color: var(--ochre-dark);
+  }
+
+  .status-grid article:first-child li::before { content: '✓'; }
+  .status-grid article:last-child li::before { content: '—'; }
+
+  .faq {
+    background: rgba(205, 226, 189, 0.28);
+  }
+
+  .faq-list {
+    border-top: 1px solid var(--forest);
+  }
+
+  details {
+    border-bottom: 1px solid var(--line);
+  }
+
+  summary {
+    position: relative;
+    padding: 1.5rem 3rem 1.5rem 0;
+    cursor: pointer;
+    font-family: var(--serif);
+    font-size: clamp(1.25rem, 2vw, 1.65rem);
+    line-height: 1.25;
+    list-style: none;
+  }
+
+  summary::-webkit-details-marker { display: none; }
+
+  summary::after {
+    content: '+';
+    position: absolute;
+    right: 0.4rem;
+    color: var(--ochre-dark);
+    font-family: var(--mono);
+  }
+
+  details[open] summary::after { content: '−'; }
+
+  details > p {
+    max-width: 55rem;
+    margin: -0.35rem 0 1.75rem;
+  }
+
+  .closing {
+    padding: clamp(6rem, 12vw, 12rem) max(1.5rem, calc((100vw - 76rem) / 2));
+    color: var(--white);
+    background: var(--forest);
+    text-align: center;
+  }
+
+  .closing-mark {
+    margin-bottom: 1.5rem;
+  }
+
+  .closing .overline {
+    justify-content: center;
+  }
+
+  .closing h2 {
+    max-width: 12ch;
+    margin-inline: auto;
+  }
+
+  .closing h2 em {
+    color: var(--pale);
+  }
+
+  .closing > p {
+    max-width: 40rem;
+    margin: 1.5rem auto 2rem;
+    color: #edf2dc;
+    font-size: 1.12rem;
+  }
+
+  .button.light {
+    color: var(--ink);
+    border-color: var(--pale);
+    background: var(--pale);
+  }
+
+  footer {
+    min-height: 8rem;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 2rem;
+    font-size: 0.82rem;
+  }
+
+  footer p {
+    margin: 0;
+    text-align: center;
+  }
+
+  footer > a:last-child {
+    justify-self: end;
+  }
+
+  @media (max-width: 1000px) {
+    .hero {
+      grid-template-columns: 1fr 20rem;
+      gap: 3rem;
+    }
+
+    .jar-glass {
+      min-height: 31rem;
+      padding-inline: 1.4rem;
+    }
+
+    .destination-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .trust {
+      padding-bottom: 7rem;
+    }
+
+    .durability-grid {
+      max-width: none;
+    }
+
+    .test-seal {
+      position: relative;
+      right: auto;
+      bottom: auto;
+      margin: 3rem auto -3rem;
+    }
+  }
+
+  @media (max-width: 760px) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    .site-header {
+      width: min(100% - 2rem, 86rem);
+      min-height: 4.5rem;
+    }
+
+    .site-header nav a:not(.source-link) {
+      display: none;
+    }
+
+    .hero {
+      width: min(100% - 2rem, 86rem);
+      min-height: 0;
+      padding: 4.5rem 0 5.5rem;
+      grid-template-columns: 1fr;
+    }
+
+    h1 {
+      font-size: clamp(3.4rem, 17vw, 5.5rem);
+    }
+
+    .hero-jar {
+      width: min(100%, 24rem);
+      margin-top: 1rem;
+    }
+
+    .jar-glass {
+      min-height: 31rem;
+    }
+
+    .plain-facts {
+      gap: 1.25rem;
+    }
+
+    .promise-strip {
+      padding-inline: 1rem;
+    }
+
+    .split-heading,
+    .assistant {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .split-heading > p {
+      margin-top: 0;
+    }
+
+    .steps li {
+      grid-template-columns: 4.5rem 1fr;
+      gap: 1rem;
+    }
+
+    .destination-grid,
+    .durability-grid,
+    .status-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .destination-grid li {
+      min-height: 15rem;
+    }
+
+    .durability-grid article {
+      min-height: 0;
+    }
+
+    .status-grid article + article {
+      border-top: 1px solid var(--forest);
+      border-left: 0;
+    }
+
+    .state-list li {
+      grid-template-columns: 0.7rem 1fr;
+      gap: 0.6rem 1rem;
+    }
+
+    .state-list p {
+      grid-column: 2;
+    }
+
+    table,
+    thead,
+    tbody,
+    tr,
+    th,
+    td {
+      display: block;
+    }
+
+    thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+    }
+
+    tbody tr {
+      padding: 1.25rem;
+      border-bottom: 1px solid var(--forest);
+    }
+
+    tbody tr:last-child {
+      border-bottom: 0;
+    }
+
+    tbody th,
+    tbody td {
+      width: auto;
+      padding: 0.25rem 0;
+      border: 0;
+    }
+
+    tbody td:last-child {
+      margin-top: 0.4rem;
+    }
+
+    footer {
+      min-height: 10rem;
+      padding: 2rem 0;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+      text-align: center;
+    }
+
+    footer .brand,
+    footer > a:last-child {
+      justify-self: center;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .hero-actions .button {
+      width: 100%;
+    }
+
+    .jar-glass {
+      min-height: 29rem;
+      padding: 4rem 1rem 2rem;
+    }
+
+    .jar-label {
+      padding: 1.8rem 1.25rem 1.3rem;
+    }
+
+    .plain-facts {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+    }
+
+    .plain-facts div {
+      min-width: 0;
+    }
+
+    .plain-facts dd {
+      font-size: 0.82rem;
+    }
+
+    .section {
+      padding-inline: 1rem;
+    }
+
+    .section-heading h2,
+    .closing h2,
+    .assistant-intro h2 {
+      font-size: clamp(2.75rem, 14vw, 4.5rem);
+    }
+
+    .steps li {
+      grid-template-columns: 1fr;
+    }
+
+    .step-number {
+      font-size: 2.75rem;
+    }
+
+    .tool-label {
+      padding-inline: 1.3rem;
+    }
+
+    .tool-label ul {
+      columns: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      scroll-behavior: auto !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>

@@ -1,0 +1,73 @@
+---
+/**
+ * tw15 · Jaw — a head that is not a circle.
+ *
+ * Wider than it is tall, flat across the top, straight down the temples, then
+ * it cuts in hard to a narrow chin. One silhouette, one opening, nothing else.
+ *
+ * The dependency: **the jawline rakes at exactly the angle of the Z's
+ * diagonal.** RAKE is the letter's own oblique — (w - diag) across for every
+ * (h - 2·bar) down — and it is the slope of both sides of the jaw, so the
+ * head's outline is the letter's one slanted stroke, repeated large. Draw a
+ * lazier Z and the face goes slack and wide; draw a steeper one and it narrows
+ * to a point. The chin width is not chosen at all; it is what is left over.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.twozz;
+const uid = `tw15-${Math.random().toString(36).slice(2, 9)}`;
+
+const Z = { y: 11.9, w: 10.4, h: 11.6, bar: 3, diag: 5.4, cap: 'angled' as const };
+const zLeft = 11.6;
+const zRight = 26;
+
+// The letter's oblique: across by this much for every one down.
+const RAKE = (Z.w - Z.diag) / (Z.h - 2 * Z.bar);
+
+const HEAD = { x: 6, w: 36, top: 8.3, temple: 27.5, chin: 39.8, r: 4.4 };
+const xr = HEAD.x + HEAD.w;
+const inset = (HEAD.chin - HEAD.temple) * RAKE;
+const cxL = HEAD.x + inset;
+const cxR = xr - inset;
+
+const SKULL =
+  `M${HEAD.x} ${HEAD.top + HEAD.r}C${HEAD.x} ${HEAD.top + HEAD.r / 2.2} ${HEAD.x + HEAD.r / 2.2} ${HEAD.top} ${HEAD.x + HEAD.r} ${HEAD.top}` +
+  `L${xr - HEAD.r} ${HEAD.top}C${xr - HEAD.r / 2.2} ${HEAD.top} ${xr} ${HEAD.top + HEAD.r / 2.2} ${xr} ${HEAD.top + HEAD.r}` +
+  `L${xr} ${HEAD.temple}L${cxR + 1.5 * RAKE} ${HEAD.chin - 1.5}` +
+  `Q${cxR} ${HEAD.chin} ${cxR - 1.7} ${HEAD.chin}` +
+  `L${cxL + 1.7} ${HEAD.chin}` +
+  `Q${cxL} ${HEAD.chin} ${cxL - 1.5 * RAKE} ${HEAD.chin - 1.5}` +
+  `L${HEAD.x} ${HEAD.temple}Z`;
+
+const MOUTH =
+  'M13.8 28.2C19.2 26.2 29 26 34.2 27.8C34 33.6 29.8 36.6 24 36.6C18 36.6 13.8 33.6 13.8 28.2Z';
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
+      <path d={zPath({ ...Z, x: zRight })} fill="#000" />
+      <path d={MOUTH} fill="#000" />
+    </mask>
+  </defs>
+
+  <g mask={`url(#${uid})`}>
+    <path d={SKULL} fill={ground === 'dark' ? app.hue : app.hue} />
+  </g>
+</svg>

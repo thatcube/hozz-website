@@ -1,0 +1,53 @@
+---
+/**
+ * tw11 · Aisles
+ *
+ * One fan-shaped audience bowl faces one live screen. In each Z, the horizontal
+ * cuts are seating tiers and the diagonal joining them is an aisle through the
+ * bowl. The aisle belongs to this object rather than occupying generic space
+ * between two letters.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.twozz;
+const uid = `tw11-${Math.random().toString(36).slice(2, 9)}`;
+
+const Z = { y: 21, w: 13, h: 15, bar: 4, diag: 7.2, cap: 'angled' as const };
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} audience aisles mark`}
+>
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: 9.5 })} fill="#000" />
+      <path d={zPath({ ...Z, x: 25.5 })} fill="#000" />
+    </mask>
+  </defs>
+
+  <rect x="14" y="4" width="20" height="7" rx="2" fill={app.deep} />
+
+  <g mask={`url(#${uid})`}>
+    <path
+      d="M4 20Q24 7 44 20L40 41Q24 47 8 41L4 20Z"
+      fill={app.hue}
+    />
+    <path
+      d="M7.2 37Q24 44 40.8 37L40 41Q24 47 8 41L7.2 37Z"
+      fill={app.deep}
+    />
+  </g>
+</svg>

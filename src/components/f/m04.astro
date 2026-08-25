@@ -1,0 +1,49 @@
+---
+/**
+ * m04 · Folded horn
+ *
+ * One flared speaker body is cut by its folded acoustic channel. The channel
+ * opens through the body itself, so the pair cannot be detached from the horn.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96 } = Astro.props as Props;
+const app = APP_BY_KEY.mozz;
+const uid = `m04-${Math.random().toString(36).slice(2, 9)}`;
+const Z = {
+  y: 15.5,
+  w: 13.5,
+  h: 17,
+  bar: 2.6,
+  diag: 5.8,
+  cap: 'open' as const,
+};
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} folded horn mark`}
+>
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: 6.5 })} fill="#000" />
+      <path d={zPath({ ...Z, x: 26.2 })} fill="#000" />
+    </mask>
+  </defs>
+
+  <g mask={`url(#${uid})`}>
+    <path d="M3 19H7V15L42 4V44L7 33V29H3V19Z" fill={app.hue} />
+    <path d="M3 25H7V29L42 40V44L7 33V29H3V25Z" fill={app.deep} />
+  </g>
+</svg>

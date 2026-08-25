@@ -1,0 +1,1120 @@
+/**
+ * Sketch T — "Instrument".
+ *
+ * Hozz treated as a measuring tool rather than a service: a calibrated edge
+ * runs down the whole page, and a single crimson marker rides it. The marker
+ * is monotonic — scroll back and it stays where it reached — because that is
+ * the one behaviour the product guarantees. Everything else is hairline grey.
+ */
+
+@font-face {
+  font-family: 'Supreme T';
+  src: url('/fonts/supreme-t-variable.woff2') format('woff2-variations'),
+    url('/fonts/supreme-t-variable.woff2') format('woff2');
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Scoped to :root, not .t — the calibrated rail lives outside <main>. */
+:root {
+  /* Cool paper, graphite ink, one crimson. Colour is a state, not decoration. */
+  --paper: #fafafb;
+  --paper-2: #f2f3f6;
+  --card: #ffffff;
+  --ink: #14161a;
+  --ink-2: #5a606b;
+  --rule: #dfe3e9;
+  --rule-soft: #edeff2;
+  --rule-hard: #b9c0ca;
+  --pip: #d0203c;
+  --pip-ink: #b01a30;
+
+  --display: 'Supreme T', 'Switzer', system-ui, sans-serif;
+
+  --rail: 34px;
+  --gutter: clamp(1.15rem, 4vw, 3rem);
+  --shell: 1120px;
+
+  --step: clamp(3.5rem, 8vw, 6.5rem);
+}
+
+html,
+body {
+  background: var(--paper);
+}
+
+.t {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: clamp(1rem, 0.96rem + 0.2vw, 1.075rem);
+  line-height: 1.55;
+  letter-spacing: -0.005em;
+  padding-left: var(--rail);
+  overflow-x: clip;
+}
+
+.t ::selection {
+  background: color-mix(in oklab, var(--pip) 22%, #fff);
+}
+
+.t-shell {
+  max-width: var(--shell);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* ── the calibrated edge ──────────────────────────────────────────────── */
+
+.t-rail {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: var(--rail);
+  z-index: 40;
+  pointer-events: none;
+  background: linear-gradient(to right, var(--card), color-mix(in oklab, var(--paper) 70%, #fff));
+  border-right: 1px solid var(--rule-soft);
+}
+
+.t-rail i {
+  position: absolute;
+  left: 17px;
+  top: 0;
+  bottom: 0;
+  display: block;
+}
+
+.t-rail .t-spine {
+  width: 1px;
+  background: var(--rule-hard);
+}
+
+.t-rail .t-minor {
+  width: 6px;
+  background: repeating-linear-gradient(to bottom, var(--rule) 0 1px, transparent 1px 11px);
+}
+
+.t-rail .t-major {
+  width: 13px;
+  background: repeating-linear-gradient(to bottom, var(--rule-hard) 0 1px, transparent 1px 55px);
+}
+
+.t-trail {
+  position: absolute;
+  left: 17px;
+  top: 0;
+  width: 1px;
+  height: var(--pip-y, 0px);
+  background: linear-gradient(to bottom, transparent, var(--pip));
+  opacity: 0.55;
+}
+
+.t-pip {
+  position: absolute;
+  left: 8px;
+  top: 0;
+  width: 19px;
+  height: 9px;
+  border-radius: 3px;
+  background: var(--pip);
+  transform: translateY(var(--pip-y, 0px));
+  transition: transform 0.22s cubic-bezier(0.22, 0.7, 0.25, 1);
+  will-change: transform;
+}
+
+/* ── shared furniture ─────────────────────────────────────────────────── */
+
+.t-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.t-eyebrow::before {
+  content: attr(data-n);
+  padding-right: 34px;
+  color: var(--pip-ink);
+  letter-spacing: 0.06em;
+  background: repeating-linear-gradient(to right, var(--rule-hard) 0 1px, transparent 1px 5px)
+    right center / 26px 7px no-repeat;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--display);
+  font-weight: 600;
+  letter-spacing: -0.032em;
+  line-height: 1.03;
+  text-wrap: balance;
+}
+
+.t h1 {
+  font-size: clamp(2.65rem, 7.4vw, 5.1rem);
+  font-weight: 500;
+  margin-block: 1.15rem 0;
+}
+
+.t h2 {
+  font-size: clamp(1.85rem, 3.6vw, 2.85rem);
+  margin-block: 0.9rem 0;
+}
+
+.t h3 {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.018em;
+  line-height: 1.25;
+}
+
+.t-lede {
+  max-width: 34ch;
+  margin-top: 1.15rem;
+  font-size: clamp(1.05rem, 0.98rem + 0.4vw, 1.28rem);
+  line-height: 1.45;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+.t-note {
+  color: var(--ink-2);
+  max-width: 56ch;
+  text-wrap: pretty;
+}
+
+.t-mono {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  letter-spacing: -0.01em;
+  color: var(--ink-2);
+}
+
+.t-em {
+  color: var(--pip-ink);
+}
+
+/* ── buttons ──────────────────────────────────────────────────────────── */
+
+.t-acts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1.9rem;
+}
+
+.t-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.72rem 1.25rem;
+  border-radius: 9999px;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: #fff;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+  text-decoration: none;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.t-btn:hover {
+  background: var(--pip-ink);
+  border-color: var(--pip-ink);
+  transform: translateY(-1px);
+}
+
+.t-btn--ghost {
+  background: transparent;
+  border-color: var(--rule-hard);
+  color: var(--ink);
+}
+
+.t-btn--ghost:hover {
+  background: var(--card);
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.t-btn svg {
+  flex: none;
+}
+
+/* ── hero ─────────────────────────────────────────────────────────────── */
+
+.t-hero {
+  padding-block: clamp(3.25rem, 9vw, 6.5rem) clamp(2.5rem, 6vw, 4.5rem);
+  position: relative;
+}
+
+.t-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, var(--card), transparent 62%);
+  pointer-events: none;
+}
+
+.t-hero-grid {
+  position: relative;
+  display: grid;
+  gap: clamp(2.25rem, 5vw, 3.5rem);
+  align-items: end;
+}
+
+.t-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.6rem;
+  padding: 0.34rem 0.7rem 0.34rem 0.5rem;
+  border: 1px solid var(--rule);
+  border-radius: 9999px;
+  background: var(--card);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.01em;
+  color: var(--ink-2);
+}
+
+.t-status b {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--pip);
+}
+
+/* the schedule dial — a calibrated scale, because the choice is a setting */
+.t-dial {
+  grid-column: 1 / -1;
+  margin-top: clamp(2.5rem, 5vw, 3.75rem);
+}
+
+.t-dial-cap {
+  margin-bottom: 0.85rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.t-dial-rule {
+  height: 16px;
+  border-bottom: 1.5px solid var(--ink);
+  background: repeating-linear-gradient(to right, var(--rule-hard) 0 1px, transparent 1px 2.5%)
+    bottom / 100% 8px repeat-x;
+}
+
+.t-dial-stops {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.t-dial-stops li {
+  position: relative;
+  padding: 0.85rem 0.9rem 0 0.9rem;
+  font-family: var(--display);
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.t-dial-stops li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: -16px;
+  width: 1.5px;
+  height: 16px;
+  background: var(--ink);
+}
+
+.t-dial-stops li i {
+  display: block;
+  margin-top: 0.15rem;
+  font-family: var(--mono);
+  font-style: normal;
+  font-size: 0.66rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+/* the example artefact */
+.t-slip {
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  background: var(--card);
+  overflow: hidden;
+  box-shadow: 0 1px 0 rgba(20, 22, 26, 0.03);
+}
+
+.t-slip-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.6rem 0.95rem;
+  border-bottom: 1px solid var(--rule-soft);
+  background: linear-gradient(to bottom, var(--paper-2), var(--card));
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.t-slip pre {
+  margin: 0;
+  padding: 0.95rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  line-height: 1.85;
+  color: var(--ink);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.t-slip pre span {
+  color: var(--ink-2);
+}
+
+.t-slip pre .t-del {
+  color: var(--pip-ink);
+}
+
+.t-slip-foot {
+  padding: 0.6rem 0.95rem;
+  border-top: 1px solid var(--rule-soft);
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  color: var(--ink-2);
+}
+
+/* ── section shell ────────────────────────────────────────────────────── */
+
+.t-sec {
+  padding-block: var(--step);
+  border-top: 1px solid var(--rule-soft);
+}
+
+.t-sec--sunk {
+  background: var(--paper-2);
+}
+
+.t-head {
+  max-width: 40ch;
+}
+
+.t-head .t-note {
+  margin-top: 1rem;
+}
+
+/* ── the fan ──────────────────────────────────────────────────────────── */
+
+.t-fan {
+  position: relative;
+  margin-top: clamp(2.25rem, 5vw, 3.25rem);
+  padding-top: 2.4rem;
+}
+
+.t-fan-origin {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  translate: -50% 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.34rem 0.85rem;
+  border: 1px solid var(--ink);
+  border-radius: 9999px;
+  background: var(--card);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.t-fan-origin b {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--pip);
+}
+
+.t-fan svg {
+  width: 100%;
+  height: 128px;
+  display: block;
+  overflow: visible;
+}
+
+.t-fan-path {
+  fill: none;
+  stroke: var(--rule-hard);
+  stroke-width: 1;
+  stroke-dasharray: 2 5;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.t-fan-drop {
+  stroke: var(--rule-hard);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.t-fan-end {
+  fill: var(--card);
+  stroke: var(--ink);
+  stroke-width: 1.25;
+  vector-effect: non-scaling-stroke;
+}
+
+.t-dot {
+  fill: var(--pip);
+  offset-rotate: 0deg;
+  animation: t-travel 3.6s cubic-bezier(0.5, 0, 0.6, 1) infinite;
+  opacity: 0;
+}
+
+@keyframes t-travel {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  72% {
+    opacity: 1;
+  }
+  88%,
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+
+/* ── destination columns ──────────────────────────────────────────────── */
+
+.t-dests {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  background: var(--card);
+  overflow: hidden;
+}
+
+.t-dest {
+  padding: 1.1rem 1.05rem 1.25rem;
+  border-left: 1px solid var(--rule-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.t-dest:first-child {
+  border-left: 0;
+}
+
+.t-dest span {
+  font-family: var(--mono);
+  font-size: 0.63rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.t-dest p {
+  font-size: 0.85rem;
+  line-height: 1.42;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+/* ── steps ────────────────────────────────────────────────────────────── */
+
+.t-steps {
+  counter-reset: t;
+  display: grid;
+  gap: 1px;
+  background: var(--rule-soft);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-top: clamp(2rem, 4vw, 2.75rem);
+}
+
+.t-steps li {
+  counter-increment: t;
+  background: var(--card);
+  padding: 1.15rem 1.25rem;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.35rem 1rem;
+  align-items: baseline;
+}
+
+.t-steps li::before {
+  content: counter(t, decimal-leading-zero);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--pip-ink);
+  grid-row: span 2;
+}
+
+.t-steps p {
+  grid-column: 2;
+  min-width: 0;
+  font-size: 0.925rem;
+  line-height: 1.5;
+  color: var(--ink-2);
+  max-width: 52ch;
+  text-wrap: pretty;
+  overflow-wrap: anywhere;
+}
+
+.t-steps h3 {
+  min-width: 0;
+}
+
+.t-steps code {
+  font-family: var(--mono);
+  font-size: 0.8em;
+  color: var(--ink);
+}
+
+/* ── formats table ────────────────────────────────────────────────────── */
+
+.t-tablewrap {
+  margin-top: clamp(2rem, 4vw, 2.75rem);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  background: var(--card);
+  overflow-x: auto;
+}
+
+.t table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 430px;
+}
+
+.t caption {
+  text-align: left;
+  padding: 0.85rem 1.15rem;
+  border-bottom: 1px solid var(--rule-soft);
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.t th,
+.t td {
+  text-align: left;
+  padding: 0.8rem 1.15rem;
+  border-top: 1px solid var(--rule-soft);
+  font-size: 0.875rem;
+  vertical-align: top;
+}
+
+.t thead th {
+  border-top: 0;
+  font-family: var(--mono);
+  font-size: 0.63rem;
+  font-weight: 500;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.t tbody th {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 0.8rem;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.t td {
+  color: var(--ink-2);
+}
+
+.t td.t-yes {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.t td.t-no {
+  position: relative;
+  font-weight: 600;
+  color: var(--pip-ink);
+  background-image: repeating-linear-gradient(
+    -45deg,
+    color-mix(in oklab, var(--pip) 22%, transparent) 0 1px,
+    transparent 1px 5px
+  );
+}
+
+.t-after {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 1.4rem;
+}
+
+.t-after li {
+  padding-left: 1.15rem;
+  position: relative;
+  font-size: 0.9rem;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+.t-after li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 7px;
+  height: 1px;
+  background: var(--rule-hard);
+}
+
+/* ── anchor section ───────────────────────────────────────────────────── */
+
+.t-anchor-grid {
+  display: grid;
+  gap: clamp(2rem, 5vw, 3.25rem);
+  align-items: start;
+}
+
+.t-ratchet {
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  background: var(--card);
+  padding: 1.35rem 1.35rem 1.1rem;
+}
+
+.t-ratchet-scale {
+  position: relative;
+  height: 30px;
+  padding-right: 10px;
+  border-bottom: 1px solid var(--rule-hard);
+  background: repeating-linear-gradient(to right, var(--rule) 0 1px, transparent 1px 6%) bottom /
+    100% 9px repeat-x;
+}
+
+.t-ratchet-track {
+  position: absolute;
+  inset: 0 10px 0 0;
+}
+
+.t-ratchet-mark {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 9px;
+  height: 19px;
+  border-radius: 3px;
+  background: var(--pip);
+  animation: t-ratchet 6.4s steps(1, end) infinite;
+}
+
+@keyframes t-ratchet {
+  0%, 10% { left: 0%; }
+  11%, 21% { left: 12%; }
+  22%, 32% { left: 24%; }
+  /* the interruption: it repeats the batch, and holds instead of sliding back */
+  33%, 43% { left: 24%; }
+  44%, 54% { left: 36%; }
+  55%, 65% { left: 54%; }
+  66%, 76% { left: 72%; }
+  77%, 100% { left: 100%; }
+}
+
+.t-ratchet-legend {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.t-facts {
+  display: grid;
+  gap: 1px;
+  background: var(--rule-soft);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-top: 1.4rem;
+}
+
+.t-facts div {
+  background: var(--card);
+  padding: 0.9rem 1.1rem;
+}
+
+.t-facts dt {
+  font-family: var(--mono);
+  font-size: 0.63rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.t-facts dd {
+  margin: 0.3rem 0 0;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: var(--ink);
+  text-wrap: pretty;
+}
+
+/* ── read-back + close ────────────────────────────────────────────────── */
+
+.t-caveat {
+  margin-top: 1.25rem;
+  padding: 0.9rem 1.05rem;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--card);
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--rule-soft) 0 1px,
+    transparent 1px 7px
+  );
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--ink-2);
+  max-width: 52ch;
+  text-wrap: pretty;
+}
+
+.t-nots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 1.6rem;
+}
+
+.t-nots li {
+  padding: 0.34rem 0.72rem;
+  border: 1px solid var(--rule);
+  border-radius: 9999px;
+  background: var(--card);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-2);
+}
+
+/* ── read-back ────────────────────────────────────────────────────────── */
+
+.t-mac-grid {
+  display: grid;
+  gap: clamp(2rem, 5vw, 3.25rem);
+  align-items: start;
+}
+
+.t-store {
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  background: var(--card);
+  overflow: hidden;
+}
+
+.t-store-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--rule-soft);
+  background: linear-gradient(to bottom, var(--paper-2), var(--card));
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--ink);
+}
+
+.t-store-head svg {
+  flex: none;
+  color: var(--ink-2);
+}
+
+.t-store ul {
+  padding: 0.35rem 0;
+}
+
+.t-store li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.73rem;
+  color: var(--ink);
+}
+
+.t-store li em {
+  font-style: normal;
+  font-size: 0.63rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.t-store-foot {
+  padding: 0.7rem 1rem;
+  border-top: 1px solid var(--rule-soft);
+  background-image: repeating-linear-gradient(-45deg, var(--rule-soft) 0 1px, transparent 1px 7px);
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+/* ── close ────────────────────────────────────────────────────────────── */
+
+.t-close {
+  padding-block: var(--step);
+  border-top: 1px solid var(--rule-soft);
+}
+
+.t-close h2 {
+  max-width: 16ch;
+}
+
+.t-foot {
+  margin-top: clamp(2.5rem, 6vw, 4rem);
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 4.5rem;
+}
+
+.t-foot a {
+  color: var(--ink-2);
+  text-underline-offset: 3px;
+  text-decoration-color: var(--rule-hard);
+}
+
+.t-foot a:hover {
+  color: var(--pip-ink);
+}
+
+/* ── reveals ──────────────────────────────────────────────────────────── */
+
+.t-js .t-rise {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 0.5s cubic-bezier(0.22, 0.7, 0.25, 1),
+    transform 0.5s cubic-bezier(0.22, 0.7, 0.25, 1);
+}
+
+.t-js .t-rise.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── responsive ───────────────────────────────────────────────────────── */
+
+@media (min-width: 62rem) {
+  .t-hero-grid {
+    grid-template-columns: 1.12fr 0.88fr;
+  }
+
+  .t-anchor-grid {
+    grid-template-columns: 1fr 0.9fr;
+  }
+
+  .t-mac-grid {
+    grid-template-columns: 1fr 0.82fr;
+  }
+}
+
+@media (max-width: 61.99rem) {
+  .t-dests {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .t-dest {
+    border-top: 1px solid var(--rule-soft);
+  }
+
+  .t-dest:nth-child(-n + 2) {
+    border-top: 0;
+  }
+
+  .t-dest:nth-child(odd) {
+    border-left: 0;
+  }
+
+  .t-fan svg {
+    height: 92px;
+  }
+}
+
+@media (max-width: 34rem) {
+  :root {
+    --rail: 22px;
+  }
+
+  .t-rail .t-major {
+    display: none;
+  }
+
+  .t-rail i,
+  .t-trail {
+    left: 11px;
+  }
+
+  .t-pip {
+    left: 4px;
+    width: 15px;
+  }
+
+  .t-dests {
+    grid-template-columns: 1fr;
+  }
+
+  .t-dest {
+    border-left: 0;
+    border-top: 1px solid var(--rule-soft);
+  }
+
+  .t-dest:first-child {
+    border-top: 0;
+  }
+
+  .t-fan {
+    display: none;
+  }
+
+  .t-dial-stops {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem 0;
+  }
+
+  .t-dial-stops li::before {
+    top: -8px;
+    height: calc(100% + 8px);
+  }
+
+  /* the table stops being a grid and becomes four stacked records; the
+     markup stays a table, because it is still tabular */
+  .t-tablewrap {
+    overflow: hidden;
+  }
+
+  .t table {
+    min-width: 0;
+    display: block;
+  }
+
+  .t caption {
+    display: block;
+  }
+
+  .t thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .t tbody,
+  .t tbody tr {
+    display: block;
+  }
+
+  .t tbody tr {
+    border-top: 1px solid var(--rule-soft);
+    padding: 0.35rem 0 0.7rem;
+  }
+
+  .t tbody th,
+  .t tbody td {
+    display: block;
+    border-top: 0;
+    padding: 0.28rem 1.15rem;
+  }
+
+  .t tbody th {
+    padding-top: 0.7rem;
+    font-size: 0.85rem;
+  }
+
+  .t tbody td::before {
+    content: attr(data-label) ' ';
+    font-family: var(--mono);
+    font-size: 0.63rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+
+  .t tbody td.t-no {
+    padding-block: 0.45rem;
+  }
+}
+
+/* ── stillness ────────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .t *,
+  .t *::before,
+  .t *::after,
+  .t-rail * {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .t-js .t-rise {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* keep every dot and marker visible, just parked */
+  .t-dot {
+    opacity: 1;
+    offset-distance: 62%;
+  }
+
+  .t-ratchet-mark {
+    left: 100%;
+  }
+}

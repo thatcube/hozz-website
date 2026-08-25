@@ -1,0 +1,49 @@
+---
+/**
+ * m11 · Shared Beam
+ *
+ * Two note heads and stems support one uninterrupted beam. The pair is punched
+ * through that single shared field, not split into one compartment per note.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.mozz;
+const uid = `m11-${Math.random().toString(36).slice(2, 9)}`;
+const Z = { y: 13, w: 12, h: 10.5, bar: 2.8, diag: 5.5, cap: 'angled' as const };
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} shared note beam mark`}
+>
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <g transform="rotate(4.5 24 18.25)">
+        <path d={zPath({ ...Z, x: 9 })} fill="#000" />
+        <path d={zPath({ ...Z, x: 25 })} fill="#000" />
+      </g>
+    </mask>
+  </defs>
+
+  <path
+    d="M6.5 22H10V35C13.3 35.4 12.8 39.3 8.1 40C3.4 40.7 2.3 37.2 5.4 35.8L6.5 35.4ZM38.5 25H42V36.5C45.2 36.9 44.6 40.7 40.1 41.2C35.5 41.8 34.3 38.5 37.4 37L38.5 36.6Z"
+    fill={app.deep}
+  />
+  <path
+    d="M5 8L43 11V28L5 25Z"
+    fill={app.hue}
+    mask={`url(#${uid})`}
+  />
+</svg>

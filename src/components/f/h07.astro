@@ -1,0 +1,62 @@
+---
+/**
+ * h07 · Trace — a day plotted, and the ZZ cut out from under it.
+ *
+ * The object is one chart: a line across the day with the area under it
+ * filled, running off both sides because the body was doing this before the
+ * app looked. The move that ties the letters to it: **the plotted line is the
+ * lid of the letters** — they are cut out of the area beneath it and nowhere
+ * else, and the lowest dip of the trace comes down to sit on the second Z.
+ * Flatten the day and the letters would be cropped away with the fill.
+ *
+ * Both tests pass. Cover the letters and a plotted day is plainly there.
+ * Glance at it and the ZZ is a full knockout with the ground showing through.
+ *
+ * Zs as letters, not eyes: a health app that reads sleep must never draw a
+ * sleeping face.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.hozz;
+const uid = `h07-${Math.random().toString(36).slice(2, 9)}`;
+
+const BASE = 42; // the axis the day is measured from
+// One calm undulation: up, down to its resting dip at x=26, and up again.
+const TRACE = 'M0 15C4 15 8 9 14 9C20 9 20 17 26 17C32 17 34 11 40 11C44 11 45 13.5 48 13.5';
+
+const Z = { y: 19.5, w: 14.5, h: 19, bar: 4.2, diag: 7.6, cap: 'angled' as const };
+// 14.5 + 3 + 14.5 = 32, running 8 to 40, centred on 24 and tucked under the
+// dip, which comes down to within 1.4 of the top of the second Z.
+const zLeft = 8;
+const zRight = 25.5;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
+      <path d={zPath({ ...Z, x: zRight })} fill="#000" />
+    </mask>
+  </defs>
+
+  <g mask={`url(#${uid})`}>
+    <path d={`${TRACE}L48 ${BASE}L0 ${BASE}Z`} fill={app.hue} />
+    {/* The line itself, drawn on its own edge, so the chart reads as plotted. */}
+    <path d={TRACE} stroke={app.deep} stroke-width="2.2" fill="none" />
+  </g>
+</svg>

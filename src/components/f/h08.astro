@@ -1,0 +1,80 @@
+---
+/**
+ * h08 · Groove — a plate of the record, cut at two levels.
+ *
+ * The object is a plain plate that runs off every edge, with two grooves cut
+ * into it: an upper limit and a resting level. Nothing else is on it.
+ *
+ * The move is relief, not a knockout. The grooves are pressed into the plate —
+ * dark in the recess, with the light catching the surface just below each cut —
+ * and **the letters are the passage where the two grooves fold into one
+ * another**. The upper groove is both top bars, the lower groove is both
+ * bottom bars, and each carries on past the pair to the edge of the plate.
+ * Only the two falls are cut. Move a groove and the letters change height with
+ * it; fill the grooves and there is nothing left to read.
+ *
+ * The grooves break between the Zs, as a cut that has turned must, or the pair
+ * would close up and read as a pair of sevens.
+ *
+ * Zs as letters, not eyes: no face on a health mark.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.hozz;
+
+const BAR = 3.2;
+const TOP = 15;
+const FLOOR = 29.6;
+const LIP = 1.1; // how far the lit surface shows below each cut
+
+const Z = {
+  y: TOP,
+  w: 13.6,
+  h: FLOOR + BAR - TOP,
+  bar: BAR,
+  diag: 5.4,
+  cap: 'flat' as const,
+};
+const zLeft = 8.9;
+const zRight = 25.5;
+const zMid = zLeft + Z.w;
+
+const plate = app.hue;
+const cut = app.deep;
+const lit = app.light;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <rect width="48" height="48" fill={plate} />
+  {/* The lit surface just below each cut, then the cut itself. */}
+  <g fill={lit} transform={`translate(0 ${LIP})`}>
+    <rect x="0" y={TOP} width={zMid} height={BAR} />
+    <rect x={zRight} y={TOP} width={48 - zRight} height={BAR} />
+    <rect x="0" y={FLOOR} width={zMid} height={BAR} />
+    <rect x={zRight} y={FLOOR} width={48 - zRight} height={BAR} />
+    <path d={zPath({ ...Z, x: zLeft })} />
+    <path d={zPath({ ...Z, x: zRight })} />
+  </g>
+  <g fill={cut}>
+    <rect x="0" y={TOP} width={zMid} height={BAR} />
+    <rect x={zRight} y={TOP} width={48 - zRight} height={BAR} />
+    <rect x="0" y={FLOOR} width={zMid} height={BAR} />
+    <rect x={zRight} y={FLOOR} width={48 - zRight} height={BAR} />
+    <path d={zPath({ ...Z, x: zLeft })} />
+    <path d={zPath({ ...Z, x: zRight })} />
+  </g>
+</svg>

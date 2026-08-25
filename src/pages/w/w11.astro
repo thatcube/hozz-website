@@ -1,0 +1,2430 @@
+---
+/**
+ * w11 · Dispersion — built on c45 "Ripple, Lens".
+ *
+ * The mark is a lens sitting in water, so the page takes the lens literally.
+ * One Apple Health archive enters as a single undispersed beam, meets Hozz, and
+ * separates into the seven real export formats — thick and deep where the format
+ * keeps everything, thin, pale and broken where it throws information away. Data
+ * types ride the bands they can honestly survive in; the six real destinations sit
+ * at the outer edge on dotted hairlines that all trace back to the one source.
+ *
+ * Nothing in the composition is invented. Every band is a row of FORMATS, every
+ * chip is a HealthKit identifier from STREAM_LANES with its own example reading,
+ * every plate is a row of DESTINATIONS with its checkable fact. There is no
+ * shape in the hero that exists only to look nice.
+ */
+import Mark from '../../components/mark/logos/c45.astro';
+import {
+  SITE,
+  GITHUB_URL,
+  DONATE_URL,
+  LICENSE_URL,
+  NAV_LINKS,
+  CATEGORIES,
+  STREAM_LANES,
+  STEPS,
+  DESTINATIONS,
+  FORMATS,
+  DURABILITY,
+  COVERAGE_STATES,
+  MCP_TOOLS,
+  PROMISES,
+  WORKING,
+  NOT_YET,
+  FAQ,
+  SIBLINGS,
+} from '../../data/site';
+
+const hue = Object.fromEntries(CATEGORIES.map((c) => [c.key, c.hue])) as Record<string, string>;
+const label = Object.fromEntries(CATEGORIES.map((c) => [c.key, c.label])) as Record<string, string>;
+
+/** Look a real identifier up rather than retyping it, so the reading always matches site.ts. */
+const lane = (id: string) => {
+  for (const row of STREAM_LANES) {
+    const found = row.find((x) => x.id === id);
+    if (found) return found;
+  }
+  throw new Error(`w11: unknown HealthKit identifier ${id}`);
+};
+
+const format = (name: string) => {
+  const found = FORMATS.find((f) => f.name === name);
+  if (!found) throw new Error(`w11: unknown format ${name}`);
+  return found;
+};
+
+/** Four words for what a format keeps, derived from the note rather than restated. */
+const keeps = (note: string) =>
+  note.startsWith('Lossless') ? 'lossless' : note.startsWith('Lossy') ? 'lossy' : note.startsWith('A filter') ? 'routes only' : 'values over time';
+
+/**
+ * The fan, ordered by what survives: deepest and thickest at the top keeps
+ * everything, palest and thinnest at the bottom keeps the least and is drawn
+ * broken because that is what lossy means.
+ *
+ * `type` is the identifier that rides each band, and each pairing is a claim the
+ * page could defend: routes only ride GPX, a waveform rides the format that
+ * keeps the original record, a daily total rides the format that is a daily
+ * note, a number in a grid rides CSV.
+ */
+const BANDS = [
+  { name: 'NDJSON', tone: '#4c7da4', weight: 1, type: 'stateOfMind' },
+  { name: 'SQLite', tone: '#5d8cb0', weight: 0.87, type: 'electrocardiogram' },
+  { name: 'JSON', tone: '#7ba7c9', weight: 0.75, type: 'dietaryProtein' },
+  { name: 'Metrics JSON', tone: '#96c2e0', weight: 0.6, type: 'respiratoryRate' },
+  { name: 'GPX', tone: '#a7cce6', weight: 0.48, type: 'workoutRoute' },
+  { name: 'CSV', tone: '#b3d2e9', weight: 0.38, type: 'walkingSpeed' },
+  { name: 'Markdown', tone: '#c3dcef', weight: 0.3, type: 'sleepAnalysis' },
+].map((b) => {
+  const f = format(b.name);
+  const l = lane(b.type);
+  return { ...b, use: f.use, note: f.note, keeps: keeps(f.note), id: l.id, sample: l.sample, category: l.category };
+});
+
+const OUT = ['Your Mac', 'Folder', 'Home Assistant', 'Web address', 'InfluxDB', 'MQTT'].map(
+  (title) => DESTINATIONS.find((d) => d.title === title)!
+);
+
+/**
+ * Both compositions are laid out by naming the point on the stage a thing should
+ * land on and solving for the spoke that reaches it, rather than by guessing
+ * angles. Units are percentages of the stage; `aspect` converts the horizontal
+ * ones so a degree means the same thing in both axes.
+ */
+const spokeTo = (aspect: number, lx: number, ly: number, x: number, y: number) => {
+  const dx = (x - lx) * aspect;
+  const dy = y - ly;
+  return {
+    a: +((Math.atan2(dy, dx) * 180) / Math.PI).toFixed(3),
+    len: +(Math.hypot(dx, dy) / aspect).toFixed(3),
+  };
+};
+/* ---- landscape: lens at 45% / 50% of a 1600 x 900 stage ----
+   Two sectors leaving one lens, so nothing has to cross anything. The seven
+   formats leave above the axis and stop at their own identifier card; the six
+   destinations leave below it and stop at their own plate. Both sectors land on
+   the same left edge, so the cards and the plates read as one column. */
+const AL = 1600 / 900;
+const LX = 45;
+const LY = 50;
+/** The edge every band and every hairline terminates on. */
+const COL_L = 74;
+/** Seven rows above the axis, then six below it, both on a real rhythm. */
+const CARD_Y_L = [6.2, 12.5, 18.8, 25.1, 31.4, 37.7, 44];
+const PLATE_Y_L = [56.5, 64.5, 72.5, 80.5, 88.5, 96];
+
+const bandsL = BANDS.map((b, i) => ({ ...b, ...spokeTo(AL, LX, LY, COL_L, CARD_Y_L[i]) }));
+const platesL = OUT.map((d, i) => ({ ...d, ...spokeTo(AL, LX, LY, COL_L, PLATE_Y_L[i]) }));
+
+/** The archive sits above the lens, so the undispersed beam is a straight drop. */
+const SRC_L = { x: 45, y: 5 };
+const beamL = spokeTo(AL, LX, LY, SRC_L.x, SRC_L.y);
+
+/* ---- portrait: lens at 50% / 12% of a 390 x 1080 stage ----
+   Not the landscape one squashed. A phone has no room for a sideways fan, so
+   the cards alternate across the axis and each band stops at the top edge of
+   the card it carries. */
+const AP = 390 / 1080;
+const PLX = 50;
+const PLY = 12;
+/** Card top-centres: the side flips every row so the fan opens as it falls. */
+const CARD_P = [
+  { x: 50, y: 19 },
+  { x: 39, y: 26.5 },
+  { x: 62, y: 34 },
+  { x: 34, y: 41.5 },
+  { x: 67, y: 49 },
+  { x: 30, y: 56.5 },
+  { x: 70, y: 64 },
+];
+const PLATE_P = [
+  { x: 25, y: 72.5 },
+  { x: 75, y: 72.5 },
+  { x: 25, y: 82.5 },
+  { x: 75, y: 82.5 },
+  { x: 25, y: 92.5 },
+  { x: 75, y: 92.5 },
+];
+
+const bandsP = BANDS.map((b, i) => ({ ...b, ...spokeTo(AP, PLX, PLY, CARD_P[i].x, CARD_P[i].y) }));
+const platesP = OUT.map((d, i) => ({ ...d, ...spokeTo(AP, PLX, PLY, PLATE_P[i].x, PLATE_P[i].y) }));
+
+const SRC_P = { x: 50, y: 4 };
+const beamP = spokeTo(AP, PLX, PLY, SRC_P.x, SRC_P.y);
+
+/** Every identifier the site documents, for the section that grounds the hero chips. */
+const allTypes = STREAM_LANES.flat();
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'SoftwareApplication',
+      name: 'Hozz',
+      applicationCategory: 'HealthApplication',
+      operatingSystem: 'iOS, macOS',
+      url: SITE,
+      downloadUrl: GITHUB_URL,
+      isAccessibleForFree: true,
+      license: LICENSE_URL,
+      softwareVersion: 'Early alpha',
+      author: { '@type': 'Person', name: 'Brandon Moore' },
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      description:
+        'A free, open-source iPhone app with a companion Mac app that exports Apple Health data to destinations you own — your Mac, a folder, Home Assistant, InfluxDB, any web endpoint or MQTT. No account, no analytics, no hosted relay and no default destination.',
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: FAQ.map(({ q, a }) => ({
+        '@type': 'Question',
+        name: q,
+        acceptedAnswer: { '@type': 'Answer', text: a },
+      })),
+    },
+  ],
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta
+      name="description"
+      content="Hozz separates your Apple Health archive into the formats and destinations you choose — your Mac, a folder, Home Assistant, InfluxDB, a URL or MQTT. Free, open source, no account, no analytics, no server in the middle."
+    />
+    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#f6fbfe" />
+    <link rel="canonical" href={`${SITE}/w/w11/`} />
+    <title>Hozz — one archive in, the shapes you chose out</title>
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="topbar">
+      <div class="shell topbar-inner">
+        <a class="brand" href="#top">
+          <Mark size={30} />
+          <span>Hozz</span>
+        </a>
+        <nav class="topnav" aria-label="Sections">
+          {NAV_LINKS.map((link) => <a href={link.href}>{link.label}</a>)}
+          <a class="topnav-source" href={GITHUB_URL}>Source <span aria-hidden="true">↗</span></a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="hero" id="top">
+        <figure class="prism">
+          <!-- ---------------- landscape composition ----------------
+               Four passes over one rotation system, so the paint order is the
+               same as the physical order: hairlines run under the fan, the fan
+               runs under what rides it, and the destinations sit on top. -->
+          <div class="stage stage-land">
+            <div class="art art-land" aria-hidden="true">
+              {
+                platesL.map((p) => (
+                  <div class="spoke wire" style={`--a:${p.a}deg; --len:${p.len}%`}>
+                    <i class="hair" />
+                  </div>
+                ))
+              }
+
+              <div class="beam" style={`--a:${beamL.a}deg; --len:${beamL.len}%`}>
+                <i class="beam-rail" />
+              </div>
+
+              {
+                bandsL.map((b) => (
+                  <div
+                    class:list={['band', b.keeps === 'lossy' && 'is-lossy']}
+                    style={`--a:${b.a}deg; --len:${b.len}%; --w:${b.weight}; --tone:${b.tone}`}
+                  >
+                    <i class="rail" />
+                  </div>
+                ))
+              }
+
+              <i class="halo" />
+
+              {
+                bandsL.map((b) => (
+                  <div class="band rider" style={`--a:${b.a}deg; --len:${b.len}%`}>
+                    <span class="chip" style={`--hue:${hue[b.category]}`}>
+                      <i class="chip-hue" />
+                      <b class="mono">{b.id}</b>
+                      <em class="mono">{b.sample}</em>
+                    </span>
+                  </div>
+                ))
+              }
+
+              {
+                platesL.map((p) => (
+                  <div class="spoke" style={`--a:${p.a}deg; --len:${p.len}%`}>
+                    <span class="plate">
+                      <b>
+                        <i class="cat-dot" style={`--hue:${hue[p.category]}`} />
+                        {p.title}
+                      </b>
+                      <span class="mono">{p.fact}</span>
+                    </span>
+                  </div>
+                ))
+              }
+
+              <span class="sector mono" style={`--x:${COL_L}%; --y:1.4%`}>
+                seven formats · thickness is what each keeps
+              </span>
+              <span class="sector mono" style={`--x:${COL_L}%; --y:50.4%`}>
+                six destinations · where any of them can land
+              </span>
+
+              <div class="source" style={`--x:${SRC_L.x}%; --y:${SRC_L.y}%`}>
+                <span class="mono src-k">Apple Health</span>
+                <b>One archive</b>
+                <span class="mono src-f">HKAnchoredObjectQuery</span>
+              </div>
+
+              <div class="lens"><Mark size={128} /></div>
+            </div>
+
+            <div class="hero-copy">
+              <p class="eyebrow"><span class="dot" aria-hidden="true"></span>Apple Health export · early alpha</p>
+              <h1>One archive in. Out in the shapes <em class="em">you</em> chose.</h1>
+              <p class="lede">
+                Hozz copies your Apple Health history off your iPhone and separates it into the
+                formats and destinations you picked. Free, open source, one developer. No account,
+                no analytics, no server of mine.
+              </p>
+              <div class="actions">
+                <a class="btn" href="#export">How to export your data</a>
+                <a class="btn-quiet" href={GITHUB_URL}>Read the source <span aria-hidden="true">↗</span></a>
+              </div>
+            </div>
+          </div>
+
+          <!-- ---------------- portrait composition ----------------
+               Not the landscape one squashed: the fan runs down the page, the
+               riders stack instead of fanning sideways, and the six
+               destinations sit in a grid the hairlines reach down into. -->
+          <div class="stage-port">
+            <div class="hero-copy port-copy">
+              <p class="eyebrow"><span class="dot" aria-hidden="true"></span>Apple Health export · early alpha</p>
+              <h1>One archive in. Out in the shapes <em class="em">you</em> chose.</h1>
+              <p class="lede">
+                Hozz copies your Apple Health history off your iPhone and separates it into the
+                formats and destinations you picked. Free, open source, one developer. No account,
+                no analytics, no server of mine.
+              </p>
+              <div class="actions">
+                <a class="btn" href="#export">How to export your data</a>
+                <a class="btn-quiet" href={GITHUB_URL}>Read the source <span aria-hidden="true">↗</span></a>
+              </div>
+            </div>
+
+            <div class="art art-port" aria-hidden="true">
+              {
+                platesP.map((p) => (
+                  <div class="spoke wire" style={`--a:${p.a}deg; --len:${p.len}%`}>
+                    <i class="hair" />
+                  </div>
+                ))
+              }
+
+              <div class="beam" style={`--a:${beamP.a}deg; --len:${beamP.len}%`}>
+                <i class="beam-rail" />
+              </div>
+
+              {
+                bandsP.map((b) => (
+                  <div
+                    class:list={['band', b.keeps === 'lossy' && 'is-lossy']}
+                    style={`--a:${b.a}deg; --len:${b.len}%; --w:${b.weight}; --tone:${b.tone}`}
+                  >
+                    <i class="rail" />
+                  </div>
+                ))
+              }
+
+              <i class="halo" />
+
+              {
+                bandsP.map((b) => (
+                  <div class="band rider" style={`--a:${b.a}deg; --len:${b.len}%`}>
+                    <span class="chip" style={`--hue:${hue[b.category]}`}>
+                      <i class="chip-hue" />
+                      <b class="mono">{b.id}</b>
+                      <em class="mono">{b.sample}</em>
+                    </span>
+                  </div>
+                ))
+              }
+
+              {
+                platesP.map((p) => (
+                  <div class="spoke" style={`--a:${p.a}deg; --len:${p.len}%`}>
+                    <span class="plate">
+                      <b>
+                        <i class="cat-dot" style={`--hue:${hue[p.category]}`} />
+                        {p.title}
+                      </b>
+                      <span class="mono">{p.fact}</span>
+                    </span>
+                  </div>
+                ))
+              }
+
+              <span class="sector mono" style={`--x:50%; --y:69.6%`}>six destinations</span>
+
+              <div class="source" style={`--x:${SRC_P.x}%; --y:${SRC_P.y}%`}>
+                <span class="mono src-k">Apple Health</span>
+                <b>One archive</b>
+                <span class="mono src-f">HKAnchoredObjectQuery</span>
+              </div>
+
+              <div class="lens lens-port"><Mark size={104} /></div>
+            </div>
+          </div>
+
+
+          <p class="sr-only">
+            A diagram: one Apple Health archive enters a lens and separates into seven export
+            formats — NDJSON, SQLite, JSON, Metrics JSON, GPX, CSV and Markdown — carrying real
+            HealthKit identifiers out to six destinations: your Mac, a folder, Home Assistant, a web
+            address, InfluxDB and MQTT. Every name in it is listed again in the sections below.
+          </p>
+
+          <ul class="key" aria-hidden="true">
+            {
+              BANDS.map((b) => (
+                <li>
+                  <i
+                    class:list={['key-bar', b.keeps === 'lossy' && 'is-lossy']}
+                    style={`--w:${b.weight}; --tone:${b.tone}`}
+                  />
+                  <b class="mono">{b.name}</b>
+                  <span class="mono">{b.keeps}</span>
+                </li>
+              ))
+            }
+          </ul>
+
+          <figcaption>
+            <span>
+              Two things leave the lens. Above the axis, seven bands in the order of the key
+              above — thick and deep keeps everything, thin and broken throws information away and
+              says so — each ending at one real HealthKit identifier that format could honestly
+              hold. Below it, six dotted lines, each ending at one real destination. Formats and
+              destinations are chosen separately, so they are drawn separately: any of the seven
+              can go to any of the six. The readings are examples, not your data.
+            </span>
+          </figcaption>
+        </figure>
+      </section>
+
+      <section class="section tint-mind" aria-labelledby="split-h">
+        <div class="shell">
+          <div class="section-head">
+            <p class="eyebrow"><span class="dot" aria-hidden="true"></span>What separation buys you</p>
+            <h2 id="split-h">A phone gives you one shape. You need <em class="em">several.</em></h2>
+            <p class="section-lede">
+              The same night’s sleep is a row in a spreadsheet, a line in a dashboard, a paragraph in
+              a journal and a record in an archive. One export format cannot be all four, so Hozz
+              does not pretend otherwise — it splits the stream and tells you what each branch costs.
+            </p>
+          </div>
+          <ul class="counts">
+            <li>
+              <span class="mono big">1</span>
+              <h3>archive in</h3>
+              <p>Read through Apple’s anchored query, type by type, so an interruption repeats work rather than skipping records.</p>
+            </li>
+            <li>
+              <span class="mono big">7</span>
+              <h3>formats out</h3>
+              <p>Three keep everything. Two throw information away. Two are projections. All seven say which, here and in the app.</p>
+            </li>
+            <li>
+              <span class="mono big">6</span>
+              <h3>places you own</h3>
+              <p>Each destination gets its own types, its own schedule and its own place in the queue. None of them is mine.</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section" id="export" aria-labelledby="export-h">
+        <div class="shell">
+          <div class="section-head">
+            <p class="eyebrow"><span class="dot" aria-hidden="true"></span>The question people actually ask</p>
+            <h2 id="export-h">How do I export my <em class="em">Apple Health</em> data?</h2>
+            <p class="section-lede">
+              Install Hozz on your iPhone — and the companion app on your Mac, if that is where you
+              want the data. Then three steps, once. After that new records leave on their own, on
+              the schedule you set, to the destination you named.
+            </p>
+          </div>
+          <ol class="steps">
+            {
+              STEPS.map((step, i) => (
+                <li style={`--hue:${hue[step.category]}`}>
+                  <span class="mono step-n">{String(i + 1).padStart(2, '0')}</span>
+                  <h3>{step.title}</h3>
+                  <p>{step.body}</p>
+                </li>
+              ))
+            }
+          </ol>
+          <p class="aside">
+            No default destination exists. Until you add one and confirm it, Hozz reads nothing and
+            sends nothing.
+          </p>
+        </div>
+      </section>
+
+      <section class="section tint-body" id="destinations" aria-labelledby="dest-h">
+        <div class="shell">
+          <div class="section-head">
+            <p class="eyebrow"><span class="dot" aria-hidden="true"></span>Six destinations</p>
+            <h2 id="dest-h">Where the bands <em class="em">land.</em></h2>
+            <p class="section-lede">
+              The six plates in the hero, at full size. Each one is a place you already run, anchored
+              by a fact you could check — a Bonjour service type, a port, an endpoint, a protocol.
+              There is no relay in the middle.
+            </p>
+          </div>
+          <ul class="dests">
+            {
+              DESTINATIONS.map((d) => (
+                <li style={`--hue:${hue[d.category]}`}>
+                  <h3><i class="cat-dot" aria-hidden="true" />{d.title}</h3>
+                  <p>{d.body}</p>
+                  <p class="mono fact">{d.fact}</p>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </section>
+
+      <section class="section" id="formats" aria-labelledby="fmt-h">
+        <div class="shell">
+          <div class="section-head">
+            <p class="eyebrow"><span class="dot" aria-hidden="true"></span>Seven formats</p>
+            <h2 id="fmt-h">Files, not a <em class="em">database you rent.</em></h2>
+            <p class="section-lede">
+              The seven bands of the fan, in the order they leave the lens. The bar beside each one
+              is the same weight it has in the hero, because that weight is the point: two of these
+              throw information away, and finding that out later is the bad outcome.
+            </p>
+          </div>
+          <div class="table-wrap">
+            <table class="formats">
+              <caption class="sr-only">Export formats, what each is for, and what each keeps</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Format</th>
+                  <th scope="col">What it is for</th>
+                  <th scope="col">What it keeps</th>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  BANDS.map((b) => (
+                    <tr class:list={[b.keeps === 'lossy' && 'lossy']}>
+                      <th scope="row">
+                        <i
+                          class:list={['key-bar', b.keeps === 'lossy' && 'is-lossy']}
+                          style={`--w:${b.weight}; --tone:${b.tone}`}
+                        />
+                        <span class="mono">{b.name}</span>
+                      </th>
+                      <td>{b.use}</td>
+                      <td>
+                        {b.keeps === 'lossy' && <span class="tag mono">lossy</span>}
+                        <span class="note">{b.note.replace(/^Lossy — /, '')}</span>
+                      </td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+          <p class="aside">
+            The pairing in the hero is not decoration either: a route can only ride GPX, a waveform
+            needs a format that keeps its original record, and a night’s sleep total is exactly what
+            a daily Markdown note can hold.
+          </p>
+        </div>
+      </section>
+
+      <section class="section tint-heart" id="types" aria-labelledby="types-h">
+        <div class="shell">
+          <div class="section-head">
+            <p class="eyebrow"><span class="dot" aria-hidden="true"></span>What rides the bands</p>
+            <h2 id="types-h">Real identifiers, so you can <em class="em">check.</em></h2>
+            <p class="section-lede">
+              These are Apple’s own API names. Showing them is the honest version of “it reads a lot
+              of things”: anyone who knows HealthKit can check the claim, and anyone who does not
+              still reads the breadth. The readings are examples — this page never touches Health.
+            </p>
+          </div>
+          <ul class="cats">
+            {
+              CATEGORIES.map((c) => (
+                <li>
+                  <i class="cat-dot" style={`--hue:${c.hue}`} />
+                  <b>{c.label}</b>
+                  <span>{c.note}</span>
+                </li>
+              ))
+            }
+          </ul>
+          <ul class="types">
+            {
+              allTypes.map((t) => (
+                <li style={`--hue:${hue[t.category]}`}>
+                  <i class="chip-hue" />
+                  <b class="mono">{t.id}</b>
+                  <em class="mono">{t.sample}</em>
+                  <span class="sr-only">{label[t.category]}</span>
+                </li>
+              ))
+            }
+          </ul>
+          <p class="aside">Coverage is partial and the app says which types it has and has not read.</p>
+        </div>
+      </section>
+
+      <section class="section slab" id="trust" aria-labelledby="trust-h">
+        <div class="shell">
+          <div class="section-head">
+            <p class="eyebrow"><span class="dot" aria-hidden="true"></span>Durability</p>
+            <h2 id="trust-h">An interruption can repeat work. It cannot <em class="em">skip a record.</em></h2>
+            <p class="section-lede">
+              That sentence is the whole design. Every mechanism below exists to make it true, and
+              475 XCTest tests exist to keep it true.
+            </p>
+          </div>
+          <ul class="durability">
+            {
+              DURABILITY.map((d) => (
+                <li>
+                  <h3>{d.title}</h3>
+                  <p>{d.body}</p>
+                  <p class="mono fact">{d.fact}</p>
+                </li>
+              ))
+            }
+          </ul>
+          <p class="tests">
+            <span class="mono big">475</span>
+            <span>XCTest tests in the repository, and you can run them yourself.</span>
+          </p>
+        </div>
+      </section>
+
+      <section class="section" id="honest" aria-labelledby="honest-h">
+        <div class="shell">
+          <div class="section-head">
+            <p class="eyebrow"><span class="dot" aria-hidden="true"></span>Honesty</p>
+            <h2 id="honest-h">Where it cannot know, it <em class="em">says so.</em></h2>
+            <p class="section-lede">
+              Apple will not let an app tell “you denied this type” from “you have no data”. So Hozz
+              does not print a green tick it has not earned. These are the five states it reports.
+            </p>
+          </div>
+          <div class="table-wrap">
+            <table class="states">
+              <caption class="sr-only">Coverage states Hozz reports for each Health type</caption>
+              <thead>
+                <tr><th scope="col">State</th><th scope="col">What it means</th></tr>
+              </thead>
+              <tbody>
+                {
+                  COVERAGE_STATES.map((s) => (
+                    <tr>
+                      <th scope="row"><span class={`mono state tone-${s.tone}`}>{s.state}</span></th>
+                      <td>{s.body}</td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+          <ul class="honest-notes">
+            <li>
+              <h3>No progress percentage</h3>
+              <p>
+                Health will not say how many records a type holds without reading all of them. Any
+                fraction would be invented, so Hozz reports how many types are complete and how far
+                back they reach instead.
+              </p>
+            </li>
+            <li>
+              <h3>iOS decides when it runs</h3>
+              <p>
+                Background work happens when the system allows it, so most types land near hourly.
+                Health cannot be read at all while the phone is locked.
+              </p>
+            </li>
+            <li>
+              <h3>It will never write back into Health</h3>
+              <p>
+                Health stamps provenance permanently and HealthKit has no upsert, so a re-import
+                would both launder the origin of every reading and silently double your records.
+              </p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section tint-respiratory" id="assistant" aria-labelledby="mcp-h">
+        <div class="shell mcp-grid">
+          <div>
+            <p class="eyebrow"><span class="dot" aria-hidden="true"></span>The assistant</p>
+            <h2 id="mcp-h">Ask your own <em class="em">questions.</em></h2>
+            <p class="section-lede">
+              The Mac app ships a read-only MCP server over the database your phone keeps current. A
+              question costs a lookup, not a re-parse of a stale XML export. It cannot change or
+              delete anything.
+            </p>
+            <p class="caveat">
+              <strong>The honest caveat:</strong> a cloud assistant may upload whatever it reads.
+              That is the assistant’s behaviour, not Hozz’s — which is a good reason to point a local
+              one at it.
+            </p>
+          </div>
+          <div>
+            <h3 class="h-tiny">What it can read</h3>
+            <ul class="mcp-list">
+              {MCP_TOOLS.map((t) => <li class="mono">{t}</li>)}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="section tint-mobility" aria-labelledby="prom-h">
+        <div class="shell">
+          <div class="section-head">
+            <p class="eyebrow"><span class="dot" aria-hidden="true"></span>Refusals</p>
+            <h2 id="prom-h">The list of things it <em class="em">will not do.</em></h2>
+          </div>
+          <ul class="prom-list">
+            {
+              PROMISES.map((p) => (
+                <li style={`--hue:${hue[p.category]}`}>
+                  <h3><i class="cat-dot" aria-hidden="true" />{p.title}</h3>
+                  <p>{p.body}</p>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </section>
+
+      <section class="section" id="status" aria-labelledby="status-h">
+        <div class="shell">
+          <div class="section-head">
+            <p class="eyebrow"><span class="dot" aria-hidden="true"></span>Early alpha</p>
+            <h2 id="status-h">It works. Coverage is <em class="em">partial.</em></h2>
+            <p class="section-lede">Both halves of that are true, so both are printed.</p>
+          </div>
+          <div class="status-grid">
+            <div class="status-col">
+              <h3 class="h-tiny">Working today</h3>
+              <ul class="tick">{WORKING.map((w) => <li>{w}</li>)}</ul>
+            </div>
+            <div class="status-col">
+              <h3 class="h-tiny">Not yet</h3>
+              <ul class="cross">{NOT_YET.map((n) => <li>{n}</li>)}</ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section tint-sleep faq" id="faq" aria-labelledby="faq-h">
+        <div class="shell">
+          <div class="section-head">
+            <p class="eyebrow"><span class="dot" aria-hidden="true"></span>Questions</p>
+            <h2 id="faq-h">Straight <em class="em">answers.</em></h2>
+          </div>
+          <dl class="faq-list">
+            {
+              FAQ.map((item) => (
+                <div class="faq-item">
+                  <dt>{item.q}</dt>
+                  <dd>{item.a}</dd>
+                </div>
+              ))
+            }
+          </dl>
+        </div>
+      </section>
+
+      <section class="section close" aria-labelledby="close-h">
+        <div class="shell close-inner">
+          <Mark size={64} />
+          <h2 id="close-h">Point it somewhere you <em class="em">own.</em></h2>
+          <p>
+            Free forever, GPL-3.0 with an App Store exception, written by one person. Read every line
+            before you trust it with anything.
+          </p>
+          <div class="actions">
+            <a class="btn" href={GITHUB_URL}>Get it on GitHub <span aria-hidden="true">↗</span></a>
+            <a class="btn-quiet" href={DONATE_URL}>Sponsor the work <span aria-hidden="true">↗</span></a>
+          </div>
+          <ul class="siblings">
+            {
+              SIBLINGS.map((s) => (
+                <li>
+                  <a href={s.href}>{s.name}</a>
+                  <span>{s.body}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="shell footer-inner">
+        <p>Hozz — Apple Health export for iPhone, with a companion Mac app. By Brandon Moore.</p>
+        <p class="footer-links">
+          <a href={GITHUB_URL}>Source</a>
+          <a href={LICENSE_URL}>GPL-3.0</a>
+          <a href={DONATE_URL}>Sponsor</a>
+        </p>
+      </div>
+    </footer>
+
+    <style>
+      @font-face {
+        font-family: 'Sentient';
+        src: url('/fonts/sentient-400.woff2') format('woff2');
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'Sentient';
+        src: url('/fonts/sentient-400-italic.woff2') format('woff2');
+        font-weight: 400;
+        font-style: italic;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'Sentient';
+        src: url('/fonts/sentient-500.woff2') format('woff2');
+        font-weight: 500;
+        font-style: normal;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'Sentient';
+        src: url('/fonts/sentient-500-italic.woff2') format('woff2');
+        font-weight: 500;
+        font-style: italic;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'General Sans';
+        src: url('/fonts/general-sans-400.woff2') format('woff2');
+        font-weight: 400;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'General Sans';
+        src: url('/fonts/general-sans-500.woff2') format('woff2');
+        font-weight: 500;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'General Sans';
+        src: url('/fonts/general-sans-600.woff2') format('woff2');
+        font-weight: 600;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'IBM Plex Mono';
+        src: url('/fonts/ibm-plex-mono-400.woff2') format('woff2');
+        font-weight: 400;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'IBM Plex Mono';
+        src: url('/fonts/ibm-plex-mono-500.woff2') format('woff2');
+        font-weight: 500;
+        font-display: swap;
+      }
+
+      :root {
+        /* c45 — Ripple, Lens. The keyline is the ink; the water and the lens ramp
+           are everything else. Text only ever uses the top three. */
+        --ink: #132638;
+        --slate: #2f4a63;
+        --muted: #3a5a76;
+
+        --paper: #f6fbfe;
+        --wash-1: #eff6fc;
+        --wash-2: #e6f1fa;
+        --line: #cddeeb;
+        --rule: #b9d7eb;
+        --water: #5d8cb0;
+
+        --shell: 1240px;
+
+        --display: 'Sentient', Georgia, serif;
+        --body: 'General Sans', system-ui, sans-serif;
+        --mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+        --step-0: clamp(0.98rem, 0.94rem + 0.2vw, 1.08rem);
+        --step-1: clamp(1.1rem, 1.02rem + 0.36vw, 1.32rem);
+        --step-2: clamp(1.4rem, 1.26rem + 0.66vw, 1.85rem);
+        --step-3: clamp(1.9rem, 1.55rem + 1.55vw, 3rem);
+        --step-4: clamp(2.35rem, 1.2rem + 2.6vw, 4.6rem);
+        --gap: clamp(1.4rem, 1rem + 1.4vw, 2.4rem);
+        --pad-y: clamp(3.4rem, 2.3rem + 4.2vw, 7rem);
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        -webkit-text-size-adjust: 100%;
+      }
+
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: var(--body);
+        font-size: var(--step-0);
+        line-height: 1.62;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-family: var(--display);
+        font-weight: 500;
+        letter-spacing: -0.018em;
+        margin: 0;
+        text-wrap: balance;
+      }
+
+      p {
+        margin: 0;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      ::selection {
+        background: #cae1f1;
+        color: var(--ink);
+      }
+
+      :focus-visible {
+        outline: 2px solid var(--ink);
+        outline-offset: 3px;
+        border-radius: 2px;
+      }
+
+      .shell {
+        width: 100%;
+        max-width: var(--shell);
+        margin-inline: auto;
+        padding-inline: clamp(1.15rem, 0.6rem + 2.4vw, 3rem);
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+      }
+
+      .skip {
+        position: absolute;
+        left: -9999px;
+        top: 0;
+        background: var(--ink);
+        color: var(--paper);
+        padding: 0.7rem 1rem;
+        z-index: 30;
+        text-decoration: none;
+      }
+      .skip:focus {
+        left: 0.5rem;
+        top: 0.5rem;
+      }
+
+      .mono {
+        font-family: var(--mono);
+        font-size: 0.82em;
+        letter-spacing: -0.01em;
+      }
+
+      /* ---------- header ---------- */
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        background: rgb(246 251 254 / 0.94);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .topbar-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        min-height: 60px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55rem;
+        text-decoration: none;
+        font-family: var(--display);
+        font-weight: 500;
+        font-size: 1.18rem;
+        letter-spacing: -0.02em;
+      }
+
+      .topnav {
+        display: flex;
+        align-items: center;
+        gap: clamp(0.9rem, 0.4rem + 1.2vw, 1.9rem);
+        font-size: 0.92rem;
+      }
+
+      .topnav a {
+        text-decoration: none;
+        color: var(--slate);
+        padding-block: 0.3rem;
+        border-bottom: 1px solid transparent;
+      }
+
+      .topnav a:hover {
+        color: var(--ink);
+        border-bottom-color: var(--ink);
+      }
+
+      .topnav-source {
+        font-weight: 500;
+        color: var(--ink) !important;
+      }
+
+      @media (max-width: 760px) {
+        .topnav a:not(.topnav-source) {
+          display: none;
+        }
+      }
+
+      /* ---------- the prism ---------- */
+
+      .hero {
+        background: linear-gradient(104deg, #ffffff 0%, #f4fafd 40%, #e4f0fa 100%);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .prism {
+        margin: 0;
+      }
+
+      /* Everything in the art is sized in em off this one value, so the
+         composition scales as a unit and the hand-solved geometry holds. */
+      .stage {
+        position: relative;
+        width: 100%;
+        max-width: 1680px;
+        margin-inline: auto;
+        aspect-ratio: 1600 / 900;
+      }
+
+      .art {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        font-size: clamp(10px, 0.75vw, 13px);
+        --tk: 1.1em;
+        --lx: 45%;
+        --ly: 50%;
+      }
+
+      /* Bands, spokes and the beam share one mechanism: a zero-height rail
+         pinned at the lens and rotated, so anything riding one is glued to it
+         and every hairline provably starts at the source. */
+      .band,
+      .spoke,
+      .beam {
+        position: absolute;
+        left: var(--lx);
+        top: var(--ly);
+        width: var(--len);
+        height: 0;
+        transform-origin: 0 0;
+        transform: rotate(var(--a));
+      }
+
+      /* Paint order is the physical order. */
+      .wire {
+        z-index: 0;
+      }
+      .beam {
+        z-index: 1;
+      }
+      .band {
+        z-index: 2;
+      }
+      .rider {
+        z-index: 3;
+      }
+      .spoke:not(.wire) {
+        z-index: 4;
+      }
+      .lens {
+        z-index: 5;
+      }
+      .source {
+        z-index: 6;
+      }
+
+      .rail {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: calc(var(--tk) * var(--w));
+        transform: translateY(-50%);
+        background: var(--tone);
+        -webkit-mask-image: linear-gradient(90deg, rgb(0 0 0 / 0) 0, rgb(0 0 0 / 0.4) 4%, #000 14%, #000 100%);
+        mask-image: linear-gradient(90deg, rgb(0 0 0 / 0) 0, rgb(0 0 0 / 0.4) 4%, #000 14%, #000 100%);
+      }
+
+      /* Lossy formats are drawn broken, because that is what lossy is. */
+      .is-lossy .rail {
+        background: repeating-linear-gradient(90deg, var(--tone) 0 0.75em, rgb(0 0 0 / 0) 0.75em 1.35em);
+      }
+
+      .beam-rail {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: calc(var(--tk) * 1.6);
+        transform: translateY(-50%);
+        background: linear-gradient(90deg, #7ba7c9 0%, #a7cce6 60%, #dcecf6 100%);
+        -webkit-mask-image: linear-gradient(90deg, #000 0, #000 55%, rgb(0 0 0 / 0.25) 100%);
+        mask-image: linear-gradient(90deg, #000 0, #000 55%, rgb(0 0 0 / 0.25) 100%);
+      }
+
+      /* The beam is light, so it spills — done with a vertical gradient rather
+         than a coloured shadow, which keeps the falloff under control. */
+      .beam-rail::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        width: 100%;
+        height: 320%;
+        transform: translateY(-50%);
+        background: linear-gradient(180deg, rgb(167 204 230 / 0) 0%, rgb(167 204 230 / 0.5) 50%, rgb(167 204 230 / 0) 100%);
+        z-index: -1;
+      }
+
+      .hair {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 0;
+        border-top: 1px dotted var(--water);
+        opacity: 0.75;
+        -webkit-mask-image: linear-gradient(90deg, rgb(0 0 0 / 0) 0, #000 16%, #000 100%);
+        mask-image: linear-gradient(90deg, rgb(0 0 0 / 0) 0, #000 16%, #000 100%);
+      }
+
+      /* Names the sector it heads, so the two fans are not left to be guessed. */
+      .sector {
+        position: absolute;
+        left: var(--x);
+        top: var(--y);
+        font-size: 0.92em;
+        letter-spacing: 0.11em;
+        text-transform: uppercase;
+        color: var(--muted);
+        white-space: nowrap;
+        z-index: 4;
+      }
+
+      .lens {
+        position: absolute;
+        left: var(--lx);
+        top: var(--ly);
+        transform: translate(-50%, -50%);
+      }
+
+      /* The dispersion happens inside the lens, so the fan is not allowed to
+         read as seven lines that merely pass behind it. It sits above the
+         bands and below the cards, so it can never wash a label. */
+      .halo {
+        position: absolute;
+        left: var(--lx);
+        top: var(--ly);
+        width: 26em;
+        height: 26em;
+        transform: translate(-50%, -50%);
+        background: radial-gradient(circle, rgb(255 255 255 / 0.96) 0 30%, rgb(255 255 255 / 0) 68%);
+        pointer-events: none;
+        z-index: 2;
+      }
+
+      .lens :global(svg) {
+        width: 9.6em;
+        height: auto;
+        filter: drop-shadow(0 6px 18px rgb(19 38 56 / 0.14));
+      }
+
+      /* the archive that goes in */
+      .source {
+        position: absolute;
+        left: var(--x);
+        top: var(--y);
+        transform: translate(-50%, -50%);
+        display: grid;
+        gap: 0.1em;
+        padding: 0.7em 0.95em;
+        background: rgb(255 255 255 / 0.96);
+        border: 1px solid var(--ink);
+        box-shadow: 0 4px 16px rgb(19 38 56 / 0.07);
+        white-space: nowrap;
+      }
+
+      .source b {
+        font-family: var(--display);
+        font-weight: 500;
+        font-size: 1.5em;
+        letter-spacing: -0.02em;
+        line-height: 1.15;
+      }
+
+      .src-k {
+        font-size: 0.92em;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .src-f {
+        font-size: 0.95em;
+        color: var(--slate);
+      }
+
+      /* A rider is the payload, so it is opaque and it sits at the end of its
+         own band: the band stops at the card's edge and never reaches a word.
+         The format is not repeated here — the band under it is the format, and
+         the key below the figure names all seven. */
+      .chip {
+        position: absolute;
+        left: 100%;
+        top: 0;
+        transform-origin: 0 0;
+        transform: rotate(calc(-1 * var(--a))) translate(0, -50%);
+        display: flex;
+        align-items: center;
+        gap: 0.45em;
+        width: 19.5em;
+        padding: 0.42em 0.6em;
+        background: #ffffff;
+        border: 1px solid var(--line);
+        box-shadow: 0 3px 12px rgb(19 38 56 / 0.09);
+        white-space: nowrap;
+        animation: drift 19s ease-in-out infinite alternate;
+      }
+
+      .chip b {
+        font-size: 0.95em;
+        font-weight: 400;
+        color: var(--ink);
+      }
+
+      .chip em {
+        font-style: normal;
+        font-size: 0.95em;
+        font-weight: 500;
+        color: var(--slate);
+        margin-left: auto;
+        padding-left: 0.6em;
+      }
+
+      .chip-hue {
+        width: 0.34em;
+        height: 1.15em;
+        flex: none;
+        background: var(--hue);
+      }
+
+      /* a real destination at the end of a hairline */
+      .plate {
+        position: absolute;
+        left: 100%;
+        top: 0;
+        transform-origin: 0 0;
+        transform: rotate(calc(-1 * var(--a))) translate(0, -50%);
+        display: grid;
+        gap: 0.25em;
+        width: 19.5em;
+        padding: 0.62em 0.8em;
+        background: #ffffff;
+        border: 1px solid var(--line);
+        box-shadow: 0 6px 20px rgb(19 38 56 / 0.09);
+        animation: drift 24s ease-in-out infinite alternate;
+      }
+
+      .plate b {
+        display: flex;
+        align-items: center;
+        gap: 0.45em;
+        font-family: var(--display);
+        font-weight: 500;
+        font-size: 1.45em;
+        letter-spacing: -0.02em;
+        line-height: 1.15;
+        color: var(--ink);
+      }
+
+      .plate .mono {
+        font-size: 0.92em;
+        line-height: 1.45;
+        color: var(--slate);
+        overflow-wrap: anywhere;
+      }
+
+      .plate .cat-dot {
+        width: 0.55em;
+        height: 0.55em;
+      }
+
+      .cat-dot {
+        width: 8px;
+        height: 8px;
+        flex: none;
+        border-radius: 50%;
+        background: var(--hue);
+      }
+
+      @keyframes drift {
+        from {
+          translate: 0 -3px;
+        }
+        to {
+          translate: 0 3px;
+        }
+      }
+
+      .rider:nth-of-type(3n) .chip {
+        animation-delay: -7s;
+      }
+
+      .rider:nth-of-type(3n + 1) .chip {
+        animation-delay: -13s;
+      }
+
+      .spoke:nth-of-type(2n) .plate {
+        animation-delay: -11s;
+      }
+
+      .spoke:nth-of-type(3n) .plate {
+        animation-delay: -17s;
+      }
+
+      /* the copy, kept on plain paper so nothing about its contrast is a gradient */
+      .hero-copy {
+        position: absolute;
+        left: clamp(1.15rem, 0.6rem + 2.4vw, 3rem);
+        top: 26%;
+        width: min(42%, 620px);
+        z-index: 7;
+      }
+
+      .eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        font-family: var(--mono);
+        font-size: 0.78rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 1.2rem;
+      }
+
+      .dot {
+        width: 7px;
+        height: 7px;
+        background: var(--tint, var(--water));
+        flex: none;
+      }
+
+      h1 {
+        font-size: var(--step-4);
+        line-height: 0.98;
+        letter-spacing: -0.035em;
+      }
+
+      .em {
+        font-style: italic;
+        font-weight: 400;
+        color: var(--tint, #2c5a80);
+      }
+
+      .lede {
+        font-size: var(--step-1);
+        line-height: 1.5;
+        max-width: 34ch;
+        margin-top: 1.35rem;
+        color: var(--slate);
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.9rem 1.5rem;
+        margin-top: 1.9rem;
+      }
+
+      .btn {
+        display: inline-block;
+        background: var(--ink);
+        color: var(--paper);
+        text-decoration: none;
+        font-weight: 500;
+        padding: 0.82rem 1.45rem;
+        border: 1px solid var(--ink);
+      }
+
+      .btn:hover {
+        background: var(--slate);
+        border-color: var(--slate);
+      }
+
+      .btn-quiet {
+        text-decoration: none;
+        font-weight: 500;
+        color: var(--slate);
+        border-bottom: 1px solid var(--rule);
+        padding-bottom: 2px;
+      }
+
+      .btn-quiet:hover {
+        color: var(--ink);
+        border-bottom-color: var(--ink);
+      }
+
+      /* The key is the legend that makes the fan readable rather than pretty:
+         same tone, same weight, same break as the band it names. */
+      .key,
+      .prism figcaption {
+        max-width: 1680px;
+        margin-inline: auto;
+        padding-inline: clamp(1.15rem, 0.6rem + 2.4vw, 3rem);
+      }
+
+      .key {
+        list-style: none;
+        margin-block: 0;
+        padding-top: clamp(1.2rem, 0.8rem + 1.2vw, 2rem);
+        display: grid;
+        gap: 0.55rem 1.4rem;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 188px), 1fr));
+      }
+
+      /* Seven columns above the fold width, so the legend is the fan, in order. */
+      @media (min-width: 1100px) {
+        .key {
+          grid-template-columns: repeat(7, minmax(0, 1fr));
+        }
+      }
+
+      .key li {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .key b {
+        font-size: 0.78rem;
+        font-weight: 500;
+        color: var(--ink);
+      }
+
+      .key span {
+        font-size: 0.74rem;
+        color: var(--muted);
+      }
+
+      .key-bar {
+        width: 26px;
+        height: calc(3px + 13px * var(--w));
+        flex: none;
+        background: var(--tone);
+      }
+
+      .key-bar.is-lossy {
+        background: repeating-linear-gradient(90deg, var(--tone) 0 5px, rgb(0 0 0 / 0) 5px 9px);
+      }
+
+      .prism figcaption {
+        padding-top: 1.1rem;
+        padding-bottom: clamp(2.4rem, 1.6rem + 2vw, 3.6rem);
+        color: var(--slate);
+        font-size: 0.88rem;
+        line-height: 1.55;
+      }
+
+      .prism figcaption span {
+        display: block;
+        max-width: 62ch;
+      }
+
+      /* ---------- portrait composition ---------- */
+
+      .stage-port {
+        display: none;
+      }
+
+      @media (max-width: 1199px) {
+        .stage-land {
+          display: none;
+        }
+
+        .stage-port {
+          display: grid;
+          gap: clamp(1.8rem, 1rem + 3vw, 3rem);
+          max-width: 1680px;
+          margin-inline: auto;
+          padding: clamp(2.6rem, 2rem + 3vw, 4rem) clamp(1.15rem, 0.6rem + 2.4vw, 3rem) 0;
+        }
+
+        .port-copy {
+          position: static;
+          width: auto;
+          max-width: 34rem;
+        }
+
+        .art-port {
+          position: relative;
+          inset: auto;
+          width: 100%;
+          max-width: 420px;
+          margin-inline: auto;
+          aspect-ratio: 390 / 1080;
+          font-size: clamp(10px, 2.9vw, 12px);
+          --tk: 0.9em;
+        }
+
+        .art-port {
+          --lx: 50%;
+          --ly: 12%;
+        }
+
+        /* A phone is too narrow for a card that reads across, so the sample
+           drops to a second line and the card meets its band top-edge first. */
+        .art-port .chip {
+          flex-wrap: wrap;
+          row-gap: 0.1em;
+          width: 12.6em;
+          transform: rotate(calc(-1 * var(--a))) translate(-50%, 0);
+        }
+
+        .art-port .chip em {
+          width: 100%;
+          margin-left: 0;
+          padding-left: 1.35em;
+        }
+
+        .art-port .chip .chip-hue {
+          height: 1em;
+        }
+
+        .art-port .plate {
+          width: 14em;
+          transform: rotate(calc(-1 * var(--a))) translate(-50%, 0);
+        }
+
+        .art-port .sector {
+          transform: translateX(-50%);
+        }
+
+        .art-port .lens :global(svg) {
+          width: 7.4em;
+        }
+
+        .art-port .rail {
+          -webkit-mask-image: linear-gradient(90deg, rgb(0 0 0 / 0) 0, rgb(0 0 0 / 0.4) 3%, #000 9%, #000 100%);
+          mask-image: linear-gradient(90deg, rgb(0 0 0 / 0) 0, rgb(0 0 0 / 0.4) 3%, #000 9%, #000 100%);
+        }
+      }
+
+      /* Between phone and desktop the portrait art has room to sit beside the
+         copy rather than under it. */
+      @media (min-width: 760px) and (max-width: 1199px) {
+        .stage-port {
+          grid-template-columns: minmax(0, 1fr) minmax(0, 380px);
+          align-items: center;
+        }
+
+        .art-port {
+          max-width: 380px;
+          font-size: 11px;
+        }
+      }
+
+      /* ---------- sections ---------- */
+
+      .section {
+        padding-block: var(--pad-y);
+        scroll-margin-top: 60px;
+        border-top: 1px solid var(--line);
+      }
+
+      .tint-mind {
+        --tint: #7a56a0;
+        background: var(--wash-1);
+      }
+      .tint-body {
+        --tint: #2f6c96;
+        background: var(--wash-2);
+      }
+      .tint-heart {
+        --tint: #a8443a;
+        background: var(--wash-1);
+      }
+      .tint-respiratory {
+        --tint: #2b6f6f;
+        background: var(--wash-2);
+      }
+      .tint-mobility {
+        --tint: #4b7530;
+        background: var(--wash-1);
+      }
+      .tint-sleep {
+        --tint: #55589f;
+        background: var(--wash-2);
+      }
+
+      .section-head {
+        max-width: 48ch;
+        margin-bottom: clamp(2.1rem, 1.4rem + 2vw, 3.3rem);
+      }
+
+      h2 {
+        font-size: var(--step-3);
+        line-height: 1.05;
+      }
+
+      .h-tiny {
+        font-family: var(--mono);
+        font-size: 0.78rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        font-weight: 500;
+        margin-bottom: 1rem;
+      }
+
+      .section-lede {
+        margin-top: 1.15rem;
+        color: var(--slate);
+        font-size: var(--step-1);
+        line-height: 1.55;
+      }
+
+      .aside {
+        margin-top: clamp(1.9rem, 1.3rem + 1.4vw, 2.9rem);
+        padding-top: 1rem;
+        border-top: 1px solid var(--line);
+        max-width: 62ch;
+        color: var(--slate);
+      }
+
+      /* ---------- the split ---------- */
+
+      .counts {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 0;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        border-top: 1px solid var(--rule);
+      }
+
+      .counts li {
+        border-right: 1px solid var(--rule);
+        border-bottom: 1px solid var(--rule);
+        padding: 1.4rem clamp(1rem, 0.7rem + 0.9vw, 1.7rem) 1.6rem 0;
+      }
+
+      .counts li:not(:first-child) {
+        padding-left: clamp(1rem, 0.7rem + 0.9vw, 1.7rem);
+      }
+
+      .counts li:last-child {
+        border-right: 0;
+        padding-right: 0;
+      }
+
+      .big {
+        font-size: clamp(2.1rem, 1.5rem + 2.2vw, 3.4rem);
+        font-weight: 500;
+        letter-spacing: -0.05em;
+        line-height: 1;
+        color: var(--ink);
+      }
+
+      .counts h3 {
+        margin-top: 0.35rem;
+        font-size: var(--step-1);
+      }
+
+      .counts p {
+        margin-top: 0.5rem;
+        color: var(--slate);
+      }
+
+      @media (max-width: 800px) {
+        .counts {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .counts li,
+        .counts li:not(:first-child),
+        .counts li:last-child {
+          padding: 1.2rem 0 1.3rem;
+          border-right: 0;
+        }
+      }
+
+      /* ---------- steps ---------- */
+
+      .steps {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: var(--gap);
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .steps li {
+        border-top: 2px solid var(--hue);
+        padding-top: 1rem;
+      }
+
+      .step-n {
+        display: block;
+        color: var(--muted);
+        margin-bottom: 0.8rem;
+      }
+
+      .steps h3 {
+        font-size: var(--step-2);
+        line-height: 1.12;
+      }
+
+      .steps p {
+        margin-top: 0.55rem;
+        color: var(--slate);
+      }
+
+      @media (max-width: 780px) {
+        .steps {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+
+      /* ---------- destinations ---------- */
+
+      .dests {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 0;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        border-top: 1px solid var(--rule);
+        border-left: 1px solid var(--rule);
+      }
+
+      .dests li {
+        border-bottom: 1px solid var(--rule);
+        border-right: 1px solid var(--rule);
+        padding: clamp(1.25rem, 1rem + 0.8vw, 1.85rem);
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .dests h3,
+      .prom-list h3 {
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+      }
+
+      .dests h3 .cat-dot,
+      .prom-list h3 .cat-dot {
+        align-self: center;
+      }
+
+      .dests h3 {
+        font-size: var(--step-1);
+      }
+
+      .dests p {
+        color: var(--slate);
+      }
+
+      .fact {
+        margin-top: auto;
+        padding-top: 0.85rem;
+        color: var(--ink);
+        overflow-wrap: anywhere;
+      }
+
+      @media (max-width: 900px) {
+        .dests {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 560px) {
+        .dests {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+
+      /* ---------- tables ---------- */
+
+      .table-wrap {
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+      }
+
+      thead th {
+        font-family: var(--mono);
+        font-size: 0.76rem;
+        font-weight: 500;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        padding: 0 0 0.7rem;
+        border-bottom: 1px solid var(--ink);
+      }
+
+      tbody th,
+      tbody td {
+        padding: 0.95rem 1.4rem 0.95rem 0;
+        border-bottom: 1px solid var(--line);
+        vertical-align: baseline;
+        font-weight: 400;
+        color: var(--slate);
+      }
+
+      tbody th {
+        color: var(--ink);
+        white-space: nowrap;
+        padding-right: 1.8rem;
+      }
+
+      .formats tbody th {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+
+      .formats tbody th .mono {
+        font-size: 0.95rem;
+        font-weight: 500;
+      }
+
+      .formats td:last-child,
+      .states td:last-child {
+        padding-right: 0;
+      }
+
+      .tag {
+        display: inline-block;
+        margin-right: 0.55rem;
+        padding: 0.1rem 0.42rem;
+        border: 1px solid #a8443a;
+        color: var(--ink);
+        font-size: 0.7rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        vertical-align: 1px;
+      }
+
+      .lossy th,
+      .lossy td {
+        background: var(--wash-2);
+      }
+
+      .state {
+        display: inline-block;
+        padding: 0.16rem 0.5rem;
+        background: var(--wash-2);
+        color: var(--ink);
+        font-weight: 500;
+      }
+
+      .tone-good {
+        background: var(--ink);
+        color: var(--paper);
+      }
+
+      .tone-unknown {
+        background: #cae1f1;
+        box-shadow: inset 0 0 0 1px var(--water);
+      }
+
+      @media (max-width: 640px) {
+        table,
+        thead,
+        tbody,
+        tr,
+        th,
+        td {
+          display: block;
+          width: 100%;
+        }
+        thead {
+          display: none;
+        }
+        tbody tr {
+          border-bottom: 1px solid var(--line);
+          padding-block: 1.05rem;
+        }
+        tbody th,
+        tbody td {
+          border-bottom: 0;
+          padding: 0 0 0.35rem;
+          white-space: normal;
+        }
+        tbody th {
+          padding-bottom: 0.5rem;
+        }
+        .formats tbody th {
+          display: flex;
+        }
+      }
+
+      /* ---------- types ---------- */
+
+      .cats {
+        list-style: none;
+        margin: 0 0 clamp(1.8rem, 1.2rem + 1.6vw, 2.8rem);
+        padding: 0;
+        display: grid;
+        gap: 0.5rem 1.6rem;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+      }
+
+      .cats li {
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+        font-size: 0.88rem;
+      }
+
+      .cats .cat-dot {
+        align-self: center;
+      }
+
+      .cats b {
+        font-weight: 600;
+        color: var(--ink);
+      }
+
+      .cats span {
+        color: var(--slate);
+      }
+
+      .types {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 0.5rem;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 232px), 1fr));
+      }
+
+      .types li {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.42rem 0.6rem;
+        background: #ffffff;
+        border: 1px solid var(--line);
+        min-width: 0;
+      }
+
+      /* An identifier that is cut short cannot be checked, so it wraps instead. */
+      .types b {
+        font-weight: 400;
+        font-size: 0.72rem;
+        color: var(--ink);
+        overflow-wrap: anywhere;
+      }
+
+      .types em {
+        margin-left: auto;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 0.72rem;
+        color: var(--slate);
+        white-space: nowrap;
+      }
+
+      /* ---------- slab ---------- */
+
+      .slab {
+        --tint: #a7cce6;
+        background: var(--ink);
+        color: var(--paper);
+        border-top: 0;
+      }
+
+      .slab .eyebrow,
+      .slab .section-lede,
+      .slab p {
+        color: #b9d7eb;
+      }
+
+      .slab .em {
+        color: #a7cce6;
+      }
+
+      .durability {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 0;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        border-top: 1px solid var(--slate);
+      }
+
+      .durability li {
+        padding: 1.4rem clamp(1rem, 0.7rem + 0.8vw, 1.6rem) 1.6rem 0;
+        border-right: 1px solid var(--slate);
+        display: flex;
+        flex-direction: column;
+        gap: 0.45rem;
+      }
+
+      .durability li:not(:first-child) {
+        padding-left: clamp(1rem, 0.7rem + 0.8vw, 1.6rem);
+      }
+
+      .durability li:last-child {
+        border-right: 0;
+        padding-right: 0;
+      }
+
+      .durability h3 {
+        font-size: var(--step-1);
+        color: var(--paper);
+      }
+
+      .durability .fact {
+        color: var(--paper);
+        margin-top: auto;
+        padding-top: 0.6rem;
+      }
+
+      @media (max-width: 900px) {
+        .durability {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .durability li:nth-child(2n) {
+          border-right: 0;
+          padding-right: 0;
+        }
+        .durability li:nth-child(odd) {
+          padding-left: 0;
+        }
+        .durability li:nth-child(-n + 2) {
+          border-bottom: 1px solid var(--slate);
+        }
+      }
+
+      @media (max-width: 560px) {
+        .durability {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .durability li {
+          border-right: 0;
+          border-bottom: 1px solid var(--slate);
+          padding: 1.25rem 0 1.35rem !important;
+        }
+        .durability li:last-child {
+          border-bottom: 0;
+        }
+      }
+
+      .tests {
+        margin-top: clamp(1.9rem, 1.3rem + 1.4vw, 2.8rem);
+        display: flex;
+        align-items: baseline;
+        gap: 0.9rem;
+        flex-wrap: wrap;
+      }
+
+      .tests .big {
+        color: var(--paper);
+      }
+
+      /* ---------- honesty ---------- */
+
+      .honest-notes {
+        list-style: none;
+        margin: clamp(2.2rem, 1.5rem + 2vw, 3.2rem) 0 0;
+        padding: 0;
+        display: grid;
+        gap: var(--gap);
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .honest-notes li {
+        border-top: 1px solid var(--rule);
+        padding-top: 0.95rem;
+      }
+
+      .honest-notes h3 {
+        font-size: var(--step-1);
+      }
+
+      .honest-notes p {
+        margin-top: 0.45rem;
+        color: var(--slate);
+      }
+
+      @media (max-width: 820px) {
+        .honest-notes {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+
+      /* ---------- assistant ---------- */
+
+      .mcp-grid {
+        display: grid;
+        gap: clamp(2rem, 1.2rem + 3vw, 4rem);
+        grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+        align-items: start;
+      }
+
+      .caveat {
+        margin-top: 1.5rem;
+        padding: 1rem 1.2rem;
+        background: #ffffff;
+        border: 1px solid var(--rule);
+        color: var(--slate);
+        max-width: 54ch;
+      }
+
+      .caveat strong {
+        color: var(--ink);
+        font-weight: 600;
+      }
+
+      .mcp-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        border-top: 1px solid var(--rule);
+      }
+
+      .mcp-list li {
+        padding: 0.55rem 0;
+        border-bottom: 1px solid var(--rule);
+        color: var(--ink);
+      }
+
+      @media (max-width: 820px) {
+        .mcp-grid {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+
+      /* ---------- refusals ---------- */
+
+      .prom-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 0;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        border-top: 1px solid var(--rule);
+        border-left: 1px solid var(--rule);
+      }
+
+      .prom-list li {
+        border-bottom: 1px solid var(--rule);
+        border-right: 1px solid var(--rule);
+        padding: clamp(1.15rem, 0.9rem + 0.8vw, 1.65rem);
+      }
+
+      .prom-list h3 {
+        font-size: var(--step-1);
+      }
+
+      .prom-list p {
+        margin-top: 0.3rem;
+        color: var(--slate);
+      }
+
+      @media (max-width: 820px) {
+        .prom-list {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 520px) {
+        .prom-list {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+
+      /* ---------- status ---------- */
+
+      .status-grid {
+        display: grid;
+        gap: clamp(2rem, 1.2rem + 2.4vw, 3.6rem);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .tick,
+      .cross {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .tick li,
+      .cross li {
+        position: relative;
+        padding: 0.5rem 0 0.5rem 1.85rem;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .tick li::before,
+      .cross li::before {
+        position: absolute;
+        left: 0;
+        font-family: var(--mono);
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+
+      .tick li::before {
+        content: '✓';
+        color: var(--ink);
+      }
+
+      .cross li::before {
+        content: '—';
+      }
+
+      .cross li {
+        color: var(--slate);
+      }
+
+      @media (max-width: 620px) {
+        .status-grid {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+
+      /* ---------- faq ---------- */
+
+      .faq-list {
+        margin: 0;
+        display: grid;
+        gap: 0;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: clamp(2rem, 1.2rem + 2.4vw, 3.6rem);
+        border-top: 1px solid var(--rule);
+      }
+
+      .faq-item {
+        padding: 1.3rem 0 1.4rem;
+        border-bottom: 1px solid var(--rule);
+      }
+
+      .faq-item dt {
+        font-family: var(--display);
+        font-weight: 500;
+        font-size: var(--step-1);
+        letter-spacing: -0.02em;
+      }
+
+      .faq-item dd {
+        margin: 0.45rem 0 0;
+        color: var(--slate);
+        max-width: 58ch;
+      }
+
+      @media (max-width: 780px) {
+        .faq-list {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+
+      /* ---------- close ---------- */
+
+      .close {
+        background: linear-gradient(168deg, #ffffff 0%, #e6f1fa 100%);
+      }
+
+      .close-inner {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.1rem;
+      }
+
+      .close h2 {
+        max-width: 16ch;
+      }
+
+      .close > .shell > p,
+      .close p {
+        max-width: 52ch;
+        color: var(--slate);
+        font-size: var(--step-1);
+        line-height: 1.55;
+      }
+
+      .siblings {
+        list-style: none;
+        margin: clamp(1.6rem, 1.2rem + 1.4vw, 2.6rem) 0 0;
+        padding: 1.1rem 0 0;
+        border-top: 1px solid var(--rule);
+        width: 100%;
+        display: grid;
+        gap: 0.5rem 2rem;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+      }
+
+      .siblings li {
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+        font-size: 0.88rem;
+      }
+
+      .siblings a {
+        font-weight: 600;
+        text-decoration: none;
+        border-bottom: 1px solid var(--rule);
+        color: var(--ink);
+      }
+
+      .siblings a:hover {
+        border-bottom-color: var(--ink);
+      }
+
+      .siblings span {
+        color: var(--slate);
+      }
+
+      /* ---------- footer ---------- */
+
+      .footer {
+        background: var(--ink);
+        color: #b9d7eb;
+        padding-block: 2.3rem;
+      }
+
+      .footer-inner {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem 2rem;
+        justify-content: space-between;
+        align-items: baseline;
+        font-size: 0.9rem;
+      }
+
+      .footer-links {
+        display: flex;
+        gap: 1.4rem;
+      }
+
+      .footer a {
+        color: var(--paper);
+        text-decoration: none;
+        border-bottom: 1px solid var(--slate);
+      }
+
+      .footer a:hover {
+        border-bottom-color: var(--paper);
+      }
+
+      .footer :focus-visible {
+        outline-color: var(--paper);
+      }
+
+      /* ---------- reduced motion: the drift stops, the positions stay ---------- */
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        .chip,
+        .plate {
+          animation: none !important;
+          translate: none !important;
+        }
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.001ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.001ms !important;
+        }
+      }
+    </style>
+  </body>
+</html>

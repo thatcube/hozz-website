@@ -1,0 +1,174 @@
+---
+/**
+ * 07 — Spill
+ *
+ * Records pile up inside the phone and go nowhere. On scroll they leave, and
+ * sort themselves into the places you own. The pile is the status quo; the sort
+ * is the product.
+ */
+import { CHIPS, OUTCOMES } from '../../data/chips';
+
+const pile = CHIPS.slice(0, 12);
+---
+
+<div class="spill">
+  <div class="phone" aria-hidden="true">
+    <span class="cap">On your iPhone</span>
+    <div class="pile">
+      {
+        pile.map((c, i) => (
+          <span class="bit" style={`--hue: var(--h-${c.cat}); --i: ${i}`} />
+        ))
+      }
+    </div>
+  </div>
+
+  <ul class="out">
+    {
+      OUTCOMES.map((o, i) => (
+        <li style={`--hue: var(--h-${o.cat}); --i: ${i}`}>
+          <span class="dot" aria-hidden="true" />
+          <b>{o.title}</b>
+          <span class="sub">{o.body}</span>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<script>
+  const io = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.classList.add('is-out');
+          io.unobserve(e.target);
+        }
+      });
+    },
+    { threshold: 0.35 },
+  );
+  document.querySelectorAll('.spill').forEach((el) => io.observe(el));
+</script>
+
+<style>
+  .spill {
+    display: grid;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: center;
+  }
+
+  @media (min-width: 620px) {
+    .spill {
+      grid-template-columns: minmax(0, 13rem) minmax(0, 1fr);
+    }
+  }
+
+  .phone {
+    position: relative;
+    inline-size: min(100%, 11.5rem);
+    aspect-ratio: 9 / 17;
+    margin-inline: auto;
+    border: 1.5px solid #d5d8dd;
+    border-radius: 24px;
+    background: #fff;
+    padding: 1.6rem 0.85rem 0.85rem;
+    overflow: hidden;
+  }
+
+  .cap {
+    position: absolute;
+    inset-block-start: 0.55rem;
+    inset-inline: 0;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #8a8f97;
+  }
+
+  .pile {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-end;
+    gap: 5px;
+    block-size: 100%;
+  }
+
+  .bit {
+    inline-size: 26px;
+    block-size: 9px;
+    border-radius: 999px;
+    background: var(--hue);
+    opacity: 0.85;
+    transition: transform 0.62s cubic-bezier(0.3, 0.7, 0.3, 1), opacity 0.4s ease;
+    transition-delay: calc(var(--i) * 34ms);
+  }
+
+  /* They leave to the right, and the pile empties. */
+  .spill.is-out .bit {
+    transform: translateX(190%);
+    opacity: 0;
+  }
+
+  .out {
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .out li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.05rem 0.7rem;
+    align-items: baseline;
+    opacity: 0;
+    transform: translateX(-8px);
+    transition: opacity 0.45s ease, transform 0.45s ease;
+    transition-delay: calc(0.45s + var(--i) * 0.1s);
+  }
+
+  .spill.is-out .out li {
+    opacity: 1;
+    transform: none;
+  }
+
+  .dot {
+    grid-row: span 2;
+    align-self: center;
+    inline-size: 9px;
+    block-size: 9px;
+    border-radius: 50%;
+    background: var(--hue);
+  }
+
+  .out b {
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: #14161a;
+  }
+
+  .sub {
+    grid-column: 2;
+    font-size: 0.875rem;
+    color: #4d525a;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* No flight: the destinations are simply already there, and the pile stays
+       put rather than vanishing without explanation. */
+    .bit,
+    .out li {
+      transition: none;
+    }
+    .spill.is-out .bit {
+      transform: none;
+      opacity: 0.85;
+    }
+    .out li {
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>

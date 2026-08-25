@@ -1,0 +1,125 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import Callout from '../../../components/docs/Callout.astro';
+import Code from '../../../components/docs/Code.astro';
+import DeviceConstraints from '../../../components/docs/DeviceConstraints.astro';
+import { page } from '../../../data/docs-nav';
+
+const entry = page('/docs/destinations/folder/');
+
+const names = `hozz-20260822T211046Z-2f1a9c04-000000.ndjson
+hozz-20260822T211046Z-2f1a9c04-000001.ndjson
+hozz-20260822T221512Z-2f1a9c04-000002.ndjson`;
+---
+
+<DocsLayout page={entry} section="Destinations">
+  <div class="fact-strip">
+    <div>
+      <dt>Format</dt>
+      <dd>NDJSON, JSON, CSV or Metrics JSON</dd>
+    </div>
+    <div>
+      <dt>Needs</dt>
+      <dd>Nothing but the Files app</dd>
+    </div>
+    <div>
+      <dt>Recommended</dt>
+      <dd>Yes — start here</dd>
+    </div>
+  </div>
+
+  <p>
+    Hozz writes batch files into a folder you choose with the system file picker. Because iOS
+    presents every provider through the same interface, that folder can be in iCloud Drive, Dropbox,
+    OneDrive, Google Drive, an SMB share, or just on the device.
+  </p>
+
+  <p>
+    This is the destination Hozz recommends first, and it is the one with the fewest ways to go
+    wrong. It needs no server, no open ports and no VPN; the sync client already installed on your
+    computer does the networking; and it keeps working while that computer is switched off — which a
+    push to a local receiver cannot.
+  </p>
+
+  <h2>Setting it up</h2>
+
+  <ol class="steps">
+    <li>
+      <h3>Choose a folder</h3>
+      <p>
+        Anywhere the Files app can reach. If you want it on a computer, choose a folder your cloud
+        client already syncs there.
+      </p>
+    </li>
+    <li>
+      <h3>Whatever syncs that folder does the rest</h3>
+      <p>Hozz writes files; your existing sync client moves them. Hozz has no part in that step.</p>
+    </li>
+    <li>
+      <h3>Send a test</h3>
+      <p>A probe file appears in the folder. If you can see it, the destination works.</p>
+    </li>
+  </ol>
+
+  <h2>What lands in the folder</h2>
+
+  <p>Files are named so they sort chronologically and cannot collide:</p>
+
+  <Code caption="hozz-&lt;timestamp&gt;-&lt;destination&gt;-&lt;sequence&gt;.&lt;ext&gt;" code={names} />
+
+  <p>
+    The destination identifier is part of the name because two destinations may point at the same
+    folder, and every batch in one pass shares a timestamp and starts at sequence zero — without it
+    their first files would be named identically and the second would silently replace the first.
+  </p>
+
+  <p>
+    Pick the format on the destination:{' '}
+    <a href="/docs/delivery-schema/#ndjson">NDJSON</a> (the default, and lossless),{' '}
+    <a href="/docs/delivery-schema/#json">JSON</a>,{' '}
+    <a href="/docs/delivery-schema/#csv">CSV</a>, or{' '}
+    <a href="/docs/delivery-schema/#metrics-json">Metrics JSON</a>.
+  </p>
+
+  <Callout kind="warn" title="Line protocol is not offered for folders">
+    <p>
+      This is deliberate rather than an oversight. Hozz's own Mac app watches a folder for{' '}
+      <code>ndjson</code>, <code>json</code> and <code>csv</code> and ignores anything else — so a folder
+      writing InfluxDB line protocol would look like it was working while nothing was ever ingested.
+    </p>
+  </Callout>
+
+  <h2>Pairing it with the Mac app</h2>
+
+  <p>
+    A folder and the <a href="/docs/destinations/mac/">Mac receiver</a> are not alternatives. Point
+    the phone at a synced folder, then point the Mac app's folder watcher at the same folder on the
+    Mac, and you get the Mac app's charts and{' '}
+    <a href="/docs/mcp/">assistant access</a> without either device needing to accept an inbound
+    connection. On a network that blocks device-to-device traffic, this is the route that works.
+  </p>
+
+  <h2>When it goes wrong</h2>
+
+  <p>Folders have exactly two failure modes, and both say so plainly:</p>
+
+  <ul>
+    <li>
+      <strong><em>Hozz could not reach that folder. It may have been moved, renamed, or signed
+          out.</em></strong>
+      The saved reference no longer resolves — usually a renamed folder, or a cloud drive that
+      signed out. Edit the destination and pick the folder again.
+    </li>
+    <li>
+      <strong><em>Hozz no longer has permission to write to that folder.</em></strong>
+      The folder resolves but iOS refused the write. Pick it again to re-grant access.
+    </li>
+  </ul>
+
+  <p>
+    Neither loses data. A destination only advances its cursor past records it actually wrote, so
+    once the folder is reachable again the same records are written.
+  </p>
+
+  <DeviceConstraints />
+</DocsLayout>

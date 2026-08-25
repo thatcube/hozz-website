@@ -1,0 +1,97 @@
+---
+/**
+ * 04 — The wheel
+ *
+ * Two counter-rotating rings of real type names. It argues breadth without a
+ * grid of fourteen tiles: you cannot count them, which is the point, and the
+ * claim sits still in the middle while they pass.
+ */
+import { TYPE_NAMES } from '../../data/chips';
+
+const outer = TYPE_NAMES.slice(0, 17).join('  ·  ');
+const inner = TYPE_NAMES.slice(17).join('  ·  ');
+---
+
+<div class="wheel" role="img" aria-label={`Health data types Hozz targets: ${TYPE_NAMES.join(', ')}`}>
+  <svg viewBox="0 0 400 400">
+    <defs>
+      <path id="ring-o" d="M200,200 m-166,0 a166,166 0 1,1 332,0 a166,166 0 1,1 -332,0" />
+      <path id="ring-i" d="M200,200 m-122,0 a122,122 0 1,1 244,0 a122,122 0 1,1 -244,0" />
+    </defs>
+
+    <g class="spin spin--o">
+      <text class="t t--o"><textPath href="#ring-o" startOffset="0">{outer}</textPath></text>
+    </g>
+    <g class="spin spin--i">
+      <text class="t t--i"><textPath href="#ring-i" startOffset="0">{inner}</textPath></text>
+    </g>
+
+    <circle class="hub" cx="200" cy="200" r="74" />
+    <text class="c1" x="200" y="194" text-anchor="middle">Every one</text>
+    <text class="c2" x="200" y="216" text-anchor="middle">of them</text>
+  </svg>
+</div>
+
+<style>
+  .wheel svg {
+    inline-size: 100%;
+    max-inline-size: 26rem;
+    block-size: auto;
+    margin-inline: auto;
+    display: block;
+  }
+
+  .spin {
+    transform-origin: 200px 200px;
+  }
+
+  .spin--o {
+    animation: turn 150s linear infinite;
+  }
+  .spin--i {
+    animation: turn 110s linear infinite reverse;
+  }
+
+  .t {
+    font-family: var(--sans);
+    fill: #4d525a;
+    letter-spacing: 0.01em;
+  }
+
+  .t--o {
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .t--i {
+    font-size: 11.5px;
+    font-weight: 400;
+    fill: #6a6f77;
+  }
+
+  .hub {
+    fill: #fff;
+    stroke: #e2e4e8;
+  }
+
+  .c1,
+  .c2 {
+    font-family: var(--sans);
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    fill: #14161a;
+  }
+
+  @keyframes turn {
+    to {
+      rotate: 360deg;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .spin {
+      animation: none;
+    }
+  }
+</style>

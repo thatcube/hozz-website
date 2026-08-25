@@ -1,0 +1,1353 @@
+---
+import Mark from '../../components/mark/logos/c11.astro';
+import {
+  SITE,
+  GITHUB_URL,
+  DONATE_URL,
+  LICENSE_URL,
+  STEPS,
+  DESTINATIONS,
+  FORMATS,
+  DURABILITY,
+  COVERAGE_STATES,
+  MCP_TOOLS,
+  PROMISES,
+  WORKING,
+  NOT_YET,
+  FAQ,
+  STREAM_LANES,
+} from '../../data/site';
+
+/** Badge text derived from the note the data already carries — nothing added. */
+const fidelity = (note: string) =>
+  note.startsWith('Lossless') ? 'Lossless' : note.startsWith('Lossy') ? 'Lossy' : 'Subset';
+
+/** Catalogue glyphs for the coverage states, never colour alone. */
+const stateGlyph: Record<string, string> = {
+  good: '●',
+  unknown: '◐',
+  flat: '○',
+  bad: '✕',
+};
+
+const subjectHeadings = STREAM_LANES[0].slice(0, 6);
+
+const sections = [
+  { n: '01', href: '#export', label: 'How to export' },
+  { n: '02', href: '#destinations', label: 'Destinations' },
+  { n: '03', href: '#formats', label: 'Formats' },
+  { n: '04', href: '#durability', label: 'Durability' },
+  { n: '05', href: '#honest', label: 'Honesty' },
+  { n: '06', href: '#assistant', label: 'Assistant' },
+  { n: '07', href: '#status', label: 'Status' },
+];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'SoftwareApplication',
+      name: 'Hozz',
+      applicationCategory: 'HealthApplication',
+      operatingSystem: 'iOS, macOS',
+      url: `${SITE}/w/w05/`,
+      downloadUrl: GITHUB_URL,
+      isAccessibleForFree: true,
+      license: LICENSE_URL,
+      softwareVersion: 'Early alpha',
+      author: { '@type': 'Person', name: 'Brandon Moore' },
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      description:
+        'A free, open-source iPhone app with a companion Mac app that exports Apple Health data to destinations you own: your Mac, a folder, Home Assistant, InfluxDB, any web endpoint, or MQTT.',
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: FAQ.map(({ q, a }) => ({
+        '@type': 'Question',
+        name: q,
+        acceptedAnswer: { '@type': 'Answer', text: a },
+      })),
+    },
+  ],
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="color-scheme" content="light" />
+    <meta
+      name="description"
+      content="Hozz files your Apple Health history where you can find it again: NDJSON, SQLite, CSV and more, sent to your Mac, a folder, Home Assistant, InfluxDB, a URL or MQTT. Free, open source, no account."
+    />
+    <link rel="canonical" href={`${SITE}/w/w05/`} />
+    <title>Hozz — your health history, filed where you can find it</title>
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+
+  <body id="top">
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="masthead">
+      <a class="brand" href="#top">
+        <Mark size={28} />
+        <span class="brand-name">Hozz</span>
+        <span class="brand-sub">Apple Health, catalogued</span>
+      </a>
+      <nav class="tabs" aria-label="Sections">
+        <ul>
+          {sections.map((s) => (
+            <li>
+              <a href={s.href}><span class="tab-n">{s.n}</span>{s.label}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+      <a class="src" href={GITHUB_URL}>Source <span aria-hidden="true">↗</span></a>
+    </header>
+
+    <main id="main">
+      <!-- ── Hero ─────────────────────────────────────────────── -->
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="dot" aria-hidden="true"></span>Free · open source · early alpha</p>
+          <h1>Your health history, filed where <em>you</em> can find it.</h1>
+          <p class="lede">
+            Hozz copies Apple Health out of your iPhone and into places you already own — a
+            folder, your Mac, your own database. No account, no analytics, no server of mine
+            in the middle.
+          </p>
+          <p class="actions">
+            <a class="btn" href="#export">How to export your data</a>
+            <a class="btn-quiet" href={GITHUB_URL}>Read the source <span aria-hidden="true">↗</span></a>
+          </p>
+          <dl class="quickfacts">
+            <div><dt>Licence</dt><dd>GPL-3.0</dd></div>
+            <div><dt>Made by</dt><dd>One developer</dd></div>
+            <div><dt>Destinations</dt><dd>Six, all yours</dd></div>
+            <div><dt>Tests</dt><dd>475 XCTest</dd></div>
+          </dl>
+        </div>
+
+        <figure class="card-plate">
+          <div class="card">
+            <div class="card-tab"><span>HOZZ</span></div>
+            <div class="card-body">
+              <p class="call">HK · 001</p>
+              <table class="card-table">
+                <caption class="sr-only">An index card describing what Hozz files</caption>
+                <tbody>
+                  <tr><th scope="row">Title</th><td>Your Apple Health record</td></tr>
+                  <tr><th scope="row">Author</th><td>You, and everything you wear</td></tr>
+                  <tr><th scope="row">Held at</th><td class="mono">_hozz._tcp · :54330</td></tr>
+                  <tr><th scope="row">Formats</th><td class="mono">ndjson · sqlite · json · csv · md · gpx</td></tr>
+                  <tr><th scope="row">Access</th><td>Yours. No copy kept elsewhere.</td></tr>
+                </tbody>
+              </table>
+              <p class="subj-label">Subject headings</p>
+              <ul class="subjects">
+                {subjectHeadings.map((s) => (
+                  <li><code>{s.id}</code></li>
+                ))}
+                <li class="more">+ hundreds more</li>
+              </ul>
+            </div>
+          </div>
+          <figcaption>
+            An index card, not a screenshot — Hozz is pre-alpha and has no public interface.
+            The identifiers are real HealthKit type names.
+          </figcaption>
+        </figure>
+      </section>
+
+      <!-- ── Refusals ─────────────────────────────────────────── -->
+      <section class="strip" aria-label="What Hozz refuses to do">
+        <h2 class="sr-only">What Hozz refuses to do</h2>
+        <ul>
+          {PROMISES.map((p) => (
+            <li>
+              <strong>{p.title}</strong>
+              <span>{p.body}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <!-- ── 01 How to export ─────────────────────────────────── -->
+      <section class="sec" id="export">
+        <div class="sec-head">
+          <p class="rule-n"><span>№ 01</span><span class="rule-meta">{STEPS.length} steps</span></p>
+          <h2>How do I export my Apple Health data?</h2>
+          <p class="sec-lede">
+            Open Hozz, add a destination you control, choose which types go there and how
+            often. New records leave on their own after that. Nothing is sent anywhere
+            until you add a destination and confirm it, because there is no default one.
+          </p>
+        </div>
+        <ol class="steps">
+          {STEPS.map((s, i) => (
+            <li>
+              <p class="step-n">{String(i + 1).padStart(2, '0')}</p>
+              <h3>{s.title}</h3>
+              <p>{s.body}</p>
+            </li>
+          ))}
+        </ol>
+        <p class="aside">
+          Health cannot be read while your phone is locked, and iOS decides when background
+          work runs — so most types land near hourly rather than the second they are recorded.
+        </p>
+      </section>
+
+      <!-- ── 02 Destinations ──────────────────────────────────── -->
+      <section class="sec tinted" id="destinations">
+        <div class="sec-head">
+          <p class="rule-n"><span>№ 02</span><span class="rule-meta">{DESTINATIONS.length} entries</span></p>
+          <h2>Six shelves it will file to.</h2>
+          <p class="sec-lede">
+            Every one of them is somewhere you already own. Test a destination before you
+            trust it; each keeps its own place in the queue.
+          </p>
+        </div>
+        <table class="tbl">
+          <caption class="sr-only">The six destinations Hozz can export to</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="c-idx">№</th>
+              <th scope="col">Destination</th>
+              <th scope="col">What it is</th>
+              <th scope="col">Checkable fact</th>
+            </tr>
+          </thead>
+          <tbody>
+            {DESTINATIONS.map((d, i) => (
+              <tr>
+                <td class="c-idx mono" data-label="№">{String(i + 1).padStart(2, '0')}</td>
+                <th scope="row" data-label="Destination">{d.title}</th>
+                <td data-label="What it is">{d.body}</td>
+                <td class="mono" data-label="Fact">{d.fact}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ── 03 Formats ───────────────────────────────────────── -->
+      <section class="sec" id="formats">
+        <div class="sec-head">
+          <p class="rule-n"><span>№ 03</span><span class="rule-meta">{FORMATS.length} entries</span></p>
+          <h2>Seven ways it comes <em>out.</em></h2>
+          <p class="sec-lede">
+            Pick per destination. Two of these lose detail on purpose — they say so here,
+            and they say so in the app.
+          </p>
+        </div>
+        <table class="tbl tbl-formats">
+          <caption class="sr-only">Export formats, what each is for, and what it keeps</caption>
+          <thead>
+            <tr>
+              <th scope="col">Format</th>
+              <th scope="col">Good for</th>
+              <th scope="col">Fidelity</th>
+              <th scope="col">What that means</th>
+            </tr>
+          </thead>
+          <tbody>
+            {FORMATS.map((f) => (
+              <tr>
+                <th scope="row" data-label="Format">
+                  <span class="fmt">{f.name}</span>
+                  {f.name === 'NDJSON' && <span class="pill">default</span>}
+                </th>
+                <td data-label="Good for">{f.use}</td>
+                <td data-label="Fidelity">
+                  <span class={`fid fid-${fidelity(f.note).toLowerCase()}`}>{fidelity(f.note)}</span>
+                </td>
+                <td data-label="What that means">{f.note}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p class="aside">
+          It exports ECG voltage waveforms, audiograms, workout routes, State of Mind,
+          medication doses and the six characteristics — not just steps and heart rate.
+        </p>
+      </section>
+
+      <!-- ── 04 Durability ────────────────────────────────────── -->
+      <section class="sec tinted" id="durability">
+        <div class="sec-head">
+          <p class="rule-n"><span>№ 04</span><span class="rule-meta">{DURABILITY.length} mechanisms</span></p>
+          <h2>An interruption can repeat work. It cannot <em>skip</em> a record.</h2>
+          <p class="sec-lede">
+            An archive is only worth keeping if it is complete. Four mechanisms make that
+            true, and 475 XCTest tests keep them honest.
+          </p>
+        </div>
+        <div class="grid-4">
+          {DURABILITY.map((d, i) => (
+            <article class="mini">
+              <p class="mini-n">{String(i + 1).padStart(2, '0')}</p>
+              <h3>{d.title}</h3>
+              <p>{d.body}</p>
+              <p class="mono fact">{d.fact}</p>
+            </article>
+          ))}
+        </div>
+        <p class="stat">
+          <span class="stat-n">475</span>
+          <span class="stat-t">XCTest tests — the only count on this page, because it is the only one that is real.</span>
+        </p>
+      </section>
+
+      <!-- ── 05 Honesty ───────────────────────────────────────── -->
+      <section class="sec" id="honest">
+        <div class="sec-head">
+          <p class="rule-n"><span>№ 05</span><span class="rule-meta">{COVERAGE_STATES.length} states</span></p>
+          <h2>The catalogue says <em>unknown</em> when it is unknown.</h2>
+          <p class="sec-lede">
+            Apple will not let an app tell “you denied this type” from “you have no data”.
+            So Hozz files a type under <em class="plain">denied or empty</em> rather than
+            showing you a green tick it did not earn.
+          </p>
+        </div>
+        <table class="tbl tbl-states">
+          <caption class="sr-only">The coverage states Hozz can report for a Health type</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="c-glyph"><span class="sr-only">Mark</span></th>
+              <th scope="col">State</th>
+              <th scope="col">What it means</th>
+            </tr>
+          </thead>
+          <tbody>
+            {COVERAGE_STATES.map((c) => (
+              <tr>
+                <td class="c-glyph" aria-hidden="true">{stateGlyph[c.tone]}</td>
+                <th scope="row" data-label="State"><span class="mono state">{c.state}</span></th>
+                <td data-label="Means">{c.body}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div class="two-notes">
+          <article class="note">
+            <h3>No progress percentage</h3>
+            <p>
+              Health will not say how many records a type holds without reading all of them.
+              Any fraction would be invented, so Hozz reports how many types are complete and
+              how far back they reach.
+            </p>
+          </article>
+          <article class="note">
+            <h3>It will never write back into Apple Health</h3>
+            <p>
+              Health stamps provenance permanently and HealthKit has no upsert, so a
+              re-import would both launder provenance and silently double your records.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <!-- ── 06 Assistant ─────────────────────────────────────── -->
+      <section class="sec tinted" id="assistant">
+        <div class="sec-head">
+          <p class="rule-n"><span>№ 06</span><span class="rule-meta">{MCP_TOOLS.length} lookups · read-only</span></p>
+          <h2>Ask your own assistant, from your own <em>Mac.</em></h2>
+          <p class="sec-lede">
+            The Mac app runs a read-only MCP server over the database your phone keeps
+            current. A question costs a lookup, not a re-parse of a stale XML export.
+          </p>
+        </div>
+        <div class="mcp">
+          <div>
+            <h3 class="idx-h">What it can look up</h3>
+            <ul class="index-list">
+              {MCP_TOOLS.map((t, i) => (
+                <li><span class="mono li-n">{String(i + 1).padStart(2, '0')}</span>{t}</li>
+              ))}
+            </ul>
+          </div>
+          <aside class="caveat">
+            <p class="caveat-tag">Read the small print</p>
+            <p>
+              It cannot change or delete anything. But a cloud assistant may upload whatever
+              it reads — that is the assistant’s behaviour, not Hozz’s. A local model keeps
+              the whole loop on your machine.
+            </p>
+          </aside>
+        </div>
+      </section>
+
+      <!-- ── 07 Status ────────────────────────────────────────── -->
+      <section class="sec" id="status">
+        <div class="sec-head">
+          <p class="rule-n"><span>№ 07</span><span class="rule-meta">{WORKING.length} working · {NOT_YET.length} not yet</span></p>
+          <h2>Early alpha. It works, and the coverage is <em>partial.</em></h2>
+          <p class="sec-lede">Both halves of that are the truth, so both are printed here.</p>
+        </div>
+        <div class="ledger">
+          <section class="ledger-col">
+            <h3>Working today</h3>
+            <ul class="ticks">
+              {WORKING.map((w) => <li>{w}</li>)}
+            </ul>
+          </section>
+          <section class="ledger-col">
+            <h3>Not yet</h3>
+            <ul class="ticks ticks-not">
+              {NOT_YET.map((n) => <li>{n}</li>)}
+            </ul>
+          </section>
+        </div>
+      </section>
+
+      <!-- ── FAQ ──────────────────────────────────────────────── -->
+      <section class="sec tinted" id="faq">
+        <div class="sec-head">
+          <p class="rule-n"><span>Ref.</span><span class="rule-meta">{FAQ.length} questions</span></p>
+          <h2>Questions, answered plainly.</h2>
+        </div>
+        <dl class="faq">
+          {FAQ.map((f, i) => (
+            <div class="faq-row">
+              <dt><span class="mono faq-n">Q{String(i + 1).padStart(2, '0')}</span>{f.q}</dt>
+              <dd>{f.a}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+
+      <!-- ── Close ────────────────────────────────────────────── -->
+      <section class="close">
+        <Mark size={56} />
+        <h2>Take the copy. Keep the copy.</h2>
+        <p>
+          Free forever, GPL-3.0 with an App Store exception, built by one person. Read every
+          line before you trust it with a single heartbeat.
+        </p>
+        <p class="actions">
+          <a class="btn" href={GITHUB_URL}>Get it on GitHub <span aria-hidden="true">↗</span></a>
+          <a class="btn-quiet" href={DONATE_URL}>Sponsor the work <span aria-hidden="true">↗</span></a>
+        </p>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <p>Hozz — Apple Health export for people who keep things.</p>
+      <p class="foot-links">
+        <a href={GITHUB_URL}>Source</a>
+        <a href={LICENSE_URL}>GPL-3.0</a>
+        <a href={DONATE_URL}>Sponsor</a>
+      </p>
+      <p class="foot-fine">
+        Not affiliated with Apple. Apple Health and HealthKit are trademarks of Apple Inc.
+        This page loads nothing from anyone else.
+      </p>
+    </footer>
+
+    <style>
+      @font-face {
+        font-family: 'Sentient';
+        src: url('/fonts/sentient-400.woff2') format('woff2');
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'Sentient';
+        src: url('/fonts/sentient-400-italic.woff2') format('woff2');
+        font-weight: 400;
+        font-style: italic;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'Sentient';
+        src: url('/fonts/sentient-500.woff2') format('woff2');
+        font-weight: 500;
+        font-style: normal;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'Sentient';
+        src: url('/fonts/sentient-500-italic.woff2') format('woff2');
+        font-weight: 500;
+        font-style: italic;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'General Sans';
+        src: url('/fonts/general-sans-400.woff2') format('woff2');
+        font-weight: 400;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'General Sans';
+        src: url('/fonts/general-sans-500.woff2') format('woff2');
+        font-weight: 500;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'General Sans';
+        src: url('/fonts/general-sans-600.woff2') format('woff2');
+        font-weight: 600;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'IBM Plex Mono';
+        src: url('/fonts/ibm-plex-mono-400.woff2') format('woff2');
+        font-weight: 400;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'IBM Plex Mono';
+        src: url('/fonts/ibm-plex-mono-500.woff2') format('woff2');
+        font-weight: 500;
+        font-display: swap;
+      }
+
+      :root {
+        --paper: #f7efdb;
+        --paper-2: #fdf7e6;
+        --cream: #fff3d1;
+        --card: #fffaee;
+        --oat: #e5d4a9;
+        --gold: #b89b68;
+        --gold-deep: #7a6132;
+        --ink: #2c251b;
+        --ink-2: #514638;
+        --body: #443a2c;
+        --muted: #5d5140;
+        --rule: #d9c69a;
+        --rule-soft: #e8dcbe;
+        --sans: 'General Sans', ui-sans-serif, system-ui, sans-serif;
+        --serif: 'Sentient', Georgia, 'Times New Roman', serif;
+        --mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', monospace;
+        --pad: clamp(1.25rem, 5vw, 5rem);
+        --maxw: 1240px;
+      }
+
+      * { box-sizing: border-box; }
+
+      html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 5.5rem;
+        -webkit-text-size-adjust: 100%;
+      }
+
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--body);
+        font-family: var(--sans);
+        font-size: clamp(1rem, 0.96rem + 0.2vw, 1.075rem);
+        line-height: 1.6;
+        overflow-x: hidden;
+        font-feature-settings: 'ss01';
+      }
+
+      h1, h2, h3 {
+        font-family: var(--serif);
+        font-weight: 500;
+        color: var(--ink);
+        letter-spacing: -0.012em;
+        margin: 0;
+        text-wrap: balance;
+      }
+
+      em {
+        font-style: italic;
+        color: var(--gold-deep);
+      }
+      em.plain { color: inherit; }
+
+      a { color: var(--ink); text-decoration-color: var(--gold); text-underline-offset: 3px; }
+      a:hover { text-decoration-color: var(--gold-deep); }
+
+      :focus-visible {
+        outline: 2px solid var(--gold-deep);
+        outline-offset: 3px;
+        border-radius: 2px;
+      }
+
+      code, .mono { font-family: var(--mono); }
+
+      .sr-only {
+        position: absolute;
+        width: 1px; height: 1px;
+        padding: 0; margin: -1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      .skip {
+        position: absolute;
+        left: -9999px;
+        top: 0;
+        background: var(--card);
+        padding: 0.75rem 1rem;
+        z-index: 50;
+      }
+      .skip:focus { left: 0.5rem; top: 0.5rem; }
+
+      /* ── Masthead ─────────────────────────────────────────── */
+      .masthead {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        display: flex;
+        align-items: center;
+        gap: 1rem clamp(1rem, 3vw, 2rem);
+        flex-wrap: wrap;
+        padding: 0.7rem var(--pad);
+        background: var(--paper);
+        border-bottom: 1px solid var(--rule);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        text-decoration: none;
+        margin-right: auto;
+      }
+      .brand-name {
+        font-family: var(--serif);
+        font-size: 1.35rem;
+        color: var(--ink);
+        line-height: 1;
+      }
+      .brand-sub {
+        font-family: var(--mono);
+        font-size: 0.68rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+        border-left: 1px solid var(--rule);
+        padding-left: 0.6rem;
+      }
+
+      .tabs ul {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .tabs a {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 0.4rem;
+        padding: 0.3rem 0.6rem 0.35rem;
+        font-size: 0.85rem;
+        text-decoration: none;
+        color: var(--ink-2);
+        border: 1px solid transparent;
+        border-radius: 3px 3px 0 0;
+      }
+      .tabs a:hover {
+        background: var(--cream);
+        border-color: var(--rule);
+        color: var(--ink);
+      }
+      .tab-n {
+        font-family: var(--mono);
+        font-size: 0.7rem;
+        color: var(--gold-deep);
+      }
+
+      .src {
+        font-family: var(--mono);
+        font-size: 0.78rem;
+        letter-spacing: 0.03em;
+        text-decoration: none;
+        padding: 0.4rem 0.75rem;
+        border: 1px solid var(--ink-2);
+        color: var(--ink);
+        background: var(--card);
+      }
+      .src:hover { background: var(--cream); }
+
+      /* ── Layout ───────────────────────────────────────────── */
+      .hero, .strip, .sec, .close, .foot {
+        padding-left: var(--pad);
+        padding-right: var(--pad);
+      }
+
+      .hero {
+        max-width: calc(var(--maxw) + var(--pad) * 2);
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
+        gap: clamp(2rem, 4vw, 4rem);
+        align-items: start;
+        padding-top: clamp(3rem, 7vw, 5.5rem);
+        padding-bottom: clamp(3rem, 6vw, 4.5rem);
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55rem;
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin: 0 0 1.1rem;
+      }
+      .dot {
+        width: 8px; height: 8px;
+        background: var(--gold);
+        border: 1px solid var(--gold-deep);
+        display: inline-block;
+      }
+
+      h1 {
+        font-size: clamp(2.5rem, 1.4rem + 4.4vw, 4.4rem);
+        line-height: 1.02;
+        letter-spacing: -0.025em;
+        margin-bottom: 1.1rem;
+      }
+
+      .lede {
+        font-size: clamp(1.06rem, 1rem + 0.4vw, 1.25rem);
+        max-width: 46ch;
+        color: var(--body);
+        margin: 0 0 1.75rem;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.75rem 1.25rem;
+        margin: 0 0 2rem;
+      }
+      .btn {
+        display: inline-block;
+        background: var(--ink-2);
+        color: var(--cream);
+        text-decoration: none;
+        padding: 0.72rem 1.25rem;
+        font-weight: 500;
+        border: 1px solid var(--ink);
+        box-shadow: 3px 3px 0 var(--oat);
+      }
+      .btn:hover { background: var(--ink); box-shadow: 3px 3px 0 var(--gold); }
+      .btn-quiet {
+        font-weight: 500;
+        color: var(--ink-2);
+        text-decoration: underline;
+        text-decoration-color: var(--gold);
+      }
+
+      .quickfacts {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0;
+        margin: 0;
+        border-top: 1px solid var(--rule);
+        border-left: 1px solid var(--rule);
+      }
+      .quickfacts > div {
+        border-right: 1px solid var(--rule);
+        border-bottom: 1px solid var(--rule);
+        padding: 0.65rem 0.85rem;
+      }
+      .quickfacts dt {
+        font-family: var(--mono);
+        font-size: 0.66rem;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .quickfacts dd {
+        margin: 0.15rem 0 0;
+        font-weight: 500;
+        color: var(--ink);
+      }
+
+      /* ── Hero card ────────────────────────────────────────── */
+      .card-plate { margin: 0; }
+
+      .card {
+        position: relative;
+        margin-top: 1.4rem;
+        background: var(--card);
+        border: 1px solid var(--ink-2);
+        box-shadow:
+          6px 6px 0 var(--cream),
+          6px 6px 0 1px var(--ink-2),
+          12px 12px 0 var(--oat),
+          12px 12px 0 1px var(--ink-2);
+      }
+      .card-tab {
+        position: absolute;
+        top: -1.4rem;
+        left: 1.6rem;
+        height: 1.4rem;
+        padding: 0 0.9rem;
+        display: flex;
+        align-items: center;
+        background: var(--gold);
+        border: 1px solid var(--ink-2);
+        border-bottom: none;
+      }
+      .card-tab span {
+        font-family: var(--mono);
+        font-size: 0.68rem;
+        font-weight: 500;
+        letter-spacing: 0.18em;
+        color: var(--ink);
+      }
+      .card-body {
+        padding: clamp(1.1rem, 2.2vw, 1.7rem);
+      }
+      .call {
+        font-family: var(--mono);
+        font-size: 0.78rem;
+        letter-spacing: 0.14em;
+        color: var(--gold-deep);
+        margin: 0 0 0.9rem;
+      }
+      .card-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+      }
+      .card-table th {
+        text-align: left;
+        font-family: var(--mono);
+        font-size: 0.66rem;
+        font-weight: 500;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        color: var(--muted);
+        vertical-align: top;
+        padding: 0.35rem 0.9rem 0.35rem 0;
+        white-space: nowrap;
+        width: 1%;
+      }
+      .card-table td {
+        padding: 0.35rem 0;
+        color: var(--ink);
+        vertical-align: top;
+        border-bottom: 1px solid var(--rule-soft);
+      }
+      .card-table tr:last-child td { border-bottom: none; }
+      .card-table td.mono { font-size: 0.8rem; word-break: break-word; }
+
+      .subj-label {
+        font-family: var(--mono);
+        font-size: 0.66rem;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin: 1.1rem 0 0.5rem;
+      }
+      .subjects {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .subjects li code,
+      .subjects li.more {
+        display: inline-block;
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        padding: 0.2rem 0.45rem;
+        border: 1px solid var(--rule);
+        background: var(--cream);
+        color: var(--ink-2);
+        word-break: break-word;
+      }
+      .subjects li.more {
+        border-style: dashed;
+        background: transparent;
+        color: var(--muted);
+      }
+
+      .card-plate figcaption {
+        margin-top: 1.5rem;
+        font-size: 0.82rem;
+        color: var(--muted);
+        max-width: 42ch;
+        border-left: 2px solid var(--gold);
+        padding-left: 0.75rem;
+      }
+
+      /* ── Refusals strip ───────────────────────────────────── */
+      .strip {
+        background: var(--ink-2);
+        color: var(--cream);
+        padding-top: clamp(2rem, 4vw, 2.75rem);
+        padding-bottom: clamp(2rem, 4vw, 2.75rem);
+      }
+      .strip ul {
+        max-width: var(--maxw);
+        margin: 0 auto;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1px;
+        background: color-mix(in srgb, var(--cream) 30%, transparent);
+        border: 1px solid color-mix(in srgb, var(--cream) 30%, transparent);
+      }
+      .strip li {
+        background: var(--ink-2);
+        padding: 0.9rem 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+      }
+      .strip strong {
+        font-family: var(--mono);
+        font-size: 0.8rem;
+        font-weight: 500;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: #f2dfae;
+      }
+      .strip span { font-size: 0.9rem; color: var(--cream); }
+
+      /* ── Sections ─────────────────────────────────────────── */
+      .sec {
+        padding-top: clamp(3.25rem, 6vw, 5.5rem);
+        padding-bottom: clamp(3.25rem, 6vw, 5.5rem);
+      }
+      .sec > * { max-width: var(--maxw); margin-inline: auto; }
+      .sec.tinted { background: var(--paper-2); border-block: 1px solid var(--rule); }
+
+      .sec-head { margin-bottom: clamp(1.75rem, 3vw, 2.5rem); }
+      .rule-n {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 1rem;
+        flex-wrap: wrap;
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--gold-deep);
+        margin: 0 0 0.75rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--rule);
+      }
+      .rule-meta { color: var(--muted); letter-spacing: 0.1em; }
+
+      .sec h2 {
+        font-size: clamp(1.85rem, 1.3rem + 2.1vw, 2.85rem);
+        line-height: 1.1;
+        max-width: 20ch;
+      }
+      .sec-lede {
+        margin: 0.9rem 0 0;
+        max-width: 62ch;
+        color: var(--body);
+      }
+      .aside {
+        margin: 1.75rem 0 0;
+        font-size: 0.92rem;
+        color: var(--muted);
+        max-width: 68ch;
+        border-left: 2px solid var(--gold);
+        padding-left: 0.85rem;
+      }
+
+      /* ── Steps ────────────────────────────────────────────── */
+      .steps {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(255px, 1fr));
+        gap: 1px;
+        background: var(--rule);
+        border: 1px solid var(--rule);
+      }
+      .steps li {
+        background: var(--card);
+        padding: clamp(1.1rem, 2vw, 1.6rem);
+      }
+      .step-n, .mini-n {
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        letter-spacing: 0.14em;
+        color: var(--gold-deep);
+        margin: 0 0 0.75rem;
+      }
+      .steps h3, .mini h3 {
+        font-size: 1.25rem;
+        margin-bottom: 0.45rem;
+      }
+      .steps p:last-child, .mini p { margin: 0; font-size: 0.95rem; }
+
+      /* ── Tables ───────────────────────────────────────────── */
+      .tbl {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+        background: var(--card);
+        border: 1px solid var(--ink-2);
+      }
+      .tbl thead th {
+        font-family: var(--mono);
+        font-size: 0.68rem;
+        font-weight: 500;
+        letter-spacing: 0.11em;
+        text-transform: uppercase;
+        color: var(--cream);
+        background: var(--ink-2);
+        padding: 0.7rem 0.9rem;
+        vertical-align: bottom;
+      }
+      .tbl tbody th,
+      .tbl tbody td {
+        padding: 0.85rem 0.9rem;
+        border-bottom: 1px solid var(--rule-soft);
+        vertical-align: top;
+        font-size: 0.95rem;
+      }
+      .tbl tbody th {
+        font-family: var(--sans);
+        font-weight: 600;
+        color: var(--ink);
+        white-space: nowrap;
+      }
+      .tbl tbody tr:nth-child(even) th,
+      .tbl tbody tr:nth-child(even) td { background: var(--paper-2); }
+      .tbl tbody tr:last-child th,
+      .tbl tbody tr:last-child td { border-bottom: none; }
+      .tbl td.mono { font-size: 0.82rem; color: var(--ink-2); word-break: break-word; }
+      .c-idx { width: 3.5rem; }
+      .tbl tbody .c-idx { color: var(--gold-deep) !important; font-size: 0.8rem !important; }
+      .c-glyph { width: 2.5rem; color: var(--gold-deep); font-size: 1rem; text-align: center; }
+
+      .fmt { font-family: var(--mono); font-size: 0.9rem; }
+      .pill {
+        display: inline-block;
+        margin-left: 0.4rem;
+        font-family: var(--mono);
+        font-size: 0.62rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 0.1rem 0.35rem;
+        border: 1px solid var(--gold-deep);
+        color: var(--gold-deep);
+        vertical-align: middle;
+      }
+      .fid {
+        display: inline-block;
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        padding: 0.15rem 0.45rem;
+        border: 1px solid var(--ink-2);
+        white-space: nowrap;
+      }
+      .fid-lossless { background: var(--cream); color: var(--ink); }
+      .fid-lossy { background: var(--ink-2); color: var(--cream); }
+      .fid-subset { background: transparent; color: var(--ink-2); border-style: dashed; }
+
+      .state { font-size: 0.86rem; color: var(--ink); }
+
+      /* ── Durability ───────────────────────────────────────── */
+      .grid-4 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(232px, 1fr));
+        gap: 1px;
+        background: var(--rule);
+        border: 1px solid var(--rule);
+      }
+      .mini { background: var(--card); padding: clamp(1.1rem, 2vw, 1.5rem); }
+      .fact {
+        margin-top: 0.85rem !important;
+        font-size: 0.75rem !important;
+        letter-spacing: 0.04em;
+        color: var(--gold-deep);
+      }
+      .stat {
+        display: flex;
+        align-items: baseline;
+        flex-wrap: wrap;
+        gap: 0.4rem 1rem;
+        margin: 1.75rem 0 0;
+        padding-top: 1.25rem;
+        border-top: 1px solid var(--rule);
+      }
+      .stat-n {
+        font-family: var(--serif);
+        font-size: clamp(2.5rem, 1.5rem + 3vw, 3.6rem);
+        line-height: 1;
+        color: var(--ink);
+      }
+      .stat-t { max-width: 44ch; color: var(--muted); font-size: 0.95rem; }
+
+      /* ── Honesty notes ────────────────────────────────────── */
+      .two-notes {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: clamp(1rem, 2vw, 1.75rem);
+        margin-top: clamp(1.5rem, 3vw, 2.25rem);
+      }
+      .note {
+        background: var(--card);
+        border: 1px solid var(--ink-2);
+        padding: clamp(1.1rem, 2vw, 1.5rem);
+      }
+      .note h3 {
+        font-size: 1.2rem;
+        margin-bottom: 0.7rem;
+        padding-bottom: 0.6rem;
+        border-bottom: 1px solid var(--rule);
+      }
+      .note p { margin: 0; font-size: 0.95rem; }
+
+      /* ── MCP ──────────────────────────────────────────────── */
+      .mcp {
+        display: grid;
+        grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+        gap: clamp(1.5rem, 3vw, 3rem);
+        align-items: start;
+      }
+      .idx-h {
+        font-family: var(--mono);
+        font-size: 0.7rem;
+        font-weight: 500;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 0.75rem;
+      }
+      .index-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        columns: 2;
+        column-gap: 2rem;
+      }
+      .index-list li {
+        break-inside: avoid;
+        display: flex;
+        gap: 0.6rem;
+        align-items: baseline;
+        padding: 0.45rem 0;
+        border-bottom: 1px dotted var(--rule);
+        color: var(--ink);
+        font-size: 0.95rem;
+      }
+      .li-n { font-size: 0.72rem; color: var(--gold-deep); }
+      .caveat {
+        background: var(--cream);
+        border: 1px solid var(--ink-2);
+        padding: clamp(1.1rem, 2vw, 1.5rem);
+      }
+      .caveat-tag {
+        font-family: var(--mono);
+        font-size: 0.68rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--gold-deep);
+        margin: 0 0 0.6rem;
+      }
+      .caveat p:last-child { margin: 0; color: var(--ink-2); }
+
+      /* ── Ledger ───────────────────────────────────────────── */
+      .ledger {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+        gap: 1px;
+        background: var(--rule);
+        border: 1px solid var(--rule);
+      }
+      .ledger-col { background: var(--card); padding: clamp(1.15rem, 2.2vw, 1.75rem); }
+      .ledger-col h3 {
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        font-weight: 500;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        color: var(--muted);
+        padding-bottom: 0.6rem;
+        border-bottom: 1px solid var(--rule);
+        margin-bottom: 0.5rem;
+      }
+      .ticks { list-style: none; margin: 0; padding: 0; }
+      .ticks li {
+        position: relative;
+        padding: 0.5rem 0 0.5rem 1.6rem;
+        border-bottom: 1px dotted var(--rule);
+        font-size: 0.95rem;
+        color: var(--ink);
+      }
+      .ticks li:last-child { border-bottom: none; }
+      .ticks li::before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        font-family: var(--mono);
+        color: var(--gold-deep);
+      }
+      .ticks-not li::before { content: '—'; color: var(--muted); }
+
+      /* ── FAQ ──────────────────────────────────────────────── */
+      .faq { margin: 0; }
+      .faq-row {
+        display: grid;
+        grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+        gap: clamp(1rem, 3vw, 2.5rem);
+        padding: clamp(1.1rem, 2vw, 1.5rem) 0;
+        border-top: 1px solid var(--rule);
+      }
+      .faq-row:last-child { border-bottom: 1px solid var(--rule); }
+      .faq dt {
+        font-family: var(--serif);
+        font-size: clamp(1.15rem, 1rem + 0.5vw, 1.4rem);
+        color: var(--ink);
+        display: flex;
+        gap: 0.7rem;
+        align-items: baseline;
+      }
+      .faq-n {
+        font-size: 0.7rem;
+        letter-spacing: 0.08em;
+        color: var(--gold-deep);
+        flex: none;
+      }
+      .faq dd { margin: 0; color: var(--body); }
+
+      /* ── Close ────────────────────────────────────────────── */
+      .close {
+        max-width: 60ch;
+        margin: 0 auto;
+        text-align: center;
+        padding-top: clamp(3.5rem, 7vw, 6rem);
+        padding-bottom: clamp(3.5rem, 7vw, 6rem);
+      }
+      .close svg { margin: 0 auto 1.25rem; }
+      .close h2 {
+        font-size: clamp(2rem, 1.4rem + 2.4vw, 3rem);
+        line-height: 1.08;
+        margin-bottom: 0.9rem;
+      }
+      .close p { margin: 0 auto 1.5rem; }
+      .close .actions { justify-content: center; margin-bottom: 0; }
+
+      /* ── Foot ─────────────────────────────────────────────── */
+      .foot {
+        background: var(--ink-2);
+        color: var(--cream);
+        padding-top: 2.25rem;
+        padding-bottom: 2.5rem;
+        font-size: 0.9rem;
+      }
+      .foot p { max-width: var(--maxw); margin: 0 auto 0.6rem; }
+      .foot a { color: #f2dfae; }
+      .foot-links { display: flex; gap: 1.25rem; flex-wrap: wrap; }
+      .foot-fine {
+        font-size: 0.8rem;
+        color: #e0cda0;
+        border-top: 1px solid color-mix(in srgb, var(--cream) 28%, transparent);
+        padding-top: 0.9rem;
+        margin-top: 1rem !important;
+        max-width: var(--maxw);
+      }
+
+      /* ── Responsive ───────────────────────────────────────── */
+      @media (max-width: 1400px) {
+        .masthead { gap: 0.6rem 1rem; }
+        .tabs a { font-size: 0.8rem; padding: 0.3rem 0.45rem; }
+        .brand-sub { display: none; }
+      }
+
+      @media (max-width: 1080px) {
+        .hero { grid-template-columns: minmax(0, 1fr); }
+        .card-plate { max-width: 34rem; }
+        .mcp { grid-template-columns: minmax(0, 1fr); }
+        .brand-sub { display: none; }
+      }
+
+      @media (max-width: 860px) {
+        html { scroll-padding-top: 9.5rem; }
+        .tabs { order: 3; width: 100%; }
+        .tabs ul { gap: 0.15rem; }
+        .tabs a { padding: 0.25rem 0.45rem; font-size: 0.8rem; }
+        .faq-row { grid-template-columns: minmax(0, 1fr); gap: 0.6rem; }
+        .index-list { columns: 1; }
+        .strip ul { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      }
+
+      /* Tables reflow into filed rows rather than scrolling sideways. */
+      @media (max-width: 720px) {
+        .tbl, .tbl tbody, .tbl tr, .tbl tbody th, .tbl tbody td { display: block; width: 100%; }
+        .tbl { border: none; background: transparent; }
+        .tbl thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+        .tbl tbody tr {
+          background: var(--card);
+          border: 1px solid var(--ink-2);
+          margin-bottom: 0.9rem;
+          padding: 0.35rem 0.9rem 0.75rem;
+        }
+        .tbl tbody tr:nth-child(even) th,
+        .tbl tbody tr:nth-child(even) td { background: transparent; }
+        .tbl tbody th, .tbl tbody td {
+          padding: 0.45rem 0;
+          border-bottom: 1px dotted var(--rule);
+          white-space: normal;
+        }
+        .tbl tbody tr > *:last-child { border-bottom: none; }
+        .tbl tbody [data-label]::before {
+          content: attr(data-label);
+          display: block;
+          font-family: var(--mono);
+          font-size: 0.62rem;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          color: var(--muted);
+          margin-bottom: 0.15rem;
+        }
+        .tbl tbody th[data-label] {
+          font-size: 1.05rem;
+          border-bottom: 1px solid var(--rule);
+        }
+        .tbl .c-idx {
+          border-bottom: none !important;
+          padding-bottom: 0 !important;
+          color: var(--gold-deep) !important;
+        }
+        .tbl .c-idx::before { display: none; }
+        .c-glyph { display: none !important; }
+        .stat { flex-direction: column; }
+      }
+
+      @media (max-width: 460px) {
+        .masthead { gap: 0.6rem; padding-inline: 1.1rem; }
+        .card-tab { left: 1rem; }
+        .subjects li code { font-size: 0.68rem; }
+        .quickfacts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        *, *::before, *::after {
+          animation-duration: 0.001ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.001ms !important;
+        }
+      }
+    </style>
+  </body>
+</html>

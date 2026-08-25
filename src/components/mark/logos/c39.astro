@@ -1,0 +1,75 @@
+---
+/**
+ * 39 · Ripple, Sheen
+ *
+ * The Mozz reflection, measured and moved onto water. Rasterised to the 32
+ * grid, Mozz's disc carries eleven colours: a near-black keyline, white for the
+ * ZZ, and nine body tones. Bucketing those by angle around the centre says what
+ * they are — not rings, but bands. The mean tone swings 2.3 to 7.4 right around
+ * the compass and moves only 6.0 to 4.4 from the centre out to the rim. Mozz's
+ * sheen is a function of angle, not of radius, which is what light on a
+ * spinning disc actually does, and it is why Mozz reads as an object rather
+ * than as a circle with a face on it.
+ *
+ * So: eleven tones here too, in four straight-edged arms. The arms are built on
+ * the integer diagonals x+y and x-y, so their boundaries land on pixel edges
+ * and come out as 45-degree staircases stepping one pixel per row — Mozz's
+ * bands are drawn exactly that way. Where this departs from Mozz is on purpose.
+ * Mozz's bands are one parallel family with two-fold rotational symmetry, which
+ * leaves the whole mark leaning to one side. This disc sits in a pool of rings
+ * that are mirror-symmetric about x=16, and a sheen leaning one way inside
+ * symmetric water reads as a mistake rather than as light, so the two diagonal
+ * families are crossed. Under x -> 31-x they swap and negate and the arm
+ * profile is even, so every layer mirrors by construction.
+ *
+ * The sheen only ever adds. A reflection is light arriving, never light
+ * removed, and writing it as a non-negative offset over the lit body makes a
+ * whole class of defect unreachable — the first cut of this was bipolar and its
+ * dark lobe punched a two-pixel notch out from under the chin.
+ *
+ * The steps are the point. Consecutive tones are 4.0-5.0% of the base
+ * luminance apart, inside the 3.3-9.1% band measured off Mozz, so no boundary
+ * is an edge you can point at, and no two touching pixels are ever more than
+ * two steps apart. The ends are 45% apart, which is a different colour
+ * entirely; Mozz's own span is 56%. The ramp drifts in hue and saturation as
+ * well as lightness — duller slate at the foot, cyan at the crest.
+ *
+ * Underneath the arms is a sphere's own falloff rather than a flat top-to-
+ * bottom gradient, so the shading follows the rim instead of banding into
+ * horizontal stripes. That is the part that survives 24px, where a one-pixel
+ * arm boundary is a third of a screen pixel and gone: downscaled, this is
+ * simply a disc lit from above, which is a correct reading of the same object.
+ *
+ * Nothing is cleared for the face. The arms run under the ZZ and out the other
+ * side, exactly as Mozz's do, and the face is centred on the disc rather than
+ * on the lit part of it — 6 rows of air above, 6 below.
+ *
+ * The disc, the water and the size are c10's, untouched.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Hozz — Ripple, Sheen">
+  <path d="M13 20h6v1h-6z M7 21h18v1h-18z M4 22h4v1h-4z M24 22h4v1h-4z M3 23h2v1h-2z M27 23h2v1h-2z M2 24h2v1h-2z M28 24h2v1h-2z M2 25h2v1h-2z M28 25h2v1h-2z M3 26h2v1h-2z M27 26h2v1h-2z M4 27h4v1h-4z M24 27h4v1h-4z M7 28h18v1h-18z M13 29h6v1h-6z" fill="#96bcd6" />
+  <path d="M12 22h8v1h-8z M9 23h3v1h-3z M20 23h3v1h-3z M7 24h2v1h-2z M23 24h2v1h-2z M7 25h2v1h-2z M23 25h2v1h-2z M9 26h3v1h-3z M20 26h3v1h-3z M12 27h8v1h-8z" fill="#5d8cb0" />
+  <path d="M14 22h4v1h-4z" fill="#92b1cc" />
+  <path d="M15 21h2v1h-2z M13 22h1v1h-1z M18 22h1v1h-1z" fill="#98b9d4" />
+  <path d="M14 20h4v1h-4z M13 21h2v1h-2z M17 21h2v1h-2z" fill="#9ec2dc" />
+  <path d="M6 12h1v1h-1z M25 12h1v1h-1z M6 13h2v1h-2z M24 13h2v1h-2z M6 14h1v1h-1z M25 14h1v1h-1z M6 15h1v1h-1z M25 15h1v1h-1z M15 18h2v1h-2z M15 19h2v1h-2z M11 21h2v1h-2z M19 21h2v1h-2z" fill="#a6cae2" />
+  <path d="M6 11h1v1h-1z M25 11h1v1h-1z M14 13h4v1h-4z M7 14h2v1h-2z M15 14h2v1h-2z M23 14h2v1h-2z M7 15h1v1h-1z M24 15h1v1h-1z M7 16h1v1h-1z M14 16h4v1h-4z M24 16h1v1h-1z M15 17h2v1h-2z M12 18h3v1h-3z M17 18h3v1h-3z M8 19h3v1h-3z M13 19h2v1h-2z M17 19h2v1h-2z M21 19h3v1h-3z M9 20h5v1h-5z M18 20h5v1h-5z" fill="#aed3e9" />
+  <path d="M6 10h2v1h-2z M24 10h2v1h-2z M7 11h2v1h-2z M15 11h2v1h-2z M23 11h2v1h-2z M7 12h6v1h-6z M14 12h4v1h-4z M19 12h6v1h-6z M8 13h6v1h-6z M18 13h6v1h-6z M9 14h1v1h-1z M12 14h3v1h-3z M17 14h3v1h-3z M22 14h1v1h-1z M8 15h16v1h-16z M10 16h4v1h-4z M18 16h4v1h-4z M7 17h8v1h-8z M17 17h8v1h-8z M8 18h4v1h-4z M20 18h4v1h-4z M11 19h2v1h-2z M19 19h2v1h-2z" fill="#b7dbee" />
+  <path d="M14 3h4v1h-4z M15 4h2v1h-2z M14 9h4v1h-4z M13 10h6v1h-6z M12 11h3v1h-3z M17 11h3v1h-3z M13 12h1v1h-1z M18 12h1v1h-1z M10 14h2v1h-2z M20 14h2v1h-2z M8 16h2v1h-2z M22 16h2v1h-2z" fill="#c0e2f3" />
+  <path d="M13 3h1v1h-1z M18 3h1v1h-1z M13 4h2v1h-2z M17 4h2v1h-2z M14 5h4v1h-4z M15 6h2v1h-2z M15 7h2v1h-2z M11 8h1v1h-1z M15 8h2v1h-2z M20 8h1v1h-1z M7 9h1v1h-1z M10 9h4v1h-4z M18 9h4v1h-4z M24 9h1v1h-1z M8 10h5v1h-5z M19 10h5v1h-5z M9 11h3v1h-3z M20 11h3v1h-3z" fill="#cbe9f7" />
+  <path d="M12 4h1v1h-1z M19 4h1v1h-1z M13 5h1v1h-1z M18 5h1v1h-1z M8 6h1v1h-1z M13 6h2v1h-2z M17 6h2v1h-2z M23 6h1v1h-1z M8 7h2v1h-2z M12 7h3v1h-3z M17 7h3v1h-3z M22 7h2v1h-2z M7 8h4v1h-4z M12 8h3v1h-3z M17 8h3v1h-3z M21 8h4v1h-4z M8 9h2v1h-2z M22 9h2v1h-2z" fill="#d6f0fa" />
+  <path d="M11 4h1v1h-1z M20 4h1v1h-1z M9 5h4v1h-4z M19 5h4v1h-4z M9 6h4v1h-4z M19 6h4v1h-4z M10 7h2v1h-2z M20 7h2v1h-2z" fill="#e2f5fc" />
+  <path d="M13 2h6v1h-6z M11 3h2v1h-2z M19 3h2v1h-2z M9 4h2v1h-2z M21 4h2v1h-2z M8 5h1v1h-1z M23 5h1v1h-1z M7 6h1v1h-1z M24 6h1v1h-1z M7 7h1v1h-1z M24 7h1v1h-1z M6 8h1v1h-1z M25 8h1v1h-1z M6 9h1v1h-1z M25 9h1v1h-1z M5 10h1v1h-1z M26 10h1v1h-1z M5 11h1v1h-1z M26 11h1v1h-1z M5 12h1v1h-1z M26 12h1v1h-1z M5 13h1v1h-1z M26 13h1v1h-1z M5 14h1v1h-1z M26 14h1v1h-1z M5 15h1v1h-1z M26 15h1v1h-1z M6 16h1v1h-1z M25 16h1v1h-1z M6 17h1v1h-1z M25 17h1v1h-1z M7 18h1v1h-1z M24 18h1v1h-1z M7 19h1v1h-1z M24 19h1v1h-1z M8 20h1v1h-1z M23 20h1v1h-1z M9 21h2v1h-2z M21 21h2v1h-2z M11 22h2v1h-2z M19 22h2v1h-2z M13 23h6v1h-6z" fill="#132638" />
+  <g fill="#132638" shape-rendering="crispEdges">
+    {facePathsAt({ cx: 16, cy: 13, size: 'md', smile: 'wide', gap: 3 }).map((d) => (
+      <path d={d} />
+    ))}
+  </g>
+</MarkFrame>

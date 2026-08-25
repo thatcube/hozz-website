@@ -1,0 +1,83 @@
+---
+/**
+ * h09 · Fold — one tape of the record, folded twice at each letter.
+ *
+ * The object is a tape: it enters at the left edge on its resting level and
+ * leaves at the right edge on the same level, and it has the one thing a plate
+ * or a disc or a jar does not — **an underside**.
+ *
+ * The move: the tape folds back on itself, and the fold is the letter. Where
+ * it turns, you see the underside instead of the face, so **the diagonal of
+ * each Z is the back of the tape** — which is also why the diagonal is heavier
+ * than the bars, because a tape crossing at an angle covers more ground than
+ * one running flat. The creases are mitred, as a real fold is. Flatten the
+ * tape and both letters go with it; there is no letter here that is not a
+ * turn in the material.
+ *
+ * The Z is built from the tape's own geometry, not from a typeface: three
+ * faces per letter, joined along the two creases.
+ *
+ * Zs as letters, not eyes: no face on a health mark.
+ */
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.hozz;
+
+const T = 4; // the tape's width, and therefore the bar
+const W = 13.5;
+const H = 19;
+const D = 6.6; // what the tape covers crossing at an angle: heavier than T
+const Y = 14.5;
+const REST = Y + H - T; // the level the tape runs at, entering and leaving
+const x1 = 8.6;
+const x2 = 25.1;
+const xEnd = x2 + W;
+
+const pt = (x: number, y: number) => `${x},${y}`;
+// The face: the tape seen from the front, running flat.
+const faceTop = (X: number) =>
+  [pt(X, Y), pt(X + W, Y), pt(X + W - D, Y + T), pt(X, Y + T)].join(' ');
+const faceBottom = (X: number) =>
+  [pt(X + D, REST), pt(X + W, REST), pt(X + W, Y + H), pt(X, Y + H)].join(' ');
+// The underside: everything past the two creases.
+const back = (X: number) =>
+  [
+    pt(X + W - D, Y + T),
+    pt(X + W, Y),
+    pt(X + W, Y + T),
+    pt(X + D, REST),
+    pt(X, Y + H),
+    pt(X, REST),
+  ].join(' ');
+
+const face = ground === 'dark' ? app.light : app.hue;
+const under = ground === 'dark' ? app.hue : app.deep;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <g fill={under}>
+    <polygon points={back(x1)} />
+    <polygon points={back(x2)} />
+  </g>
+  <g fill={face}>
+    <rect x="0" y={REST} width={x1} height={T} />
+    <rect x={xEnd} y={REST} width={48 - xEnd} height={T} />
+    <polygon points={faceTop(x1)} />
+    <polygon points={faceBottom(x1)} />
+    <polygon points={faceTop(x2)} />
+    <polygon points={faceBottom(x2)} />
+  </g>
+</svg>

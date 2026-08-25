@@ -1,0 +1,50 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import { CATEGORIES } from '../data/site';
+
+const hue = Object.fromEntries(CATEGORIES.map((c) => [c.key, c.hue]));
+---
+
+<Layout title="Page not found — Hozz" noindex>
+  <SiteHeader />
+
+  <main id="main">
+    <section class="section lost" style={`--tint: ${hue.mind}`}>
+      <div class="wrap wrap--narrow">
+        <p class="eyebrow">404</p>
+        <h1>That page isn't <em class="em">here</em>.</h1>
+        <p class="lead">
+          The link may be old, or the page may never have existed. The front page
+          has everything there is so far.
+        </p>
+        <div class="cta">
+          <a class="btn btn--primary" href="/">
+            Back to the start
+            <span class="arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <SiteFooter />
+</Layout>
+
+<style>
+  .lost {
+    padding-block: clamp(5rem, 12vw, 9rem);
+  }
+
+  .lost h1 {
+    font-size: clamp(2.2rem, 1.5rem + 2.6vw, 3.4rem);
+    margin-block: 1.1rem 1.3rem;
+  }
+
+  .cta {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+</style>

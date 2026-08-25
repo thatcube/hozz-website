@@ -1,0 +1,46 @@
+---
+/**
+ * h04 · Transfer Sheet
+ *
+ * A single folded band with a clean ZZ path cut through it. The clipped
+ * knockout keeps both letters joined and lets the ground provide full contrast.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.hozz;
+const uid = `h04-${Math.random().toString(36).slice(2, 9)}`;
+
+const Z = { y: 14, w: 13, h: 20, bar: 3.7, diag: 7, cap: 'angled' as const };
+const band = 'M4 10H44L40 24L44 38H4L8 24Z';
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+  data-ground={ground}
+>
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: 8.5 })} fill="#000" />
+      <path d={zPath({ ...Z, x: 26.5 })} fill="#000" />
+    </mask>
+  </defs>
+
+  <g mask={`url(#${uid})`}>
+    <path d={band} fill={app.hue} />
+    <path d="M4 35.5H43.3L44 38H4Z" fill={app.deep} opacity="0.48" />
+    <path d="M4 10H44L43.2 12.4H4.8Z" fill={app.light} />
+  </g>
+</svg>

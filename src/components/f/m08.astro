@@ -1,0 +1,56 @@
+---
+/**
+ * m08 · Bevel — a disc cartridge, shutter pulled back.
+ *
+ * The dependency: **the caddy's cut corner is the angle every terminal is cut
+ * on.** The bevel falls 7 across 13.5; the letters' shear is (w - diag) over
+ * (h - 2*bar), which is 5.6 over 10.8 — the same number. So the object's profile
+ * is what shears the ends of the bars, and the second Z runs its foot down the
+ * bevel a hairline away from it. Re-angle the corner and all eight terminals are
+ * wrong. A record has no corner and neither does a jar; this one does.
+ *
+ * Two shapes: the bevelled body and the shutter forming its left wall.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.mozz;
+const uid = `m08-${Math.random().toString(36).slice(2, 9)}`;
+
+// The bevel runs 7 across and 13.5 down: exactly the letters' terminal shear.
+const BODY =
+  'M7 10.5 H41 A3 3 0 0 1 44 13.5 V24 L37 37.5 H7 A3 3 0 0 1 4 34.5 V13.5 A3 3 0 0 1 7 10.5 Z';
+// The shutter is the cartridge's own left wall, not a bar floating on the face.
+const SHUTTER = 'M7 10.5 H14.4 V37.5 H7 A3 3 0 0 1 4 34.5 V13.5 A3 3 0 0 1 7 10.5 Z';
+
+const Z = { y: 15.6, w: 10.4, h: 16.8, bar: 3, diag: 4.8, cap: 'angled' as const };
+// The second Z's angled foot sits 0.6 inside the bevel, running parallel to it.
+const ZX = [16, 30.2];
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      {ZX.map((zx) => <path d={zPath({ ...Z, x: zx })} fill="#000" />)}
+    </mask>
+  </defs>
+
+  <g mask={`url(#${uid})`}>
+    <path d={BODY} fill={app.hue} />
+    <path d={SHUTTER} fill={app.deep} />
+  </g>
+</svg>

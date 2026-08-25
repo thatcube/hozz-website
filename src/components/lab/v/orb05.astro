@@ -1,0 +1,328 @@
+---
+/**
+ * orb05 — The slot nobody filled in for you.
+ *
+ * The centre is empty because Hozz ships no default destination. To keep that
+ * emptiness reading as a decision rather than a missing asset, the void gets the
+ * treatment a reserved space gets in a drawing: a crisp dashed slot, exactly
+ * centred, labelled for what it is, with a constant clearance held all the way
+ * round it and every dash divided evenly so nothing looks accidental.
+ *
+ * The chips step 45° and then rest, so most of the time each one is parked at
+ * the head of a dashed leader line that aims at the slot and stops short of it.
+ * The route is drawn. It was never connected.
+ *
+ * Geometry comes from the figure's own box — viewBox units and container query
+ * units throughout — so it cannot outgrow the column it is dropped into.
+ */
+import { CHIPS } from '../../../data/chips';
+
+/**
+ * Eight types, eight different category hues. Ordered so a wide label never sits
+ * next to another wide one, which is what keeps the ring from colliding with
+ * itself halfway through a turn.
+ */
+const WANTED = [
+  'heartRate',
+  'stepCount',
+  'bloodGlucose',
+  'bodyMass',
+  'walkingSpeed',
+  'sleepAnalysis',
+  'oxygenSaturation',
+  'dietaryProtein',
+];
+const ring = WANTED.map((id) => CHIPS.find((c) => c.id === id)!).filter(Boolean);
+
+/* All in viewBox units on a 100×100 field. */
+const R_TRACK = 34; // the chips ride this circle
+const R_SPOKE = 30; // leader lines start just under them
+const HW = 19; // slot half-width
+const HH = 11.5; // slot half-height
+const GAP = 4.6; // clearance kept constant the whole way round the slot
+
+const spokes = ring.map((_, i) => {
+  const rad = ((i * 360) / ring.length - 90) * (Math.PI / 180);
+  const cx = Math.cos(rad);
+  const sy = Math.sin(rad);
+  // How far the slot's edge is along this ray, so the gap after it is uniform.
+  const edge = Math.min(HW / Math.max(Math.abs(cx), 1e-6), HH / Math.max(Math.abs(sy), 1e-6));
+  const rIn = edge + GAP;
+  return {
+    x1: (50 + cx * R_SPOKE).toFixed(2),
+    y1: (50 + sy * R_SPOKE).toFixed(2),
+    x2: (50 + cx * rIn).toFixed(2),
+    y2: (50 + sy * rIn).toFixed(2),
+  };
+});
+---
+
+<figure class="orb">
+  <div
+    class="field"
+    role="img"
+    aria-label="Eight health data types circle a centre left deliberately empty and labelled “Empty on purpose — no destination”. Dashed leader lines run inward from each type and stop short of the empty slot, so nothing ever reaches the middle."
+  >
+    <svg class="lines" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+      <circle class="track" cx="50" cy="50" r={R_TRACK} />
+      {spokes.map((s) => <line class="spoke" x1={s.x1} y1={s.y1} x2={s.x2} y2={s.y2} />)}
+      <rect class="slot" x={50 - HW} y={50 - HH} width={HW * 2} height={HH * 2} rx="5" />
+    </svg>
+
+    <div class="ring">
+      {
+        ring.map((c, i) => (
+          <span class="station" style={`--a: ${(360 / ring.length) * i}deg`}>
+            <span class="holder">
+              <span class="chip" style={`--hue: var(--h-${c.cat})`}>
+                <i aria-hidden="true" />
+                {c.name}
+              </span>
+            </span>
+          </span>
+        ))
+      }
+    </div>
+
+    <p class="label">
+      <span class="label-h">Empty on purpose</span>
+      <span class="label-m">no destination</span>
+    </p>
+  </div>
+
+  <figcaption class="cap">
+    The types circle and wait. Nothing lands in the middle until you name a place
+    you own — Your Mac, a folder, Home Assistant, a web address, MQTT.
+  </figcaption>
+</figure>
+
+<style>
+  .orb {
+    container-type: inline-size;
+    inline-size: 100%;
+    max-inline-size: 26rem;
+    margin-inline: auto;
+    display: grid;
+    justify-items: center;
+    gap: clamp(0.5rem, 2cqi, 0.875rem);
+  }
+
+  .field {
+    position: relative;
+    inline-size: 100%;
+    aspect-ratio: 1;
+  }
+
+  .lines {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    fill: none;
+  }
+
+  /* The path: visible, dashed, and divided into a whole number of dashes so it
+     closes on itself without a short one at the seam. */
+  .track {
+    stroke: #c8ced7;
+    stroke-width: 0.3;
+    stroke-dasharray: 2.6 3.334;
+    stroke-linecap: round;
+  }
+
+  .spoke {
+    stroke: #d5dae1;
+    stroke-width: 0.34;
+    stroke-dasharray: 1.5 2;
+    stroke-linecap: round;
+    animation: flow 6s linear infinite;
+  }
+
+  /* The one thing in the picture that is drawn but not filled. */
+  .slot {
+    stroke: #969ea9;
+    stroke-width: 0.45;
+    stroke-dasharray: 3.5 2.801;
+    stroke-linecap: round;
+  }
+
+  /* Radius is this box's own inset, so it tracks the figure, not a length. */
+  .ring {
+    position: absolute;
+    inset: 16%;
+    animation: step 72s cubic-bezier(0.62, 0, 0.34, 1) infinite;
+  }
+
+  .station {
+    position: absolute;
+    inset: 0;
+    transform: rotate(var(--a));
+  }
+
+  .holder {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 50%;
+    transform: translate(-50%, -50%) rotate(calc(var(--a) * -1));
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+    white-space: nowrap;
+    padding: 0.34em 0.72em 0.34em 0.6em;
+    border-radius: 999px;
+    border: 1px solid #e0e3e8;
+    background: #fff;
+    font-size: clamp(0.5rem, 2.85cqi, 0.75rem);
+    font-weight: 500;
+    letter-spacing: -0.012em;
+    line-height: 1.25;
+    color: #23262b;
+    animation: unstep 72s cubic-bezier(0.62, 0, 0.34, 1) infinite;
+  }
+
+  .chip i {
+    inline-size: 0.5em;
+    block-size: 0.5em;
+    border-radius: 50%;
+    background: var(--hue);
+    flex: none;
+  }
+
+  .label {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    transform: translate(-50%, -50%);
+    inline-size: 32%;
+    display: grid;
+    justify-items: center;
+    gap: 0.25em;
+    text-align: center;
+  }
+
+  .label-h {
+    font-size: clamp(0.5625rem, 3.3cqi, 0.8125rem);
+    font-weight: 700;
+    letter-spacing: -0.028em;
+    line-height: 1.12;
+    color: #14161a;
+  }
+
+  .label-m {
+    font-family: var(--mono);
+    font-size: clamp(0.4375rem, 2.2cqi, 0.5625rem);
+    letter-spacing: 0.03em;
+    line-height: 1.2;
+    color: #5c6169;
+  }
+
+  .cap {
+    /* Pulls up into the slack a square field leaves under the lowest chip. */
+    margin-block-start: calc(-1 * clamp(0.5rem, 4cqi, 1.5rem));
+    max-inline-size: 44ch;
+    text-align: center;
+    text-wrap: balance;
+    font-size: clamp(0.75rem, 3cqi, 0.8125rem);
+    line-height: 1.5;
+    color: #4d525a;
+  }
+
+  /* Eight stations, 45° apart. Every cycle begins at rest, and each wait runs
+     nearly twice as long as the move that follows it. */
+  @keyframes step {
+    0%,
+    8% {
+      rotate: 0deg;
+    }
+    12.5%,
+    20.5% {
+      rotate: 45deg;
+    }
+    25%,
+    33% {
+      rotate: 90deg;
+    }
+    37.5%,
+    45.5% {
+      rotate: 135deg;
+    }
+    50%,
+    58% {
+      rotate: 180deg;
+    }
+    62.5%,
+    70.5% {
+      rotate: 225deg;
+    }
+    75%,
+    83% {
+      rotate: 270deg;
+    }
+    87.5%,
+    95.5% {
+      rotate: 315deg;
+    }
+    100% {
+      rotate: 360deg;
+    }
+  }
+
+  /* The exact negative, so labels stay upright through every move and pause. */
+  @keyframes unstep {
+    0%,
+    8% {
+      rotate: 0deg;
+    }
+    12.5%,
+    20.5% {
+      rotate: -45deg;
+    }
+    25%,
+    33% {
+      rotate: -90deg;
+    }
+    37.5%,
+    45.5% {
+      rotate: -135deg;
+    }
+    50%,
+    58% {
+      rotate: -180deg;
+    }
+    62.5%,
+    70.5% {
+      rotate: -225deg;
+    }
+    75%,
+    83% {
+      rotate: -270deg;
+    }
+    87.5%,
+    95.5% {
+      rotate: -315deg;
+    }
+    100% {
+      rotate: -360deg;
+    }
+  }
+
+  /* Dashes creep toward the slot and never arrive. */
+  @keyframes flow {
+    to {
+      stroke-dashoffset: -3.5;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Stopped, every chip is parked at the head of its leader line and the slot
+       is still empty, which is the whole sentence. */
+    .ring,
+    .chip,
+    .spoke {
+      animation: none;
+    }
+  }
+</style>

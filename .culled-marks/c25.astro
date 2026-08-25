@@ -1,0 +1,34 @@
+---
+/**
+ * 25 · Tag
+ *
+ * The label you tie to the thing you are keeping: a chamfered kraft tag with
+ * an ochre head and a real punched hole. The two-tone head replaces the header
+ * rule — same ochre, one shape instead of two — which leaves the whole lower
+ * field of the tag empty for the face.
+ *
+ * The face is centred on that field at (16, 19), not on the tag, so the head
+ * and the hole stay chrome.
+ *
+ * Drawn against the shared face geometry in `src/data/mark.ts` rather than a
+ * hand-placed copy of it, so the eyes stay the family's eyes.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+
+const face = facePathsAt({ cx: 16, cy: 19, size: 'md', smile: 'wide' });
+---
+
+<MarkFrame size={size} title="Hozz — Tag">
+  <path d="M10 4h12v1h-12z M9 5h14v1h-14z M8 6h15v1h-15z M7 7h16v1h-16z M7 8h16v1h-16z M7 9h16v1h-16z M7 10h16v1h-16z M7 11h16v1h-16z M7 12h16v1h-16z M7 13h16v1h-16z M7 14h16v1h-16z M7 15h16v1h-16z M7 16h16v1h-16z M7 17h16v1h-16z M7 18h16v1h-16z M7 19h16v1h-16z M7 20h16v1h-16z M7 21h16v1h-16z M7 22h16v1h-16z M7 23h16v1h-16z M7 24h16v1h-16z M7 25h16v1h-16z" fill="#e9dcc0" />
+  <path d="M23 5h1v1h-1z M23 6h2v1h-2z M23 7h2v1h-2z M23 8h2v1h-2z M23 9h2v1h-2z M23 10h2v1h-2z M23 11h2v1h-2z M23 12h2v1h-2z M23 13h2v1h-2z M23 14h2v1h-2z M23 15h2v1h-2z M23 16h2v1h-2z M23 17h2v1h-2z M23 18h2v1h-2z M23 19h2v1h-2z M23 20h2v1h-2z M23 21h2v1h-2z M23 22h2v1h-2z M23 23h2v1h-2z M23 24h2v1h-2z M23 25h2v1h-2z M6 26h19v1h-19z M6 27h19v1h-19z" fill="#d0b373" />
+  <path d="M25 7h1v1h-1z M25 8h1v1h-1z M25 9h1v1h-1z M25 10h1v1h-1z M25 11h1v1h-1z M25 12h1v1h-1z M25 13h1v1h-1z M25 14h1v1h-1z M25 15h1v1h-1z M25 16h1v1h-1z M25 17h1v1h-1z M25 18h1v1h-1z M25 19h1v1h-1z M25 20h1v1h-1z M25 21h1v1h-1z M25 22h1v1h-1z M25 23h1v1h-1z M25 24h1v1h-1z M25 25h1v1h-1z M25 26h1v1h-1z M25 27h1v1h-1z M6 28h20v1h-20z" fill="#b38c37" />
+  <path d="M10 3h12v1h-12z M9 4h1v1h-1z M22 4h1v1h-1z M8 5h1v1h-1z M7 6h1v1h-1z M6 7h1v1h-1z M6 8h1v1h-1z M6 9h1v1h-1z M6 10h1v1h-1z M6 11h1v1h-1z M6 12h1v1h-1z M6 13h1v1h-1z M6 14h1v1h-1z M6 15h1v1h-1z M6 16h1v1h-1z M6 17h1v1h-1z M6 18h1v1h-1z M6 19h1v1h-1z M6 20h1v1h-1z M6 21h1v1h-1z M6 22h1v1h-1z M6 23h1v1h-1z M6 24h1v1h-1z M6 25h1v1h-1z" fill="#efe7d7" />
+  <path d="M10 2h12v1h-12z M9 3h1v1h-1z M22 3h1v1h-1z M8 4h1v1h-1z M23 4h1v1h-1z M7 5h1v1h-1z M24 5h1v1h-1z M6 6h1v1h-1z M25 6h1v1h-1z M5 7h1v1h-1z M26 7h1v1h-1z M5 8h1v1h-1z M26 8h1v1h-1z M5 9h1v1h-1z M26 9h1v1h-1z M5 10h1v1h-1z M26 10h1v1h-1z M5 11h1v1h-1z M26 11h1v1h-1z M5 12h1v1h-1z M26 12h1v1h-1z M5 13h1v1h-1z M26 13h1v1h-1z M5 14h1v1h-1z M26 14h1v1h-1z M5 15h1v1h-1z M26 15h1v1h-1z M5 16h1v1h-1z M26 16h1v1h-1z M5 17h1v1h-1z M26 17h1v1h-1z M5 18h1v1h-1z M26 18h1v1h-1z M5 19h1v1h-1z M26 19h1v1h-1z M5 20h1v1h-1z M26 20h1v1h-1z M5 21h1v1h-1z M26 21h1v1h-1z M5 22h1v1h-1z M26 22h1v1h-1z M5 23h1v1h-1z M26 23h1v1h-1z M5 24h1v1h-1z M26 24h1v1h-1z M5 25h1v1h-1z M26 25h1v1h-1z M5 26h1v1h-1z M26 26h1v1h-1z M5 27h1v1h-1z M26 27h1v1h-1z M5 28h1v1h-1z M26 28h1v1h-1z M5 29h22v1h-22z" fill="#5d481a" />
+  <g fill="#33302a" shape-rendering="crispEdges">
+    {face.map((d) => <path d={d} />)}
+  </g>
+</MarkFrame>

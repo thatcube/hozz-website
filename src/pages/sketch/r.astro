@@ -1,0 +1,510 @@
+---
+/**
+ * Sketch R — "The Break".
+ *
+ * The point of view: consent is the product. Every other export tool draws an
+ * unbroken pipe from your phone to somewhere else. Hozz's pipe is drawn with a
+ * gap cut into it, and only you can close it. That break is the page's one
+ * graphic device — it appears under the word in the headline, on every stem in
+ * the diagram, and it is the thing the visitor's click physically repairs.
+ *
+ * Everything on the stage is abstract line-art and real strings. No mock of the
+ * app UI, no invented numbers, sample records labelled as examples.
+ */
+import SketchLayout from '../../layouts/SketchLayout.astro';
+import '../../styles/sketch-r.css';
+import { GITHUB_URL, DONATE_URL, LICENSE_URL } from '../../data/site';
+
+type Dest = {
+  id: string;
+  name: string;
+  transport: string;
+  tag: string;
+  line: string;
+};
+
+const dests: Dest[] = [
+  {
+    id: 'mac',
+    name: 'Your Mac',
+    transport: 'NDJSON over your local network · Bonjour _hozz._tcp · port 54330 · token auth',
+    tag: 'this mac · ndjson',
+    line: '{"type":"heartRate","value":58,"unit":"count/min","startDate":"2026-03-11T07:02:14Z"}',
+  },
+  {
+    id: 'folder',
+    name: 'Folder',
+    transport: 'Files picker → iCloud Drive, Dropbox, OneDrive, Google Drive, SMB, on-device',
+    tag: 'folder · ndjson',
+    line: 'hozz-2026-03-11T0702Z.ndjson ← {"type":"stepCount","value":412,"unit":"count"}',
+  },
+  {
+    id: 'ha',
+    name: 'Home Assistant',
+    transport: 'Webhook or REST · Metrics JSON',
+    tag: 'home assistant · metrics json',
+    line: '{"metric":"restingHeartRate","value":54,"unit":"count/min","ts":"2026-03-11T07:00:00Z"}',
+  },
+  {
+    id: 'web',
+    name: 'Web address',
+    transport: 'POST to an endpoint you run · NDJSON, JSON, CSV or Metrics JSON',
+    tag: 'web address · ndjson',
+    line: 'POST /ingest · Idempotency-Key: 9f2c…d41 · 1 batch, content-derived ids',
+  },
+  {
+    id: 'mqtt',
+    name: 'MQTT',
+    transport: 'mqtt:// or mqtts:// · MQTT 3.1.1 · retained, QoS 0',
+    tag: 'mqtt · retained',
+    line: 'hozz/health/oxygenSaturation ← {"value":0.98,"unit":"%","ts":"2026-03-11T07:04:41Z"}',
+  },
+];
+
+/* Deterministic heights so the "records staged" row is the same every build. */
+const tickHeights = Array.from({ length: 40 }, (_, i) => {
+  const n = Math.abs(Math.sin(i * 12.9898) * 43758.5453) % 1;
+  return 5 + Math.round(n * 17);
+});
+
+const rows = [
+  {
+    name: 'Your Mac',
+    how: 'Straight over your local network. Bonjour <code>_hozz._tcp</code>, port <code>54330</code>, token auth. The Mac app stores what arrives in <code>hozz-received.sqlite</code> and charts it.',
+    formats: 'NDJSON',
+  },
+  {
+    name: 'Folder',
+    how: 'You pick it in Files — iCloud Drive, Dropbox, OneDrive, Google Drive, an SMB share, or on the device itself.',
+    formats: 'NDJSON · JSON · CSV · Metrics JSON',
+  },
+  {
+    name: 'Home Assistant',
+    how: 'A webhook or REST call to your own instance.',
+    formats: 'Metrics JSON',
+  },
+  {
+    name: 'Web address',
+    how: 'A POST to any endpoint you control. Retries are safe: content-derived ids plus an <code>Idempotency-Key</code>.',
+    formats: 'NDJSON · JSON · CSV · Metrics JSON',
+  },
+  {
+    name: 'MQTT',
+    how: 'Your broker, <code>mqtt://</code> or <code>mqtts://</code>. MQTT 3.1.1, retained, QoS 0.',
+    formats: 'Metrics JSON',
+  },
+];
+
+const faq = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'How do I export my Apple Health data?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Install Hozz on your iPhone and grant it the Health types you want to export. Add a destination you control — a folder in Files, a Mac on your network, a Home Assistant webhook, your own web endpoint, or an MQTT broker. Test the destination, then choose a schedule: on arrival, hourly, daily, or manual. Hozz writes NDJSON, JSON, CSV or Metrics JSON straight from the phone to that destination.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Where can Hozz send Apple Health data?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Five destinations: a Mac running the companion app (NDJSON over the local network, Bonjour _hozz._tcp, port 54330), a folder chosen in the Files app (iCloud Drive, Dropbox, OneDrive, Google Drive, SMB or on-device), Home Assistant via webhook or REST, any web address you control via POST, and an MQTT broker over mqtt:// or mqtts://.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Does Hozz upload my health data to its own server?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'No. There is no Hozz server, no account, no analytics and no default destination. Nothing leaves the iPhone until you add a destination yourself and confirm it.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can an export miss records?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Hozz uses per-type opaque anchors from HKAnchoredObjectQuery instead of date windows, and only advances an anchor after records are durably staged. An interruption can repeat work, but it cannot skip records. Deletions are carried as tombstones rather than dropped.',
+      },
+    },
+  ],
+};
+
+const app = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Hozz',
+  applicationCategory: 'HealthApplication',
+  operatingSystem: 'iOS, macOS',
+  description:
+    'Free, open-source app that exports Apple Health data from your iPhone to destinations you own: a folder, a Mac on your network, Home Assistant, your own web endpoint, or an MQTT broker.',
+  isAccessibleForFree: true,
+  license: LICENSE_URL,
+  codeRepository: GITHUB_URL,
+  author: { '@type': 'Person', name: 'Brandon Moore' },
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+---
+
+<SketchLayout title="Sketch R — The Break · Hozz" letter="R" name="The Break">
+  <main class="r">
+    <div class="r-wrap">
+      <header class="r-top">
+        <span class="r-brand">hozz</span>
+        <span class="r-alpha"><i aria-hidden="true"></i> early alpha · partial coverage</span>
+      </header>
+
+      <section class="r-hero" aria-labelledby="r-title">
+        <p class="r-eyebrow">Apple Health export · iPhone + Mac</p>
+        <h1 class="r-h1" id="r-title">Your Health data goes <em>where you say.</em></h1>
+        <p class="r-lede">
+          Hozz copies Apple Health out of your iPhone and into a folder, a Mac, or a server you run.{' '}
+          <strong>Nothing leaves until you add a destination.</strong> The list starts empty.
+        </p>
+        <div class="r-actions">
+          <a class="r-pill r-pill--solid" href={GITHUB_URL} rel="noopener">
+            Get Hozz on GitHub
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+              <path d="M3 10 10 3M4.4 3H10v5.6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+          <a class="r-pill r-pill--ghost" href="#how">How the export works</a>
+        </div>
+        <p class="r-fineprint">
+          Free · GPL-3.0 with an App Store exception · no account · no analytics · no server of ours
+        </p>
+      </section>
+
+      <!-- ============ the stage ============ -->
+      <section class="r-stage rv" aria-labelledby="r-stage-h">
+        <div class="r-inside">
+          <div class="r-stage-head">
+            <b>iPhone · Apple Health</b>
+            <span class="r-mono">records staged on device</span>
+          </div>
+          <div class="r-ticks" aria-hidden="true">
+            {tickHeights.map((h, i) => (
+              <span style={`height:${h}px;animation-delay:${(i * 0.19).toFixed(2)}s`}></span>
+            ))}
+          </div>
+        </div>
+
+        <div class="r-edge">
+          <span>the phone ends here</span>
+          <span>every line out is cut until you close it</span>
+        </div>
+
+        <h2 id="r-stage-h" class="r-sr-only">Pick a destination</h2>
+
+        <ul class="r-dests">
+          {dests.map((d) => (
+            <li class="r-dest" id={`dest-${d.id}`}>
+              <svg class="r-stem" viewBox="0 0 16 58" width="16" height="58" aria-hidden="true">
+                <path class="r-dash" d="M8 0 V21" stroke="currentColor" />
+                <path class="r-dash" d="M8 37 V58" stroke="currentColor" />
+                <path class="r-bridge" d="M8 20 V38" stroke="currentColor" />
+                <circle class="r-end" cx="8" cy="21" r="2.4" stroke="currentColor" />
+                <circle class="r-end" cx="8" cy="37" r="2.4" stroke="currentColor" />
+                <path class="r-cut" d="M2.5 30.5 L13.5 26.5 M2.5 33.5 L13.5 29.5" stroke="currentColor" />
+                <circle class="r-flow" cx="8" cy="2" r="2.1" />
+                <circle class="r-flow" cx="8" cy="2" r="2.1" />
+                <circle class="r-flow" cx="8" cy="2" r="2.1" />
+              </svg>
+
+              <div class="r-card">
+                <h3>{d.name}</h3>
+                <p class="r-transport">{d.transport}</p>
+                <button
+                  class="r-arm"
+                  type="button"
+                  aria-pressed="false"
+                  data-tag={d.tag}
+                  data-line={d.line}
+                  data-name={d.name}
+                >Send here</button>
+                <p class="r-state">held on device</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+
+        <div class="r-wire is-idle" id="r-wire" aria-live="polite">
+          <span class="r-wire-key" id="r-wire-key">idle</span>
+          <span class="r-wire-line" id="r-wire-line">
+            Nothing has left the phone. There is no default destination.
+          </span>
+        </div>
+
+        <p class="r-caption">
+          Diagram, not the app. Sample records are examples, formatted the way Hozz writes them.
+        </p>
+      </section>
+
+      <!-- ============ three claims ============ -->
+      <section class="r-sec" aria-labelledby="r-get">
+        <div class="r-sec-head rv">
+          <p class="r-eyebrow">What you get</p>
+          <h2 id="r-get">Years of your own data, in a file you can open.</h2>
+        </div>
+
+        <div class="r-claims">
+          <article class="r-claim rv">
+            <svg class="r-glyph" viewBox="0 0 120 40" preserveAspectRatio="xMinYMid meet" aria-hidden="true">
+              <path d="M2 20 h62" stroke="currentColor" stroke-dasharray="1.5 4"/>
+              <circle class="dot" cx="44" cy="20" r="3"/>
+              <rect x="72" y="5" width="44" height="30" rx="6" stroke="currentColor"/>
+              <path d="M80 15 h28M80 21 h28M80 27 h17" stroke="currentColor"/>
+            </svg>
+            <h3>A file you own</h3>
+            <p>
+              It lands where you put it. No middleman, no account, nothing to keep paying for to keep
+              reading it.
+            </p>
+          </article>
+
+          <article class="r-claim rv">
+            <svg class="r-glyph" viewBox="0 0 120 40" preserveAspectRatio="xMinYMid meet" aria-hidden="true">
+              <path d="M6 20 h108" stroke="currentColor" stroke-dasharray="1.5 4"/>
+              <path d="M6 13 v14M42 13 v14M78 13 v14M114 13 v14" stroke="currentColor"/>
+              <circle class="dot" cx="24" cy="20" r="3"/>
+              <circle class="dot" cx="60" cy="20" r="3"/>
+              <circle class="dot" cx="96" cy="20" r="3"/>
+            </svg>
+            <h3>It keeps going</h3>
+            <p>
+              New records go out on their own — on arrival, hourly, daily, or only when you ask. Each
+              destination keeps its own schedule.
+            </p>
+          </article>
+
+          <article class="r-claim rv">
+            <svg class="r-glyph" viewBox="0 0 120 40" preserveAspectRatio="xMinYMid meet" aria-hidden="true">
+              <path d="M4 27 h112" stroke="currentColor"/>
+              <path d="M18 27 v-10M42 27 v-10M66 27 v-10M90 27 v-10M114 27 v-10" stroke="currentColor"/>
+              <path class="go" d="M66 15 C66 3 42 3 42 15" stroke="currentColor" stroke-dasharray="1.5 3.5"/>
+              <circle class="dot" cx="66" cy="27" r="3"/>
+            </svg>
+            <h3>It repeats, it never skips</h3>
+            <p>
+              Anchors move only after records are safely staged. An interruption can redo work. It
+              cannot lose a reading.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <!-- ============ how ============ -->
+      <section class="r-sec" id="how" aria-labelledby="r-how-h">
+        <div class="r-how">
+          <div class="rv">
+            <p class="r-eyebrow">Straight answer</p>
+            <h2 id="r-how-h">How do I export my Apple Health data?</h2>
+            <p class="r-answer" style="margin-top:0.9rem">
+              Grant Hozz the Health types you want, point it at a destination you control, test it,
+              then pick a schedule. <strong>The data goes phone → destination.</strong> There is no
+              service in the middle, because there is no service.
+            </p>
+          </div>
+
+          <ol class="r-steps rv">
+            <li>
+              <div>
+                <b>Install Hozz, allow the types</b>
+                <span
+                  >Heart, sleep, activity, nutrition, mobility — you choose per type, and per
+                  destination.</span
+                >
+              </div>
+            </li>
+            <li>
+              <div>
+                <b>Add a destination</b>
+                <span>A folder, your Mac, Home Assistant, a URL, or an MQTT broker. Until then, nothing moves.</span>
+              </div>
+            </li>
+            <li>
+              <div>
+                <b>Test it before you trust it</b>
+                <span>Hozz sends a sample and shows you the real result — including the failures.</span>
+              </div>
+            </li>
+            <li>
+              <div>
+                <b>Choose a schedule</b>
+                <span
+                  >On arrival, hourly, daily or manual. Manual exports resume from the last
+                  checkpoint if you kill the app or reboot.</span
+                >
+              </div>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ destinations table ============ -->
+      <section class="r-sec" aria-labelledby="r-where">
+        <div class="r-sec-head rv">
+          <p class="r-eyebrow">Where it sends</p>
+          <h2 id="r-where">Five destinations. All of them yours.</h2>
+        </div>
+
+        <div class="r-table-wrap rv">
+          <table class="r-table">
+            <caption>Apple Health export destinations and formats</caption>
+            <thead>
+              <tr>
+                <th scope="col">Destination</th>
+                <th scope="col">How it travels</th>
+                <th scope="col">Formats</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row) => (
+                <tr>
+                  <th scope="row">{row.name}</th>
+                  <td data-label="How it travels" set:html={row.how} />
+                  <td data-label="Formats">{row.formats}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <p class="r-note rv">
+          <code>NDJSON</code> is the default: streamable, lossless for encoded fields, byte-identical
+          whatever your locale or time zone. <span class="r-lossy">CSV is lossy</span> — metadata and
+          nested workout detail don't fit a grid, so Hozz tells you instead of quietly dropping them.
+          Deletions travel as tombstones, never silent gaps.
+        </p>
+      </section>
+
+      <!-- ============ honesty ============ -->
+      <section class="r-sec" aria-labelledby="r-honest-h">
+        <div class="r-sec-head rv">
+          <p class="r-eyebrow">The unflattering part</p>
+          <h2 id="r-honest-h">What it won't pretend.</h2>
+        </div>
+
+        <ul class="r-honest rv">
+          <li>
+            <b>No green tick you didn't earn</b>
+            <span
+              >Apple won't let an app tell "you denied this type" from "you have no data". Hozz
+              reports denied-or-empty, unavailable, unsupported or failed.</span
+            >
+          </li>
+          <li>
+            <b>iOS picks the moment</b>
+            <span
+              >Background work runs when the system allows it — most types land near hourly. Health
+              can't be read while the phone is locked.</span
+            >
+          </li>
+          <li>
+            <b>MCP can't protect you from your assistant</b>
+            <span
+              >The read-only MCP server can't change or delete anything. But a cloud assistant may
+              upload whatever it reads. That's the assistant, not Hozz.</span
+            >
+          </li>
+          <li>
+            <b>Early alpha</b>
+            <span
+              >It works, and coverage is partial. One developer, 475 XCTest tests, and the source is
+              right there.</span
+            >
+          </li>
+        </ul>
+
+        <ul class="r-chips rv">
+          <li><b>Mac app</b> · receiver + charts by hour/day/week/month</li>
+          <li><b>hozz-mcp</b> · read-only, JSON-RPC 2.0 over stdio</li>
+          <li><b>Shortcuts</b> · Sync Health Data</li>
+          <li><b>Widget</b> · last sync state</li>
+          <li><b>475</b> XCTest tests</li>
+          <li><b>GPL-3.0</b> with App Store exception</li>
+        </ul>
+      </section>
+
+      <!-- ============ close ============ -->
+      <section class="r-close rv" aria-labelledby="r-close-h">
+        <p class="r-eyebrow">Take it with you</p>
+        <h2 id="r-close-h">Your health history should outlive the app that stored it.</h2>
+        <p>
+          Hozz is free, open source, and built by one person. Add a destination, or read the code
+          first — both are the point.
+        </p>
+        <div class="r-actions" style="margin-top:0">
+          <a class="r-pill r-pill--solid" href={GITHUB_URL} rel="noopener">Read the source on GitHub</a>
+          <a class="r-pill r-pill--ghost" href={DONATE_URL} rel="noopener">Sponsor the work</a>
+        </div>
+        <p class="r-foot">
+          <span>Hozz · Apple Health export for iPhone and Mac</span>
+          <span>Early alpha</span>
+          <a href={LICENSE_URL} rel="noopener">GPL-3.0 licence</a>
+        </p>
+      </section>
+    </div>
+
+    <script type="application/ld+json" set:html={JSON.stringify(app)} />
+    <script type="application/ld+json" set:html={JSON.stringify(faq)} />
+
+    <script is:inline>
+      document.documentElement.classList.add('r-js');
+
+      const wire = document.getElementById('r-wire');
+      const wireKey = document.getElementById('r-wire-key');
+      const wireLine = document.getElementById('r-wire-line');
+      const armed = new Set();
+
+      document.querySelectorAll('.r-arm').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const dest = btn.closest('.r-dest');
+          const state = dest.querySelector('.r-state');
+          const on = dest.classList.toggle('is-on');
+          btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+          btn.textContent = on ? 'Sending' : 'Send here';
+          state.textContent = on ? 'delivered · example' : 'held on device';
+
+          if (on) {
+            armed.add(btn.dataset.name);
+            wire.classList.remove('is-idle');
+            wireKey.textContent = '→ ' + btn.dataset.tag;
+            wireLine.textContent = btn.dataset.line;
+          } else {
+            armed.delete(btn.dataset.name);
+            if (armed.size === 0) {
+              wire.classList.add('is-idle');
+              wireKey.textContent = 'idle';
+              wireLine.textContent = 'Nothing has left the phone. There is no default destination.';
+            }
+          }
+        });
+      });
+
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((e) => {
+              if (e.isIntersecting) {
+                e.target.classList.add('is-in');
+                io.unobserve(e.target);
+              }
+            });
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.08 }
+        );
+        document.querySelectorAll('.rv').forEach((el, i) => {
+          el.style.transitionDelay = Math.min(i, 3) * 45 + 'ms';
+          io.observe(el);
+        });
+      } else {
+        document.querySelectorAll('.rv').forEach((el) => el.classList.add('is-in'));
+      }
+    </script>
+  </main>
+</SketchLayout>

@@ -1,0 +1,46 @@
+---
+/**
+ * p05 · Switchback scrubber
+ *
+ * The filled route enters from the left, bends through two complete Zs, and
+ * exits into the circular playhead. That continuation is the scrubber's working
+ * progress line, not a mark laid over it.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.plozz;
+const Z = {
+  y: 17,
+  w: 9,
+  h: 14,
+  bar: 3.2,
+  diag: 5.5,
+  cap: 'angled' as const,
+};
+const zLeft = 8;
+const zRight = 20.5;
+const progress =
+  `${zPath({ ...Z, x: zLeft })}${zPath({ ...Z, x: zRight })}` +
+  `M4 17H${zLeft + 1}V20.2H4Z` +
+  `M${zRight + Z.w - 1} 27.8H40V31H${zRight + Z.w - 1}Z`;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} scrubber mark`}
+>
+  <rect x="4" y="12" width="40" height="24" rx="12" fill={app.hue} />
+  <path d={progress} fill={app.deep} />
+  <circle cx="40" cy="29.4" r="4" fill={app.deep} />
+</svg>

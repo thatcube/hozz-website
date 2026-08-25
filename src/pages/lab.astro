@@ -1,0 +1,303 @@
+---
+/**
+ * The visualisation lab.
+ *
+ * Seven candidate figures, live, at the size they would actually run at, plus
+ * the two device slots. Each is framed identically so they can be compared on
+ * the idea rather than on presentation.
+ *
+ * Nothing here is a page design. These are the moving parts, so the good ones
+ * can be picked before anything is built around them.
+ */
+import Orbit from '../components/lab/Orbit.astro';
+import RingsFan from '../components/lab/RingsFan.astro';
+import KeepAskBuild from '../components/lab/KeepAskBuild.astro';
+import Wheel from '../components/lab/Wheel.astro';
+import OneRing from '../components/lab/OneRing.astro';
+import Question from '../components/lab/Question.astro';
+import Spill from '../components/lab/Spill.astro';
+import DeviceFrame from '../components/lab/DeviceFrame.astro';
+import '../styles/sketch-base.css';
+import { SITE } from '../data/site';
+
+const FIGS = [
+  {
+    n: '01',
+    name: 'Orbit',
+    says: 'Everything Health holds, circling a copy that is yours.',
+    note: 'Two counter-rotating tracks; each label counter-turns so it stays upright. Cheap to build. The risk is that orbiting chips are a known SaaS habit — it survives on being slow, sparse and monochrome.',
+  },
+  {
+    n: '02',
+    name: 'Rings, then fan',
+    says: 'What you are shown, then what you can do with it.',
+    note: 'The rings close, then records leave along the dotted routes. Deliberately not Move/Exercise/Stand — three arcs in our own hues, so we are not borrowing Apple’s marks.',
+  },
+  {
+    n: '03',
+    name: 'Keep · Ask · Build',
+    says: 'Three things you can do once the copy is yours.',
+    note: 'The three-ring form with the meaning replaced. Fills once, on arrival, rather than looping — a statement, not wallpaper.',
+  },
+  {
+    n: '04',
+    name: 'The wheel',
+    says: 'Not a curated dozen.',
+    note: 'Real type names on two counter-rotating rings. You cannot count them, which is the argument. Very cheap, and unlike anything else here.',
+  },
+  {
+    n: '05',
+    name: 'One ring, four shapes',
+    says: 'Your data, drawn however you like.',
+    note: 'The same circle as an activity ring, a night of sleep, a day of heart rate, and a dashboard donut. The most elegant argument on this page and the most work.',
+  },
+  {
+    n: '06',
+    name: 'The question',
+    says: 'Ask your own assistant, on your own machine.',
+    note: 'Has to be explicit that the assistant is yours and Hozz answers nothing itself, or it implies a chat feature that does not exist.',
+  },
+  {
+    n: '07',
+    name: 'Spill',
+    says: 'It piles up and goes nowhere. Then it does.',
+    note: 'Closest to sketches B and R, so it is the one to drop if you want fewer.',
+  },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Visualisation lab · Hozz</title>
+    <link rel="icon" href="/logo.svg" type="image/svg+xml" />
+    <link rel="canonical" href={`${SITE}/lab/`} />
+  </head>
+  <body>
+    <header class="top">
+      <p class="eyebrow">Hozz · working file</p>
+      <h1>Seven figures, live.</h1>
+      <p class="lede">
+        Candidate visuals at the size they would really run at. Each one is a
+        moving part, not a page — pick the ones worth building around. Every
+        label is a real Apple Health type, so the pictures stay checkable.
+      </p>
+      <p class="lede lede--fine">
+        All of them stop under <code>prefers-reduced-motion</code> and hold a
+        still frame that says the same thing.
+      </p>
+    </header>
+
+    <main>
+      {
+        FIGS.map((f, i) => (
+          <section class="fig" id={`f${f.n}`}>
+            <div class="meta">
+              <p class="tag"><b>{f.n}</b> <span>{f.name}</span></p>
+              <p class="says">{f.says}</p>
+              <p class="note">{f.note}</p>
+            </div>
+            <div class="stage">
+              {i === 0 && <Orbit />}
+              {i === 1 && <RingsFan />}
+              {i === 2 && <KeepAskBuild />}
+              {i === 3 && <Wheel />}
+              {i === 4 && <OneRing />}
+              {i === 5 && <Question />}
+              {i === 6 && <Spill />}
+            </div>
+          </section>
+        ))
+      }
+
+      <section class="fig" id="slots">
+        <div class="meta">
+          <p class="tag"><b>08</b> <span>Device slots</span></p>
+          <p class="says">Two answers to the screenshot question.</p>
+          <p class="note">
+            Left is an honest empty slot at the right aspect ratio, waiting for a
+            real capture. Right holds no app interface at all — just the data,
+            with real type names, the real receiver port and the real file name.
+            If the right-hand version reads well enough, no screenshot is needed,
+            and it stays true while the app’s UI is still private.
+          </p>
+        </div>
+        <div class="stage stage--slots">
+          <div class="pair">
+            <DeviceFrame device="mac" mode="empty" />
+            <DeviceFrame device="mac" mode="filled" />
+          </div>
+          <div class="pair">
+            <DeviceFrame device="ios" mode="empty" />
+            <DeviceFrame device="ios" mode="filled" />
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="end">
+      <a href="/directions/">← Back to the directions board</a>
+    </footer>
+  </body>
+</html>
+
+<style>
+  body {
+    background: #f4f5f7;
+    color: #14161a;
+    font-family: var(--sans);
+  }
+
+  .top {
+    width: min(100% - 2.5rem, 1080px);
+    margin-inline: auto;
+    padding-block: clamp(3rem, 7vw, 5rem) clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #6a6f77;
+    margin-bottom: 1rem;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 1.2rem + 3.2vw, 3.4rem);
+    font-weight: 800;
+    letter-spacing: -0.042em;
+    line-height: 1.02;
+  }
+
+  .lede {
+    margin-top: 1.1rem;
+    max-width: 58ch;
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    color: #4d525a;
+  }
+
+  .lede--fine {
+    font-size: 0.9375rem;
+  }
+
+  .lede code {
+    font-family: var(--mono);
+    font-size: 0.875em;
+    color: #23262b;
+  }
+
+  main {
+    width: min(100% - 2.5rem, 1080px);
+    margin-inline: auto;
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 2.25rem);
+    padding-bottom: 4rem;
+  }
+
+  .fig {
+    display: grid;
+    gap: 1.5rem;
+    padding: clamp(1.5rem, 3.5vw, 2.5rem);
+    background: #fff;
+    border: 1px solid #e4e6ea;
+    border-radius: 18px;
+  }
+
+  /* Grid children default to min-content width, which lets a wide figure push
+     the whole card past the viewport. */
+  .fig > * {
+    min-inline-size: 0;
+  }
+
+  @media (min-width: 900px) {
+    .fig {
+      grid-template-columns: minmax(0, 17rem) minmax(0, 1fr);
+      gap: clamp(2rem, 4vw, 3.5rem);
+      align-items: center;
+    }
+  }
+
+  .tag {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+  }
+
+  .tag b {
+    font-family: var(--mono);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #8a8f97;
+  }
+
+  .tag span {
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.032em;
+  }
+
+  .says {
+    margin-top: 0.65rem;
+    font-size: 1rem;
+    line-height: 1.45;
+    color: #23262b;
+  }
+
+  .note {
+    margin-top: 0.65rem;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: #5c6169;
+  }
+
+  .stage {
+    display: grid;
+    place-items: center;
+    min-block-size: 17rem;
+    padding: clamp(0.5rem, 2vw, 1.5rem);
+    border-radius: 14px;
+    background: #fafbfc;
+  }
+
+  .stage--slots {
+    gap: 2rem;
+    align-content: center;
+  }
+
+  .pair {
+    display: grid;
+    gap: 1.75rem;
+    justify-items: center;
+    inline-size: 100%;
+  }
+
+  @media (min-width: 640px) {
+    .pair {
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+    }
+  }
+
+  .end {
+    width: min(100% - 2.5rem, 1080px);
+    margin: 0 auto 5rem;
+  }
+
+  .end a {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #14161a;
+    text-decoration: none;
+    border-bottom: 2px solid #c6cad1;
+    padding-bottom: 2px;
+  }
+
+  .end a:hover {
+    border-bottom-color: #14161a;
+  }
+</style>

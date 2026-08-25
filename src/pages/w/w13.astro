@@ -1,0 +1,2222 @@
+---
+/**
+ * w13 · Ripple — built entirely out of c45 "Ripple, Lens".
+ *
+ * The identity and the page come from one idea rather than two. The mark is a
+ * disc resting on water, its interior stepping through six close tones from a
+ * near-white rim to a deeper core, sending rings outward. So:
+ *
+ *   • The hero is that mark at page scale. One archive enters at a single
+ *     point, strikes the lens, and six rings carry it outward. Each ring is one
+ *     of the six real destinations, drawn in the mark's water tones and
+ *     labelled with a fact you could check. Riding those rings are real
+ *     HealthKit identifiers with example readings. Every hairline runs back to
+ *     the one point where the data entered, because nothing here is invented.
+ *
+ *   • The page is the disc's bevel unrolled. Section washes walk the six lens
+ *     tones in order — #edf6fc → #96c2e0 — so scrolling is travelling from the
+ *     rim to the core. No single step announces itself; the whole descent does.
+ *     Section boundaries are ring crests, not straight rules.
+ *
+ *   • The footer is the keyline, #132638, the one dark value the mark owns.
+ *
+ * Landscape and portrait are separate compositions, not one squashed. Both are
+ * built from the same ring/arm/pin geometry, so a label is always exactly on
+ * its ring at any width.
+ */
+import Mark from '../../components/mark/logos/c45.astro';
+import {
+  SITE,
+  GITHUB_URL,
+  DONATE_URL,
+  LICENSE_URL,
+  NAV_LINKS,
+  CATEGORIES,
+  STREAM_LANES,
+  STEPS,
+  DESTINATIONS,
+  FORMATS,
+  DURABILITY,
+  COVERAGE_STATES,
+  MCP_TOOLS,
+  PROMISES,
+  WORKING,
+  NOT_YET,
+  FAQ,
+  SIBLINGS,
+} from '../../data/site';
+
+const hue = (key: string) => CATEGORIES.find((c) => c.key === key)?.hue ?? '#5d8cb0';
+
+/* The six ripple rings, outward from the disc. Diameter is a share of the
+   stage width with a hard cap, so the composition stops growing once it has
+   the room it needs and every label stays on its own ring. Stroke tones step
+   through the mark's water colours, palest furthest from the drop. */
+const RINGS = [
+  { d: '21%', cap: '300px', stroke: '#5d8cb0' },
+  { d: '30%', cap: '430px', stroke: '#6b98ba' },
+  { d: '40%', cap: '580px', stroke: '#79a4c4' },
+  { d: '52%', cap: '750px', stroke: '#87b0ce' },
+  { d: '62%', cap: '880px', stroke: '#96bcd6' },
+  { d: '75%', cap: '1040px', stroke: '#a6c8de' },
+];
+
+/* Portrait rings are wider than the phone on purpose — the outer two run off
+   both edges, which is what a ripple does when you are standing in it. */
+const RINGS_P = [
+  { d: '46%', cap: '258px', stroke: '#5d8cb0' },
+  { d: '68%', cap: '380px', stroke: '#6b98ba' },
+  { d: '94%', cap: '524px', stroke: '#79a4c4' },
+  { d: '126%', cap: '704px', stroke: '#87b0ce' },
+  { d: '164%', cap: '916px', stroke: '#96bcd6' },
+  { d: '208%', cap: '1162px', stroke: '#a6c8de' },
+];
+
+/* Ring n carries destination n. Short facts here, full facts in the section
+   below — every one of them is still a thing you could go and check. */
+const SHORT: Record<string, string> = {
+  'Your Mac': '_hozz._tcp · :54330',
+  Folder: 'Files picker',
+  'Home Assistant': 'Metrics JSON',
+  'Web address': 'POST · NDJSON',
+  InfluxDB: '/api/v2/write',
+  MQTT: 'mqtts:// · QoS 0',
+};
+
+/* Angles measured from three o'clock, clockwise, so 90deg is straight down —
+   away from the drop at the top of the stage. */
+const DEST_A = ['103deg', '345deg', '33deg', '217deg', '39deg', '48deg'];
+const DEST_A_P = ['122deg', '14deg', '131deg', '116deg', '112deg', '78deg'];
+
+/* What rides the rings: real HealthKit identifiers, coloured by the category
+   they belong to. The readings are examples and the caption says so. */
+const RIDERS = [
+  { ring: 2, a: '216deg', category: 'heart', id: 'heartRateVariabilitySDNN', sample: '48 ms' },
+  { ring: 3, a: '12deg', category: 'sleep', id: 'sleepAnalysis', sample: '7h 12m' },
+  { ring: 3, a: '83deg', category: 'activity', id: 'workoutRoute', sample: '6.2 mi' },
+  { ring: 4, a: '145deg', category: 'heart', id: 'electrocardiogram', sample: 'sinus rhythm' },
+  { ring: 4, a: '327deg', category: 'respiratory', id: 'vo2Max', sample: '44.1' },
+  { ring: 5, a: '124deg', category: 'mind', id: 'stateOfMind', sample: 'pleasant' },
+];
+
+const RIDERS_P = [
+  { ring: 2, a: '69deg', category: 'heart', id: 'heartRateVariabilitySDNN', sample: '48 ms' },
+  { ring: 3, a: '78deg', category: 'sleep', id: 'sleepAnalysis', sample: '7h 12m' },
+  { ring: 4, a: '68deg', category: 'heart', id: 'electrocardiogram', sample: 'sinus rhythm' },
+  { ring: 5, a: '76deg', category: 'mind', id: 'stateOfMind', sample: 'pleasant' },
+];
+
+const allTypes = STREAM_LANES.flat();
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'SoftwareApplication',
+      name: 'Hozz',
+      applicationCategory: 'HealthApplication',
+      operatingSystem: 'iOS, macOS',
+      url: SITE,
+      downloadUrl: GITHUB_URL,
+      isAccessibleForFree: true,
+      license: LICENSE_URL,
+      softwareVersion: 'Early alpha',
+      author: { '@type': 'Person', name: 'Brandon Moore' },
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      description:
+        'A free, open-source iPhone app with a companion Mac app that exports Apple Health data to destinations you own — your Mac, a folder, Home Assistant, InfluxDB, any web endpoint or MQTT. No account, no analytics, no hosted relay and no default destination.',
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: FAQ.map(({ q, a }) => ({
+        '@type': 'Question',
+        name: q,
+        acceptedAnswer: { '@type': 'Answer', text: a },
+      })),
+    },
+  ],
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta
+      name="description"
+      content="Hozz exports your Apple Health history to destinations you own — your Mac, a folder, Home Assistant, InfluxDB, a URL or MQTT. Free, open source, no account, no analytics, no server in the middle."
+    />
+    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#f7fbfd" />
+    <link rel="canonical" href={`${SITE}/w/w13/`} />
+    <title>Hozz — drop it once, it reaches everywhere you own</title>
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="topbar">
+      <div class="shell topbar-inner">
+        <a class="brand" href="#top">
+          <Mark size={30} />
+          <span>Hozz</span>
+        </a>
+        <nav class="topnav" aria-label="Sections">
+          {NAV_LINKS.map((link) => <a href={link.href}>{link.label}</a>)}
+          <a class="topnav-source" href={GITHUB_URL}>Source <span aria-hidden="true">↗</span></a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <!-- ================= hero ================= -->
+      <section class="hero" id="top">
+       <div class="herogrid">
+        <div class="shell hero-copy">
+          <div class="hero-say">
+            <p class="eyebrow">
+              <svg class="glyph" viewBox="0 0 16 16" aria-hidden="true">
+                <circle cx="8" cy="8" r="2" fill="currentColor" />
+                <circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".55" />
+                <circle cx="8" cy="8" r="7.4" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".28" />
+              </svg>
+              Apple Health export · early alpha
+            </p>
+            <h1>Drop it once. It reaches everywhere you <em class="em">own.</em></h1>
+            <p class="lede">
+              Your Apple Health history, copied off your iPhone into places you already run.
+              Free, open source, one developer.
+            </p>
+            <div class="actions">
+              <a class="btn" href="#export">How to export your data</a>
+              <a class="btn-quiet" href={GITHUB_URL}>Read the source <span aria-hidden="true">↗</span></a>
+            </div>
+          </div>
+
+          <dl class="hero-facts">
+            <div>
+              <dt>It reads</dt>
+              <dd><b class="fnum">{allTypes.length}</b> Health record types, across {STREAM_LANES.length} lanes</dd>
+            </div>
+            <div>
+              <dt>It writes to</dt>
+              <dd><b class="fnum">{DESTINATIONS.length}</b> destinations, in {FORMATS.length} formats</dd>
+            </div>
+            <div>
+              <dt>It sends me</dt>
+              <dd><b class="fnum">0</b> bytes — there is no server of mine</dd>
+            </div>
+          </dl>
+        </div>
+
+        <figure class="stagewrap">
+          <!-- landscape composition -->
+          <div class="stage stage-l" role="img" aria-label="One archive enters at a single point and six rings carry it outward — one ring for each of the six destinations Hozz can send to, with real HealthKit record types riding them.">
+            <span class="entry" aria-hidden="true"></span>
+            <div class="pin pin-src src" aria-hidden="true">
+              <b>Apple Health</b>
+              <span class="mono">HKAnchoredObjectQuery</span>
+            </div>
+
+            {RINGS.map((ring, i) => (
+              <div class="ring" style={`--d:${ring.d};--cap:${ring.cap};--stroke:${ring.stroke}`} aria-hidden="true">
+                <div class="arm arm-dest" style={`--a:${DEST_A[i]}`}></div>
+                {RIDERS.filter((r) => r.ring === i + 1).map((r) => (
+                  <div class="arm arm-ride" style={`--a:${r.a}`}></div>
+                ))}
+              </div>
+            ))}
+
+            <div class="layer layer-pins">
+              {RINGS.map((ring, i) => (
+                <div class="ring bare" style={`--d:${ring.d};--cap:${ring.cap}`} aria-hidden="true">
+                  <div class="arm" style={`--a:${DEST_A[i]}`}>
+                    <div class="tip">
+                      <div class="pin pin-dest">
+                        <i class="bead" style={`--c:${hue(DESTINATIONS[i].category)}`}></i>
+                        <b>{DESTINATIONS[i].title}</b>
+                        <span class="mono">{SHORT[DESTINATIONS[i].title]}</span>
+                      </div>
+                    </div>
+                  </div>
+                  {RIDERS.filter((r) => r.ring === i + 1).map((r) => (
+                    <div class="arm" style={`--a:${r.a}`}>
+                      <div class="tip">
+                        <div class="pin pin-ride" style={`--c:${hue(r.category)}`}>
+                          <span class="ridline"><i class="bead"></i><span class="mono rid">{r.id}</span></span>
+                          <span class="mono rsample">{r.sample}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+
+            <div class="disc" aria-hidden="true"><Mark size={132} /></div>
+          </div>
+
+          <!-- portrait composition: recomposed, not squashed -->
+          <div class="stage stage-p" role="img" aria-label="One archive enters at a single point and six rings carry it outward — one ring for each of the six destinations Hozz can send to, with real HealthKit record types riding them.">
+            <span class="entry" aria-hidden="true"></span>
+            <div class="pin pin-src src" aria-hidden="true">
+              <b>Apple Health</b>
+              <span class="mono">HKAnchoredObjectQuery</span>
+            </div>
+
+            {RINGS_P.map((ring, i) => (
+              <div class="ring" style={`--d:${ring.d};--cap:${ring.cap};--stroke:${ring.stroke}`} aria-hidden="true">
+                <div class="arm arm-dest" style={`--a:${DEST_A_P[i]}`}></div>
+                {RIDERS_P.filter((r) => r.ring === i + 1).map((r) => (
+                  <div class="arm arm-ride" style={`--a:${r.a}`}></div>
+                ))}
+              </div>
+            ))}
+
+            <div class="layer layer-pins">
+              {RINGS_P.map((ring, i) => (
+                <div class="ring bare" style={`--d:${ring.d};--cap:${ring.cap}`} aria-hidden="true">
+                  <div class="arm" style={`--a:${DEST_A_P[i]}`}>
+                    <div class="tip">
+                      <div class="pin pin-dest">
+                        <i class="bead" style={`--c:${hue(DESTINATIONS[i].category)}`}></i>
+                        <b>{DESTINATIONS[i].title}</b>
+                        <span class="mono">{SHORT[DESTINATIONS[i].title]}</span>
+                      </div>
+                    </div>
+                  </div>
+                  {RIDERS_P.filter((r) => r.ring === i + 1).map((r) => (
+                    <div class="arm" style={`--a:${r.a}`}>
+                      <div class="tip">
+                        <div class="pin pin-ride" style={`--c:${hue(r.category)}`}>
+                          <span class="ridline"><i class="bead"></i><span class="mono rid">{r.id}</span></span>
+                          <span class="mono rsample">{r.sample}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+
+            <div class="disc" aria-hidden="true"><Mark size={104} /></div>
+          </div>
+        </figure>
+
+        <div class="shell notewrap">
+          <p class="stagenote">
+            Six rings, six real destinations, each with a fact you could check. Riding them are
+            real HealthKit identifiers — the readings beside them are examples, not your data.
+            Nothing on this page ever touches Health.
+          </p>
+        </div>
+       </div>
+      </section>
+
+      <!-- ================= the lens ================= -->
+      <section class="sec t1" aria-labelledby="lens-h">
+        <svg class="crest" viewBox="0 0 1200 48" preserveAspectRatio="none" aria-hidden="true"
+          ><path d="M0 48C280-8 920-8 1200 48Z"></path></svg
+        >
+        <div class="shell">
+          <div class="head">
+            <p class="eyebrow">
+              <svg class="glyph" viewBox="0 0 16 16" aria-hidden="true">
+                <circle cx="8" cy="8" r="2" fill="currentColor" />
+                <circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".55" />
+                <circle cx="8" cy="8" r="7.4" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".28" />
+              </svg>
+              The lens
+            </p>
+            <h2 id="lens-h">A lens does not <em class="em">change</em> the light it passes.</h2>
+            <p class="lede">
+              Hozz reads your Health records and hands them on. It does not interpret them, keeps
+              nothing on anything of mine, and cannot put a single reading back.
+            </p>
+          </div>
+          <ul class="cards three">
+            <li>
+              <h3>It reads by anchor</h3>
+              <p>
+                Every Health type carries its own opaque anchor, advanced only once records are
+                durably staged. A resumed export carries on rather than re-reading your history.
+              </p>
+              <p class="mono fact">HKAnchoredObjectQuery</p>
+            </li>
+            <li>
+              <h3>Nothing sits in the middle</h3>
+              <p>
+                Your phone talks to your destination directly. There is no relay of mine between
+                them, which means there is nothing of mine to breach, subpoena or shut down.
+              </p>
+              <p class="mono fact">no hosted service</p>
+            </li>
+            <li>
+              <h3>It never writes back</h3>
+              <p>
+                Health stamps every sample with the app that wrote it, so a returned reading would
+                launder its own origin. Hozz reads, and that is all it can do.
+              </p>
+              <p class="mono fact">read-only, permanently</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ================= how to export ================= -->
+      <section class="sec t1" id="export" aria-labelledby="export-h">
+        <div class="shell">
+          <div class="head">
+            <p class="eyebrow">
+              <svg class="glyph" viewBox="0 0 16 16" aria-hidden="true">
+                <circle cx="8" cy="8" r="2" fill="currentColor" />
+                <circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".55" />
+                <circle cx="8" cy="8" r="7.4" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".28" />
+              </svg>
+              The question people actually ask
+            </p>
+            <h2 id="export-h">How do I <em class="em">export</em> my Apple Health data?</h2>
+            <p class="lede">
+              Install Hozz on your iPhone — and the companion app on your Mac, if that is where the
+              data should land. Then three steps, once. After that new records leave on their own.
+            </p>
+          </div>
+          <ol class="steps">
+            {STEPS.map((step, i) => (
+              <li style={`--c:${hue(step.category)}`}>
+                <span class="mono step-n">{String(i + 1).padStart(2, '0')}</span>
+                <h3>{step.title}</h3>
+                <p>{step.body}</p>
+              </li>
+            ))}
+          </ol>
+          <p class="aside">
+            There is no default destination. Until you add one and confirm it, Hozz reads nothing
+            and sends nothing.
+          </p>
+        </div>
+      </section>
+
+      <!-- ================= destinations ================= -->
+      <section class="sec t2" id="destinations" aria-labelledby="dest-h">
+        <svg class="crest" viewBox="0 0 1200 48" preserveAspectRatio="none" aria-hidden="true"
+          ><path d="M0 48C280-8 920-8 1200 48Z"></path></svg
+        >
+        <div class="shell">
+          <div class="head">
+            <p class="eyebrow">
+              <svg class="glyph" viewBox="0 0 16 16" aria-hidden="true">
+                <circle cx="8" cy="8" r="2" fill="currentColor" />
+                <circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".55" />
+                <circle cx="8" cy="8" r="7.4" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".28" />
+              </svg>
+              Six rings
+            </p>
+            <h2 id="dest-h">Every one of them somewhere you <em class="em">own.</em></h2>
+            <p class="lede">
+              These are the six rings in the picture above, written out. Each is a place you
+              already run, and each is anchored by something you could go and verify.
+            </p>
+          </div>
+          <ul class="dests">
+            {DESTINATIONS.map((d, i) => (
+              <li style={`--c:${hue(d.category)}`}>
+                <svg class="rip" viewBox="0 0 44 44" aria-hidden="true">
+                  <circle cx="22" cy="22" r="3.4" fill="var(--c)" />
+                  <circle cx="22" cy="22" r="8.6" fill="none" stroke="var(--c)" stroke-width="1.6" opacity=".6" />
+                  <circle cx="22" cy="22" r="14" fill="none" stroke="var(--c)" stroke-width="1.6" opacity=".36" />
+                  <circle cx="22" cy="22" r="19.4" fill="none" stroke="var(--c)" stroke-width="1.6" opacity=".18" />
+                </svg>
+                <p class="mono ringno">ring {String(i + 1).padStart(2, '0')}</p>
+                <h3>{d.title}</h3>
+                <p>{d.body}</p>
+                <p class="mono fact">{d.fact}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <!-- ================= formats ================= -->
+      <section class="sec t2" id="formats" aria-labelledby="fmt-h">
+        <div class="shell">
+          <div class="head">
+            <p class="eyebrow">
+              <svg class="glyph" viewBox="0 0 16 16" aria-hidden="true">
+                <circle cx="8" cy="8" r="2" fill="currentColor" />
+                <circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".55" />
+                <circle cx="8" cy="8" r="7.4" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".28" />
+              </svg>
+              Seven formats
+            </p>
+            <h2 id="fmt-h"><em class="em">Files,</em> not a database you rent.</h2>
+            <p class="lede">
+              What the records wear when they arrive. Two of these throw information away — both
+              say so here and both say so in the app, because a lossy export is a fine thing to
+              want and a bad thing to discover later.
+            </p>
+          </div>
+          <div class="tablewrap">
+            <table class="formats">
+              <caption class="sr-only">Export formats, what each is for, and what each keeps</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Format</th>
+                  <th scope="col">What it is for</th>
+                  <th scope="col">What it keeps</th>
+                </tr>
+              </thead>
+              <tbody>
+                {FORMATS.map((f) => {
+                  const lossy = f.note.startsWith('Lossy');
+                  return (
+                    <tr class={lossy ? 'lossy' : undefined}>
+                      <th scope="row"><span class="mono">{f.name}</span></th>
+                      <td>{f.use}</td>
+                      <td>
+                        {lossy && <span class="mono tag">lossy</span>}
+                        <span>{f.note.replace(/^Lossy — /, '')}</span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= what it reads ================= -->
+      <section class="sec t3" id="reads" aria-labelledby="reads-h">
+        <svg class="crest" viewBox="0 0 1200 48" preserveAspectRatio="none" aria-hidden="true"
+          ><path d="M0 48C280-8 920-8 1200 48Z"></path></svg
+        >
+        <div class="shell">
+          <div class="head">
+            <p class="eyebrow">
+              <svg class="glyph" viewBox="0 0 16 16" aria-hidden="true">
+                <circle cx="8" cy="8" r="2" fill="currentColor" />
+                <circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".55" />
+                <circle cx="8" cy="8" r="7.4" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".28" />
+              </svg>
+              What rides the rings
+            </p>
+            <h2 id="reads-h">Real identifiers, so you can <em class="em">check</em> the claim.</h2>
+            <p class="lede">
+              These are Apple's own API names, not invented ones. Anyone who knows HealthKit can
+              verify them; anyone who does not still reads the breadth. The values are examples —
+              this page has never seen your data, and coverage is still partial.
+            </p>
+          </div>
+
+          <ul class="cats">
+            {CATEGORIES.map((c) => (
+              <li style={`--c:${c.hue}`}>
+                <i></i>
+                {c.label}
+              </li>
+            ))}
+          </ul>
+
+          <ul class="types">
+            {allTypes.map((t) => (
+              <li style={`--c:${hue(t.category)}`}>
+                <i></i>
+                <span class="mono tid">{t.id}</span>
+                <span class="mono tval">{t.sample}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <!-- ================= durability ================= -->
+      <section class="sec t3" id="durability" aria-labelledby="dur-h">
+        <div class="shell">
+          <div class="head">
+            <p class="eyebrow">
+              <svg class="glyph" viewBox="0 0 16 16" aria-hidden="true">
+                <circle cx="8" cy="8" r="2" fill="currentColor" />
+                <circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".55" />
+                <circle cx="8" cy="8" r="7.4" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".28" />
+              </svg>
+              Durability
+            </p>
+            <h2 id="dur-h">An interruption can repeat work. It cannot <em class="em">skip</em> a record.</h2>
+            <p class="lede">
+              That sentence is the whole design. Everything below exists to make it true, and 475
+              XCTest tests exist to keep it true.
+            </p>
+          </div>
+          <ul class="cards four">
+            {DURABILITY.map((d) => (
+              <li>
+                <h3>{d.title}</h3>
+                <p>{d.body}</p>
+                <p class="mono fact">{d.fact}</p>
+              </li>
+            ))}
+          </ul>
+          <p class="aside">
+            <span class="mono big">475</span> XCTest tests in the repository, and you can run them
+            yourself.
+          </p>
+        </div>
+      </section>
+
+      <!-- ================= honesty ================= -->
+      <section class="sec t4" id="honest" aria-labelledby="honest-h">
+        <svg class="crest" viewBox="0 0 1200 48" preserveAspectRatio="none" aria-hidden="true"
+          ><path d="M0 48C280-8 920-8 1200 48Z"></path></svg
+        >
+        <div class="shell">
+          <div class="head">
+            <p class="eyebrow">
+              <svg class="glyph" viewBox="0 0 16 16" aria-hidden="true">
+                <circle cx="8" cy="8" r="2" fill="currentColor" />
+                <circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".55" />
+                <circle cx="8" cy="8" r="7.4" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".28" />
+              </svg>
+              Honesty
+            </p>
+            <h2 id="honest-h">Where it cannot know, it <em class="em">says</em> so.</h2>
+            <p class="lede">
+              Apple will not let an app tell “you denied this type” from “you have no data”. So
+              Hozz does not print a tick it has not earned. These are the five states it reports.
+            </p>
+          </div>
+          <div class="tablewrap">
+            <table class="states">
+              <caption class="sr-only">Coverage states Hozz reports for each Health type</caption>
+              <thead>
+                <tr><th scope="col">State</th><th scope="col">What it means</th></tr>
+              </thead>
+              <tbody>
+                {COVERAGE_STATES.map((s) => (
+                  <tr>
+                    <th scope="row"><span class={`mono state tone-${s.tone}`}>{s.state}</span></th>
+                    <td>{s.body}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <ul class="cards three flat">
+            <li>
+              <h3>No progress percentage</h3>
+              <p>
+                Health will not say how many records a type holds without reading all of them, so
+                any fraction would be invented. Hozz reports how many types are complete and how
+                far back they reach instead.
+              </p>
+            </li>
+            <li>
+              <h3>iOS decides when it runs</h3>
+              <p>
+                Background work happens when the system allows it, so most types land near hourly.
+                Health cannot be read at all while the phone is locked.
+              </p>
+            </li>
+            <li>
+              <h3>Coverage is partial</h3>
+              <p>
+                Not every Health type is handled yet. A type this version cannot parse is
+                quarantined and named, then added once a newer version can read it.
+              </p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ================= assistant ================= -->
+      <section class="sec t4" id="assistant" aria-labelledby="mcp-h">
+        <div class="shell mcp">
+          <div>
+            <p class="eyebrow">
+              <svg class="glyph" viewBox="0 0 16 16" aria-hidden="true">
+                <circle cx="8" cy="8" r="2" fill="currentColor" />
+                <circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".55" />
+                <circle cx="8" cy="8" r="7.4" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".28" />
+              </svg>
+              The assistant
+            </p>
+            <h2 id="mcp-h">Ask your <em class="em">own</em> questions.</h2>
+            <p class="lede">
+              The Mac app ships a read-only MCP server over the database your phone keeps current,
+              so a question costs a lookup rather than a re-parse of a stale XML export. It cannot
+              change or delete anything.
+            </p>
+            <p class="caveat">
+              <strong>The honest caveat:</strong> a cloud assistant may upload whatever it reads.
+              That is the assistant's behaviour, not Hozz's — which is a good reason to point a
+              local one at it.
+            </p>
+          </div>
+          <div>
+            <h3 class="tiny">What it can read</h3>
+            <ul class="mcp-list">
+              {MCP_TOOLS.map((t) => <li class="mono">{t}</li>)}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= refusals ================= -->
+      <section class="sec t5" id="refusals" aria-labelledby="prom-h">
+        <svg class="crest" viewBox="0 0 1200 48" preserveAspectRatio="none" aria-hidden="true"
+          ><path d="M0 48C280-8 920-8 1200 48Z"></path></svg
+        >
+        <div class="shell">
+          <div class="head">
+            <p class="eyebrow">
+              <svg class="glyph" viewBox="0 0 16 16" aria-hidden="true">
+                <circle cx="8" cy="8" r="2" fill="currentColor" />
+                <circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".55" />
+                <circle cx="8" cy="8" r="7.4" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".28" />
+              </svg>
+              Refusals
+            </p>
+            <h2 id="prom-h">The list of things it will <em class="em">not</em> do.</h2>
+          </div>
+          <ul class="proms">
+            {PROMISES.map((p) => (
+              <li style={`--c:${hue(p.category)}`}>
+                <h3>{p.title}</h3>
+                <p>{p.body}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <!-- ================= status ================= -->
+      <section class="sec t5" id="status" aria-labelledby="status-h">
+        <div class="shell">
+          <div class="head">
+            <p class="eyebrow">
+              <svg class="glyph" viewBox="0 0 16 16" aria-hidden="true">
+                <circle cx="8" cy="8" r="2" fill="currentColor" />
+                <circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".55" />
+                <circle cx="8" cy="8" r="7.4" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".28" />
+              </svg>
+              Early alpha
+            </p>
+            <h2 id="status-h">It works. Coverage is <em class="em">partial.</em></h2>
+            <p class="lede">Both halves of that are true, so both are printed.</p>
+          </div>
+          <div class="status">
+            <div>
+              <h3 class="tiny">Working today</h3>
+              <ul class="tick">{WORKING.map((w) => <li>{w}</li>)}</ul>
+            </div>
+            <div>
+              <h3 class="tiny">Not yet</h3>
+              <ul class="cross">{NOT_YET.map((n) => <li>{n}</li>)}</ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= faq ================= -->
+      <section class="sec t6" id="faq" aria-labelledby="faq-h">
+        <svg class="crest" viewBox="0 0 1200 48" preserveAspectRatio="none" aria-hidden="true"
+          ><path d="M0 48C280-8 920-8 1200 48Z"></path></svg
+        >
+        <div class="shell">
+          <div class="head">
+            <p class="eyebrow">
+              <svg class="glyph" viewBox="0 0 16 16" aria-hidden="true">
+                <circle cx="8" cy="8" r="2" fill="currentColor" />
+                <circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".55" />
+                <circle cx="8" cy="8" r="7.4" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".28" />
+              </svg>
+              Questions
+            </p>
+            <h2 id="faq-h"><em class="em">Straight</em> answers.</h2>
+          </div>
+          <dl class="faq">
+            {FAQ.map((item) => (
+              <div>
+                <dt>{item.q}</dt>
+                <dd>{item.a}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </section>
+
+      <!-- ================= close ================= -->
+      <section class="sec t6 close" aria-labelledby="close-h">
+        <div class="shell close-in">
+          <div class="close-mark"><Mark size={72} /></div>
+          <h2 id="close-h">Drop it in. <em class="em">Keep</em> the copy.</h2>
+          <p>
+            Free forever, GPL-3.0 with an App Store exception, written by one person. Read every
+            line before you trust it with anything.
+          </p>
+          <div class="actions">
+            <a class="btn" href={GITHUB_URL}>Get it on GitHub <span aria-hidden="true">↗</span></a>
+            <a class="btn-quiet" href={DONATE_URL}>Sponsor the work <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <svg class="crest crest-dark" viewBox="0 0 1200 48" preserveAspectRatio="none" aria-hidden="true"
+        ><path d="M0 48C280-8 920-8 1200 48Z"></path></svg
+      >
+      <div class="shell foot-in">
+        <div>
+          <p class="foot-lead">
+            Hozz — Apple Health export for iPhone, with a companion Mac app. By Brandon Moore.
+          </p>
+          <p class="foot-links">
+            <a href={GITHUB_URL}>Source</a>
+            <a href={LICENSE_URL}>GPL-3.0</a>
+            <a href={DONATE_URL}>Sponsor</a>
+          </p>
+        </div>
+        <div>
+          <h2 class="tiny">Also mine</h2>
+          <ul class="sibs">
+            {SIBLINGS.map((s) => (
+              <li>
+                <a href={s.href}>{s.name}</a>
+                <span>{s.body}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </footer>
+
+    <style>
+      @font-face {
+        font-family: 'Sentient';
+        src: url('/fonts/sentient-400.woff2') format('woff2');
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'Sentient';
+        src: url('/fonts/sentient-400-italic.woff2') format('woff2');
+        font-weight: 400;
+        font-style: italic;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'Sentient';
+        src: url('/fonts/sentient-500.woff2') format('woff2');
+        font-weight: 500;
+        font-style: normal;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'Sentient';
+        src: url('/fonts/sentient-500-italic.woff2') format('woff2');
+        font-weight: 500;
+        font-style: italic;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'General Sans';
+        src: url('/fonts/general-sans-400.woff2') format('woff2');
+        font-weight: 400;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'General Sans';
+        src: url('/fonts/general-sans-500.woff2') format('woff2');
+        font-weight: 500;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'General Sans';
+        src: url('/fonts/general-sans-600.woff2') format('woff2');
+        font-weight: 600;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'IBM Plex Mono';
+        src: url('/fonts/ibm-plex-mono-400.woff2') format('woff2');
+        font-weight: 400;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'IBM Plex Mono';
+        src: url('/fonts/ibm-plex-mono-500.woff2') format('woff2');
+        font-weight: 500;
+        font-display: swap;
+      }
+
+      :root {
+        /* c45 · Ripple, Lens — the whole palette, nothing imported.
+           The six lens tones are the page's washes, rim to core. */
+        --air: #f7fbfd;
+        --t1: #edf6fc;
+        --t2: #dcecf6;
+        --t3: #cae1f1;
+        --t4: #b9d7eb;
+        --t5: #a7cce6;
+        --t6: #96c2e0;
+        /* the water the disc rests in */
+        --w1: #96bcd6;
+        --w2: #5d8cb0;
+        /* keyline and face */
+        --ink: #132638;
+        /* one step off the keyline, for the word that carries the argument */
+        --em: #1d3b57;
+        /* the quietest text this page allows: 5.4:1 on the deepest wash */
+        --mid: #2e4256;
+        --hair: #a9c6db;
+        --rule: #bcd6e7;
+
+        --shell: 1240px;
+
+        --display: 'Sentient', Georgia, serif;
+        --body: 'General Sans', system-ui, sans-serif;
+        --mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+        --step--1: clamp(0.78rem, 0.75rem + 0.12vw, 0.85rem);
+        --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.1rem);
+        --step-1: clamp(1.25rem, 1.1rem + 0.52vw, 1.42rem);
+        --step-2: clamp(1.58rem, 1.36rem + 0.86vw, 2.05rem);
+        --step-3: clamp(1.95rem, 1.5rem + 1.6vw, 2.85rem);
+        --step-4: clamp(2.5rem, 1.75rem + 2.9vw, 4.35rem);
+
+        --gap: clamp(1.2rem, 0.9rem + 1.2vw, 2rem);
+        --pad-y: clamp(3.4rem, 2.2rem + 4.2vw, 7rem);
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        -webkit-text-size-adjust: 100%;
+      }
+
+      body {
+        margin: 0;
+        background: var(--air);
+        color: var(--ink);
+        font-family: var(--body);
+        font-size: var(--step-0);
+        line-height: 1.62;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      h1,
+      h2,
+      h3 {
+        margin: 0;
+        font-family: var(--display);
+        font-weight: 500;
+        letter-spacing: -0.016em;
+        text-wrap: balance;
+      }
+
+      p {
+        margin: 0;
+      }
+
+      ul,
+      ol,
+      dl,
+      dd {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      img,
+      svg {
+        display: block;
+        max-width: 100%;
+      }
+
+      .mono {
+        font-family: var(--mono);
+        font-variant-ligatures: none;
+      }
+
+      .em {
+        font-style: italic;
+        color: var(--em);
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      .skip {
+        position: absolute;
+        left: -9999px;
+        top: 0;
+        z-index: 100;
+        background: var(--ink);
+        color: var(--t1);
+        padding: 0.7rem 1.1rem;
+        border-radius: 0 0 10px 0;
+        text-decoration: none;
+      }
+
+      .skip:focus {
+        left: 0;
+      }
+
+      :focus-visible {
+        outline: 3px solid var(--em);
+        outline-offset: 3px;
+        border-radius: 2px;
+      }
+
+      .shell {
+        width: min(100% - 2.5rem, var(--shell));
+        margin-inline: auto;
+      }
+
+      /* ---------------- topbar ---------------- */
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        background: color-mix(in srgb, var(--air) 86%, transparent);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--rule);
+      }
+
+      .topbar-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding-block: 0.7rem;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        text-decoration: none;
+        font-family: var(--display);
+        font-size: 1.16rem;
+        font-weight: 500;
+        letter-spacing: -0.02em;
+      }
+
+      .topnav {
+        display: flex;
+        align-items: center;
+        gap: clamp(0.9rem, 1.6vw, 1.7rem);
+        font-size: 0.92rem;
+        font-weight: 500;
+      }
+
+      .topnav a {
+        text-decoration: none;
+        color: var(--mid);
+        white-space: nowrap;
+      }
+
+      .topnav a:hover {
+        color: var(--ink);
+      }
+
+      .topnav-source {
+        color: var(--ink) !important;
+        border-bottom: 1.5px solid var(--hair);
+        padding-bottom: 1px;
+      }
+
+      @media (max-width: 900px) {
+        .topnav a:not(.topnav-source) {
+          display: none;
+        }
+      }
+
+      /* ---------------- hero ---------------- */
+
+      .hero {
+        position: relative;
+        z-index: 0;
+        background: var(--air);
+        padding-top: clamp(1.6rem, 1.1rem + 1.8vw, 2.8rem);
+        padding-bottom: clamp(2rem, 1.4rem + 2vw, 3.4rem);
+        overflow: hidden;
+      }
+
+      .hero-copy {
+        position: relative;
+        z-index: 2;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 17.5rem);
+        gap: clamp(1.8rem, 1rem + 3.4vw, 4.5rem);
+        align-items: end;
+      }
+
+      .hero-say {
+        max-width: 46rem;
+      }
+
+      /* Wide: the reader meets the diagram, not a description of it. The copy
+         column and the ripple share one grid cell — the drop sits right of the
+         text and the outer rings pass behind it, so the first screen is the
+         thing spreading. The copy stays on .shell, so its left edge is the
+         same x as the nav mark at every width. */
+      @media (min-width: 1240px) {
+        .herogrid {
+          display: grid;
+          grid-template-rows: auto auto;
+        }
+
+        .hero-copy,
+        .stagewrap {
+          grid-column: 1;
+          grid-row: 1;
+        }
+
+        .hero-copy {
+          align-self: start;
+          grid-template-columns: minmax(0, 1fr);
+          gap: clamp(1.5rem, 1rem + 1.2vw, 2.2rem);
+          align-items: start;
+          width: min(100% - 2.5rem, var(--shell));
+          margin-inline: auto;
+          pointer-events: none;
+        }
+
+        .hero-copy > * {
+          max-width: 25.5rem;
+          pointer-events: auto;
+        }
+
+        .hero-say {
+          max-width: 25.5rem;
+        }
+
+        .stage {
+          margin-top: 0;
+        }
+
+        .hero-say h1 {
+          font-size: clamp(2.35rem, 1.2rem + 2vw, 3.05rem);
+        }
+
+        .notewrap {
+          grid-column: 1;
+          grid-row: 2;
+        }
+      }
+
+      .notewrap {
+        margin-top: clamp(1rem, 0.7rem + 1vw, 1.7rem);
+      }
+
+      .stagenote {
+        margin: 0;
+        max-width: 46rem;
+        font-size: var(--step--1);
+        line-height: 1.62;
+        color: var(--mid);
+      }
+
+      .hero-facts {
+        margin: 0 0 0.5rem;
+        border-top: 1px solid rgba(93, 140, 176, 0.32);
+      }
+
+      .hero-facts > div {
+        padding: 0.72rem 0;
+        border-bottom: 1px solid rgba(93, 140, 176, 0.32);
+      }
+
+      .hero-facts dt {
+        font-family: var(--mono);
+        font-size: 0.7rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--mid);
+      }
+
+      .hero-facts dd {
+        margin: 0.18rem 0 0;
+        font-size: 0.94rem;
+        line-height: 1.4;
+        color: var(--mid);
+      }
+
+      .fnum {
+        font-family: var(--mono);
+        font-weight: 500;
+        font-size: 1.08rem;
+        color: var(--ink);
+      }
+
+      /* Narrow: the copy column dissolves so the ripple can rise to just under
+         the buttons. The statement, the thing spreading, what it means, then
+         the counts — the diagram is met, not described. */
+      @media (max-width: 900px) {
+        .herogrid {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .hero-copy {
+          display: contents;
+        }
+
+        .hero-say,
+        .hero-facts {
+          width: min(100% - 2.5rem, var(--shell));
+          margin-inline: auto;
+        }
+
+        .hero-say {
+          order: 1;
+        }
+
+        .stagewrap {
+          order: 2;
+        }
+
+        .notewrap {
+          order: 3;
+        }
+
+        .hero-facts {
+          order: 4;
+          margin-top: clamp(1.6rem, 1.1rem + 1.6vw, 2.4rem);
+          margin-bottom: 0;
+        }
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: var(--mono);
+        font-size: var(--step--1);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--mid);
+        margin-bottom: 0.9rem;
+      }
+
+      .glyph {
+        width: 15px;
+        height: 15px;
+        flex: none;
+        color: var(--w2);
+      }
+
+      h1 {
+        font-size: var(--step-4);
+        line-height: 0.98;
+        max-width: 16ch;
+      }
+
+      .lede {
+        margin-top: 1.15rem;
+        max-width: 58ch;
+        font-size: var(--step-1);
+        line-height: 1.52;
+        color: var(--mid);
+      }
+
+      .actions {
+        margin-top: 1.7rem;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.9rem 1.6rem;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: var(--ink);
+        color: var(--t1);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.98rem;
+        padding: 0.72rem 1.25rem;
+        border-radius: 999px;
+      }
+
+      .btn:hover {
+        background: #0c1a28;
+      }
+
+      .btn-quiet {
+        font-weight: 600;
+        font-size: 0.98rem;
+        text-decoration: none;
+        border-bottom: 2px solid var(--hair);
+        padding-bottom: 2px;
+      }
+
+      .btn-quiet:hover {
+        border-bottom-color: var(--ink);
+      }
+
+      /* ---------------- the ripple stage ---------------- */
+
+      .stagewrap {
+        margin: 0;
+      }
+
+      .stage {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        overflow: hidden;
+        margin-top: clamp(1.4rem, 1rem + 1.6vw, 2.4rem);
+        background: radial-gradient(
+          128% 96% at var(--ox) var(--oy),
+          #ffffff 0%,
+          #f3f9fd 34%,
+          #e7f1fa 66%,
+          #dbebf6 100%
+        );
+      }
+
+      /* The drop sits right of centre and a little above it, so the rings have
+         room to spread in every direction rather than only downward. Same
+         origin at every landscape width, so the composition is one thing that
+         scales rather than two that disagree. */
+      .stage-l {
+        --ox: 64%;
+        --oy: 38%;
+        --disc: clamp(84px, 8.4vw, 132px);
+        height: clamp(660px, 4rem + 44vw, 796px);
+      }
+
+      .stage-p {
+        --ox: 50%;
+        --oy: 20%;
+        --disc: clamp(76px, 20vw, 104px);
+        height: clamp(680px, 182vw, 880px);
+      }
+
+      /* Landscape is the default; the phone gets its own composition. */
+      .stage-p {
+        display: none;
+      }
+
+      @media (max-width: 860px) {
+        .stage-l {
+          display: none;
+        }
+        .stage-p {
+          display: block;
+        }
+        .stage-p .pin-ride {
+          max-width: 10.4rem;
+        }
+        .stage-p .pin-ride .rid {
+          font-size: 0.61rem;
+        }
+        .stage-p .pin-ride .rsample {
+          font-size: 0.61rem;
+        }
+        .stage-p .pin-dest {
+          max-width: 8.6rem;
+        }
+        .stage-p .pin {
+          padding: 0.36rem 0.54rem;
+        }
+      }
+
+      /* The one point everything traces back to. */
+      .entry {
+        position: absolute;
+        left: var(--ox);
+        top: 0;
+        width: 0;
+        height: calc(var(--oy) - var(--disc) / 2);
+        border-left: 1px dashed var(--w1);
+      }
+
+      .disc {
+        position: absolute;
+        left: var(--ox);
+        top: var(--oy);
+        width: var(--disc);
+        aspect-ratio: 1;
+        translate: -50% -50%;
+        z-index: 2;
+        filter: drop-shadow(0 10px 22px rgba(19, 38, 56, 0.13));
+      }
+
+      .disc :global(svg) {
+        width: 100%;
+        height: auto;
+      }
+
+      /* Two layers over one origin: every dashed line is painted first, every
+         label second, so no line can ever cross a word. Each .arm rotates, and
+         a rotation makes its own stacking context, so z-index inside an arm
+         cannot lift a label above a sibling arm's line — separate layers can. */
+      .layer {
+        position: absolute;
+        inset: 0;
+      }
+
+      .layer-pins {
+        z-index: 3;
+      }
+
+      .ring.bare {
+        border-color: transparent;
+        animation: none;
+        opacity: 1;
+      }
+
+      /* Ring n is destination n. Diameter is a share of the stage width with a
+         cap, so once the composition has its room it stops growing. */
+      .ring {        position: absolute;
+        left: var(--ox);
+        top: var(--oy);
+        width: min(var(--d), var(--cap));
+        aspect-ratio: 1;
+        translate: -50% -50%;
+        border: 1px solid var(--stroke);
+        border-radius: 50%;
+      }
+
+      /* An arm is exactly the ring's radius, so anything at its far end sits
+         precisely on the ring at any viewport. */
+      .arm {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 50%;
+        height: 0;
+        transform-origin: 0 0;
+        rotate: var(--a);
+      }
+
+      .arm-dest {
+        border-top: 1px dashed color-mix(in srgb, var(--stroke) 70%, transparent);
+      }
+
+      /* Zero-size pivot that undoes the arm's rotation, so labels stay level. */
+      .tip {
+        position: absolute;
+        left: 100%;
+        top: 0;
+        width: 0;
+        height: 0;
+        transform-origin: 0 0;
+        rotate: calc(-1 * var(--a));
+      }
+
+      .pin {
+        position: absolute;
+        left: 0;
+        top: 0;
+        translate: -50% -50%;
+        width: max-content;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(9px);
+        -webkit-backdrop-filter: blur(9px);
+        border: 1px solid rgba(93, 140, 176, 0.28);
+        border-radius: 11px;
+        box-shadow: 0 6px 18px rgba(19, 38, 56, 0.08);
+        padding: 0.42rem 0.66rem;
+        line-height: 1.3;
+      }
+
+      @supports not (backdrop-filter: blur(1px)) {
+        .pin {
+          background: #fbfdfe;
+        }
+      }
+
+      .pin b {
+        display: flex;
+        align-items: center;
+        gap: 0.38rem;
+        font-weight: 600;
+        font-size: clamp(0.8rem, 0.74rem + 0.2vw, 0.92rem);
+        letter-spacing: -0.01em;
+      }
+
+      .pin .mono {
+        display: block;
+        font-size: clamp(0.63rem, 0.58rem + 0.16vw, 0.72rem);
+        color: var(--mid);
+        letter-spacing: -0.005em;
+        white-space: nowrap;
+      }
+
+      .pin-dest {
+        max-width: 15rem;
+      }
+
+      .bead {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--c);
+        flex: none;
+      }
+
+      .pin-ride {
+        max-width: 14rem;
+      }
+
+      .ridline {
+        display: flex;
+        align-items: center;
+        gap: 0.38rem;
+      }
+
+      .pin-ride .rid {
+        font-size: clamp(0.63rem, 0.58rem + 0.18vw, 0.74rem);
+        font-weight: 500;
+        color: var(--ink);
+        white-space: nowrap;
+      }
+
+      .pin-ride .rsample {
+        display: block;
+        padding-left: calc(8px + 0.38rem);
+        font-size: clamp(0.63rem, 0.58rem + 0.14vw, 0.7rem);
+        color: var(--mid);
+      }
+
+      .pin-src {
+        left: var(--ox);
+        top: clamp(28px, 3vw, 32px);
+        z-index: 3;
+      }
+
+      .stagewrap figcaption {
+        margin-top: 1rem;
+        padding-bottom: clamp(2.4rem, 1.6rem + 2.4vw, 4rem);
+        font-size: var(--step--1);
+        line-height: 1.6;
+        color: var(--mid);
+        max-width: 78ch;
+      }
+
+      /* The ripple's energy travels outward; the geometry never moves, so no
+         label ever leaves its ring. Inert under reduced motion. */
+      @keyframes travel {
+        0%,
+        100% {
+          opacity: 0.55;
+        }
+        18% {
+          opacity: 1;
+        }
+      }
+
+      .ring {
+        animation: travel 9s ease-in-out infinite;
+        animation-delay: calc(var(--i, 0) * 0.6s);
+      }
+
+      .stage .ring:nth-of-type(1) {
+        --i: 0;
+      }
+      .stage .ring:nth-of-type(2) {
+        --i: 1;
+      }
+      .stage .ring:nth-of-type(3) {
+        --i: 2;
+      }
+      .stage .ring:nth-of-type(4) {
+        --i: 3;
+      }
+      .stage .ring:nth-of-type(5) {
+        --i: 4;
+      }
+      .stage .ring:nth-of-type(6) {
+        --i: 5;
+      }
+
+      /* ---------------- sections ---------------- */
+
+      .sec {
+        position: relative;
+        z-index: 0;
+        background: var(--wash);
+        padding-block: var(--pad-y);
+      }
+
+      .sec > .shell {
+        position: relative;
+        z-index: 2;
+      }
+
+      .t1 {
+        --wash: var(--t1);
+      }
+      .t2 {
+        --wash: var(--t2);
+      }
+      .t3 {
+        --wash: var(--t3);
+      }
+      .t4 {
+        --wash: var(--t4);
+      }
+      .t5 {
+        --wash: var(--t5);
+      }
+      .t6 {
+        --wash: var(--t6);
+      }
+
+      /* Section boundaries are ring crests, not rules. */
+      .crest {
+        position: absolute;
+        left: 0;
+        bottom: 100%;
+        z-index: 1;
+        width: 100%;
+        height: clamp(22px, 3.2vw, 48px);
+        fill: var(--wash);
+        pointer-events: none;
+      }
+
+      .crest-dark {
+        fill: var(--ink);
+      }
+
+      .head {
+        max-width: 62rem;
+        margin-bottom: clamp(2rem, 1.4rem + 1.8vw, 3.2rem);
+      }
+
+      .head h2 {
+        font-size: var(--step-3);
+        line-height: 1.04;
+        max-width: 20ch;
+      }
+
+      .head .lede {
+        font-size: var(--step-1);
+        max-width: 62ch;
+      }
+
+      .aside {
+        margin-top: clamp(1.4rem, 1rem + 1.2vw, 2.2rem);
+        padding-left: 1rem;
+        border-left: 2px solid var(--w1);
+        color: var(--mid);
+        max-width: 60ch;
+      }
+
+      .mono.big {
+        font-size: var(--step-2);
+        font-weight: 500;
+        color: var(--ink);
+      }
+
+      .fact {
+        margin-top: 0.7rem;
+        font-size: var(--step--1);
+        color: var(--mid);
+        letter-spacing: -0.01em;
+      }
+
+      .tiny {
+        font-family: var(--mono);
+        font-size: var(--step--1);
+        font-weight: 500;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--mid);
+        margin-bottom: 0.9rem;
+      }
+
+      /* ---------------- card grids ---------------- */
+
+      .cards {
+        display: grid;
+        gap: var(--gap);
+      }
+
+      .cards li {
+        background: rgba(255, 255, 255, 0.56);
+        border: 1px solid rgba(93, 140, 176, 0.22);
+        border-radius: 16px;
+        padding: clamp(1.15rem, 0.9rem + 0.9vw, 1.7rem);
+      }
+
+      .cards.flat li {
+        background: none;
+        border: 0;
+        border-top: 1px solid var(--rule);
+        border-radius: 0;
+        padding: 1.1rem 0 0;
+      }
+
+      .cards h3 {
+        font-size: var(--step-2);
+        line-height: 1.12;
+        margin-bottom: 0.55rem;
+      }
+
+      .cards p {
+        color: var(--mid);
+        max-width: 44ch;
+      }
+
+      @media (min-width: 700px) {
+        .cards.three {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+        .cards.four {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (min-width: 1060px) {
+        .cards.four {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+      }
+
+      /* ---------------- steps ---------------- */
+
+      .steps {
+        display: grid;
+        gap: var(--gap);
+      }
+
+      @media (min-width: 760px) {
+        .steps {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+      }
+
+      .steps li {
+        padding-top: 1.1rem;
+        border-top: 2px solid var(--c);
+      }
+
+      .step-n {
+        font-size: var(--step--1);
+        color: var(--mid);
+      }
+
+      .steps h3 {
+        margin: 0.5rem 0 0.4rem;
+        font-size: var(--step-2);
+        line-height: 1.14;
+      }
+
+      .steps p {
+        color: var(--mid);
+        max-width: 40ch;
+      }
+
+      /* ---------------- destinations ---------------- */
+
+      .dests {
+        display: grid;
+        gap: var(--gap);
+      }
+
+      @media (min-width: 700px) {
+        .dests {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (min-width: 1060px) {
+        .dests {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+      }
+
+      .dests li {
+        position: relative;
+        background: rgba(255, 255, 255, 0.6);
+        border: 1px solid rgba(93, 140, 176, 0.22);
+        border-radius: 16px;
+        padding: clamp(1.15rem, 0.9rem + 0.9vw, 1.7rem);
+      }
+
+      .rip {
+        width: 44px;
+        height: 44px;
+        margin-bottom: 0.8rem;
+      }
+
+      .ringno {
+        font-size: var(--step--1);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--mid);
+      }
+
+      .dests h3 {
+        margin: 0.3rem 0 0.5rem;
+        font-size: var(--step-2);
+        line-height: 1.14;
+      }
+
+      .dests > li > p:not(.fact):not(.ringno) {
+        color: var(--mid);
+        max-width: 40ch;
+      }
+
+      /* ---------------- tables ---------------- */
+
+      .tablewrap {
+        overflow-x: auto;
+        border: 1px solid rgba(93, 140, 176, 0.28);
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.6);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 36rem;
+      }
+
+      thead th {
+        text-align: left;
+        font-family: var(--mono);
+        font-size: var(--step--1);
+        font-weight: 500;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--mid);
+        padding: 0.9rem 1.1rem;
+        border-bottom: 1px solid var(--rule);
+      }
+
+      tbody th,
+      tbody td {
+        text-align: left;
+        font-weight: 400;
+        vertical-align: top;
+        padding: 0.85rem 1.1rem;
+        border-bottom: 1px solid rgba(93, 140, 176, 0.18);
+      }
+
+      tbody tr:last-child th,
+      tbody tr:last-child td {
+        border-bottom: 0;
+      }
+
+      tbody th .mono {
+        font-weight: 500;
+        font-size: 0.95rem;
+      }
+
+      tbody td {
+        color: var(--mid);
+      }
+
+      .tag {
+        display: inline-block;
+        margin-right: 0.5rem;
+        font-size: 0.66rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #7a2b21;
+        background: rgba(221, 101, 88, 0.2);
+        border-radius: 999px;
+        padding: 0.1rem 0.45rem;
+        vertical-align: 1px;
+      }
+
+      .state {
+        font-weight: 500;
+        font-size: 0.9rem;
+        white-space: nowrap;
+      }
+
+      .tone-good {
+        color: #2f5f3a;
+      }
+      .tone-bad {
+        color: #7a2b21;
+      }
+      .tone-unknown {
+        color: #6b4a12;
+      }
+      .tone-flat {
+        color: var(--mid);
+      }
+
+      /* ---------------- what it reads ---------------- */
+
+      .cats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem 0.55rem;
+        margin-bottom: 1.4rem;
+      }
+
+      .cats li {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.84rem;
+        font-weight: 500;
+        padding: 0.24rem 0.6rem 0.24rem 0.45rem;
+        border: 1px solid rgba(93, 140, 176, 0.3);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.55);
+      }
+
+      .cats i {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--c);
+      }
+
+      .types {
+        display: grid;
+        gap: 0.5rem;
+        grid-template-columns: repeat(auto-fill, minmax(15.5rem, 1fr));
+      }
+
+      .types li {
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+        min-width: 0;
+        padding: 0.5rem 0.7rem;
+        background: rgba(255, 255, 255, 0.55);
+        border: 1px solid rgba(93, 140, 176, 0.2);
+        border-radius: 10px;
+      }
+
+      .types i {
+        width: 8px;
+        height: 8px;
+        flex: none;
+        border-radius: 50%;
+        background: var(--c);
+        translate: 0 -1px;
+      }
+
+      .tid {
+        flex: 1 1 auto;
+        min-width: 0;
+        font-size: 0.75rem;
+        overflow-wrap: anywhere;
+      }
+
+      .tval {
+        flex: none;
+        font-size: 0.72rem;
+        color: var(--mid);
+      }
+
+      /* ---------------- assistant ---------------- */
+
+      .mcp {
+        display: grid;
+        gap: clamp(1.8rem, 1.2rem + 2.4vw, 3.6rem);
+      }
+
+      @media (min-width: 900px) {
+        .mcp {
+          grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+        }
+      }
+
+      .mcp h2 {
+        font-size: var(--step-3);
+        line-height: 1.05;
+        max-width: 14ch;
+      }
+
+      .caveat {
+        margin-top: 1.1rem;
+        padding-left: 1rem;
+        border-left: 2px solid var(--w1);
+        color: var(--mid);
+        max-width: 54ch;
+      }
+
+      .caveat strong {
+        color: var(--ink);
+        font-weight: 600;
+      }
+
+      .mcp-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+      }
+
+      .mcp-list li {
+        font-size: 0.82rem;
+        padding: 0.3rem 0.66rem;
+        border: 1px solid rgba(93, 140, 176, 0.3);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.55);
+      }
+
+      /* ---------------- refusals ---------------- */
+
+      .proms {
+        display: grid;
+        gap: var(--gap);
+      }
+
+      @media (min-width: 640px) {
+        .proms {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (min-width: 1000px) {
+        .proms {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+      }
+
+      .proms li {
+        padding-top: 0.95rem;
+        border-top: 2px solid var(--c);
+      }
+
+      .proms h3 {
+        font-size: var(--step-2);
+        line-height: 1.14;
+        margin-bottom: 0.3rem;
+      }
+
+      .proms p {
+        color: var(--mid);
+      }
+
+      /* ---------------- status ---------------- */
+
+      .status {
+        display: grid;
+        gap: clamp(1.8rem, 1.2rem + 2.2vw, 3.4rem);
+      }
+
+      @media (min-width: 760px) {
+        .status {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      .tick li,
+      .cross li {
+        position: relative;
+        padding-left: 1.7rem;
+        padding-block: 0.42rem;
+        border-bottom: 1px solid rgba(93, 140, 176, 0.24);
+      }
+
+      .tick li::before,
+      .cross li::before {
+        position: absolute;
+        left: 0;
+        top: 0.42rem;
+        font-family: var(--mono);
+        font-size: 0.9rem;
+      }
+
+      .tick li::before {
+        content: '✓';
+        color: #2f5f3a;
+      }
+
+      .cross li::before {
+        content: '·';
+        color: var(--mid);
+      }
+
+      .cross li {
+        color: var(--mid);
+      }
+
+      /* ---------------- faq ---------------- */
+
+      .faq {
+        display: grid;
+        gap: clamp(1.4rem, 1rem + 1.4vw, 2.4rem);
+      }
+
+      @media (min-width: 900px) {
+        .faq {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      .faq > div {
+        border-top: 1px solid var(--rule);
+        padding-top: 1.1rem;
+      }
+
+      .faq dt {
+        font-family: var(--display);
+        font-size: var(--step-2);
+        font-weight: 500;
+        line-height: 1.16;
+        letter-spacing: -0.016em;
+      }
+
+      .faq dd {
+        margin-top: 0.55rem;
+        color: var(--mid);
+        max-width: 56ch;
+      }
+
+      /* ---------------- close ---------------- */
+
+      .close-in {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 1.1rem;
+      }
+
+      .close-mark {
+        filter: drop-shadow(0 8px 18px rgba(19, 38, 56, 0.14));
+      }
+
+      .close h2 {
+        font-size: var(--step-3);
+        line-height: 1.04;
+        max-width: 18ch;
+      }
+
+      .close p {
+        max-width: 46ch;
+        font-size: var(--step-1);
+        line-height: 1.5;
+        color: var(--mid);
+      }
+
+      .close .actions {
+        justify-content: center;
+      }
+
+      /* ---------------- footer ---------------- */
+
+      .footer {
+        position: relative;
+        z-index: 0;
+        background: var(--ink);
+        color: var(--t3);
+        padding-block: clamp(2.4rem, 1.8rem + 1.8vw, 3.6rem);
+      }
+
+      .foot-in {
+        position: relative;
+        z-index: 2;
+        display: grid;
+        gap: 2rem;
+      }
+
+      @media (min-width: 760px) {
+        .foot-in {
+          grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+          gap: 3rem;
+        }
+      }
+
+      .foot-lead {
+        max-width: 44ch;
+        font-size: 0.95rem;
+      }
+
+      .foot-links {
+        margin-top: 1rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.4rem;
+        font-size: 0.95rem;
+      }
+
+      .footer .tiny {
+        color: var(--t4);
+      }
+
+      .footer a {
+        color: var(--t1);
+        text-decoration: none;
+        border-bottom: 1px solid rgba(150, 188, 214, 0.55);
+      }
+
+      .footer a:hover {
+        border-bottom-color: var(--t1);
+      }
+
+      .footer :focus-visible {
+        outline-color: var(--t2);
+      }
+
+      .sibs {
+        display: grid;
+        gap: 0.55rem;
+        font-size: 0.95rem;
+      }
+
+      .sibs li {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 0.5rem;
+      }
+
+      .sibs span {
+        color: var(--t4);
+        font-size: 0.88rem;
+      }
+
+      /* ---------------- reduced motion ---------------- */
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        .ring {
+          animation: none;
+          opacity: 1;
+        }
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.001ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.001ms !important;
+        }
+      }
+    </style>
+  </body>
+</html>

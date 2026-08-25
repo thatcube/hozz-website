@@ -1,0 +1,171 @@
+---
+/**
+ * 05 — One ring, four shapes
+ *
+ * The same circle, drawn four ways: an activity arc, a night split into sleep
+ * stages, a day of heart rate wrapped round, and a dashboard donut. Once the
+ * records are yours, how they are drawn is your decision, not the vendor's.
+ */
+
+/** A day of heart rate, wrapped into a circle. Deterministic, so it is a
+    picture of a shape rather than a claim about anyone's heart. */
+const CX = 130;
+const CY = 130;
+const trace = Array.from({ length: 121 }, (_, i) => {
+  const t = i / 120;
+  const a = t * Math.PI * 2 - Math.PI / 2;
+  const base = 58 + Math.sin(t * Math.PI * 2 - 0.7) * 9;
+  const beat = Math.sin(t * Math.PI * 34) * 3.4 + Math.sin(t * Math.PI * 71) * 1.6;
+  const r = base + beat;
+  return `${(CX + Math.cos(a) * r).toFixed(1)},${(CY + Math.sin(a) * r).toFixed(1)}`;
+}).join(' ');
+
+const SHAPES = [
+  { key: 'move', label: 'As a ring', sub: 'Move, closed at 106%' },
+  { key: 'sleep', label: 'As a night', sub: 'Core, deep, REM, awake' },
+  { key: 'heart', label: 'As a day', sub: 'heartRate, wrapped' },
+  { key: 'donut', label: 'As a dashboard', sub: 'Four categories, one week' },
+];
+---
+
+<div class="one">
+  <svg viewBox="0 0 260 260" role="img" aria-label="One ring redrawn four ways: an activity ring, a night of sleep stages, a day of heart rate, and a dashboard donut">
+    <g transform="translate(130 130)">
+      <circle class="tr" r="58" />
+    </g>
+
+    <!-- a. the closed ring -->
+    <g class="sh sh0" transform="translate(130 130)">
+      <circle class="arc" r="58" />
+    </g>
+
+    <!-- b. a night, split into stages -->
+    <g class="sh sh1" transform="translate(130 130)">
+      <circle class="stg s0" r="58" />
+      <circle class="stg s1" r="58" />
+      <circle class="stg s2" r="58" />
+      <circle class="stg s3" r="58" />
+    </g>
+
+    <!-- c. a day of heart rate, wrapped -->
+    <g class="sh sh2">
+      <polyline class="trace" points={trace} />
+    </g>
+
+    <!-- d. four categories -->
+    <g class="sh sh3" transform="translate(130 130)">
+      <circle class="seg g0" r="58" />
+      <circle class="seg g1" r="58" />
+      <circle class="seg g2" r="58" />
+      <circle class="seg g3" r="58" />
+    </g>
+
+    {
+      SHAPES.map((s, i) => (
+        <g class={`cap cap${i}`}>
+          <text class="cl" x="130" y="126" text-anchor="middle">{s.label}</text>
+          <text class="cs" x="130" y="144" text-anchor="middle">{s.sub}</text>
+        </g>
+      ))
+    }
+  </svg>
+</div>
+
+<style>
+  .one svg {
+    inline-size: 100%;
+    max-inline-size: 18rem;
+    block-size: auto;
+    margin-inline: auto;
+    display: block;
+  }
+
+  .tr {
+    fill: none;
+    stroke: #eceef1;
+    stroke-width: 12;
+  }
+
+  .sh,
+  .cap {
+    opacity: 0;
+    animation: cycle 15s linear infinite;
+  }
+
+  .sh0, .cap0 { animation-delay: 0s; }
+  .sh1, .cap1 { animation-delay: 3.75s; }
+  .sh2, .cap2 { animation-delay: 7.5s; }
+  .sh3, .cap3 { animation-delay: 11.25s; }
+
+  /* Each shape holds, then hands over. */
+  @keyframes cycle {
+    0% { opacity: 0; }
+    3%, 22% { opacity: 1; }
+    25%, 100% { opacity: 0; }
+  }
+
+  .arc {
+    fill: none;
+    stroke: var(--h-heart);
+    stroke-width: 12;
+    stroke-linecap: round;
+    stroke-dasharray: 364.4;
+    stroke-dashoffset: 22;
+    transform: rotate(-90deg);
+  }
+
+  .stg {
+    fill: none;
+    stroke-width: 12;
+    stroke-dasharray: 364.4;
+    transform: rotate(-90deg);
+  }
+  .s0 { stroke: var(--h-sleep); stroke-dashoffset: 146; }
+  .s1 { stroke: color-mix(in oklab, var(--h-sleep) 62%, #fff); stroke-dashoffset: 240; }
+  .s2 { stroke: color-mix(in oklab, var(--h-sleep) 34%, #fff); stroke-dashoffset: 318; }
+  .s3 { stroke: #d8dbe0; stroke-dashoffset: 350; }
+
+  .trace {
+    fill: none;
+    stroke: var(--h-vitals);
+    stroke-width: 1.6;
+    stroke-linejoin: round;
+  }
+
+  .seg {
+    fill: none;
+    stroke-width: 12;
+    stroke-dasharray: 364.4;
+    transform: rotate(-90deg);
+  }
+  .g0 { stroke: var(--h-activity); stroke-dashoffset: 255; }
+  .g1 { stroke: var(--h-nutrition); stroke-dashoffset: 300; }
+  .g2 { stroke: var(--h-respiratory); stroke-dashoffset: 334; }
+  .g3 { stroke: var(--h-mind); stroke-dashoffset: 356; }
+
+  .cl {
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.032em;
+    fill: #14161a;
+  }
+
+  .cs {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    fill: #6a6f77;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Hold the first shape and name the rest below the figure instead. */
+    .sh,
+    .cap {
+      animation: none;
+    }
+    .sh0,
+    .cap0 {
+      opacity: 1;
+    }
+  }
+</style>

@@ -1,0 +1,75 @@
+---
+/**
+ * tw08 · Crease — a face folded by a laugh, the squint pressed into it.
+ *
+ * Not a hole. When you laugh hard the eyes squeeze shut and the skin folds, and
+ * a fold is a thing you read by light: dark where the skin turns away, bright
+ * along the lip where it turns back. Every stroke of both Zs and of the open
+ * mouth obeys one light, from one number.
+ *
+ * The dependency: **the crease sets the skull.** The fold is what flattens the
+ * top of the head, so the brow is not a chosen curve — it is parked a fixed
+ * BROW above the squint (HEAD.top = Z.y - BROW). Raise the letters and the
+ * skull cap rises with them; lower them and the head grows a forehead it should
+ * not have. And the light: LIFT is used once and every lit lip in the face is
+ * that far below its own shadow, letters and mouth alike, so the whole face is
+ * folded by the same light rather than the letters being decorated separately.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.twozz;
+const uid = `tw08-${Math.random().toString(36).slice(2, 9)}`;
+
+const Z = { y: 13.6, w: 10, h: 12.8, bar: 3.2, diag: 5.7, cap: 'angled' as const };
+const zLeft = 9.4;
+const zRight = 28.6;
+
+const BROW = 3.9; // skin left above a fold — the only thing setting the skull cap
+const LIFT = 1.1; // one light, one distance from shadow to lit lip
+
+const HEAD = { x: 8, w: 32, top: Z.y - BROW, jaw: 26.4, chin: 41.6 };
+const xr = HEAD.x + HEAD.w;
+
+const SKULL =
+  `M${HEAD.x} ${HEAD.top + 2.2}C${HEAD.x} ${HEAD.top + 1} ${HEAD.x + 1} ${HEAD.top} ${HEAD.x + 2.4} ${HEAD.top}` +
+  `L${xr - 2.4} ${HEAD.top}C${xr - 1} ${HEAD.top} ${xr} ${HEAD.top + 1} ${xr} ${HEAD.top + 2.2}` +
+  `L${xr} ${HEAD.jaw}C${xr} ${HEAD.jaw + 9.2} ${xr - 7.2} ${HEAD.chin} 24 ${HEAD.chin}` +
+  `C${HEAD.x + 7.2} ${HEAD.chin} ${HEAD.x} ${HEAD.jaw + 9.2} ${HEAD.x} ${HEAD.jaw}Z`;
+
+const MOUTH =
+  'M12.6 30.8C18 28.8 30.2 28.6 35.2 30.4C34.8 36.2 30 39.4 24 39.4C17.8 39.4 13 35.8 12.6 30.8Z';
+
+const folds = [zPath({ ...Z, x: zLeft }), zPath({ ...Z, x: zRight }), MOUTH];
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    <clipPath id={uid}>
+      <path d={SKULL} />
+    </clipPath>
+  </defs>
+
+  <g transform="rotate(-4 24 25)">
+    <path d={SKULL} fill={ground === 'dark' ? app.hue : app.hue} />
+    <g clip-path={`url(#${uid})`}>
+      <g transform={`translate(0 ${LIFT})`}>
+        {folds.map((d) => <path d={d} fill={app.light} />)}
+      </g>
+      {folds.map((d) => <path d={d} fill={app.deep} />)}
+    </g>
+  </g>
+</svg>

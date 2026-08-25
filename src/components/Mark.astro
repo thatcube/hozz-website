@@ -1,0 +1,50 @@
+---
+/**
+ * The mark: a face whose smile lifts, at the last moment, into the tick of a
+ * pulse trace heading up and out of the frame. Health, a smile, and the export
+ * in one gesture — and it still reads at 16px, which is where most people will
+ * actually meet it.
+ */
+export interface Props {
+  size?: number;
+  /** Decorative when a text wordmark sits beside it. */
+  title?: string;
+}
+const { size = 34, title } = Astro.props;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 64 64"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role={title ? 'img' : 'presentation'}
+  aria-hidden={title ? undefined : 'true'}
+  class="mark"
+>
+  {title && <title>{title}</title>}
+  <defs>
+    <linearGradient id="hozz-mark-fill" x1="0" y1="0" x2="0" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#4ea56a"></stop>
+      <stop offset="1" stop-color="#2b7247"></stop>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="17" fill="url(#hozz-mark-fill)"></rect>
+  <circle cx="23" cy="25.5" r="3.7" fill="#fff"></circle>
+  <circle cx="41" cy="25.5" r="3.7" fill="#fff"></circle>
+  <path
+    d="M18.5 35.2c1.9 7.5 7.2 11.1 13.4 11.1 4.6 0 8.5-2.3 10.7-6.3l4.3-7.8"
+    stroke="#fff"
+    stroke-width="4.6"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  ></path>
+</svg>
+
+<style>
+  .mark {
+    flex: none;
+    border-radius: 10px;
+  }
+</style>

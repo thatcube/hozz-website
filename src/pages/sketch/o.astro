@@ -1,0 +1,243 @@
+---
+import SketchLayout from '../../layouts/SketchLayout.astro';
+import '../../styles/sketch-o.css';
+
+const GITHUB_URL = 'https://github.com/thatcube/hozz';
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'SoftwareApplication',
+      name: 'Hozz',
+      operatingSystem: 'iOS, macOS',
+      applicationCategory: 'HealthApplication',
+      isAccessibleForFree: true,
+      license: 'https://www.gnu.org/licenses/gpl-3.0.html',
+      codeRepository: GITHUB_URL,
+      description:
+        'A free, open-source Apple Health export app that sends health data directly to systems you control. Hozz is currently in early alpha.',
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'How do I export my Apple Health data?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text:
+              'In Hozz, grant access to the Apple Health metrics you choose, add a destination such as MQTT, HTTP, a watched folder, Home Assistant, or SQLite, then test it and choose when it runs. Data goes directly from your device to that destination without a Hozz account or relay.',
+          },
+        },
+      ],
+    },
+  ],
+};
+---
+
+<SketchLayout title="Sketch O — Pump Room · Hozz" letter="O" name="Pump Room">
+  <main class="pump-room" aria-labelledby="pump-room-title">
+    <section class="hero" aria-label="Hozz Apple Health export">
+      <div class="hero-copy reveal">
+        <p class="kicker"><span aria-hidden="true"></span> Apple Health export / direct pipe</p>
+        <div class="hero-message">
+          <h1 id="pump-room-title">Your health data. Routed your way.</h1>
+          <p class="lede">
+            Hozz sends Apple Health data from your device to MQTT, HTTP, files, Home Assistant, or SQLite.
+            No account. No relay.
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href={GITHUB_URL} rel="noopener">
+              Follow the build <span aria-hidden="true">↗</span>
+            </a>
+            <a class="button button-secondary" href="#export">How export works</a>
+          </div>
+        </div>
+        <div class="commitment-row" aria-label="Product commitments">
+          <span>Free</span>
+          <span>GPL-3.0</span>
+          <span>No account</span>
+          <span>No relay</span>
+          <span>Early alpha</span>
+        </div>
+      </div>
+
+      <div class="manifold reveal" aria-label="Diagram of Hozz routing Apple Health data to owned destinations">
+        <div class="service-ticket" aria-label="Destination schedule and safety notes">
+          <span>each outlet</span>
+          <b>Manual · hourly · daily</b>
+          <small>Test first. Nothing leaves until confirmed.</small>
+        </div>
+
+        <div class="gauge intake">
+          <span class="gauge-label">single inlet</span>
+          <strong>Apple Health</strong>
+          <code>heartRate · stepCount · sleepAnalysis</code>
+        </div>
+
+        <svg class="pipe-map pipe-map-desktop" viewBox="0 0 760 520" role="img" aria-labelledby="pipe-map-title pipe-map-desc">
+          <title id="pipe-map-title">Hozz pipe map</title>
+          <desc id="pipe-map-desc">One Apple Health inlet enters Hozz and branches to six destinations.</desc>
+          <path class="pipe pipe-main" d="M70 260 H302 V102" />
+          <path class="pipe pipe-main" d="M302 102 V420" />
+          <path class="pipe branch" d="M302 132 H610" />
+          <path class="pipe branch" d="M302 188 H662" />
+          <path class="pipe branch" d="M302 244 H622" />
+          <path class="pipe branch" d="M302 300 H686" />
+          <path class="pipe branch" d="M302 356 H594" />
+          <path class="pipe branch" d="M302 412 H650" />
+          <path class="pipe pipe-dots" d="M70 260 H302 V132 H610" />
+          <path class="pipe pipe-dots" d="M70 260 H302 V188 H662" />
+          <path class="pipe pipe-dots" d="M70 260 H302 V244 H622" />
+          <path class="pipe pipe-dots" d="M70 260 H302 V300 H686" />
+          <path class="pipe pipe-dots" d="M70 260 H302 V356 H594" />
+          <path class="pipe pipe-dots" d="M70 260 H302 V412 H650" />
+          <g class="joints" aria-hidden="true">
+            <circle cx="302" cy="132" r="7" />
+            <circle cx="302" cy="188" r="7" />
+            <circle cx="302" cy="244" r="7" />
+            <circle cx="302" cy="300" r="7" />
+            <circle cx="302" cy="356" r="7" />
+            <circle cx="302" cy="412" r="7" />
+          </g>
+          <g class="flow-dots" aria-hidden="true">
+            <circle class="flow-dot" r="5">
+              <animateMotion dur="9s" repeatCount="indefinite" path="M70 260 H302 V132 H610" />
+            </circle>
+            <circle class="flow-dot" r="5">
+              <animateMotion dur="10.5s" begin="-7s" repeatCount="indefinite" path="M70 260 H302 V188 H662" />
+            </circle>
+            <circle class="flow-dot" r="5">
+              <animateMotion dur="11s" begin="-4s" repeatCount="indefinite" path="M70 260 H302 V244 H622" />
+            </circle>
+            <circle class="flow-dot" r="5">
+              <animateMotion dur="12s" begin="-9s" repeatCount="indefinite" path="M70 260 H302 V300 H686" />
+            </circle>
+            <circle class="flow-dot" r="5">
+              <animateMotion dur="10s" begin="-3s" repeatCount="indefinite" path="M70 260 H302 V356 H594" />
+            </circle>
+            <circle class="flow-dot" r="5">
+              <animateMotion dur="12.5s" begin="-10s" repeatCount="indefinite" path="M70 260 H302 V412 H650" />
+            </circle>
+          </g>
+        </svg>
+
+        <svg class="pipe-map pipe-map-mobile" viewBox="0 0 100 430" aria-hidden="true">
+          <path class="pipe pipe-main" d="M24 0 V405" />
+          <path class="pipe branch" d="M24 38 H92 M24 108 H92 M24 178 H92 M24 248 H92 M24 318 H92 M24 388 H92" />
+          <path class="pipe pipe-dots" d="M24 0 V38 H92 M24 38 V108 H92 M24 108 V178 H92 M24 178 V248 H92 M24 248 V318 H92 M24 318 V388 H92" />
+          <g class="flow-dots">
+            <circle class="flow-dot" r="4">
+              <animateMotion dur="8s" repeatCount="indefinite" path="M24 0 V38 H92" />
+            </circle>
+            <circle class="flow-dot" r="4">
+              <animateMotion dur="9s" begin="-5s" repeatCount="indefinite" path="M24 0 V178 H92" />
+            </circle>
+            <circle class="flow-dot" r="4">
+              <animateMotion dur="11s" begin="-8s" repeatCount="indefinite" path="M24 0 V388 H92" />
+            </circle>
+          </g>
+        </svg>
+
+        <ul class="endpoint-list" aria-label="Supported destinations">
+          <li style="--pin: var(--h-heart)"><b>MQTT 3.1.1</b><code>mqtts://broker/health/#</code></li>
+          <li style="--pin: var(--h-other)"><b>HTTP POST</b><code>Idempotency-Key</code></li>
+          <li style="--pin: var(--h-mind)"><b>Home Assistant</b><code>webhook or REST</code></li>
+          <li style="--pin: var(--h-sleep)"><b>Watched folder</b><code>NDJSON · CSV · JSON</code></li>
+          <li style="--pin: var(--h-respiratory)"><b>Bonjour receiver</b><code>_hozz._tcp :54330</code></li>
+          <li style="--pin: var(--h-mobility)"><b>Mac / Python</b><code>SQLite or receiver/</code></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="spec-strip" aria-labelledby="control-title">
+      <h2 class="section-heading reveal" id="control-title">One pipe. Independent outlets.</h2>
+      <article class="reveal">
+        <span class="spec-code">cursor.destination_id</span>
+        <h3>Failures stay contained.</h3>
+        <p>One stalled endpoint cannot hide another.</p>
+      </article>
+      <article class="reveal">
+        <span class="spec-code">formats[]</span>
+        <h3>Choose the output.</h3>
+        <p>NDJSON, JSON, CSV, or Metrics JSON.</p>
+      </article>
+      <article class="reveal">
+        <span class="spec-code">shortcuts.action</span>
+        <h3>Automate the handoff.</h3>
+        <p>Run and check exports with Shortcuts.</p>
+      </article>
+    </section>
+
+    <section class="export-guide reveal" id="export" aria-labelledby="export-title">
+      <div class="export-intro">
+        <p class="bench-label">operator answer</p>
+        <h2 id="export-title">How do I export my Apple Health data?</h2>
+        <p>
+          Choose the Health metrics Hozz can read. Add a destination you control, test it, then set the schedule.
+          Data travels directly from your device — never through a Hozz account or relay.
+        </p>
+      </div>
+      <ol class="export-steps">
+        <li><span>01 / intake</span><b>Choose metrics</b><small>Grant only the Health access you want.</small></li>
+        <li><span>02 / outlet</span><b>Add a destination</b><small>MQTT, HTTP, files, Home Assistant, or SQLite.</small></li>
+        <li><span>03 / pressure test</span><b>Test, then schedule</b><small>Confirm the route before anything leaves.</small></li>
+      </ol>
+    </section>
+
+    <section class="bench reveal" aria-labelledby="artifacts-title">
+      <div>
+        <p class="bench-label">what you inspect</p>
+        <h2 id="artifacts-title">Real files. Your systems.</h2>
+      </div>
+      <div class="artifact-grid">
+        <figure>
+          <figcaption>Metrics JSON</figcaption>
+          <pre><code>&#123;
+  "heartRate": [&#123; "value": 64 &#125;],
+  "walkingSpeed": [&#123; "value": 1.28 &#125;]
+&#125;</code></pre>
+        </figure>
+        <figure>
+          <figcaption>SQLite</figcaption>
+          <pre><code>select metric, value, start_date
+from samples
+where metric = 'restingHeartRate';</code></pre>
+        </figure>
+      </div>
+    </section>
+
+    <section class="close-panel reveal" aria-labelledby="close-title">
+      <p class="kicker"><span aria-hidden="true"></span> early alpha / line open</p>
+      <h2 id="close-title">Your health data should have an exit.</h2>
+      <p>Hozz is free, open source, and being built in public.</p>
+      <a class="button button-primary" href={GITHUB_URL} rel="noopener">
+        Inspect the source <span aria-hidden="true">↗</span>
+      </a>
+    </section>
+
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+    <script is:inline>
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const reveals = document.querySelectorAll('.pump-room .reveal');
+
+      if (reduceMotion || !('IntersectionObserver' in window)) {
+        reveals.forEach((element) => element.classList.add('is-visible'));
+      } else {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.12 },
+        );
+        reveals.forEach((element) => observer.observe(element));
+      }
+    </script>
+  </main>
+</SketchLayout>

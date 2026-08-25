@@ -1,0 +1,27 @@
+---
+/**
+ * A code sample with a label saying what it is.
+ *
+ * The content is passed as a `code` prop rather than through a slot so that
+ * braces, backticks and angle brackets in a payload survive being written in
+ * an .astro file without being mistaken for expressions.
+ *
+ * The <pre> is focusable because it scrolls sideways on a narrow screen, and a
+ * region that can only be scrolled with a trackpad is one a keyboard user
+ * cannot read the end of.
+ */
+interface Props {
+  /** The label above the block — a filename, a media type, a shell. */
+  caption?: string;
+  code: string;
+}
+
+const { caption, code } = Astro.props;
+---
+
+<figure class="code-block">
+  {caption && <figcaption>{caption}</figcaption>}
+  <pre tabindex="0" role="region" aria-label={caption ?? 'Code sample'}><code
+    >{code.replace(/\n+$/, '')}</code
+  ></pre>
+</figure>

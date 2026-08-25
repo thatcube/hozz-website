@@ -1,0 +1,37 @@
+---
+/**
+ * 48 · Ripple, Riverstone
+ *
+ * Eight close blue-grey tones form shallow, repeating mineral strata through
+ * the disc. The curves continue behind the face, so the ZZ belongs to a smooth
+ * river stone rather than sitting on a decorated field.
+ *
+ * The fixed 22-wide disc and c10 water are unchanged. Every painted layer is
+ * mirrored about x=16. The 10-wide face has even parity and is centred on the
+ * disc itself, with 6px air above and 6px below.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Hozz — Ripple, Riverstone">
+  <path d="M13 20h6v1h-6z M7 21h18v1h-18z M4 22h4v1h-4z M24 22h4v1h-4z M3 23h2v1h-2z M27 23h2v1h-2z M2 24h2v1h-2z M28 24h2v1h-2z M2 25h2v1h-2z M28 25h2v1h-2z M3 26h2v1h-2z M27 26h2v1h-2z M4 27h4v1h-4z M24 27h4v1h-4z M7 28h18v1h-18z M13 29h6v1h-6z" fill="#96bcd6" />
+  <path d="M12 22h8v1h-8z M9 23h3v1h-3z M20 23h3v1h-3z M7 24h2v1h-2z M23 24h2v1h-2z M7 25h2v1h-2z M23 25h2v1h-2z M9 26h3v1h-3z M20 26h3v1h-3z M12 27h8v1h-8z" fill="#5d8cb0" />
+  <path d="M6 15h1v1h-1z M12 15h2v1h-2z M18 15h2v1h-2z M25 15h1v1h-1z M7 16h1v1h-1z M10 16h2v1h-2z M14 16h4v1h-4z M20 16h2v1h-2z M24 16h1v1h-1z M8 17h2v1h-2z M22 17h2v1h-2z" fill="#bfd7e3" />
+  <path d="M14 3h4v1h-4z M6 14h1v1h-1z M12 14h2v1h-2z M18 14h2v1h-2z M25 14h1v1h-1z M7 15h1v1h-1z M10 15h2v1h-2z M14 15h4v1h-4z M20 15h2v1h-2z M24 15h1v1h-1z M8 16h2v1h-2z M12 16h2v1h-2z M18 16h2v1h-2z M22 16h2v1h-2z M7 17h1v1h-1z M10 17h2v1h-2z M14 17h4v1h-4z M20 17h2v1h-2z M24 17h1v1h-1z M8 18h2v1h-2z M22 18h2v1h-2z" fill="#c3dbe6" />
+  <path d="M13 3h1v1h-1z M18 3h1v1h-1z M11 4h1v1h-1z M14 4h4v1h-4z M20 4h1v1h-1z M9 5h1v1h-1z M22 5h1v1h-1z M6 13h1v1h-1z M12 13h2v1h-2z M18 13h2v1h-2z M25 13h1v1h-1z M7 14h1v1h-1z M10 14h2v1h-2z M14 14h4v1h-4z M20 14h2v1h-2z M24 14h1v1h-1z M8 15h2v1h-2z M22 15h2v1h-2z M12 17h2v1h-2z M18 17h2v1h-2z M10 18h2v1h-2z M14 18h4v1h-4z M20 18h2v1h-2z M8 19h2v1h-2z M22 19h2v1h-2z" fill="#c7dfe9" />
+  <path d="M12 4h2v1h-2z M18 4h2v1h-2z M10 5h2v1h-2z M14 5h4v1h-4z M20 5h2v1h-2z M8 6h2v1h-2z M22 6h2v1h-2z M6 12h1v1h-1z M12 12h2v1h-2z M18 12h2v1h-2z M25 12h1v1h-1z M7 13h1v1h-1z M10 13h2v1h-2z M14 13h4v1h-4z M20 13h2v1h-2z M24 13h1v1h-1z M8 14h2v1h-2z M22 14h2v1h-2z M12 18h2v1h-2z M18 18h2v1h-2z M10 19h2v1h-2z M14 19h4v1h-4z M20 19h2v1h-2z M9 20h1v1h-1z M22 20h1v1h-1z" fill="#cbe3ec" />
+  <path d="M12 5h2v1h-2z M18 5h2v1h-2z M10 6h2v1h-2z M14 6h4v1h-4z M20 6h2v1h-2z M8 7h2v1h-2z M22 7h2v1h-2z M6 11h1v1h-1z M12 11h2v1h-2z M18 11h2v1h-2z M25 11h1v1h-1z M7 12h1v1h-1z M10 12h2v1h-2z M14 12h4v1h-4z M20 12h2v1h-2z M24 12h1v1h-1z M8 13h2v1h-2z M22 13h2v1h-2z M12 19h2v1h-2z M18 19h2v1h-2z M10 20h2v1h-2z M14 20h4v1h-4z M20 20h2v1h-2z" fill="#cfe7ef" />
+  <path d="M12 6h2v1h-2z M18 6h2v1h-2z M10 7h2v1h-2z M14 7h4v1h-4z M20 7h2v1h-2z M8 8h2v1h-2z M22 8h2v1h-2z M6 10h1v1h-1z M12 10h2v1h-2z M18 10h2v1h-2z M25 10h1v1h-1z M7 11h1v1h-1z M10 11h2v1h-2z M14 11h4v1h-4z M20 11h2v1h-2z M24 11h1v1h-1z M8 12h2v1h-2z M22 12h2v1h-2z M12 20h2v1h-2z M18 20h2v1h-2z M11 21h1v1h-1z M14 21h4v1h-4z M20 21h1v1h-1z" fill="#d3ebf2" />
+  <path d="M12 7h2v1h-2z M18 7h2v1h-2z M7 8h1v1h-1z M10 8h2v1h-2z M14 8h4v1h-4z M20 8h2v1h-2z M24 8h1v1h-1z M8 9h2v1h-2z M12 9h2v1h-2z M18 9h2v1h-2z M22 9h2v1h-2z M7 10h1v1h-1z M10 10h2v1h-2z M14 10h4v1h-4z M20 10h2v1h-2z M24 10h1v1h-1z M8 11h2v1h-2z M22 11h2v1h-2z M12 21h2v1h-2z M18 21h2v1h-2z M14 22h4v1h-4z" fill="#d7eff5" />
+  <path d="M12 8h2v1h-2z M18 8h2v1h-2z M7 9h1v1h-1z M10 9h2v1h-2z M14 9h4v1h-4z M20 9h2v1h-2z M24 9h1v1h-1z M8 10h2v1h-2z M22 10h2v1h-2z M13 22h1v1h-1z M18 22h1v1h-1z" fill="#dbf3f8" />
+  <path d="M13 2h6v1h-6z M11 3h2v1h-2z M19 3h2v1h-2z M9 4h2v1h-2z M21 4h2v1h-2z M8 5h1v1h-1z M23 5h1v1h-1z M7 6h1v1h-1z M24 6h1v1h-1z M7 7h1v1h-1z M24 7h1v1h-1z M6 8h1v1h-1z M25 8h1v1h-1z M6 9h1v1h-1z M25 9h1v1h-1z M5 10h1v1h-1z M26 10h1v1h-1z M5 11h1v1h-1z M26 11h1v1h-1z M5 12h1v1h-1z M26 12h1v1h-1z M5 13h1v1h-1z M26 13h1v1h-1z M5 14h1v1h-1z M26 14h1v1h-1z M5 15h1v1h-1z M26 15h1v1h-1z M6 16h1v1h-1z M25 16h1v1h-1z M6 17h1v1h-1z M25 17h1v1h-1z M7 18h1v1h-1z M24 18h1v1h-1z M7 19h1v1h-1z M24 19h1v1h-1z M8 20h1v1h-1z M23 20h1v1h-1z M9 21h2v1h-2z M21 21h2v1h-2z M11 22h2v1h-2z M19 22h2v1h-2z M13 23h6v1h-6z" fill="#132638" />
+  <g fill="#132638" shape-rendering="crispEdges">
+    {facePathsAt({ cx: 16, cy: 13, size: 'lg', smile: 'wide', gap: 1 }).map((d) => (
+      <path d={d} />
+    ))}
+  </g>
+</MarkFrame>

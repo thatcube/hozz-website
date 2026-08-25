@@ -1,0 +1,207 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import Callout from '../../../components/docs/Callout.astro';
+import Code from '../../../components/docs/Code.astro';
+import Table from '../../../components/docs/Table.astro';
+import DeviceConstraints from '../../../components/docs/DeviceConstraints.astro';
+import { page } from '../../../data/docs-nav';
+
+const entry = page('/docs/destinations/influxdb/');
+
+const lines = `health,type=heart_rate,source=Apple\\ Watch,device=Apple\\ Watch,unit=count/min value=62.5 1787433046500000000
+health,type=sleep_analysis,source=Apple\\ Watch value=3.0,duration=1800.0 1787436000000000000
+health_workouts,type=workout,activity=Running,source=Apple\\ Watch duration=1800.0,id="7b21c0de-0000-4000-8000-000000000001" 1787382000000000000
+health_deletions,type=step_count,id=9c40c0de-0000-4000-8000-000000000002 deleted=true`;
+
+const v2 = `POST http://influxdb.local:8086/api/v2/write?org=YOURORG&bucket=health&precision=ns
+Authorization: Token YOUR_API_TOKEN
+Content-Type: text/plain; charset=utf-8`;
+
+const v1 = `POST http://influxdb.local:8086/write?db=health&precision=ns`;
+
+const tags = [
+  ['type', 'The metric name, e.g. heart_rate. workout for a workout.'],
+  ['source', 'The app or device that recorded it. Omitted when unknown.'],
+  ['device', 'The hardware name. Omitted when unknown.'],
+  ['unit', 'HealthKit’s unit string. Omitted for types without one.'],
+  ['activity', 'Workouts only — Running, Cycling, and so on.'],
+];
+
+const fields = [
+  ['value', 'Float', 'Samples.'],
+  ['duration', 'Float', 'Seconds. Present when the record covers an interval.'],
+  ['id', 'String', 'Workouts and events, for tracing a point back to a record.'],
+  ['deleted', 'Boolean', 'Tombstones.'],
+];
+---
+
+<DocsLayout page={entry} section="Destinations">
+  <div class="fact-strip">
+    <div>
+      <dt>Format</dt>
+      <dd>InfluxDB line protocol</dd>
+    </div>
+    <div>
+      <dt>Versions</dt>
+      <dd>1.8, 2.x and 3.x</dd>
+    </div>
+    <div>
+      <dt>Default measurement</dt>
+      <dd><code>health</code></dd>
+    </div>
+  </div>
+
+  <p>
+    Hozz writes line protocol directly to InfluxDB's write endpoint. This exists because the usual
+    self-hosted setup — Health data in InfluxDB, charted in Grafana — otherwise means deploying a
+    container whose entire job is turning an exporter's JSON into the format InfluxDB already
+    wanted. Writing it here removes that container from the diagram.
+  </p>
+
+  <h2>Setting it up</h2>
+
+  <ol class="steps">
+    <li>
+      <h3>Put the whole write URL in the address field</h3>
+      <p>
+        Query string included. For 2.x and 3.x that is <code>/api/v2/write</code> with{' '}
+        <code>org</code>, <code>bucket</code> and <code>precision</code>. For 1.8 it is{' '}
+        <code>/write?db=yourdatabase</code>.
+      </p>
+    </li>
+    <li>
+      <h3>Put the authorization value in the secret field</h3>
+      <p>
+        Hozz sends that secret as the <code>Authorization</code> header, so for 2.x and 3.x it has
+        to be written as <code>Token</code> followed by a space and the token itself.
+      </p>
+    </li>
+    <li>
+      <h3>Set the measurement and precision under Details</h3>
+      <p>
+        The measurement defaults to <code>health</code>. The precision has to match the one in the
+        address — see the warning below.
+      </p>
+    </li>
+    <li>
+      <h3>Send a test</h3>
+      <p>
+        InfluxDB writes one point you can query straight away. The probe is a single point in{' '}
+        <code>&lt;measurement&gt;_events</code> tagged <code>type=hozz_connection_test</code>, and
+        carries no Health data.
+      </p>
+    </li>
+  </ol>
+
+  <h3>InfluxDB 2.x and 3.x</h3>
+  <Code caption="Address and secret" code={v2} />
+
+  <h3>InfluxDB 1.8</h3>
+  <Code caption="Address" code={v1} />
+
+  <Callout kind="warn" title="Precision has to match, and InfluxDB will not tell you">
+    <p>
+      A point is timestamped in the precision configured on the destination. If that does not match
+      the <code>precision</code> parameter on the write request, InfluxDB does not report a
+      mismatch — it silently files every point in 1970 or in the far future.
+    </p>
+    <p>
+      Nanoseconds is the default and the recommendation. Because InfluxDB stays quiet about it, Hozz
+      reads the <code>precision</code> parameter back out of the address and warns in the
+      destination editor when the two disagree.
+    </p>
+  </Callout>
+
+  <h2>What gets written</h2>
+
+  <Code caption="Line protocol" code={lines} />
+
+  <h3>Measurements</h3>
+
+  <Table caption="Measurements and what each holds" columns={['Measurement', 'Holds']} mono>
+    <tr>
+      <th scope="row">health</th>
+      <td>Every sample with a numeric value.</td>
+    </tr>
+    <tr>
+      <th scope="row">health_workouts</th>
+      <td>Workouts.</td>
+    </tr>
+    <tr>
+      <th scope="row">health_events</th>
+      <td>Records with no numeric value at all, such as a correlation.</td>
+    </tr>
+    <tr>
+      <th scope="row">health_deletions</th>
+      <td>Tombstones.</td>
+    </tr>
+  </Table>
+
+  <p>
+    <code>health</code> is the configurable part; the four suffixes follow whatever you set it to.
+  </p>
+
+  <h3>Tags</h3>
+
+  <Table caption="Tags written on each point" columns={['Tag', 'Value']} mono>
+    {
+      tags.map(([tag, value]) => (
+        <tr>
+          <th scope="row">{tag}</th>
+          <td>{value}</td>
+        </tr>
+      ))
+    }
+  </Table>
+
+  <p>
+    Every tag is deliberately low cardinality: a handful of sources, a handful of devices, a bounded
+    set of types and units. <strong>Record identifiers are not tags</strong> — a UUID in a tag is the
+    canonical way to ruin an InfluxDB instance — with one deliberate exception, described below.
+  </p>
+
+  <h3>Fields</h3>
+
+  <Table caption="Fields written on each point" columns={['Field', 'Type', 'Where']} mono>
+    {
+      fields.map(([field, type, where]) => (
+        <tr>
+          <th scope="row">{field}</th>
+          <td>{type}</td>
+          <td>{where}</td>
+        </tr>
+      ))
+    }
+  </Table>
+
+  <h2>Two honest limitations</h2>
+
+  <Callout kind="lossy" title="InfluxDB deduplicates, and that loses samples">
+    <p>
+      A point is identified by measurement, tag set and timestamp. Two samples of the same type,
+      from the same source, at the same instant become one point. Line protocol has no way to
+      express otherwise without putting a unique identifier in a tag, which would make the database
+      unusable.
+    </p>
+    <p>
+      The lossless formats do not have this property. If you need every sample kept separately, send{' '}
+      <a href="/docs/delivery-schema/#ndjson">NDJSON</a> somewhere alongside.
+    </p>
+  </Callout>
+
+  <p>
+    <strong>A deletion is recorded, not applied.</strong> Line protocol cannot retract a point, so
+    tombstones go to <code>&lt;measurement&gt;_deletions</code> for you to reconcile yourself. That
+    measurement is the one place Hozz puts a record identifier in a tag, and it is deliberate: a
+    tombstone has no timestamp, so as a field every deletion in a batch would land on the same
+    series at the same instant and overwrite the one before it. Not losing records is worth spending
+    the cardinality on, and it is spent in a measurement nothing else queries.
+  </p>
+
+  <p>
+    Hozz escapes exactly what the InfluxDB line protocol requires; non-finite values go to{' '}
+    <code>&lt;measurement&gt;_events</code> rather than being dropped or invented.
+  </p>
+
+  <DeviceConstraints />
+</DocsLayout>

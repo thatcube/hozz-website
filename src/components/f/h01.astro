@@ -1,0 +1,64 @@
+---
+/**
+ * h01 · Struck — a bottle with the ZZ pressed into its wall.
+ *
+ * The dependency: **a vessel is the only thing in this family with a wall.**
+ * A screen, a disc and a bubble have surfaces; a bottle has thickness, and a
+ * thing with thickness can be struck. So the letters are given no colour of
+ * their own — they are the glass, sunk, dark because the recess is in shade
+ * and edged below where the lower lip of the groove turns up to the light.
+ * Press them flat and the bottle is blank; there is nothing lying on it.
+ *
+ * Not a knockout: no ground shows through, so the mark is the same object in
+ * the same light on paper and on black.
+ *
+ * Two shapes — a lip and a necked body — and the panel between the shoulder
+ * and the foot is exactly what the strike has to fit.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.hozz;
+const uid = `h01-${Math.random().toString(36).slice(2, 9)}`;
+
+const BODY =
+  'M19.2 9.2H28.8V16.2C33.6 17.8 38.6 19.6 38.6 23.4V36.6A4.4 4.4 0 0 1 34.2 41H13.8A4.4 4.4 0 0 1 9.4 36.6V23.4C9.4 19.6 14.4 17.8 19.2 16.2Z';
+
+const Z = { y: 25.4, w: 9.8, h: 12.2, bar: 3.2, diag: 5.6, cap: 'angled' as const };
+const GAP = 2.2; // letterspace only — it is not a feature of the bottle
+const zLeft = 24 - (Z.w * 2 + GAP) / 2;
+const zRight = zLeft + Z.w + GAP;
+const LIP = 1.1; // the lit underside of the groove, and the depth of the strike
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    <clipPath id={`${uid}-wall`}>
+      <path d={BODY} />
+    </clipPath>
+  </defs>
+
+  <rect x="17.4" y="5.6" width="13.2" height="3.8" rx="1.5" fill={app.deep} />
+  <path d={BODY} fill={app.hue} />
+
+  {/* The strike. Clipped to the wall, because a groove cannot leave the glass. */}
+  <g clip-path={`url(#${uid}-wall)`}>
+    <path d={zPath({ ...Z, x: zLeft, y: Z.y + LIP })} fill={app.light} />
+    <path d={zPath({ ...Z, x: zRight, y: Z.y + LIP })} fill={app.light} />
+    <path d={zPath({ ...Z, x: zLeft })} fill={app.deep} />
+    <path d={zPath({ ...Z, x: zRight })} fill={app.deep} />
+  </g>
+</svg>

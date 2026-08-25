@@ -1,0 +1,25 @@
+---
+/**
+ * 13 · Keepsake Chest
+ *
+ * An arched chest makes ownership warm and domestic, while a pale front panel
+ * and dawn-lit lid stop the archive from feeling like a heavy vault.
+ *
+ * The chest fills the safe area. Its compact face is centred at (16, 21) on
+ * the front panel alone, excluding the taller arched lid.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import Face from '../Face.astro';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Hozz — Keepsake Chest">
+  <path d="M10 2h12v1h-12zM7 3h18v1h-18zM5 4h22v1h-22zM4 5h24v1h-24zM3 6h26v1h-26zM2 7h28v21h-28zM3 28h26v1h-26zM5 29h6v1h-6zM21 29h6v1h-6z" fill="#5a4037" />
+  <path d="M10 3h12v1h-12zM7 4h18v1h-18zM6 5h20v1h-20zM5 6h22v1h-22zM4 7h24v4h-24zM4 13h24v14h-24zM5 27h22v1h-22z" fill="#b9836c" />
+  <path d="M10 4h12v1h-12zM8 5h16v1h-16zM7 6h18v1h-18zM6 7h20v3h-20zM5 14h22v13h-22zM6 27h20v1h-20z" fill="#d9ad8c" />
+  <path d="M10 4h8v1h-8zM8 5h7v1h-7zM7 6h6v1h-6zM6 7h5v3h-5zM5 14h4v10h-4zM6 24h3v3h-3z" fill="#f0d2ad" />
+  <path d="M3 10h26v3h-26zM5 11h22v1h-22zM7 10h2v5h-2zM23 10h2v5h-2zM7 26h2v2h-2zM23 26h2v2h-2z" fill="#8b6253" />
+  <Face cx={16} cy={21} smile="compact" fill="#5a4037" />
+</MarkFrame>

@@ -1,0 +1,75 @@
+---
+/**
+ * h02 · Seam — a lidded tin, and the ZZ strung between its two lines.
+ *
+ * The dependency: **the seam under the lid is the top edge of both letters and
+ * the level of the contents is their foot**, so the gap between the two lines
+ * the tin already has is exactly the letters' height. Screw the lid down and
+ * the Zs shorten; fill the tin higher and they shorten from below; empty it and
+ * the letters have nothing to stand on.
+ *
+ * Neither line is drawn. The seam is where the lid stops and the tin starts,
+ * the level is where the tin stops and the contents start — both are edges
+ * between two fills, and both run wall to wall out of the letters to the sides.
+ * That also keeps the whole knockout inside one flat field, so every stroke has
+ * the same separation on both grounds.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.hozz;
+const uid = `h02-${Math.random().toString(36).slice(2, 9)}`;
+
+const SEAM = 13.6; // underside of the lid
+const KEPT = 28; // surface of the contents
+const BODY = 'M9 11.6H39V36.1A3.5 3.5 0 0 1 35.5 39.6H12.5A3.5 3.5 0 0 1 9 36.1Z';
+
+// The two lines are the letters' two edges, so h is the distance between them.
+const Z = {
+  y: SEAM,
+  w: 11.2,
+  h: KEPT - SEAM,
+  bar: 3.6,
+  diag: 6.4,
+  cap: 'angled' as const,
+};
+// 11.2 + 2.6 + 11.2 = 25, running 11.5 to 36.5, centred on 24.
+const zLeft = 11.5;
+const zRight = zLeft + Z.w + 2.6;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
+      <path d={zPath({ ...Z, x: zRight })} fill="#000" />
+    </mask>
+    <clipPath id={`${uid}-body`}>
+      <path d={BODY} />
+    </clipPath>
+  </defs>
+
+  <g mask={`url(#${uid})`}>
+    <path d={BODY} fill={app.hue} />
+    {/* What is kept. Its surface is the line the letters stand on. */}
+    <g clip-path={`url(#${uid}-body)`}>
+      <rect x="8" y={KEPT} width="32" height={40 - KEPT} fill={app.deep} />
+    </g>
+    {/* The lid, overhanging. Its underside is the line the letters hang from. */}
+    <rect x="6.6" y={SEAM - 6.1} width="34.8" height="6.1" rx="1.8" fill={app.deep} />
+  </g>
+</svg>

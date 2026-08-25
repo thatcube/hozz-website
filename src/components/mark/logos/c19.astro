@@ -1,0 +1,35 @@
+---
+/**
+ * 19 · Ripple, Even
+ *
+ * Lit from no direction at all — one rim right the way round, so the field is uniform.
+ *
+ * c10's size and its water, but a true circle: c10's outline has single pixels
+ * standing off the sides, which read as little arms. The shading is concentric.
+ *
+ * The face is centred on the disc, not on the lit field. Centring on the field
+ * rides the face high, because the chin eats rows off the field's bottom — Mozz
+ * centres on the record and lets its shading pass behind the ZZ, and that is
+ * what makes the face read as the middle of the thing rather than as something
+ * dropped on it. Measured air on the disc: 6 above, 6 below.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Hozz — Ripple, Even">
+  <path d="M13 20h6v1h-6z M7 21h18v1h-18z M4 22h4v1h-4z M24 22h4v1h-4z M3 23h2v1h-2z M27 23h2v1h-2z M2 24h2v1h-2z M28 24h2v1h-2z M2 25h2v1h-2z M28 25h2v1h-2z M3 26h2v1h-2z M27 26h2v1h-2z M4 27h4v1h-4z M24 27h4v1h-4z M7 28h18v1h-18z M13 29h6v1h-6z" fill="#96bcd6" />
+  <path d="M12 22h8v1h-8z M9 23h3v1h-3z M20 23h3v1h-3z M7 24h2v1h-2z M23 24h2v1h-2z M7 25h2v1h-2z M23 25h2v1h-2z M9 26h3v1h-3z M20 26h3v1h-3z M12 27h8v1h-8z" fill="#5d8cb0" />
+  <path d="M13 5h6v1h-6z M10 6h12v1h-12z M9 7h14v1h-14z M9 8h14v1h-14z M9 9h14v1h-14z M8 10h16v1h-16z M8 11h16v1h-16z M8 12h16v1h-16z M8 13h16v1h-16z M8 14h16v1h-16z M8 15h16v1h-16z M9 16h14v1h-14z M9 17h14v1h-14z M9 18h14v1h-14z M10 19h12v1h-12z M13 20h6v1h-6z" fill="#cfe3ef" />
+  <path d="M13 4h6v1h-6z M10 5h3v1h-3z M19 5h3v1h-3z M9 6h1v1h-1z M22 6h1v1h-1z M8 7h1v1h-1z M23 7h1v1h-1z M8 8h1v1h-1z M23 8h1v1h-1z M8 9h1v1h-1z M23 9h1v1h-1z M7 10h1v1h-1z M24 10h1v1h-1z M7 11h1v1h-1z M24 11h1v1h-1z M7 12h1v1h-1z M24 12h1v1h-1z M7 13h1v1h-1z M24 13h1v1h-1z M7 14h1v1h-1z M24 14h1v1h-1z M7 15h1v1h-1z M24 15h1v1h-1z M8 16h1v1h-1z M23 16h1v1h-1z M8 17h1v1h-1z M23 17h1v1h-1z M8 18h1v1h-1z M23 18h1v1h-1z M9 19h1v1h-1z M22 19h1v1h-1z M10 20h3v1h-3z M19 20h3v1h-3z M13 21h6v1h-6z" fill="#5d8cb0" />
+  <path d="M13 3h6v1h-6z M10 4h3v1h-3z M19 4h3v1h-3z M9 5h1v1h-1z M22 5h1v1h-1z M8 6h1v1h-1z M23 6h1v1h-1z M7 7h1v1h-1z M24 7h1v1h-1z M7 8h1v1h-1z M24 8h1v1h-1z M7 9h1v1h-1z M24 9h1v1h-1z M6 10h1v1h-1z M25 10h1v1h-1z M6 11h1v1h-1z M25 11h1v1h-1z M6 12h1v1h-1z M25 12h1v1h-1z M6 13h1v1h-1z M25 13h1v1h-1z M6 14h1v1h-1z M25 14h1v1h-1z M6 15h1v1h-1z M25 15h1v1h-1z M7 16h1v1h-1z M24 16h1v1h-1z M7 17h1v1h-1z M24 17h1v1h-1z M7 18h1v1h-1z M24 18h1v1h-1z M8 19h1v1h-1z M23 19h1v1h-1z M9 20h1v1h-1z M22 20h1v1h-1z M10 21h3v1h-3z M19 21h3v1h-3z M13 22h6v1h-6z" fill="#eaf5fb" />
+  <path d="M13 2h6v1h-6z M10 3h3v1h-3z M19 3h3v1h-3z M9 4h1v1h-1z M22 4h1v1h-1z M8 5h1v1h-1z M23 5h1v1h-1z M7 6h1v1h-1z M24 6h1v1h-1z M6 7h1v1h-1z M25 7h1v1h-1z M6 8h1v1h-1z M25 8h1v1h-1z M6 9h1v1h-1z M25 9h1v1h-1z M5 10h1v1h-1z M26 10h1v1h-1z M5 11h1v1h-1z M26 11h1v1h-1z M5 12h1v1h-1z M26 12h1v1h-1z M5 13h1v1h-1z M26 13h1v1h-1z M5 14h1v1h-1z M26 14h1v1h-1z M5 15h1v1h-1z M26 15h1v1h-1z M6 16h1v1h-1z M25 16h1v1h-1z M6 17h1v1h-1z M25 17h1v1h-1z M6 18h1v1h-1z M25 18h1v1h-1z M7 19h1v1h-1z M24 19h1v1h-1z M8 20h1v1h-1z M23 20h1v1h-1z M9 21h1v1h-1z M22 21h1v1h-1z M10 22h3v1h-3z M19 22h3v1h-3z M13 23h6v1h-6z" fill="#132638" />
+  <g fill="#132638" shape-rendering="crispEdges">
+    {facePathsAt({ cx: 16, cy: 13, size: 'md', smile: 'wide', gap: 3 }).map((d) => (
+      <path d={d} />
+    ))}
+  </g>
+</MarkFrame>

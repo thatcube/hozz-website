@@ -1,0 +1,23 @@
+---
+/**
+ * 15 · Cadence
+ *
+ * A pulse written as rhythm rather than as a waveform: one beat and its decay,
+ * notated in four marks that shorten and lighten. The marks span x9–22, so the
+ * measure is centred on 16 like the shell it sits in, and the face rides a little
+ * high so the beat has room of its own.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import Face from '../Face.astro';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Hozz — Cadence">
+  <path d="M16 8h7v1h-7zM14 9h11v1h-11zM12 10h14v1h-14zM11 11h16v1h-16zM10 12h17v1h-17zM10 13h17v1h-17zM9 14h19v1h-19zM9 15h19v1h-19zM8 16h20v1h-20zM8 17h20v1h-20zM8 18h19v1h-19zM8 19h19v1h-19zM8 20h19v1h-19zM8 21h18v1h-18zM8 22h1v1h-1zM14 22h1v1h-1zM18 22h1v1h-1zM21 22h1v1h-1zM23 22h3v1h-3zM14 23h1v1h-1zM18 23h1v1h-1zM21 23h1v1h-1zM23 23h2v1h-2zM14 24h1v1h-1zM18 24h1v1h-1zM21 24h1v1h-1zM23 24h1v1h-1zM10 25h13v1h-13zM11 26h10v1h-10zM14 27h4v1h-4z" fill="#e8cdd2" />
+  <path d="M14 2h4v1h-4zM11 3h10v1h-10zM9 4h5v1h-5zM18 4h5v1h-5zM7 5h4v1h-4zM21 5h4v1h-4zM6 6h3v1h-3zM23 6h3v1h-3zM5 7h3v1h-3zM24 7h3v1h-3zM5 8h2v1h-2zM25 8h2v1h-2zM4 9h2v1h-2zM26 9h2v1h-2zM4 10h2v1h-2zM26 10h2v1h-2zM3 11h2v1h-2zM27 11h2v1h-2zM3 12h2v1h-2zM27 12h2v1h-2zM3 13h2v1h-2zM27 13h2v1h-2zM2 14h2v1h-2zM28 14h2v1h-2zM2 15h2v1h-2zM28 15h2v1h-2zM2 16h2v1h-2zM28 16h2v1h-2zM2 17h2v1h-2zM28 17h2v1h-2zM3 18h2v1h-2zM27 18h2v1h-2zM3 19h2v1h-2zM27 19h2v1h-2zM3 20h2v1h-2zM27 20h2v1h-2zM4 21h2v1h-2zM26 21h2v1h-2zM4 22h2v1h-2zM19 22h2v1h-2zM22 22h1v1h-1zM26 22h2v1h-2zM5 23h2v1h-2zM19 23h2v1h-2zM22 23h1v1h-1zM25 23h2v1h-2zM5 24h3v1h-3zM19 24h2v1h-2zM22 24h1v1h-1zM24 24h3v1h-3zM6 25h3v1h-3zM23 25h3v1h-3zM7 26h4v1h-4zM21 26h4v1h-4zM9 27h5v1h-5zM18 27h5v1h-5zM11 28h10v1h-10zM14 29h4v1h-4z" fill="#a9737f" />
+  <path d="M14 4h4v1h-4zM11 5h10v1h-10zM9 6h14v1h-14zM8 7h16v1h-16zM7 8h9v1h-9zM23 8h2v1h-2zM6 9h8v1h-8zM25 9h1v1h-1zM6 10h6v1h-6zM5 11h6v1h-6zM5 12h5v1h-5zM5 13h5v1h-5zM4 14h5v1h-5zM4 15h5v1h-5zM4 16h4v1h-4zM4 17h4v1h-4zM5 18h3v1h-3zM5 19h3v1h-3zM5 20h3v1h-3zM6 21h2v1h-2zM6 22h2v1h-2zM7 23h2v1h-2zM8 24h1v1h-1zM9 25h1v1h-1z" fill="#f6e6e8" />
+  <path d="M9 22h5v1h-5zM15 22h3v1h-3zM9 23h5v1h-5zM15 23h3v1h-3zM9 24h5v1h-5zM15 24h3v1h-3z" fill="#7d4f5c" />
+  <Face cx={16} cy={14} smile="wide" fill="#3d2932" />
+</MarkFrame>

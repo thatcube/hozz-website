@@ -1,0 +1,77 @@
+---
+/**
+ * m01 · Rim — a record, cut wider than itself.
+ *
+ * The dependency: **the rim is the shape of every bar end.** The pair is drawn
+ * wider than the record and the cut is clipped to the disc, so all four bar
+ * ends are arcs — a terminal no straight tool could make, and one that only a
+ * circle of this radius produces. Change the record's size and every end
+ * changes with it. Nothing about the ends is drawn by hand.
+ *
+ * There is no spindle. The hole is m00's device and putting one in the gap here
+ * would quietly restate its idea; this record is identified by its groove and
+ * by the four arcs the rim leaves behind, and by nothing in the middle.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.mozz;
+const uid = `m01-${Math.random().toString(36).slice(2, 9)}`;
+
+const R = 19; // disc spans 5–43
+const GAP = 7;
+
+// 17 + 7 + 17 = 41, running 3.5 to 44.5 across a disc that runs 5 to 43, so
+// every bar end is past the edge and gets returned as an arc. `cap` is moot:
+// the drawn terminals are never on screen.
+const Z = { y: 15, w: 17, h: 18, bar: 3.4, diag: 6.4, cap: 'flat' as const };
+const zLeft = 24 - GAP / 2 - Z.w;
+const zRight = 24 + GAP / 2;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    <clipPath id={`${uid}-disc`}>
+      <circle cx="24" cy="24" r={R} />
+    </clipPath>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      {/* Clipped to the disc, so the outline stays whole and the rim returns
+          each bar end as an arc. */}
+      <g clip-path={`url(#${uid}-disc)`}>
+        <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
+        <path d={zPath({ ...Z, x: zRight })} fill="#000" />
+      </g>
+    </mask>
+  </defs>
+
+  <g mask={`url(#${uid})`}>
+    <circle cx="24" cy="24" r={R} fill={app.hue} />
+    {/* Two grooves near the rim, and nothing else: with no hole in the middle
+        the rule has to carry the record on its own. */}
+    {[R - 2.4, R - 4.6].map((r) => (
+      <circle
+        cx="24"
+        cy="24"
+        r={r}
+        fill="none"
+        stroke={app.deep}
+        stroke-width="1.2"
+        opacity="0.5"
+      />
+    ))}
+  </g>
+</svg>

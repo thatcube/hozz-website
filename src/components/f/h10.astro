@@ -1,0 +1,44 @@
+---
+/**
+ * h10 · Open Punch
+ *
+ * One tabbed record card with a clean paired knockout. The card's filing edge
+ * is the top edge of both apertures, so moving the pair down breaks the concept.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.hozz;
+const uid = `h10-${Math.random().toString(36).slice(2, 9)}`;
+
+const Z = { y: 10, w: 11.5, h: 18, bar: 3.4, diag: 6.2, cap: 'angled' as const };
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} open-punch record mark`}
+>
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: 11 })} fill="#000" />
+      <path d={zPath({ ...Z, x: 27 })} fill="#000" />
+    </mask>
+  </defs>
+
+  <path
+    d="M4 6H10V10H44V38H4Z"
+    fill={ground === 'dark' ? app.light : app.hue}
+    mask={`url(#${uid})`}
+  />
+</svg>

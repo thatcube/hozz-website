@@ -1,0 +1,204 @@
+---
+import SketchLayout from '../../layouts/SketchLayout.astro';
+import '../../styles/sketch-x.css';
+---
+
+<SketchLayout title="Sketch X — The Threshold · Hozz" letter="X" name="The Threshold">
+  <main>
+    <header class="masthead shell">
+      <a class="brand" href="#top" aria-label="Hozz, back to top">
+        <span class="brand-mark" aria-hidden="true"></span>
+        Hozz
+      </a>
+      <nav aria-label="Page">
+        <a href="#how">How it works</a>
+        <a href="#destinations">Destinations</a>
+        <a class="nav-cta" href="https://github.com/thatcube/hozz">View source</a>
+      </nav>
+    </header>
+
+    <section class="hero shell" id="top">
+      <div class="hero-copy">
+        <p class="eyebrow"><span></span> Apple Health, on your terms</p>
+        <h1>Your health data has an <em>exit.</em></h1>
+        <p class="lede">
+          Hozz moves a faithful copy out of Apple Health and into a place you control.
+          No account, subscription, analytics, or cloud in the middle.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="#how">See the handoff</a>
+          <a class="button quiet" href="https://github.com/thatcube/hozz">Free and open source <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+
+      <div class="threshold" aria-label="A diagram showing health data crossing directly from Apple Health to a place you own">
+        <div class="threshold-label source-label">
+          <span class="label-dot health-dot"></span>
+          Apple Health
+        </div>
+        <div class="threshold-label owner-label">
+          <span class="label-dot owner-dot"></span>
+          Yours
+        </div>
+        <div class="threshold-field">
+          <div class="source-stack" aria-hidden="true">
+            <span>heartRate</span>
+            <span>sleepAnalysis</span>
+            <span>stepCount</span>
+          </div>
+          <div class="door" aria-hidden="true">
+            <span class="door-copy">Hozz</span>
+            <span class="door-note">passes through<br />keeps nothing</span>
+          </div>
+          <span class="empty-state" aria-hidden="true">no storage here</span>
+          <div class="arrival-stack" aria-hidden="true">
+            <span>health-export</span>
+            <small>complete · verified</small>
+          </div>
+          <div class="traveller" aria-hidden="true"><span>48 ms</span></div>
+        </div>
+        <p class="threshold-caption">
+          <span>one-way handoff</span>
+          <span>zero third parties</span>
+        </p>
+      </div>
+    </section>
+
+    <section class="thesis">
+      <div class="shell thesis-inner">
+        <p class="section-kicker">What it does</p>
+        <h2>A doorway, <em>not a warehouse.</em></h2>
+        <p class="section-intro">
+          Hozz reads only the Health categories you allow, remembers where it stopped,
+          and writes the next complete batch where you chose.
+        </p>
+
+        <div class="proof-grid">
+          <article>
+            <span class="proof-mark" aria-hidden="true">01</span>
+            <h3>You choose the scope</h3>
+            <p>iOS asks what Hozz may read. Everything else stays closed.</p>
+          </article>
+          <article>
+            <span class="proof-mark" aria-hidden="true">02</span>
+            <h3>It resumes exactly</h3>
+            <p>Interrupted exports pick up where they stopped—without gaps or duplicates.</p>
+          </article>
+          <article>
+            <span class="proof-mark" aria-hidden="true">03</span>
+            <h3>The copy stays honest</h3>
+            <p>Manifests identify every part, and limitations are labelled instead of hidden.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="process shell" id="how">
+      <div class="process-heading">
+        <p class="section-kicker">How it works</p>
+        <h2>Three deliberate <em>yeses.</em></h2>
+      </div>
+      <ol class="steps">
+        <li>
+          <span class="step-index">1</span>
+          <div>
+            <h3>Allow</h3>
+            <p>Select the Health data you want to take with you. Change access whenever you like.</p>
+          </div>
+          <span class="step-state">on device</span>
+        </li>
+        <li>
+          <span class="step-index">2</span>
+          <div>
+            <h3>Choose</h3>
+            <p>Point Hozz at a file, your server, or your Mac. Nothing moves before this.</p>
+          </div>
+          <span class="step-state">your address</span>
+        </li>
+        <li>
+          <span class="step-index">3</span>
+          <div>
+            <h3>Send</h3>
+            <p>Hozz verifies the handoff and remembers its place for next time.</p>
+          </div>
+          <span class="step-state">no relay</span>
+        </li>
+      </ol>
+    </section>
+
+    <section class="destinations" id="destinations">
+      <div class="shell">
+        <div class="destination-heading">
+          <div>
+            <p class="section-kicker">Where it sends</p>
+            <h2>Your data should arrive somewhere <em>you recognise.</em></h2>
+          </div>
+          <p>Every route is direct. Hozz runs no service between your phone and its destination.</p>
+        </div>
+
+        <div class="destination-grid">
+          <article class="destination-card file-card">
+            <span class="destination-icon" aria-hidden="true">
+              <svg viewBox="0 0 40 40"><path d="M12 4.5h11l6 6V35.5H12z"/><path d="M23 4.5v7h6M16.5 20h8M16.5 25h8"/></svg>
+            </span>
+            <h3>A file you keep</h3>
+            <p>A complete archive with a manifest, built to survive an interrupted export.</p>
+            <span class="format">canonical archive</span>
+          </article>
+          <article class="destination-card server-card">
+            <span class="destination-icon" aria-hidden="true">
+              <svg viewBox="0 0 40 40"><rect x="7" y="7" width="26" height="10" rx="3"/><rect x="7" y="23" width="26" height="10" rx="3"/><path d="M12 12h.1M12 28h.1M17 12h10M17 28h10"/></svg>
+            </span>
+            <h3>A server you run</h3>
+            <p>Sent over TLS, with credentials kept in the Keychain on that device.</p>
+            <span class="format">direct delivery</span>
+          </article>
+          <article class="destination-card mac-card">
+            <span class="destination-icon" aria-hidden="true">
+              <svg viewBox="0 0 40 40"><rect x="5" y="7" width="30" height="22" rx="4"/><path d="M14 34h12M20 29v5"/></svg>
+            </span>
+            <h3>Your own Mac</h3>
+            <p>Found on your network and sent straight from your phone—no address to type.</p>
+            <span class="format">local network</span>
+          </article>
+          <article class="destination-card formats-card">
+            <span class="destination-icon" aria-hidden="true">
+              <svg viewBox="0 0 40 40"><path d="M9 8h22M9 15h22M9 22h14M9 29h18"/></svg>
+            </span>
+            <h3>CSV and JSON</h3>
+            <p>Useful projections, plainly labelled as lossy. The full record remains intact.</p>
+            <span class="format">portable views</span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="promise shell">
+      <p class="section-kicker">The shortest privacy policy</p>
+      <div class="promise-statement">
+        <h2>There is no <em>other side.</em></h2>
+        <ul aria-label="Hozz privacy promises">
+          <li>No account</li>
+          <li>No subscription</li>
+          <li>No analytics</li>
+          <li>No Hozz server</li>
+          <li>No Health data in iCloud</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="close">
+      <div class="shell close-inner">
+        <p class="status"><span></span> Pre-alpha · background endurance testing in progress</p>
+        <h2>Take the copy.<br /><em>Keep the control.</em></h2>
+        <p>Hozz is free forever, open source, and built in public.</p>
+        <a class="button primary inverted" href="https://github.com/thatcube/hozz">
+          Follow development <span aria-hidden="true">↗</span>
+        </a>
+        <div class="close-rule" aria-hidden="true">
+          <span>Health</span><i></i><span>Your destination</span>
+        </div>
+      </div>
+    </section>
+  </main>
+</SketchLayout>

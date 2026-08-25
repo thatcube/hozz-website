@@ -1,0 +1,44 @@
+---
+/**
+ * p11 · Box Set
+ *
+ * The cases end exactly where the shelf begins, and the Z bottom bars end on
+ * that same line. The shelf therefore fixes the letters' baseline.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96 } = Astro.props as Props;
+const app = APP_BY_KEY.plozz;
+const uid = `p11-${Math.random().toString(36).slice(2, 9)}`;
+const Z = { y: 16, w: 14, h: 18, bar: 3.2, diag: 6.2, cap: 'angled' as const };
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} box-set mark`}
+>
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: 7 })} fill="#000" />
+      <path d={zPath({ ...Z, x: 27 })} fill="#000" />
+    </mask>
+  </defs>
+
+  <path
+    d="M5 13H16V34H5ZM18 9H29V34H18ZM31 14H43V34H31ZM5 15H43V34H5Z"
+    fill={app.hue}
+    mask={`url(#${uid})`}
+  />
+  <path d="M3.5 34H44.5V41H3.5Z" fill={app.deep} />
+</svg>

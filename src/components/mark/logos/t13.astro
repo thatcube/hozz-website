@@ -1,0 +1,86 @@
+---
+/**
+ * t13 · Glass, cast
+ *
+ * The opposite case to the chosen Hozz mark. That one is opaque — a light rim
+ * falling to a deeper core, which is what light landing on a curved surface
+ * does. This is glass, so the light also comes *through*, and the tell is that
+ * the tones stop being monotonic.
+ *
+ * Plozz, the only glass in the shipped family, rings its screen on all four
+ * sides — #97e3fe → #82deff → #72daff, a ramp almost entirely in the red
+ * channel, so the edge reads as catching light because it goes *whiter*, not
+ * bluer. Desaturation is the trick and it is borrowed here. The frame is not:
+ * light does not arrive from four directions at once, so the ring is split.
+ *
+ * Across the top and down the upper left it is lit, with a white catch on the
+ * shoulder where the light gets in, guttering back into the field over four
+ * rows rather than stopping on a hard line. The rest of the ring is the wall —
+ * glass seen edge-on, a step *deeper* than the field it borders, which is what
+ * keeps the light pooled inside the bubble rather than running out of the
+ * bottom, and what holds the silhouette on a white page at 24px. Inside the lit
+ * edge the tone steps deeper again per pixel, fading toward the base. Bright,
+ * dark, then field: that profile is the difference between glass and paint.
+ *
+ * Depth is measured from that lit ring outward through the glass rather than as
+ * an offset of the outline, and the difference matters: offset the outline and
+ * the same band appears on all four sides at the same width, which reads as a
+ * moulding. Measured from the light, the ramp has run out by the far side.
+ *
+ * What is over there instead is the pool — transmitted light, measured up from
+ * the silhouette's own underside so its contour is the bottom contour, focusing
+ * in from the far corner and falling away on both sides. It carries into the
+ * wall it leaves through, because light stopping a pixel short of the surface
+ * it exits by ends on a cliff and reads as a painted patch. A rake across the
+ * body, scaled by the same depth so it leans rather than stripes, is what puts
+ * the focus off to one side. That pool is the one thing an opaque mark cannot
+ * show: a bright region not attached to the lit edge.
+ *
+ * The field is held back so every tone the letterforms sit on or touch clears
+ * 4.5:1 against white — asserted, worst 4.94:1 — because a white ZZ needs
+ * something to sit on at 24px. Nothing is cleared for the face: the bands pass
+ * behind it, as they do on both shipped marks. Pure white is the face's alone,
+ * the catch being a violet-white one step off it.
+ *
+ * The silhouette is the shipped bubble at its full 28 across, rounder over the
+ * top (insets 6,4,2,1,0 rather than 5,3,2,1,0) and flatter underneath, so the
+ * light has a base to gather in. The tail is four rows, six wide at most, flush
+ * with the body's bottom-left corner — small relative to the body and plainly a
+ * separate part, and given its own mid tone so it does not dissolve into the
+ * pool. The body is symmetric about x=16, every row of it; the tail is not, and
+ * is exempt.
+ *
+ * The face is the shipped size — lg, 10 wide, from the shared module untouched
+ * — and it is centred on the *body*: 5 rows of air above it, 5 below,
+ * measured. 10 on 28 is the parity that lets it centre at all.
+ *
+ * 14 tones, no step louder than 18 on any channel.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Twozz — Glass, cast">
+  <path d="M28 11h1v1h-1z M3 18h1v1h-1z M3 19h1v1h-1z" fill="#6732bb" />
+  <path d="M8 8h16v1h-16z M8 9h18v1h-18z M8 10h15v1h-15z M8 11h11v1h-11z M8 12h7v1h-7z M28 12h1v1h-1z M8 13h4v1h-4z M28 13h1v1h-1z M7 14h2v1h-2z M28 14h1v1h-1z M28 15h1v1h-1z M28 16h1v1h-1z M28 17h1v1h-1z M4 20h2v1h-2z M6 21h1v1h-1z M7 22h1v1h-1z M7 23h1v1h-1z M10 23h1v1h-1z M7 24h3v1h-3z M7 25h1v1h-1z" fill="#713dc6" />
+  <path d="M8 7h16v1h-16z M7 8h1v1h-1z M24 8h2v1h-2z M7 9h1v1h-1z M7 10h1v1h-1z M23 10h5v1h-5z M7 11h1v1h-1z M19 11h9v1h-9z M7 12h1v1h-1z M15 12h13v1h-13z M7 13h1v1h-1z M12 13h16v1h-16z M6 14h1v1h-1z M9 14h19v1h-19z M6 15h18v1h-18z M5 16h16v1h-16z M4 17h14v1h-14z M4 18h11v1h-11z M4 19h8v1h-8z M6 20h4v1h-4z M12 21h1v1h-1z M11 22h1v1h-1z" fill="#7c48d1" />
+  <path d="M8 6h16v1h-16z M6 7h2v1h-2z M24 7h2v1h-2z M6 8h1v1h-1z M6 9h1v1h-1z M26 9h2v1h-2z M6 10h1v1h-1z M6 11h1v1h-1z M6 12h1v1h-1z M6 13h1v1h-1z M5 14h1v1h-1z M5 15h1v1h-1z M24 15h4v1h-4z M4 16h1v1h-1z M21 16h7v1h-7z M18 17h10v1h-10z M15 18h11v1h-11z M28 18h1v1h-1z M12 19h5v1h-5z M10 20h3v1h-3z M7 21h5v1h-5z M13 21h1v1h-1z M8 22h3v1h-3z M8 23h2v1h-2z" fill="#8652dc" />
+  <path d="M8 5h16v1h-16z M6 6h2v1h-2z M5 7h1v1h-1z M5 8h1v1h-1z M26 8h2v1h-2z M5 9h1v1h-1z M5 10h1v1h-1z M28 10h1v1h-1z M5 11h1v1h-1z M5 12h1v1h-1z M5 13h1v1h-1z M4 15h1v1h-1z M3 17h1v1h-1z M26 18h2v1h-2z M17 19h9v1h-9z M13 20h2v1h-2z M14 21h1v1h-1z" fill="#905de7" />
+  <path d="M8 4h9v1h-9z M6 5h2v1h-2z M4 6h2v1h-2z M24 6h2v1h-2z M4 7h1v1h-1z M26 7h2v1h-2z M4 8h1v1h-1z M4 9h1v1h-1z M4 10h1v1h-1z M4 11h1v1h-1z M4 14h1v1h-1z M27 19h2v1h-2z M15 20h2v1h-2z M15 21h1v1h-1z" fill="#9a68f2" />
+  <path d="M17 4h7v1h-7z M24 5h2v1h-2z M26 6h2v1h-2z M28 9h1v1h-1z M4 12h1v1h-1z M4 13h1v1h-1z M3 16h1v1h-1z M26 19h1v1h-1z M17 20h2v1h-2z M25 20h1v1h-1z M27 20h1v1h-1z M16 21h1v1h-1z" fill="#a274f3" />
+  <path d="M19 20h6v1h-6z M26 20h1v1h-1z M17 21h1v1h-1z" fill="#aa80f4" />
+  <path d="M28 8h1v1h-1z M3 15h1v1h-1z M18 21h1v1h-1z M25 21h1v1h-1z" fill="#b28cf6" />
+  <path d="M19 21h2v1h-2z M23 21h2v1h-2z" fill="#b998f7" />
+  <path d="M28 7h1v1h-1z M3 14h1v1h-1z M21 21h2v1h-2z" fill="#c1a4f8" />
+  <path d="M10 3h14v1h-14z M24 4h2v1h-2z M26 5h2v1h-2z M28 6h1v1h-1z M3 7h1v1h-1z M3 8h1v1h-1z M3 9h1v1h-1z M3 10h1v1h-1z M3 11h1v1h-1z M3 12h1v1h-1z M3 13h1v1h-1z" fill="#e9dcff" />
+  <path d="M8 3h2v1h-2z M6 4h2v1h-2z M4 5h2v1h-2z M3 6h1v1h-1z" fill="#f6efff" />
+  <path d="M8 2h16v1h-16z M6 3h2v1h-2z M24 3h2v1h-2z M4 4h2v1h-2z M26 4h2v1h-2z M3 5h1v1h-1z M28 5h1v1h-1z M2 6h1v1h-1z M29 6h1v1h-1z M2 7h1v1h-1z M29 7h1v1h-1z M2 8h1v1h-1z M29 8h1v1h-1z M2 9h1v1h-1z M29 9h1v1h-1z M2 10h1v1h-1z M29 10h1v1h-1z M2 11h1v1h-1z M29 11h1v1h-1z M2 12h1v1h-1z M29 12h1v1h-1z M2 13h1v1h-1z M29 13h1v1h-1z M2 14h1v1h-1z M29 14h1v1h-1z M2 15h1v1h-1z M29 15h1v1h-1z M2 16h1v1h-1z M29 16h1v1h-1z M2 17h1v1h-1z M29 17h1v1h-1z M2 18h1v1h-1z M29 18h1v1h-1z M2 19h1v1h-1z M29 19h1v1h-1z M3 20h1v1h-1z M28 20h1v1h-1z M4 21h2v1h-2z M26 21h2v1h-2z M6 22h1v1h-1z M12 22h14v1h-14z M6 23h1v1h-1z M11 23h1v1h-1z M6 24h1v1h-1z M10 24h1v1h-1z M6 25h1v1h-1z M8 25h2v1h-2z M6 26h2v1h-2z" fill="#1d0a3b" />
+  <g fill="#ffffff" shape-rendering="crispEdges">
+    {facePathsAt({ cx: 16, cy: 12, size: 'lg', smile: 'wide', gap: 2 }).map((d) => (
+      <path d={d} />
+    ))}
+  </g>
+</MarkFrame>

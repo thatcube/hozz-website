@@ -1,0 +1,194 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import Callout from '../../../components/docs/Callout.astro';
+import Code from '../../../components/docs/Code.astro';
+import Table from '../../../components/docs/Table.astro';
+import DeviceConstraints from '../../../components/docs/DeviceConstraints.astro';
+import { page } from '../../../data/docs-nav';
+import { COUNTS, DELIVERY_FORMATS, spell } from '../../../data/docs';
+
+const entry = page('/docs/destinations/web/');
+
+const request = `POST /health HTTP/1.1
+Host: example.com
+Content-Type: application/x-ndjson
+Idempotency-Key: 2f1a9c04-8e2b-4a1d-9f30-11c4e6a7b920
+Hozz-Batch-Id: 2f1a9c04-8e2b-4a1d-9f30-11c4e6a7b920
+Hozz-Batch-Sequence: 41
+Hozz-Record-Count: 500
+X-Hozz-Device: Brandon's iPhone
+Authorization: <whatever you configured>
+
+{"catalogVersion":6,"id":"…","kind":"quantity","…":"…"}
+{"id":"9c40…","kind":"deletion","schemaVersion":1,"type":"HKQuantityTypeIdentifierStepCount"}`;
+
+const minimal = `from http.server import BaseHTTPRequestHandler, HTTPServer
+
+seen = set()
+
+class Handler(BaseHTTPRequestHandler):
+    def do_POST(self):
+        key = self.headers.get("Idempotency-Key")
+        body = self.rfile.read(int(self.headers["Content-Length"]))
+
+        # A repeated key means byte-identical content, so it is safe to drop.
+        if key not in seen:
+            seen.add(key)
+            for line in body.splitlines():
+                store(line)          # your problem, not Hozz's
+
+        self.send_response(200)      # any 2xx is an acceptance
+        self.end_headers()
+
+HTTPServer(("", 8000), Handler).serve_forever()`;
+
+const headers = [
+  ['Content-Type', 'The format’s media type.'],
+  ['Idempotency-Key', 'The batch identifier. A repeat means the same bytes.'],
+  ['Hozz-Batch-Id', 'The same value, under a Hozz-specific name.'],
+  ['Hozz-Batch-Sequence', 'Batch number for this destination.'],
+  ['Hozz-Record-Count', 'How many records the payload holds.'],
+  ['X-Hozz-Device', 'What this phone calls itself.'],
+];
+---
+
+<DocsLayout page={entry} section="Destinations">
+  <div class="fact-strip">
+    <div>
+      <dt>Format</dt>
+      <dd>Any of the five</dd>
+    </div>
+    <div>
+      <dt>Method</dt>
+      <dd>POST</dd>
+    </div>
+    <div>
+      <dt>Accepts</dt>
+      <dd>Any <code>2xx</code></dd>
+    </div>
+  </div>
+
+  <p>
+    Point Hozz at any endpoint that accepts a POST. This is the destination for anything not covered
+    by the named ones — your own service, a serverless function, an ingestion pipeline, or something
+    off-the-shelf that speaks HTTP.
+  </p>
+
+  <p>
+    The <a href="/docs/destinations/mac/">Mac receiver</a>, <a href="/docs/destinations/home-assistant/">Home
+      Assistant</a> and <a href="/docs/destinations/influxdb/">InfluxDB</a> destinations are this destination
+    with the fields filled in.
+  </p>
+
+  <h2>Setting it up</h2>
+
+  <ol class="steps">
+    <li>
+      <h3>Put the full URL in the address field</h3>
+      <p>Query string included, if you need one.</p>
+    </li>
+    <li>
+      <h3>Add an authorization header if your endpoint wants one</h3>
+      <p>
+        The secret field holds the entire header value. The header name defaults to{' '}
+        <code>Authorization</code>. It is stored in the device Keychain, not in the destination
+        record.
+      </p>
+    </li>
+    <li>
+      <h3>Choose a format</h3>
+      <p>All {spell(COUNTS.deliveryFormats)} are available here. NDJSON is the default and the only lossless streaming one.</p>
+    </li>
+    <li>
+      <h3>Send a test</h3>
+      <p>
+        A small probe in the chosen format, reporting the status that came back. It contains no
+        Health data.
+      </p>
+    </li>
+  </ol>
+
+  <h2>What a request looks like</h2>
+
+  <Code caption="A delivery" code={request} />
+
+  <Table caption="Headers on every delivery" columns={['Header', 'Meaning']} mono>
+    {
+      headers.map(([header, meaning]) => (
+        <tr>
+          <th scope="row">{header}</th>
+          <td>{meaning}</td>
+        </tr>
+      ))
+    }
+  </Table>
+
+  <h2>How to answer</h2>
+
+  <p>
+    Answer <code>2xx</code> to accept. Hozz treats <code>408</code>, <code>429</code> and{' '}
+    <code>5xx</code> as "try again" and retries with backoff; anything else stops and asks the user
+    to fix it rather than retrying on a timer forever.
+  </p>
+
+  <Callout kind="note" title="Response bodies are discarded, not logged">
+    <p>
+      A server rejecting a batch frequently echoes the offending record back, and a Health value
+      must not end up in a log. So Hozz records the status and a human-readable failure state, and
+      throws the body away. If you need to know why your endpoint rejected something, look at your
+      endpoint's own logs.
+    </p>
+  </Callout>
+
+  <h2>Idempotency, and why it matters</h2>
+
+  <p>
+    <strong>The batch identifier is derived from the payload bytes.</strong> A retry of the same data
+    reuses it, so you can safely discard a repeat. A retry that picked up newer records gets a{' '}
+    <em>different</em> identifier and has to be stored — reusing a key for changed contents is exactly
+    how a correctly written receiver ends up discarding records it has never seen.
+  </p>
+
+  <h2>A receiver, in full</h2>
+
+  <Code caption="A minimal receiver" code={minimal} />
+
+  <p>
+    A working, dependency-free Python receiver lives in <code>receiver/</code> in the Hozz
+    repository if you would rather start from something complete.
+  </p>
+
+  <h2>Choosing a format</h2>
+
+  <Table
+    caption="Delivery formats available to a web destination"
+    columns={['Format', 'Media type', 'Notes']}
+  >
+    {
+      DELIVERY_FORMATS.map((format) => (
+        <tr>
+          <th scope="row">{format.name}</th>
+          <td>
+            <code>{format.contentType}</code>
+          </td>
+          <td>{format.note}</td>
+        </tr>
+      ))
+    }
+  </Table>
+
+  <p>
+    <a href="/docs/delivery-schema/">The delivery schema</a> documents each of them field by field, with
+    a worked example payload.
+  </p>
+
+  <Callout kind="warn" title="Your phone has to be able to reach the address">
+    <p>
+      On a home network that means being on the same Wi-Fi, and a <code>.local</code> address will
+      not resolve over cellular. If you want deliveries while you are out, the endpoint has to be
+      reachable from outside — and if it is, it should be behind TLS, because this is Health data.
+    </p>
+  </Callout>
+
+  <DeviceConstraints />
+</DocsLayout>

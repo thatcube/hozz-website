@@ -1,0 +1,65 @@
+---
+/**
+ * t15 · Swell
+ *
+ * The bubble pulled toward the circle, and lit like one.
+ *
+ * Hozz's chosen mark is a disc and this is a rounded rectangle, so the two did
+ * not rhyme. The corners here are the cap of the canonical **24-across circle**
+ * — one step wider than the 22 Hozz is drawn from — widened onto a 28 body, so
+ * a Twozz corner and the Hozz disc are now literally the same curve. Nine rows
+ * of corner against the shipped five.
+ *
+ * It stops one step short of round. The body is 28x23, the shipped footprint
+ * exactly, with five straight rows on each side and twelve pixels of flat top;
+ * take the corners to circle(28) and the flats vanish, the body becomes an
+ * ellipse, and the mark is Hozz's silhouette in purple with a spike on it.
+ *
+ * The rounder the body, the more the tail carries — so it takes over the
+ * bottom-left corner instead of hanging under a flat underside (the left
+ * contour runs unbroken from corner into spout, never stepping back out), and
+ * it holds the two deepest tones in the mark, so it separates by value as well
+ * as by outline and survives at 24px.
+ *
+ * 13 tones. One monotone violet ramp, no step larger than 16 on any
+ * channel, laid down by a single scalar field: three steps of meniscus in from
+ * the outline, plus distance from a light off the top-left corner, plus a fold
+ * on the spout. One field, so the light wraps the corner, crosses the body and
+ * runs out into the tail with no seam. Ramp tone 6 is #8f52f6 — the shipped
+ * body colour — and that is what the face sits on.
+ *
+ * The face is `lg` with the wide smile, ten wide on twenty-eight — the same
+ * face-to-body ratio as Hozz's eight on twenty-two — at gap 1, so it is ten
+ * rows on a twenty-row field, which is the arithmetic the family default gets
+ * wrong here: eleven rows cannot split twenty evenly and lands the mark a row
+ * top-heavy. Centred on the **field** the eye reads (the violet, y3-22:
+ * keyline ring out, tail-junction rows out, tail out): 5 above, 5 below.
+ * Against the whole outline that leaves 6 above and 7 below — the extra
+ * row falls under the face, where the tail already carries the weight.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Twozz — Swell">
+  <path d="M10 3h2v1h-2z M8 4h2v1h-2z M7 5h1v1h-1z M6 6h1v1h-1z M5 7h1v1h-1z" fill="#cdb0fa" />
+  <path d="M12 3h2v1h-2z M10 4h1v1h-1z M8 5h2v1h-2z M7 6h1v1h-1z M6 7h1v1h-1z M5 8h1v1h-1z M4 9h1v1h-1z" fill="#c3a0f9" />
+  <path d="M14 3h3v1h-3z M11 4h3v1h-3z M10 5h1v1h-1z M8 6h2v1h-2z M7 7h1v1h-1z M6 8h1v1h-1z M5 9h1v1h-1z M4 10h1v1h-1z M3 11h1v1h-1z" fill="#b891f9" />
+  <path d="M17 3h3v1h-3z M14 4h3v1h-3z M11 5h3v1h-3z M10 6h1v1h-1z M8 7h2v1h-2z M7 8h1v1h-1z M6 9h1v1h-1z M5 10h1v1h-1z M4 11h2v1h-2z M3 12h1v1h-1z M3 13h1v1h-1z" fill="#ae81f8" />
+  <path d="M20 3h2v1h-2z M17 4h3v1h-3z M14 5h3v1h-3z M11 6h2v1h-2z M10 7h2v1h-2z M8 8h3v1h-3z M7 9h1v1h-1z M6 10h2v1h-2z M6 11h1v1h-1z M4 12h2v1h-2z M4 13h1v1h-1z M3 14h2v1h-2z M3 15h2v1h-2z" fill="#a471f7" />
+  <path d="M20 4h4v1h-4z M17 5h8v1h-8z M13 6h5v1h-5z M12 7h5v1h-5z M11 8h5v1h-5z M8 9h7v1h-7z M8 10h6v1h-6z M7 11h6v1h-6z M6 12h5v1h-5z M5 13h1v1h-1z M5 14h2v1h-2z M5 15h1v1h-1z M4 16h2v1h-2z M4 17h2v1h-2z" fill="#9962f7" />
+  <path d="M18 6h8v1h-8z M17 7h8v1h-8z M16 8h5v1h-5z M15 9h5v1h-5z M14 10h5v1h-5z M13 11h5v1h-5z M11 12h6v1h-6z M6 13h10v1h-10z M7 14h8v1h-8z M6 15h7v1h-7z M6 16h4v1h-4z M6 17h2v1h-2z M5 18h3v1h-3z M5 19h3v1h-3z M6 20h1v1h-1z" fill="#8f52f6" />
+  <path d="M25 7h2v1h-2z M21 8h6v1h-6z M20 9h8v1h-8z M19 10h6v1h-6z M18 11h5v1h-5z M17 12h5v1h-5z M16 13h5v1h-5z M15 14h5v1h-5z M13 15h6v1h-6z M10 16h8v1h-8z M8 17h8v1h-8z M8 18h6v1h-6z M8 19h4v1h-4z M7 20h4v1h-4z M7 21h3v1h-3z M8 22h1v1h-1z" fill="#854ae7" />
+  <path d="M25 10h3v1h-3z M23 11h6v1h-6z M22 12h6v1h-6z M21 13h6v1h-6z M20 14h6v1h-6z M19 15h5v1h-5z M18 16h5v1h-5z M16 17h6v1h-6z M14 18h7v1h-7z M12 19h8v1h-8z M11 20h7v1h-7z M10 21h8v1h-8z M9 22h8v1h-8z M8 23h7v1h-7z M8 24h2v1h-2z" fill="#7a42d8" />
+  <path d="M28 12h1v1h-1z M27 13h2v1h-2z M26 14h3v1h-3z M24 15h5v1h-5z M23 16h5v1h-5z M22 17h6v1h-6z M21 18h6v1h-6z M20 19h6v1h-6z M18 20h6v1h-6z M18 21h5v1h-5z M17 22h5v1h-5z M15 23h5v1h-5z M10 24h5v1h-5z" fill="#703bca" />
+  <path d="M26 19h1v1h-1z M24 20h2v1h-2z M23 21h2v1h-2z M22 22h2v1h-2z M20 23h2v1h-2z M8 25h5v1h-5z M8 26h4v1h-4z M8 27h3v1h-3z M9 28h1v1h-1z" fill="#6633bb" />
+  <path d="M10 2h12v1h-12z M8 3h2v1h-2z M22 3h2v1h-2z M7 4h1v1h-1z M24 4h1v1h-1z M6 5h1v1h-1z M25 5h1v1h-1z M5 6h1v1h-1z M26 6h1v1h-1z M4 7h1v1h-1z M27 7h1v1h-1z M4 8h1v1h-1z M27 8h1v1h-1z M3 9h1v1h-1z M28 9h1v1h-1z M3 10h1v1h-1z M28 10h1v1h-1z M2 11h1v1h-1z M29 11h1v1h-1z M2 12h1v1h-1z M29 12h1v1h-1z M2 13h1v1h-1z M29 13h1v1h-1z M2 14h1v1h-1z M29 14h1v1h-1z M2 15h1v1h-1z M29 15h1v1h-1z M3 16h1v1h-1z M28 16h1v1h-1z M3 17h1v1h-1z M28 17h1v1h-1z M4 18h1v1h-1z M27 18h1v1h-1z M4 19h1v1h-1z M27 19h1v1h-1z M5 20h1v1h-1z M26 20h1v1h-1z M6 21h1v1h-1z M25 21h1v1h-1z M7 22h1v1h-1z M24 22h1v1h-1z M7 23h1v1h-1z M22 23h2v1h-2z M7 24h1v1h-1z M15 24h7v1h-7z M7 25h1v1h-1z M13 25h2v1h-2z M7 26h1v1h-1z M12 26h1v1h-1z M7 27h1v1h-1z M11 27h1v1h-1z M8 28h1v1h-1z M10 28h1v1h-1z M8 29h2v1h-2z" fill="#241056" />
+  <g fill="#ffffff" shape-rendering="crispEdges">
+    {facePathsAt({ cx: 16, cy: 13, size: 'lg', smile: 'wide', gap: 1 }).map((d) => (
+      <path d={d} />
+    ))}
+  </g>
+</MarkFrame>

@@ -1,0 +1,41 @@
+---
+/**
+ * Shell for the art-direction sketches. No header, no footer, no nav — a sketch
+ * is one idea shown at full size, not a site. Kept out of the index and the
+ * sitemap for the same reason.
+ */
+interface Props {
+  title: string;
+  letter: string;
+  name: string;
+}
+
+const { title, letter, name } = Astro.props;
+
+import '../styles/sketch-base.css';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{title}</title>
+    <link rel="icon" href="/logo.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <slot />
+    <a class="sketch-tag" href="/directions/">
+      <b>Sketch {letter}</b>
+      <span>{name} · back to all</span>
+    </a>
+    <script is:inline>
+      /* Inside the comparison board the tag would sit on top of the design it is
+         labelling, and the board already names it. */
+      if (window.top !== window.self) {
+        document.querySelector('.sketch-tag')?.remove();
+      }
+    </script>
+  </body>
+</html>

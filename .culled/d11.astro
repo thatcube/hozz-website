@@ -1,0 +1,48 @@
+---
+/**
+ * 11 · Stack — two whole Z's, stepped.
+ *
+ * The same letterform as the rest of this set, set twice: one Z above the
+ * other, offset to the right so the pair steps down the diagonal instead of
+ * sitting in a column. The two letters stay separate — a hairline of paper
+ * runs between them — which is exactly what makes the ZZ countable at a
+ * glance.
+ *
+ * No container, no face; the letters are drawn as paths so there is no font
+ * dependency. Every cut is horizontal, vertical, or parallel to the diagonal,
+ * and the diagonal carries more weight than the bars.
+ *
+ * Colour: with nothing to sit inside, the two letters carry the shading
+ * themselves — a soft duotone, the upper Z running light into the hue, the
+ * lower running the hue into deep. Read together they are one continuous ramp;
+ * read apart they are two distinct letters. Both ramps hold most of their
+ * length at the hue itself, so neither letter thins out on a dark ground.
+ */
+import { APP_BY_KEY, type AppKey } from '../../data/brand';
+
+interface Props {
+  app: AppKey;
+  size?: number;
+}
+const { app, size = 96 } = Astro.props;
+const a = APP_BY_KEY[app];
+const up = `g-d11-up-${app}`;
+const lo = `g-d11-lo-${app}`;
+---
+
+<svg width={size} height={size} viewBox="0 0 64 64" role="img" aria-label={`${a.name} mark`} style="display:block">
+  <defs>
+    <linearGradient id={up} gradientUnits="userSpaceOnUse" x1="18" y1="6" x2="35" y2="34">
+      <stop offset="0" stop-color={a.light} />
+      <stop offset="0.62" stop-color={a.hue} />
+    </linearGradient>
+    <linearGradient id={lo} gradientUnits="userSpaceOnUse" x1="29" y1="30" x2="46" y2="60">
+      <stop offset="0" stop-color={a.hue} />
+      <stop offset="0.45" stop-color={a.hue} />
+      <stop offset="1" stop-color={a.deep} />
+    </linearGradient>
+  </defs>
+
+  <path d="M22 14 L35 14 L35 18.4 L27.2 26.8 L35 26.8 L31 31.2 L18 31.2 L18 26.8 L25.8 18.4 L18 18.4 Z" fill={`url(#${up})`} />
+  <path d="M33 32.8 L46 32.8 L46 37.2 L38.2 45.6 L46 45.6 L42 50 L29 50 L29 45.6 L36.8 37.2 L29 37.2 Z" fill={`url(#${lo})`} />
+</svg>

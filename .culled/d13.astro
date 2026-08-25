@@ -1,0 +1,44 @@
+---
+/**
+ * 13 · Slant — the same ZZ, moving.
+ *
+ * The pair is sheared about twelve degrees, and the shear is baked into the
+ * coordinates rather than applied as a transform, so the outline is a real
+ * italic drawing and not a squashed upright. The terminals already run
+ * parallel to the diagonal, which under the slant reads as speed: every cut in
+ * the letter leans the same way.
+ *
+ * The second Z exits on a swash — its foot lifts off the baseline and tapers
+ * to a point, so the pair looks like it is travelling rather than standing.
+ * That tail is the only curve in the whole set; everything else is straight.
+ *
+ * Colour: no container to hold it, so the shading follows the motion — the
+ * gradient runs up the direction of travel, pale at the trailing edge and
+ * saturating into deep at the leading one. Both ends of the ramp are placed
+ * outside the mark so neither extreme is fully reached on either ground.
+ */
+import { APP_BY_KEY, type AppKey } from '../../data/brand';
+
+interface Props {
+  app: AppKey;
+  size?: number;
+}
+const { app, size = 96 } = Astro.props;
+const a = APP_BY_KEY[app];
+const id = `g-d13-${app}`;
+---
+
+<svg width={size} height={size} viewBox="0 0 64 64" role="img" aria-label={`${a.name} mark`} style="display:block">
+  <defs>
+    <linearGradient id={id} gradientUnits="userSpaceOnUse" x1="4" y1="50" x2="60" y2="14">
+      <stop offset="0" stop-color={a.light} />
+      <stop offset="0.4" stop-color={a.hue} />
+      <stop offset="1" stop-color={a.deep} />
+    </linearGradient>
+  </defs>
+
+  <g fill={`url(#${id})`}>
+    <path d="M19.14 21 L31.34 21 L30.32 25.8 L21.78 38.2 L27.68 38.2 L24.36 43 L12.16 43 L13.18 38.2 L21.72 25.8 L15.82 25.8 Z" />
+    <path d="M37.14 21 L49.34 21 L48.32 25.8 L39.78 38.2 L45.68 38.2 Q48.73 37.85 50.16 39.74 Q47.09 40.6 42.36 43 L30.16 43 L31.18 38.2 L39.72 25.8 L33.82 25.8 Z" />
+  </g>
+</svg>

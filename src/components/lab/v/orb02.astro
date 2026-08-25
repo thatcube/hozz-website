@@ -1,0 +1,167 @@
+---
+import { CHIPS } from '../../../data/chips';
+
+const movers = [
+  { chip: CHIPS[0], angle: 8, radius: 30, duration: 89, sway: 17, reverse: false },
+  { chip: CHIPS[2], angle: 49, radius: 35, duration: 117, sway: 21, reverse: true },
+  { chip: CHIPS[4], angle: 91, radius: 28, duration: 101, sway: 19, reverse: false },
+  { chip: CHIPS[5], angle: 137, radius: 32, duration: 131, sway: 23, reverse: true },
+  { chip: CHIPS[6], angle: 181, radius: 29.5, duration: 109, sway: 16, reverse: false },
+  { chip: CHIPS[8], angle: 222, radius: 26, duration: 127, sway: 25, reverse: true },
+  { chip: CHIPS[9], angle: 255, radius: 29, duration: 97, sway: 18, reverse: false },
+  { chip: CHIPS[10], angle: 315, radius: 33, duration: 139, sway: 22, reverse: true },
+  { chip: CHIPS[12], angle: 342, radius: 20, duration: 113, sway: 20, reverse: false },
+];
+---
+
+<figure
+  class="mobile"
+  role="img"
+  aria-label="Nine Apple Health data types drifting independently around the word you"
+>
+  {
+    movers.map(({ chip, angle, radius, duration, sway, reverse }) => (
+      <span
+        class="origin"
+        style={`--angle:${angle}deg;--radius:${radius}cqi;--duration:${duration}s;--sway:${sway}s;--orbit-direction:${reverse ? 'reverse' : 'normal'};--counter-direction:${reverse ? 'normal' : 'reverse'};--hue:var(--h-${chip.cat})`}
+      >
+        <span class="rotor">
+          <span class="reach">
+            <span class="level">
+              <span class="counter">
+                <span class="drift">
+                  <span class="chip">
+                    <i aria-hidden="true" />
+                    {chip.name}
+                  </span>
+                </span>
+              </span>
+            </span>
+          </span>
+        </span>
+      </span>
+    ))
+  }
+
+  <span class="person">you</span>
+</figure>
+
+<style>
+  .mobile {
+    position: relative;
+    container-type: inline-size;
+    inline-size: 100%;
+    max-inline-size: 31rem;
+    aspect-ratio: 1;
+    margin: 0;
+    overflow: visible;
+    isolation: isolate;
+    font-family: var(--sans);
+  }
+
+  .origin,
+  .rotor {
+    position: absolute;
+    inset: 0;
+  }
+
+  .origin {
+    transform: rotate(var(--angle));
+    pointer-events: none;
+  }
+
+  .rotor {
+    animation: orbit var(--duration) linear infinite;
+    animation-direction: var(--orbit-direction);
+  }
+
+  .reach {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    transform: translateY(-50%);
+  }
+
+  .level {
+    display: block;
+    transform: translateX(var(--radius));
+  }
+
+  .counter {
+    display: block;
+    transform: rotate(calc(-1 * var(--angle)));
+    transform-origin: 0 50%;
+  }
+
+  .drift {
+    display: block;
+    animation: sway var(--sway) ease-in-out infinite alternate;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: clamp(0.28rem, 1.4cqi, 0.42rem);
+    padding: clamp(0.25rem, 1.15cqi, 0.34rem) clamp(0.48rem, 2cqi, 0.68rem)
+      clamp(0.25rem, 1.15cqi, 0.34rem) clamp(0.4rem, 1.7cqi, 0.56rem);
+    border: 1px solid #dfe3e8;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 2px 10px rgba(31, 36, 42, 0.04);
+    color: #252a31;
+    font-size: clamp(0.5625rem, 1.9cqi, 0.72rem);
+    font-weight: 500;
+    letter-spacing: -0.012em;
+    line-height: 1;
+    white-space: nowrap;
+    transform: translateX(-50%);
+    animation: orbit var(--duration) linear infinite;
+    animation-direction: var(--counter-direction);
+  }
+
+  .chip i {
+    inline-size: clamp(0.3rem, 1.35cqi, 0.42rem);
+    block-size: clamp(0.3rem, 1.35cqi, 0.42rem);
+    flex: none;
+    border-radius: 50%;
+    background: var(--hue);
+  }
+
+  .person {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    z-index: 2;
+    translate: -50% -50%;
+    color: #171b20;
+    font-size: clamp(1rem, 4.8cqi, 1.45rem);
+    font-weight: 600;
+    letter-spacing: -0.045em;
+    line-height: 1;
+  }
+
+  @keyframes orbit {
+    to {
+      rotate: 360deg;
+    }
+  }
+
+  @keyframes sway {
+    from {
+      translate: -2px -3px;
+      rotate: -0.7deg;
+    }
+    to {
+      translate: 3px 2px;
+      rotate: 0.7deg;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rotor,
+    .chip,
+    .drift {
+      animation: none;
+    }
+  }
+</style>

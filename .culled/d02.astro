@@ -1,0 +1,44 @@
+---
+/**
+ * 02 · Drop — a soft organic blob with the ZZ cut clean out of it.
+ *
+ * One calm, asymmetric liquid form — a settled drop rather than a circle — with
+ * a single diagonal gradient of the app's own hue. The ZZ is negative space, so
+ * the mark is one shape and one hole: nothing left to simplify.
+ *
+ * The blob is byte-identical across the four apps. Only the hue moves, which is
+ * what lets the four read as one family at a glance.
+ */
+import { APP_BY_KEY, type AppKey } from '../../data/brand';
+
+interface Props {
+  app: AppKey;
+  size?: number;
+}
+const { app, size = 96 } = Astro.props;
+const a = APP_BY_KEY[app];
+const id = `g-d02-${app}`;
+---
+
+<svg width={size} height={size} viewBox="0 0 64 64" role="img" aria-label={`${a.name} mark`} style="display:block">
+  <defs>
+    <linearGradient id={id} x1="0.1" y1="0" x2="0.85" y2="1">
+      <stop offset="0" stop-color={a.light} />
+      <stop offset="0.46" stop-color={a.hue} />
+      <stop offset="1" stop-color={a.deep} />
+    </linearGradient>
+  </defs>
+
+  <!-- The drop. A closed curvature-continuous loop, so no join betrays itself. -->
+  <path
+    d="M62.00 29.51C62.03 33.42 60.81 37.77 59.05 41.29C57.29 44.82 54.48 48.07 51.44 50.65C48.40 53.23 44.73 55.42 40.81 56.78C36.88 58.14 32.29 59.15 27.89 58.82C23.49 58.49 18.32 57.26 14.42 54.80C10.51 52.33 6.52 48.22 4.48 44.01C2.44 39.79 1.61 34.07 2.17 29.51C2.73 24.95 5.21 20.10 7.85 16.63C10.49 13.17 14.47 10.58 18.01 8.73C21.55 6.87 25.43 6.01 29.10 5.50C32.77 4.98 36.45 4.97 40.03 5.63C43.61 6.29 47.44 7.42 50.58 9.45C53.71 11.48 56.94 14.48 58.85 17.82C60.75 21.17 61.97 25.60 62.00 29.51Z"
+    fill={`url(#${id})`}
+  />
+
+  <!-- ZZ, knocked through. Two equal letterforms so the pair is unmistakable,
+       held inside 15.5–48.5 with a clear dozen units of air on every side. -->
+  <g fill="#fff">
+    <path d="M15.5 22h15v4.4L21.9 38.1h8.6v4.4h-15v-4.4l8.6-11.7h-8.6z" />
+    <path d="M33.5 22h15v4.4L39.9 38.1h8.6v4.4h-15v-4.4l8.6-11.7h-8.6z" />
+  </g>
+</svg>

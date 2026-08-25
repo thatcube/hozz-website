@@ -1,0 +1,60 @@
+---
+/**
+ * p04 · Playhead
+ *
+ * A single forward playhead with the pair punched cleanly through its broad
+ * body. One lower facet gives the silhouette depth without adding hardware.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.plozz;
+const uid = `p04-${Math.random().toString(36).slice(2, 9)}`;
+
+const Z_LEFT = {
+  x: 6,
+  y: 16,
+  w: 9.5,
+  h: 16,
+  bar: 3.4,
+  diag: 5.8,
+  cap: 'angled' as const,
+};
+const Z_RIGHT = {
+  x: 18.5,
+  y: 16,
+  w: 9.5,
+  h: 16,
+  bar: 3.4,
+  diag: 5.8,
+  cap: 'angled' as const,
+};
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} playhead mark`}
+>
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath(Z_LEFT)} fill="#000" />
+      <path d={zPath(Z_RIGHT)} fill="#000" />
+    </mask>
+  </defs>
+
+  <g mask={`url(#${uid})`}>
+    <path d="M4 9H28L44 24L28 39H4Z" fill={app.hue} />
+    <path d="M4 35.5H27L40.3 23.2L44 24L28 39H4Z" fill={app.deep} />
+  </g>
+</svg>

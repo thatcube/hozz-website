@@ -1,0 +1,374 @@
+---
+/**
+ * Sketch G — "Addressed"
+ *
+ * Leads with the five automatic destinations. The organising idea: this is a
+ * list of *your own things*, not a menu of other companies' clouds — so each
+ * destination is anchored by its real address, and the page opens with a
+ * deliberately empty slot to make the "no default" point physical.
+ *
+ * Around that spine sits the minimum a page needs: what it does (hero), how it
+ * works (a question-shaped section with the real steps), what comes out
+ * (formats), and a close. Everything is cut to the bone — the addresses are
+ * meant to be the loudest thing here.
+ *
+ * Nothing depicts the Hozz app. The only artefacts shown are addresses,
+ * transports and identifiers — all real API names. Sample hostnames are marked
+ * as examples so nothing reads as an invented fact.
+ */
+import SketchLayout from '../../layouts/SketchLayout.astro';
+import '../../styles/sketch-g.css';
+import { GITHUB_URL, DONATE_URL, LICENSE_URL } from '../../data/site';
+
+/** Break long addresses only after path delimiters, never mid-number. */
+function addrParts(s) {
+  return s.split(/(?<=[/:.@])/);
+}
+
+const DESTINATIONS = [
+  {
+    n: '01',
+    name: 'Your Mac',
+    hue: 'var(--h-other)',
+    scheme: '_hozz._tcp',
+    rest: ' · 192.168.1.24:54330',
+    example: true,
+    transport: 'NDJSON over your own local network, authenticated with a token only your devices hold.',
+    meta: ['Bonjour _hozz._tcp', 'port 54330', 'token auth'],
+  },
+  {
+    n: '02',
+    name: 'A folder',
+    hue: 'var(--h-nutrition)',
+    scheme: '~/Drive',
+    rest: '/Health/hozz/',
+    example: true,
+    transport: 'Batch files through the Files picker — iCloud, Dropbox, OneDrive, Drive, SMB, or the device itself.',
+    meta: ['Files picker', 'NDJSON / JSON / CSV', 'on device or a drive you mount'],
+  },
+  {
+    n: '03',
+    name: 'Home Assistant',
+    hue: 'var(--h-mind)',
+    scheme: 'http://',
+    rest: 'homeassistant.local:8123/api/webhook/…',
+    example: true,
+    transport: 'Metrics JSON posted to a webhook or REST endpoint in your own house.',
+    meta: ['webhook / REST', 'Metrics JSON'],
+  },
+  {
+    n: '04',
+    name: 'A web address',
+    hue: 'var(--h-mobility)',
+    scheme: 'https://',
+    rest: 'your-host.example/ingest',
+    example: true,
+    transport: 'NDJSON, JSON, CSV or Metrics JSON, POSTed to an endpoint you run.',
+    meta: ['POST', 'four formats', 'your endpoint'],
+  },
+  {
+    n: '05',
+    name: 'MQTT',
+    hue: 'var(--h-symptoms)',
+    scheme: 'mqtts://',
+    rest: 'broker.lan:8883',
+    example: true,
+    transport: 'Retained publishes to your own broker, over mqtt:// or mqtts://.',
+    meta: ['MQTT 3.1.1', 'retained', 'QoS 0'],
+  },
+];
+
+/* Row centres in the fan diagram's own pixel grid — 40px pitch, first at 30. */
+const FAN_Y = [30, 70, 110, 150, 190];
+
+const FAQ = [
+  {
+    q: 'How do I export my Apple Health data?',
+    a: "Apple's own export is a one-off zip of XML you request from your Health profile. Hozz makes it continuous. Add a destination you already control — a Mac on your network, a folder, a Home Assistant webhook, a URL, or an MQTT broker — choose which Health types it may receive and a schedule, send a test, then confirm the first real send. After that, new records go on their own as NDJSON, JSON, CSV or Metrics JSON.",
+  },
+  {
+    q: 'Where does Hozz send my Apple Health data?',
+    a: 'Only where you address it. There is no default destination, no account and no hosted relay — nothing leaves the iPhone until you add a destination and confirm it. Credentials stay in the device Keychain and are never synced.',
+  },
+  {
+    q: 'What does it cost?',
+    a: 'Nothing. Hozz is free and open source under GPL-3.0 with an App Store exception, written by one developer. There is no subscription, no advertising and no analytics.',
+  },
+];
+
+const LD = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'SoftwareApplication',
+      name: 'Hozz',
+      applicationCategory: 'HealthApplication',
+      operatingSystem: 'iOS, macOS',
+      description:
+        'Free, open-source iPhone and Mac app that exports Apple Health data to destinations you own: a Mac on your local network, a folder, Home Assistant, a web address, or an MQTT broker. No account, no relay and no default destination.',
+      author: { '@type': 'Person', name: 'Brandon Moore' },
+      codeRepository: GITHUB_URL,
+      license: LICENSE_URL,
+      isAccessibleForFree: true,
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      softwareVersion: 'early alpha',
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: FAQ.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  ],
+};
+---
+
+<SketchLayout title="Sketch G — Addressed · Hozz" letter="G" name="Addressed">
+  <script is:inline>
+    /* Marks the document so the reveal styles only hide content when there is
+       JavaScript to bring it back. */
+    document.documentElement.classList.add('g-js');
+  </script>
+
+  <div class="g">
+    <div class="wrap">
+      <header class="mast">
+        <a class="mark" href="#top">HOZZ</a>
+        <p class="flag">EARLY ALPHA — FREE &amp; OPEN SOURCE</p>
+      </header>
+
+      <main id="top">
+        <section class="hero" aria-labelledby="hero-title">
+          <div class="hero-grid">
+            <div class="hero-lead">
+              <p class="eyebrow">OUTBOUND / FIVE DESTINATIONS</p>
+              <h1 id="hero-title">Five places to&nbsp;send it. Every one <em>already yours.</em></h1>
+              <p class="lede">
+                Hozz copies Apple&nbsp;Health off your iPhone to somewhere you already own.{' '}
+                <b>No account, no relay, no default destination.</b>
+              </p>
+              <p class="cta">
+                <a class="pill pill-solid" href="#how">How it works</a>
+                <a class="pill" href={GITHUB_URL} rel="noopener">Read the source on GitHub</a>
+              </p>
+            </div>
+
+            <!-- One source, five owned endpoints. The lines are the argument;
+                 the dots are the export. -->
+            <aside class="fan" data-r>
+              <p class="fan-head">FROM ONE IPHONE</p>
+              <div class="fan-body">
+                <svg class="fan-svg" width="58" height="206" viewBox="0 0 58 206" fill="none" aria-hidden="true">
+                  <circle class="src-ring" cx="11" cy="10" r="6" />
+                  <circle class="src-core" cx="11" cy="10" r="2" />
+                  <path class="trunk" d="M11 16 V190" />
+                  {FAN_Y.map((y) => <path class="spur" d={`M11 ${y} H47`} />)}
+                  {
+                    FAN_Y.map((y, i) => (
+                      <circle class={`end e${i + 1}`} cx="51" cy={y} r="3.4" />
+                    ))
+                  }
+                  {
+                    FAN_Y.map((y, i) => (
+                      <circle
+                        class={`pip p${i + 1}`}
+                        cx="0"
+                        cy="0"
+                        r="2.2"
+                        style={`offset-path: path('M11 16 V${y} H47'); animation-delay: ${i * 0.5}s`}
+                      />
+                    ))
+                  }
+                </svg>
+                <ol class="fan-list">
+                  {
+                    DESTINATIONS.map((d) => (
+                      <li style={`--hue: ${d.hue}`}>
+                        <span class="n">{d.n}</span>
+                        <span class="nm">{d.name}</span>
+                      </li>
+                    ))
+                  }
+                </ol>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section aria-labelledby="ledger-title">
+          <div class="ledger-head" data-r>
+            <h2 id="ledger-title">THE FIVE</h2>
+            <p>Pick the Health types. Pick the schedule. <b>Test it before you trust it.</b></p>
+          </div>
+
+          <ol class="ledger">
+            <li class="row empty" data-r>
+              <div class="gutter">
+                <span class="idx">00</span>
+                <span class="node" aria-hidden="true"></span>
+              </div>
+              <div class="body">
+                <p class="name">No default</p>
+                <p class="slot">— empty until you say otherwise —</p>
+                <p class="transport">Nothing leaves the phone until this slot has an address in it.</p>
+              </div>
+            </li>
+
+            {
+              DESTINATIONS.map((d, i) => (
+                <li class="row" style={`--hue: ${d.hue}; --d: ${i * 0.55}s`} data-r>
+                  <div class="gutter">
+                    <span class="idx">{d.n}</span>
+                    <span class="node" aria-hidden="true" />
+                    <span class="drop" aria-hidden="true" />
+                  </div>
+                  <div class="body">
+                    <p class="name">{d.name}</p>
+                    <p class="addr">
+                      <span class="scheme">{d.scheme}</span>{addrParts(d.rest).map((seg) => (<>{seg}<wbr /></>))}
+                      {d.example && <span class="tag">EXAMPLE</span>}
+                    </p>
+                    <p class="transport">{d.transport}</p>
+                    <p class="meta">
+                      {d.meta.map((m) => (
+                        <span>{m}</span>
+                      ))}
+                    </p>
+                  </div>
+                </li>
+              ))
+            }
+          </ol>
+        </section>
+
+        <section class="how" id="how" aria-labelledby="how-title">
+          <div class="how-grid">
+            <div data-r>
+              <h2 id="how-title">How do I export my <em>Apple Health</em> data?</h2>
+              <p class="answer">
+                Apple gives you one zip of XML, once, by hand. Hozz keeps sending. Set a
+                destination up once and new records follow it.
+              </p>
+              <ol class="steps">
+                <li>Add a destination you control.</li>
+                <li>Choose which Health types it may receive.</li>
+                <li>Pick a format and a schedule — on arrival, hourly, daily or manual.</li>
+                <li>Send a test.</li>
+                <li>Confirm the first real send.</li>
+              </ol>
+              <p class="after">
+                Deletions travel too, as tombstones. Encoding is deterministic — the same
+                record is byte-identical whatever your locale or time zone.
+              </p>
+            </div>
+
+            <div class="fmt" data-r>
+              <h3 id="fmt-title">What comes out</h3>
+              <table class="formats" aria-labelledby="fmt-title">
+                <thead>
+                  <tr>
+                    <th scope="col">Format</th>
+                    <th scope="col">What it is</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">NDJSON</th>
+                    <td>Default. One record per line, streamable, lossless.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">JSON</th>
+                    <td>One document per batch.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">CSV</th>
+                    <td>A grid, and <b>lossy</b> — metadata and workout detail don't fit one.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Metrics&nbsp;JSON</th>
+                    <td>Readings shaped for dashboards and Home Assistant.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="indep" aria-labelledby="indep-title">
+          <h2 id="indep-title" data-r>Five destinations. None can <em>break</em> the others.</h2>
+          <dl class="facts">
+            <div class="fact" data-r>
+              <dt>OWN CURSOR</dt>
+              <dd>Each keeps its own place in your data. A stalled one can't skip or block another.</dd>
+            </div>
+            <div class="fact" data-r>
+              <dt>DEVICE KEYCHAIN</dt>
+              <dd>
+                Credentials sit in the Keychain as <code>ThisDeviceOnly</code>. Never synced
+                off this phone.
+              </dd>
+            </div>
+            <div class="fact" data-r>
+              <dt>SAFE TO RETRY</dt>
+              <dd>
+                Content-derived ids and an <code>Idempotency-Key</code>. Re-sending after a
+                drop can't double-count.
+              </dd>
+            </div>
+            <div class="fact" data-r>
+              <dt>PROVEN, NOT PROMISED</dt>
+              <dd>475 XCTest tests. Interruption can repeat work; it cannot skip a record.</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="close" aria-labelledby="close-title" data-r>
+          <h2 id="close-title">Your health history, in a file <em>you own</em>.</h2>
+          <p>Free, forever. GPL-3.0. One developer, no company.</p>
+          <p class="cta">
+            <a class="pill pill-solid" href={GITHUB_URL} rel="noopener">Read the source on GitHub</a>
+            <a class="pill" href={DONATE_URL} rel="noopener">Sponsor the work</a>
+          </p>
+          <p class="note">Early alpha — it works, coverage is partial. Nothing to install yet.</p>
+        </section>
+
+        <footer class="foot">
+          <span>Hozz — by Brandon Moore</span>
+          <a href={LICENSE_URL} rel="noopener">GPL-3.0 licence</a>
+        </footer>
+      </main>
+    </div>
+  </div>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(LD)} />
+
+  <script is:inline>
+    /* Quiet reveals. Under reduced motion the observer never runs and the
+       fallback rule leaves everything visible from the start. */
+    (function () {
+      var items = document.querySelectorAll('[data-r]');
+      if (!window.IntersectionObserver || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        items.forEach(function (el) {
+          el.classList.add('is-in');
+        });
+        return;
+      }
+      var io = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) {
+              e.target.classList.add('is-in');
+              io.unobserve(e.target);
+            }
+          });
+        },
+        { rootMargin: '0px 0px -8% 0px', threshold: 0.05 }
+      );
+      items.forEach(function (el) {
+        io.observe(el);
+      });
+    })();
+  </script>
+</SketchLayout>

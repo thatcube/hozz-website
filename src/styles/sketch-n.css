@@ -1,0 +1,751 @@
+/**
+ * Sketch N — "Redline"
+ *
+ * Extra faces beyond sketch-base (Switzer, IBM Plex Mono): Erode carries the
+ * corrected copy — it reads like something set for print, which is the point,
+ * since this whole page is a document being proofed in front of you. General
+ * Sans carries the margin annotations, because they are meant to read fast.
+ *
+ * Two rules the page never breaks: no cards, and no colour that is not either
+ * ink, paper, the proofreader's red, or one of the Health category hues used
+ * as a small locating dot.
+ */
+@font-face {
+  font-family: 'Erode';
+  src: url('/fonts/erode-g-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Erode';
+  src: url('/fonts/erode-g-400-italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Erode';
+  src: url('/fonts/erode-g-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Erode';
+  src: url('/fonts/erode-g-600.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'General Sans';
+  src: url('/fonts/general-sans-400.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'General Sans';
+  src: url('/fonts/general-sans-500.woff2') format('woff2');
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'General Sans';
+  src: url('/fonts/general-sans-600.woff2') format('woff2');
+  font-weight: 600;
+  font-display: swap;
+}
+
+.n-page {
+  --paper: #edf1ee;
+  --paper-2: #e4e9e4;
+  --ink: #16232a;
+  --ink-soft: #3c4a49;
+  --draft: #6c5c4f;
+  --rust: #9c3a30;
+  --rule: color-mix(in oklab, var(--ink) 15%, transparent);
+  --serif: 'Erode', 'Sentient', ui-serif, Georgia, serif;
+  --annot: 'General Sans', var(--sans);
+
+  /* One text column, one margin column, one gutter — the whole page aligns to
+     these three numbers so nothing ever needs a card to look deliberate. */
+  --col: 42ch;
+  --margin-col: 15rem;
+  --gutter: 2.5rem;
+  --branch: 1.6rem;
+
+  background: linear-gradient(180deg, var(--paper) 0%, var(--paper) 60%, var(--paper-2) 100%);
+  color: var(--ink);
+  min-height: 100vh;
+  padding-bottom: 7rem;
+  overflow-x: clip;
+}
+
+.n-page * {
+  min-width: 0;
+}
+
+/* The shared ring is currentColor, which on the solid pill is paper — and a
+   paper ring on paper is no ring. Pin it to ink for the whole page. */
+.n-page :focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+}
+
+/* Every band shares one measure, so the left edge of the manuscript never moves. */
+.n-masthead,
+.n-hero,
+.n-manuscript,
+.n-close,
+.n-row {
+  max-width: 46rem;
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 4vw, 2rem);
+}
+
+.n-manuscript .n-row {
+  max-width: none;
+  margin-inline: 0;
+  padding-inline: 0;
+}
+
+.n-masthead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: clamp(1.5rem, 4vw, 2.5rem);
+  font-family: var(--annot);
+}
+
+.n-wordmark {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  color: var(--ink);
+}
+
+.n-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.n-status i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--rust);
+  display: inline-block;
+}
+
+/* ---------- hero ---------- */
+
+.n-hero {
+  padding-top: clamp(2.5rem, 7vw, 4.5rem);
+  padding-bottom: clamp(2rem, 5vw, 3rem);
+}
+
+.n-eyebrow {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--rust);
+  margin-bottom: 1.1rem;
+}
+
+/* ---------- the redline itself ----------
+   The struck sentence is real <del>, hidden from assistive tech, and the wavy
+   rule lives on a transparent-text overlay so it can be drawn on rather than
+   simply appearing. */
+
+.n-draft {
+  position: relative;
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  font-family: var(--annot);
+  font-size: clamp(0.95rem, 1.6vw, 1.05rem);
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--draft);
+  text-decoration: none;
+  margin-bottom: 0;
+}
+
+.n-draft::after {
+  content: attr(data-strike);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  /* A straight stroke, not a wave: the point is that you can still read what
+     was struck. A quarter of a degree off true is the hand holding the pen. */
+  text-decoration: line-through solid var(--rust) 1.5px;
+  text-decoration-skip-ink: none;
+  transform-origin: left center;
+  rotate: -0.35deg;
+  clip-path: inset(0 0 0 0);
+}
+
+.n-draft--lead {
+  font-size: clamp(1.05rem, 2.6vw, 1.3rem);
+  max-width: 34ch;
+  margin-bottom: 0.85rem;
+}
+
+/* ---------- corrected copy ---------- */
+
+.n-final {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(2rem, 5.6vw, 3.4rem);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  max-width: 20ch;
+}
+
+.n-final em {
+  font-style: italic;
+  color: var(--rust);
+}
+
+.n-correction {
+  display: block;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(1.2rem, 2.4vw, 1.5rem);
+  line-height: 1.34;
+  color: var(--ink);
+  max-width: var(--col);
+  text-decoration: none;
+}
+
+.n-correction--lead {
+  font-size: clamp(1.3rem, 3vw, 1.85rem);
+  line-height: 1.24;
+  max-width: 26ch;
+}
+
+.n-lede {
+  margin-top: 1.4rem;
+  font-family: var(--annot);
+  font-size: clamp(1rem, 1.6vw, 1.08rem);
+  line-height: 1.6;
+  color: var(--ink-soft);
+  max-width: 46ch;
+}
+
+/* ---------- pills ---------- */
+
+.n-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1.6rem;
+}
+
+.n-pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.68rem 1.15rem;
+  border: 1px solid color-mix(in oklab, var(--ink) 32%, transparent);
+  font-family: var(--annot);
+  font-size: 0.925rem;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--ink);
+  text-decoration: none;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.n-pill:hover {
+  background: color-mix(in oklab, var(--ink) 7%, transparent);
+  border-color: color-mix(in oklab, var(--ink) 52%, transparent);
+  transform: translateY(-1px);
+}
+
+.n-pill--solid {
+  background: var(--rust);
+  border-color: var(--rust);
+  color: var(--paper);
+}
+
+.n-pill--solid:hover {
+  background: #8c3227;
+  border-color: #8c3227;
+}
+
+.n-fine {
+  margin-top: 0.95rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+/* ---------- the shared row: text column + margin annotation ---------- */
+
+.n-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.1rem;
+  align-items: start;
+}
+
+.n-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.n-h2 {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+/* Inside .n-manuscript (a flex column) the heading must not pick up the auto
+   margins that centre the bands above it. */
+.n-h2--rule {
+  padding-bottom: 0.25rem;
+}
+
+.n-stet,
+.n-how {
+  padding-top: clamp(2.2rem, 5vw, 3.2rem);
+}
+
+.n-answer {
+  font-family: var(--annot);
+  font-size: clamp(1rem, 1.5vw, 1.05rem);
+  line-height: 1.6;
+  color: var(--ink-soft);
+  max-width: 48ch;
+}
+
+.n-note {
+  font-family: var(--annot);
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  max-width: 48ch;
+}
+
+/* ---------- Fig. 1 — hairline delivery diagram ---------- */
+
+.n-fig {
+  margin: 1.1rem 0 0;
+  font-family: var(--annot);
+}
+
+.n-fig-src {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  color: var(--ink-soft);
+}
+
+/* read aloud, never seen: the figure is a drawing on screen and a sentence
+   to anything that cannot see it */
+.n-vh {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.n-node {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+}
+
+.n-node--hozz {
+  color: var(--rust);
+  border-color: color-mix(in oklab, var(--rust) 40%, transparent);
+}
+
+.n-arrow {
+  flex: none;
+  color: color-mix(in oklab, var(--ink) 42%, transparent);
+}
+
+.n-fig-out {
+  --stem: 0.5rem;
+  --stub: 0.7rem;
+  position: relative;
+  margin-top: 0.35rem;
+  padding-left: calc(var(--stem) + var(--branch) + var(--stub));
+}
+
+/* the spine: a dotted rule dropping out of the Hozz node */
+.n-fig-out::before {
+  content: '';
+  position: absolute;
+  left: var(--stem);
+  top: -0.35rem;
+  bottom: 0.85em;
+  width: 1px;
+  background: repeating-linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--ink) 38%, transparent) 0 2px,
+    transparent 2px 5px
+  );
+}
+
+.n-fig-out li {
+  position: relative;
+  padding: 0.42rem 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.15rem 0.55rem;
+}
+
+/* the branch out to one destination — offsets are negative because the list
+   item's own left edge already sits past the spine and the branch */
+.n-fig-out li::before {
+  content: '';
+  position: absolute;
+  left: calc(-1 * (var(--branch) + var(--stub)));
+  top: 1.12em;
+  width: var(--branch);
+  height: 1px;
+  background: repeating-linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--ink) 38%, transparent) 0 2px,
+    transparent 2px 5px
+  );
+}
+
+/* the destination node it arrives at */
+.n-fig-out li::after {
+  content: '';
+  position: absolute;
+  left: calc(-1 * var(--stub) - 4px);
+  top: calc(1.12em - 3.5px);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid color-mix(in oklab, var(--rust) 55%, transparent);
+}
+
+/* the record travelling out along the branch, once */
+.n-spark {
+  position: absolute;
+  left: calc(-1 * (var(--branch) + var(--stub)) - 2px);
+  top: calc(1.12em - 2px);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--rust);
+  transform: translateX(var(--branch));
+}
+
+.n-fig-out b {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--ink);
+}
+
+.n-fig-out span {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+}
+
+.n-fig figcaption {
+  margin-top: 0.9rem;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  line-height: 1.6;
+  letter-spacing: 0.03em;
+  color: var(--ink-soft);
+  max-width: 44ch;
+}
+
+/* ---------- the four steps ---------- */
+
+.n-steps {
+  counter-reset: n-step;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-top: 0.35rem;
+  max-width: 48ch;
+}
+
+.n-steps li {
+  counter-increment: n-step;
+  position: relative;
+  padding-left: 2rem;
+  font-family: var(--annot);
+  font-size: 0.975rem;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.n-steps li::before {
+  content: counter(n-step);
+  position: absolute;
+  left: 0;
+  top: 0.05em;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--rust);
+}
+
+/* ---------- the manuscript ---------- */
+
+.n-manuscript {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2.2rem, 4.5vw, 3rem);
+  padding-top: clamp(2.6rem, 6vw, 4rem);
+}
+
+.n-item {
+  padding-top: clamp(1.5rem, 3vw, 1.9rem);
+  border-top: 1px solid var(--rule);
+}
+
+.n-mark {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+}
+
+/* ---------- margin annotations ---------- */
+
+.n-annot {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  font-family: var(--annot);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  max-width: 42ch;
+}
+
+.n-annot .n-dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-top: 0.42em;
+}
+
+.n-dot--stet {
+  background: none;
+  border: 1px solid var(--rust);
+}
+
+.n-annot span {
+  color: var(--ink-soft);
+}
+
+.n-annot b {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* wide screens: the annotation moves out into a real proofreader's margin */
+@media (min-width: 70rem) {
+  .n-page {
+    --col: 46ch;
+    --margin-col: 17rem;
+    --gutter: 3.25rem;
+  }
+
+  .n-masthead,
+  .n-hero,
+  .n-manuscript,
+  .n-close,
+  .n-row {
+    max-width: calc(var(--col) + var(--gutter) + var(--margin-col) + 4rem);
+  }
+
+  .n-row {
+    grid-template-columns: minmax(0, var(--col)) minmax(0, var(--margin-col));
+    column-gap: var(--gutter);
+  }
+
+  .n-item {
+    align-items: center;
+  }
+
+  .n-stet .n-annot,
+  .n-how .n-annot {
+    padding-top: 1.7rem;
+  }
+}
+
+/* very wide screens: the sheet grows, the measure stays a measure */
+@media (min-width: 100rem) {
+  .n-page {
+    --col: 54ch;
+    --margin-col: 19rem;
+    --gutter: 4rem;
+  }
+
+  .n-correction {
+    font-size: 1.62rem;
+  }
+
+  .n-correction--lead {
+    font-size: 2rem;
+  }
+
+  .n-final {
+    font-size: 3.8rem;
+  }
+}
+
+/* ---------- close ---------- */
+
+.n-close {
+  margin-top: clamp(2.8rem, 6vw, 4rem);
+  padding-top: clamp(1.8rem, 4vw, 2.4rem);
+  border-top: 1px solid color-mix(in oklab, var(--ink) 20%, transparent);
+  font-family: var(--annot);
+}
+
+.n-final--close {
+  font-size: clamp(1.7rem, 4vw, 2.5rem);
+  max-width: 16ch;
+}
+
+.n-close-body {
+  margin-top: 0.9rem;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  max-width: 44ch;
+}
+
+.n-close a:not(.n-pill) {
+  color: var(--ink);
+  text-decoration-color: var(--rust);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+
+.n-signoff {
+  margin-top: 1.5rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+}
+
+/* ---------- motion ----------
+   Everything above is the finished state. `.is-anim` is added by script only
+   when motion is welcome; it winds the page back so it can be drawn in. */
+
+.n-page.is-anim .n-row,
+.n-page.is-anim .n-hero,
+.n-page.is-anim .n-close {
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+.n-page.is-anim .n-row.is-lit,
+.n-page.is-anim .n-hero.is-lit,
+.n-page.is-anim .n-close.is-lit {
+  opacity: 1;
+  transform: none;
+}
+
+/* the red rule draws itself across, then stops */
+.n-page.is-anim .n-draft::after {
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 0.28s ease 0.14s;
+}
+
+.n-page.is-anim .is-lit .n-draft::after,
+.n-page.is-anim .n-hero.is-lit .n-draft::after {
+  clip-path: inset(0 0 0 0);
+}
+
+/* one record leaves for each destination, staggered, and parks there */
+.n-page.is-anim .n-spark {
+  opacity: 0;
+  transform: translateX(0);
+  transition:
+    transform 0.36s cubic-bezier(0.4, 0, 0.2, 1) calc(var(--i) * 70ms + 120ms),
+    opacity 0.15s linear calc(var(--i) * 70ms + 120ms);
+}
+
+.n-page.is-anim .n-fig.is-lit .n-spark {
+  opacity: 1;
+  transform: translateX(var(--branch));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* The information is the finished state, so reduced motion simply is the
+     finished state: rules fully drawn, records already delivered. */
+  .n-page.is-anim .n-row,
+  .n-page.is-anim .n-hero,
+  .n-page.is-anim .n-close {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .n-page.is-anim .n-spark {
+    opacity: 1;
+    transform: translateX(var(--branch));
+    transition: none;
+  }
+
+  .n-page.is-anim .n-draft::after {
+    clip-path: inset(0 0 0 0);
+    transition: none;
+  }
+
+  .n-pill {
+    transition: none;
+  }
+
+  .n-pill:hover {
+    transform: none;
+  }
+}

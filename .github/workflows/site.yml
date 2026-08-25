@@ -1,0 +1,146 @@
+# Keeps the documentation honest, and publishes the site.
+#
+# Three jobs, because there are two ways a page can be wrong and one way for the
+# live site to be wrong about both. `verify` checks what the pages *claim*: the
+# site and the app are separate repositories, so nothing here can rely on a
+# relative path, and it fetches the app's Swift source from GitHub and holds the
+# lists and numbers in src/data/docs.ts to it. `layout` checks whether the pages
+# *render*, which no amount of fact checking can see. `deploy` then publishes,
+# on main only and only once both have passed.
+#
+# On a pull request the first two are gates. On a schedule they are a tripwire —
+# the app moves without this repository being touched, and a weekly failure is
+# how that gets noticed before a reader does.
+name: Site
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  schedule:
+    # Mondays, 08:00 UTC. Nothing here is urgent enough for a nightly.
+    - cron: '0 8 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Build, and check the docs against the app
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Check for dead internal links
+        run: npm run verify:links
+
+      # Deliberately not continue-on-error. A claim on the site that the app no
+      # longer supports is exactly the thing this site says it does not do.
+      - name: Check the documentation's facts against thatcube/hozz@main
+        run: npm run verify:facts
+
+  # A separate job because it needs a browser and a server, and because a
+  # failure here means something different: the facts are right and the page
+  # is broken. This is the class of bug the fact checker cannot see — an
+  # anchor nested inside a card link took the index apart without changing a
+  # single claim on it.
+  layout:
+    name: Render the docs and check the layout
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build
+
+      # Ubuntu runners ship Chrome; puppeteer-core has to be told where it is
+      # rather than downloading one of its own.
+      - name: Find Chrome
+        run: echo "CHROME_PATH=$(which google-chrome || which chromium-browser)" >> "$GITHUB_ENV"
+
+      # Server and audit in one step: a process backgrounded in an earlier step
+      # survives, but only by accident of how the runner works, and a check that
+      # depends on that is a check that will one day fail for the wrong reason.
+      - name: Check every page at phone, tablet and desktop widths
+        env:
+          SHOOT_BASE: http://localhost:4600
+        run: |
+          npx astro preview --port 4600 &
+          server=$!
+          trap 'kill $server 2>/dev/null || true' EXIT
+
+          for _ in $(seq 1 60); do
+            if curl -sf -o /dev/null http://localhost:4600/docs/; then break; fi
+            sleep 1
+          done
+          curl -sf -o /dev/null http://localhost:4600/docs/ || {
+            echo "The preview server never came up."
+            exit 1
+          }
+
+          npm run verify:layout
+
+      # The screenshots are the evidence for anything that failed, and are worth
+      # having even when nothing did.
+      - name: Keep the screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: page-screenshots
+          path: .shots/
+          retention-days: 7
+
+  # Publishing to Cloudflare, on main only.
+  #
+  # The site used to be deployed by running wrangler on somebody's laptop, which
+  # is why hozz.brando.page sat on an older build than the repository for a
+  # while and nobody could tell by looking. This makes main and the live site
+  # the same thing by construction.
+  #
+  # It needs both checks to pass first. A deploy is the one action here that a
+  # reader can see, so it is the last thing that should happen on trust.
+  deploy:
+    name: Publish to Cloudflare
+    needs: [verify, layout]
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    # Deploys go one at a time, and a newer commit wins rather than queueing
+    # behind an older one that is about to be overwritten anyway.
+    concurrency:
+      group: deploy-hozz-website
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build
+
+      # account_id is in wrangler.jsonc; only the token is a secret. It needs
+      # the "Edit Cloudflare Workers" template, scoped to this account.
+      - name: Deploy
+        run: npx wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}

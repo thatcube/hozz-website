@@ -1,0 +1,500 @@
+---
+/**
+ * The comparison board.
+ *
+ * Every direction stays alive and visible: the two built pages and the sketches,
+ * each in a live frame at real scale so what is being judged is the actual page
+ * rather than a picture of one.
+ *
+ * The sketches after C were each built by a separate agent on a separate model,
+ * working from the same product brief but with no sight of each other's work.
+ * That is why they disagree so completely about what Hozz should look like.
+ */
+import { SITE } from '../data/site';
+
+const BUILT = [
+  {
+    href: '/',
+    tag: 'V1',
+    name: 'Category spectrum',
+    note: 'The live site. Sentient and General Sans, every section keyed to a different Health hue, and a drifting stream of real HealthKit identifiers in the hero.',
+    verdict: 'Currently what hozz.brando.page serves.',
+  },
+  {
+    href: '/v2/',
+    tag: 'V2',
+    name: 'Health language',
+    note: "Apple Health's own idiom — gradient category tiles, white cards on system grey, one typeface at six weights.",
+    verdict: 'Rejected: borrows Apple’s components rather than its ideas, and the cards imply an app UI that does not exist.',
+  },
+];
+
+const SKETCHES = [
+  {
+    href: '/sketch/a/',
+    tag: 'A',
+    name: 'Manifest',
+    lead: 'What it missed',
+    note: 'The page is shaped like the disclosure file Hozz writes. Colour is the category key on a ledger row, and the interesting column is the one admitting it does not know.',
+  },
+  {
+    href: '/sketch/b/',
+    tag: 'B',
+    name: 'Transfer',
+    lead: 'Movement',
+    note: "The spectrum as a legend rather than scenery: saturated colour is Apple's end, plain black is yours, and records lose their colour crossing between them.",
+  },
+  {
+    href: '/sketch/c/',
+    tag: 'C',
+    name: 'Quiet',
+    lead: 'Restraint',
+    note: 'Almost entirely type on system grey. The spectrum appears once, as a hairline, and is the only colour in the design.',
+  },
+  {
+    href: '/sketch/d/',
+    tag: 'D',
+    name: 'Local Loop',
+    lead: 'The MCP server',
+    note: 'Treats MCP as a physical local circuit between your Mac and your assistant, with a read-only gate in the middle. Oversized editorial type against elliptical nodes on lilac.',
+  },
+  {
+    href: '/sketch/e/',
+    tag: 'E',
+    name: 'Thermal',
+    lead: 'Automatic export',
+    note: 'A telemetry console in near-black, with neon state colours and terminal-style log views. Sells the honest sync states rather than a green tick.',
+  },
+  {
+    href: '/sketch/f/',
+    tag: 'F',
+    name: 'Take',
+    lead: 'You own it',
+    note: 'A possession poster. Condensed stencil type on a pine wall, and the thing you walk out with is a manila export folder stamped YOURS.',
+  },
+  {
+    href: '/sketch/g/',
+    tag: 'G',
+    name: 'Addressed',
+    lead: 'The five destinations',
+    note: 'A shipping manifest where each row is anchored by its real address, set in mono at display size. Opens with an empty “no default” slot.',
+  },
+  {
+    href: '/sketch/h/',
+    tag: 'H',
+    name: 'Fault line',
+    lead: 'Durability',
+    note: 'An interruption physically cuts the export artefact, leaving only the sealed checkpoint below it. Failure is the hero rather than a disclaimer.',
+  },
+  {
+    href: '/sketch/j/',
+    tag: 'J',
+    name: 'Unsellable',
+    lead: 'Free forever',
+    note: 'Frames having no business model as the actual security property — economics as the mechanism, not a privacy promise.',
+  },
+  {
+    href: '/sketch/k/',
+    tag: 'K',
+    name: 'Cut sheet',
+    lead: 'The formats',
+    note: 'NDJSON, JSON and CSV as three cards holding the same fields — and CSV’s card is genuinely shorter, its bottom edge cut with sawtooth teeth, because CSV genuinely loses data.',
+  },
+  {
+    href: '/sketch/m/',
+    tag: 'M',
+    name: 'Received',
+    lead: 'The Mac app',
+    note: 'Sells the Mac side as a file that lands on your desk. A parchment card for hozz-received.sqlite, with discovery as a vertical spine beside a Bonjour beacon.',
+  },
+  {
+    href: '/sketch/n/',
+    tag: 'N',
+    name: 'Redline',
+    lead: 'Honest limits',
+    note: 'The page is an edited manuscript: confident marketing lines struck through in red, the accurate sentence set below in serif, with a margin note on why it is phrased that way.',
+  },
+  {
+    href: '/sketch/o/',
+    tag: 'O',
+    name: 'Pump Room',
+    lead: 'A pipe you point anywhere',
+    note: 'Hozz as a mechanical manifold — data enters one pipe and branches to owned endpoints. Infrastructure signage rather than an app landing page.',
+  },
+  {
+    href: '/sketch/p/',
+    tag: 'P',
+    name: 'Coverage',
+    lead: 'Motion round',
+    note: 'A hairline track of hatched batches. Where an interruption made Hozz repeat work, the hatching crosses into crosshatch — repeated work you can see, and a track that never goes white.',
+  },
+  {
+    href: '/sketch/q/',
+    tag: 'Q',
+    name: 'Closed Circuit',
+    lead: 'Motion round',
+    note: 'An animated hairline custody circuit running from Apple Health to “your place”, on pale blue-white. Argues the route, not the app.',
+  },
+  {
+    href: '/sketch/r/',
+    tag: 'R',
+    name: 'The Break',
+    lead: 'Motion round',
+    note: 'Every path out of the phone is drawn already severed, with an engineering break mark. Pressing “send here” closes the gap and records start moving. Consent as a circuit.',
+  },
+  {
+    href: '/sketch/s/',
+    tag: 'S',
+    name: 'Sketch S',
+    lead: 'Motion round',
+    note: 'Built independently on GPT-5.6 Sol from the same motion brief.',
+  },
+  {
+    href: '/sketch/t/',
+    tag: 'T',
+    name: 'Instrument',
+    lead: 'Motion round',
+    note: 'Hozz as a precision instrument. A calibrated rail runs the page edge and its pip physically refuses to retreat as you scroll back — an anchor drawn as furniture.',
+  },
+  {
+    href: '/sketch/u/',
+    tag: 'U',
+    name: 'Quiet Packer',
+    lead: 'Motion round',
+    note: 'Records gather into a bracketed batch, then travel a dotted delivery path. Deliberate understatement, near-monochrome.',
+  },
+  {
+    href: '/sketch/w/',
+    tag: 'W',
+    name: 'Day Dial',
+    lead: 'Motion round',
+    note: 'Not a pipeline but a clock. A 24-hour ring ticks an hour a second and releases a delivery to each destination as the hand passes. The same ruler becomes the page grid.',
+  },
+  {
+    href: '/sketch/x/',
+    tag: 'X',
+    name: 'Sketch X',
+    lead: 'Motion round',
+    note: 'Built independently on GPT-5.6 Sol from the same motion brief.',
+  },
+  {
+    href: '/sketch/y/',
+    tag: 'Y',
+    name: 'Sketch Y',
+    lead: 'Motion round',
+    note: 'Built independently on Claude Opus 5 from the same motion brief.',
+  },
+  {
+    href: '/sketch/z/',
+    tag: 'Z',
+    name: 'Sketch Z',
+    lead: 'Motion round',
+    note: 'Built independently on GPT-5.6 Sol from the same motion brief.',
+  },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Directions · Hozz</title>
+    <link rel="icon" href="/logo.svg" type="image/svg+xml" />
+    <link rel="canonical" href={`${SITE}/directions/`} />
+  </head>
+  <body>
+    <header class="top">
+      <h1>Twenty-five directions, all still standing</h1>
+      <p>
+        Two finished pages and twenty-three directions. Nothing here is deleted
+        until you pick, and every earlier version is recoverable from git.
+      </p>
+      <p class="how">
+        Every direction was built by a separate agent on a separate model, from
+        the same product brief, with no sight of each other's work. P onward
+        were briefed on subtle motion and hairline graphics; A, C, F, G, J, K,
+        M, N, O and V1 have since had a revision pass for graphics, tighter
+        copy and factual accuracy.
+      </p>
+    </header>
+
+    <section class="band" aria-labelledby="built-h">
+      <h2 id="built-h">Finished pages</h2>
+      <ol class="board board--wide">
+        {
+          BUILT.map((b) => (
+            <li class="item">
+              <div class="meta">
+                <p class="tag">
+                  <b>{b.tag}</b>
+                  <span>{b.name}</span>
+                </p>
+                <p class="note">{b.note}</p>
+                <p class="verdict">{b.verdict}</p>
+                <a class="open" href={b.href}>Open full size →</a>
+              </div>
+              <div class="screen">
+                <iframe src={b.href} title={`${b.tag} — ${b.name}`} loading="lazy" />
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <section class="band" aria-labelledby="sk-h">
+      <h2 id="sk-h">Sketches</h2>
+      <ol class="board board--grid">
+        {
+          SKETCHES.map((b) => (
+            <li class="item item--card">
+              <div class="meta">
+                <p class="tag">
+                  <b>{b.tag}</b>
+                  <span>{b.name}</span>
+                  <em>{b.lead}</em>
+                </p>
+                <p class="note">{b.note}</p>
+                <a class="open" href={b.href}>Open full size →</a>
+              </div>
+              <div class="screen">
+                <iframe src={b.href} title={`${b.tag} — ${b.name}`} loading="lazy" />
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+  </body>
+</html>
+
+<style>
+  @font-face {
+    font-family: 'Switzer';
+    src: url('/fonts/switzer-400.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Switzer';
+    src: url('/fonts/switzer-600.woff2') format('woff2');
+    font-weight: 600;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Switzer';
+    src: url('/fonts/switzer-800.woff2') format('woff2');
+    font-weight: 800;
+    font-display: swap;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: #16161a;
+    color: #f4f4f6;
+    font-family: 'Switzer', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  p {
+    margin: 0;
+  }
+
+  ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .top {
+    width: min(100% - 3rem, 1400px);
+    margin-inline: auto;
+    padding-block: clamp(3rem, 7vw, 5rem) clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  .top h1 {
+    font-size: clamp(1.8rem, 1rem + 3vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+  }
+
+  .top p {
+    margin-top: 1.1rem;
+    max-width: 62ch;
+    line-height: 1.55;
+    color: #b0b0ba;
+  }
+
+  .how {
+    font-size: 0.9375rem;
+  }
+
+  .band {
+    width: min(100% - 3rem, 1400px);
+    margin-inline: auto;
+    padding-block: clamp(2rem, 5vw, 3.5rem);
+  }
+
+  .band h2 {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #82828e;
+    padding-bottom: 0.9rem;
+    border-bottom: 1px solid #2c2c33;
+  }
+
+  .board {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3rem);
+    margin-top: clamp(1.75rem, 4vw, 2.5rem);
+  }
+
+  .item {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  /* The two finished pages get the wide treatment, because there is more to
+     read about them and only two of them. */
+  @media (min-width: 940px) {
+    .board--wide .item {
+      grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+      gap: clamp(2rem, 4vw, 3.5rem);
+      align-items: start;
+    }
+  }
+
+  @media (min-width: 900px) {
+    .board--grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1500px) {
+    .board--grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .tag {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.55rem;
+  }
+
+  .tag b {
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+  }
+
+  .tag span {
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: #d2d2da;
+  }
+
+  /* The subject each sketch was asked to lead with. Two sketches can look
+     nothing alike and still be arguing about the same feature. */
+  .tag em {
+    font-style: normal;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    padding: 0.22rem 0.5rem;
+    border-radius: 4px;
+    background: #2a2a32;
+    color: #a8a8b4;
+  }
+
+  .note {
+    margin-top: 0.75rem;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: #b0b0ba;
+  }
+
+  .verdict {
+    margin-top: 0.75rem;
+    line-height: 1.5;
+    font-weight: 500;
+    color: #f4f4f6;
+  }
+
+  .open {
+    display: inline-block;
+    margin-top: 1rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: #f4f4f6;
+    text-decoration: none;
+    border-bottom: 2px solid #5a5a66;
+    padding-bottom: 2px;
+  }
+
+  .open:hover {
+    border-bottom-color: #f4f4f6;
+  }
+
+  /* A live frame rather than a screenshot, so what is being compared is the real
+     page at a real width. */
+  .screen {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    aspect-ratio: 16 / 11;
+  }
+
+  .screen iframe {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    inline-size: 1440px;
+    block-size: 990px;
+    border: 0;
+    transform-origin: 0 0;
+  }
+
+  :focus-visible {
+    outline: 3px solid #6ea8ff;
+    outline-offset: 3px;
+  }
+</style>
+
+<script>
+  /* Scale each frame to whatever width its slot ended up at, so the previews stay
+     honest at every viewport instead of guessing a fixed ratio. */
+  const FRAME_W = 1440;
+
+  const fit = () => {
+    document.querySelectorAll<HTMLElement>('.screen').forEach((box) => {
+      const frame = box.querySelector('iframe');
+      if (!frame) return;
+      const scale = box.clientWidth / FRAME_W;
+      frame.style.transform = `scale(${scale})`;
+      frame.style.height = `${box.clientHeight / scale}px`;
+    });
+  };
+
+  fit();
+  window.addEventListener('resize', fit);
+  window.addEventListener('load', fit);
+</script>

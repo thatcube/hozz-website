@@ -1,0 +1,82 @@
+---
+/**
+ * tw01 · Aside — a bubble whose tail is the last stroke still going.
+ *
+ * The dependency is the bubble's own tail, and it belongs to no other object in
+ * the family: **the tail is the second Z's diagonal, run on past the letter and
+ * out of the bubble.** Its right edge sits on that diagonal's line, its root is
+ * exactly the diagonal's thickness, and it hangs from the bottom edge directly
+ * below where the stroke lands. Re-pitch the diagonal and the tail swings with
+ * it; take the letters away and the tail points nowhere in particular.
+ *
+ * That is also why the diagonal is nearly twice the weight of the bars — the
+ * stroke has to survive leaving the bubble, so it is drawn as the letter's
+ * strongest move rather than as a font's even sixth.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.twozz;
+const uid = `tw01-${Math.random().toString(36).slice(2, 9)}`;
+
+const Z = { y: 8, w: 13.6, h: 17, bar: 3.6, diag: 6.4, cap: 'flat' as const };
+const zLeft = 8.1;
+const zRight = 26.3;
+
+// The right edge of the second Z's diagonal, from under the top bar to its foot.
+const dTop: [number, number] = [zRight + Z.w, Z.y + Z.bar]; //   39.9, 11.6
+const dFoot: [number, number] = [zRight + Z.diag, Z.y + Z.h - Z.bar]; // 32.7, 21.4
+const pitch = (dFoot[0] - dTop[0]) / (dFoot[1] - dTop[1]); // -0.735
+
+const FLOOR = 30; // the bubble's bottom edge
+const TIP_Y = 37.6; // how far the stroke carries past it
+const at = (y: number) => dFoot[0] + pitch * (y - dFoot[1]);
+const r = (v: number) => Math.round(v * 100) / 100;
+
+const rootR = r(at(FLOOR)); //        where the diagonal crosses the floor
+const rootL = r(at(FLOOR) - Z.diag); // one diagonal-width behind it
+const tipX = r(at(TIP_Y));
+
+/** 4–44 by 5–30, soft over the top, firmer underneath, and the tail cut by the
+ *  diagonal rather than stuck on. */
+const BODY = [
+  'M12 5',
+  'H36',
+  'A8 8 0 0 1 44 13',
+  'V24',
+  'A6 6 0 0 1 38 30',
+  `H${rootR}`,
+  `L${tipX} ${TIP_Y}`,
+  `L${rootL} 30`,
+  'H10',
+  'A6 6 0 0 1 4 24',
+  'V13',
+  'A8 8 0 0 1 12 5',
+  'Z',
+].join(' ');
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
+      <path d={zPath({ ...Z, x: zRight })} fill="#000" />
+    </mask>
+  </defs>
+
+  <path d={BODY} fill={app.hue} mask={`url(#${uid})`} />
+</svg>

@@ -1,0 +1,63 @@
+---
+/**
+ * p06 · Clickpad
+ *
+ * A slim remote whose circular clickpad is the exact field of the knockout
+ * pair. Move or enlarge the letters and they breach the pad; outside it they
+ * do not exist. The lower slot keeps the intentional eyes reading awake.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.plozz;
+const uid = `p06-${Math.random().toString(36).slice(2, 9)}`;
+const Z = {
+  y: 15,
+  w: 8,
+  h: 10.5,
+  bar: 2.7,
+  diag: 5,
+  cap: 'angled' as const,
+};
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} clickpad remote mark`}
+>
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: 14.5 })} fill="#000" />
+      <path d={zPath({ ...Z, x: 25.5 })} fill="#000" />
+    </mask>
+    <mask id={`${uid}-body`}>
+      <rect width="48" height="48" fill="#fff" />
+      <circle cx="24" cy="20.25" r="12" fill="#000" />
+      <rect x="19" y="34" width="10" height="2.5" rx="1.25" fill="#000" />
+    </mask>
+  </defs>
+
+  <rect
+    x="9"
+    y="3"
+    width="30"
+    height="42"
+    rx="7"
+    fill={app.deep}
+    mask={`url(#${uid}-body)`}
+  />
+  <g mask={`url(#${uid})`}>
+    <circle cx="24" cy="20.25" r="12" fill={app.hue} />
+  </g>
+</svg>

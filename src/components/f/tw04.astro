@@ -1,0 +1,53 @@
+---
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.twozz;
+const uid = `tw04-${Math.random().toString(36).slice(2, 9)}`;
+const BODY = 'M7 6H31V42H7L3 38V10Z';
+const BARREL = 'M31 13H40L45 18V30L40 35H31Z';
+const Z = {
+  y: 14,
+  w: 11,
+  h: 16,
+  bar: 3.1,
+  diag: 5.6,
+  cap: 'angled' as const,
+};
+const zLeft = 6;
+const zRight = 20;
+const TALLY = { x: 18, y: 4, r: 2.8 };
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} tally lamp mark`}
+>
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#000" />
+      <path d={BODY} fill="#fff" />
+      <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
+      <path d={zPath({ ...Z, x: zRight })} fill="#000" />
+    </mask>
+  </defs>
+
+  <path d={BODY} fill={app.hue} mask={`url(#${uid})`} />
+  <path d={BARREL} fill={app.deep} />
+  <circle
+    cx={TALLY.x}
+    cy={TALLY.y}
+    r={TALLY.r}
+    fill={ground === 'dark' ? app.light : app.deep}
+  />
+</svg>

@@ -1,0 +1,32 @@
+---
+/**
+ * t10 · Calm
+ *
+ * The plainest bubble that still has weight. Radius 5, so the corners are
+ * genuinely round rather than chamfered; the tail is a short pennant that
+ * reaches the bottom of the safe area without dragging; and the only shading is
+ * a single row of ground under the body, carried down through the tail — enough
+ * to seat the shape, not enough to notice.
+ *
+ * Two fills and a face. No keyline, no highlight, no pip. If a plain purple
+ * bubble is the right answer, this is the best-made version of it.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Twozz — Calm">
+  <path d="M5 4h21v1h-21z M4 5h22v1h-22z M4 6h22v1h-22z M4 7h22v1h-22z M4 8h22v1h-22z M4 9h22v1h-22z M4 10h22v1h-22z M4 11h22v1h-22z M4 12h22v1h-22z M4 13h22v1h-22z M4 14h22v1h-22z M4 15h22v1h-22z M4 16h22v1h-22z M4 17h22v1h-22z M4 18h22v1h-22z M4 19h22v1h-22z M4 20h21v1h-21z M4 21h20v1h-20z M4 22h6v1h-6z M5 23h3v1h-3z" fill="#8f52f6" />
+  <path d="M26 3h1v1h-1z M26 4h2v1h-2z M26 5h2v1h-2z M26 6h2v1h-2z M26 7h2v1h-2z M26 8h2v1h-2z M26 9h2v1h-2z M26 10h2v1h-2z M26 11h2v1h-2z M26 12h2v1h-2z M26 13h2v1h-2z M26 14h2v1h-2z M26 15h2v1h-2z M26 16h2v1h-2z M26 17h2v1h-2z M26 18h2v1h-2z M26 19h2v1h-2z M25 20h3v1h-3z M24 21h4v1h-4z M10 22h17v1h-17z M8 23h18v1h-18z M6 24h6v1h-6z M6 25h4v1h-4z M7 26h1v1h-1z" fill="#5f08f1" />
+  <path d="M28 5h1v1h-1z M28 6h1v1h-1z M28 7h1v1h-1z M28 8h1v1h-1z M28 9h1v1h-1z M28 10h1v1h-1z M28 11h1v1h-1z M28 12h1v1h-1z M28 13h1v1h-1z M28 14h1v1h-1z M28 15h1v1h-1z M28 16h1v1h-1z M28 17h1v1h-1z M28 18h1v1h-1z M28 19h1v1h-1z M28 20h1v1h-1z M28 21h1v1h-1z M27 22h2v1h-2z M26 23h2v1h-2z M12 24h15v1h-15z M10 25h3v1h-3z M8 26h3v1h-3z M7 27h2v1h-2z" fill="#4301b4" />
+  <path d="M5 3h21v1h-21z M4 4h1v1h-1z M3 5h1v1h-1z M3 6h1v1h-1z M3 7h1v1h-1z M3 8h1v1h-1z M3 9h1v1h-1z M3 10h1v1h-1z M3 11h1v1h-1z M3 12h1v1h-1z M3 13h1v1h-1z M3 14h1v1h-1z M3 15h1v1h-1z M3 16h1v1h-1z M3 17h1v1h-1z M3 18h1v1h-1z M3 19h1v1h-1z M3 20h1v1h-1z M3 21h1v1h-1z M3 22h1v1h-1z M4 23h1v1h-1z M5 24h1v1h-1z" fill="#b793f3" />
+  <path d="M5 2h22v1h-22z M3 3h2v1h-2z M27 3h2v1h-2z M3 4h1v1h-1z M28 4h1v1h-1z M2 5h1v1h-1z M29 5h1v1h-1z M2 6h1v1h-1z M29 6h1v1h-1z M2 7h1v1h-1z M29 7h1v1h-1z M2 8h1v1h-1z M29 8h1v1h-1z M2 9h1v1h-1z M29 9h1v1h-1z M2 10h1v1h-1z M29 10h1v1h-1z M2 11h1v1h-1z M29 11h1v1h-1z M2 12h1v1h-1z M29 12h1v1h-1z M2 13h1v1h-1z M29 13h1v1h-1z M2 14h1v1h-1z M29 14h1v1h-1z M2 15h1v1h-1z M29 15h1v1h-1z M2 16h1v1h-1z M29 16h1v1h-1z M2 17h1v1h-1z M29 17h1v1h-1z M2 18h1v1h-1z M29 18h1v1h-1z M2 19h1v1h-1z M29 19h1v1h-1z M2 20h1v1h-1z M29 20h1v1h-1z M2 21h1v1h-1z M29 21h1v1h-1z M2 22h1v1h-1z M29 22h1v1h-1z M3 23h1v1h-1z M28 23h1v1h-1z M3 24h2v1h-2z M27 24h2v1h-2z M5 25h1v1h-1z M13 25h14v1h-14z M6 26h1v1h-1z M11 26h2v1h-2z M6 27h1v1h-1z M9 27h2v1h-2z M6 28h3v1h-3z M6 29h1v1h-1z" fill="#22005c" />
+  <g fill="#ffffff" shape-rendering="crispEdges">
+    {facePathsAt({ cx: 16, cy: 13.5, size: 'md', smile: 'wide' }).map((d) => (
+      <path d={d} />
+    ))}
+  </g>
+</MarkFrame>

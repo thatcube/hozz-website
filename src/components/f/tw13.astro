@@ -1,0 +1,100 @@
+---
+/**
+ * tw13 · Barrage — one emote, sent four times, retreating.
+ *
+ * tw07 sends it twice. This sends it until it disappears: three copies, each
+ * smaller than the one in front and each further up the same line, so the mark
+ * is not a face with a repeat behind it — the repeat is the mark.
+ *
+ * The dependency: **the spam's direction and its rate of retreat both come out
+ * of the letter.** STEP is the Z's own diagonal — across by (w - diag), up by
+ * (h - 2·bar) — and SHRINK is one bar taken off the letter's full extent, so
+ * each copy retreats by exactly the weight of a stroke. Redraw the Z heavier
+ * and the barrage falls away faster; redraw it wider and the column leans
+ * further. Neither number is chosen.
+ *
+ * The face is one hole bored through the whole pile, so the letters belong to
+ * no single copy — they are the thing all three have in common.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.twozz;
+const uid = `tw13-${Math.random().toString(36).slice(2, 9)}`;
+
+const Z = { y: 15.4, w: 10, h: 11.6, bar: 2.9, diag: 5, cap: 'angled' as const };
+
+const STEP = { x: Z.w - Z.diag, y: -(Z.h - 2 * Z.bar) };
+const SHRINK = 1 - Z.bar / (Z.h + Z.bar);
+
+const CARD = 30;
+const HEAD = { x: 21.7, y: 27.1 }; // centre of the front copy
+
+const copies = [0, 1, 2].map((i) => {
+  const s = CARD * SHRINK ** i;
+  return {
+    x: HEAD.x + STEP.x * i - s / 2,
+    y: HEAD.y + STEP.y * i - s / 2,
+    s,
+    r: 5.5 * SHRINK ** i,
+  };
+});
+
+const zLeft = 10.2;
+const zRight = 23.2;
+
+const GRIN =
+  'M12.4 31.2C17.2 29.8 26.8 29.6 31.2 31C30.8 36.8 26.8 40.4 21.7 40.4C16.2 40.4 12.8 36.6 12.4 31.2Z';
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
+      <path d={zPath({ ...Z, x: zRight })} fill="#000" />
+      <path d={GRIN} fill="#000" />
+    </mask>
+  </defs>
+
+  <g mask={`url(#${uid})`}>
+    <rect
+      x={copies[2].x}
+      y={copies[2].y}
+      width={copies[2].s}
+      height={copies[2].s}
+      rx={copies[2].r}
+      fill={app.light}
+      opacity="0.5"
+    />
+    <rect
+      x={copies[1].x}
+      y={copies[1].y}
+      width={copies[1].s}
+      height={copies[1].s}
+      rx={copies[1].r}
+      fill={app.light}
+    />
+    <rect
+      x={copies[0].x}
+      y={copies[0].y}
+      width={copies[0].s}
+      height={copies[0].s}
+      rx={copies[0].r}
+      fill={ground === 'dark' ? app.hue : app.hue}
+    />
+  </g>
+</svg>

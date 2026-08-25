@@ -1,0 +1,203 @@
+---
+/**
+ * Sketch F — "Take"
+ *
+ * Thesis: Hozz is a handover, not a platform. Apple Health records leave as
+ * ordinary files or travel directly to a destination their owner controls.
+ */
+import SketchLayout from '../../layouts/SketchLayout.astro';
+import { GITHUB_URL } from '../../data/site';
+import '../../styles/sketch-f.css';
+
+const LINES = [
+  { id: 'heartRate', value: '72 count/min' },
+  { id: 'heartRateVariabilitySDNN', value: '48 ms' },
+  { id: 'sleepAnalysis', value: 'asleep' },
+  { id: 'stepCount', value: '8241 count' },
+  { id: 'oxygenSaturation', value: '97 %' },
+  { id: 'bodyMass', value: '178.4 lb' },
+  { id: 'dietaryProtein', value: '112 g' },
+  { id: 'vo2Max', value: '44.1 mL/kg·min' },
+];
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'SoftwareApplication',
+      name: 'Hozz',
+      applicationCategory: 'HealthApplication',
+      operatingSystem: 'iOS, macOS',
+      description:
+        'A free, open-source app for exporting Apple Health records to files and destinations you control.',
+      isAccessibleForFree: true,
+      license: 'https://www.gnu.org/licenses/gpl-3.0.html',
+      sameAs: GITHUB_URL,
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'How do I export my Apple Health data?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text:
+              'Open Hozz on your iPhone, choose the Health categories you want, select a file or destination you control, then approve Apple Health access. Hozz exports the records without a Hozz account, cloud, or relay.',
+          },
+        },
+      ],
+    },
+  ],
+};
+---
+
+<SketchLayout title="Sketch F — Take · Hozz" letter="F" name="Take">
+  <main class="take">
+    <header class="mast">
+      <a class="wordmark" href="#top" id="top" aria-label="Hozz home">HOZZ</a>
+      <p class="meta">
+        <span>Early alpha</span>
+        <span>Free · GPL-3.0</span>
+        <a href={GITHUB_URL}>Source</a>
+      </p>
+    </header>
+
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="kicker">Apple Health, exported</p>
+        <h1 class="headline" id="hero-title">
+          <span>It is</span>
+          <span>your</span>
+          <span>data.</span>
+        </h1>
+        <div class="take-line">
+          <strong>Take it.</strong>
+          <p>Hozz moves your health history to files and services you control.</p>
+        </div>
+        <div class="hero-actions">
+          <a class="button primary" href="#export">See how</a>
+          <a class="button secondary" href={GITHUB_URL}>View source</a>
+        </div>
+      </div>
+
+      <aside class="folder" aria-label="Example Hozz export file">
+        <div class="folder-tab">export.ndjson</div>
+        <div class="folder-body">
+          <div class="stamp" aria-hidden="true">YOURS</div>
+          <div class="folder-head">
+            <p>Plain file · example readings</p>
+          </div>
+          <ol class="listing">
+            {
+              LINES.map((row) => (
+                <li class="row">
+                  <code>{row.id}</code>
+                  <em>{row.value}</em>
+                </li>
+              ))
+            }
+          </ol>
+          <p class="folder-foot">
+            NDJSON, CSV, or JSON. No proprietary format. No lock-in.
+          </p>
+        </div>
+      </aside>
+    </section>
+
+    <div class="cargo-line" aria-hidden="true">
+      <p><span>Apple Health</span><span>Your destination</span></p>
+      <svg viewBox="0 0 1200 96" preserveAspectRatio="none">
+        <path class="route-hairline" d="M4 48 H336 C418 48 422 18 510 18 H708 C798 18 790 78 884 78 H1196" />
+        <path class="route-dots route-dots-a" d="M4 48 H336 C418 48 422 18 510 18 H708 C798 18 790 78 884 78 H1196" />
+        <path class="route-dots route-dots-b" d="M4 48 H336 C418 48 422 18 510 18 H708 C798 18 790 78 884 78 H1196" />
+        <circle cx="4" cy="48" r="4" />
+        <circle cx="1196" cy="78" r="4" />
+      </svg>
+    </div>
+
+    <section class="argument" aria-labelledby="arg-title" data-reveal>
+      <div>
+        <p class="eyebrow">Choose the exit</p>
+        <h2 id="arg-title">Send it somewhere <em>you</em> own.</h2>
+      </div>
+      <div class="argument-copy">
+        <p>
+          Save a file. Sync to your Mac. Publish to your home server. You choose every route.
+        </p>
+        <ul class="routes" aria-label="Destinations Hozz can export to">
+          <li>Files</li>
+          <li>Your Mac</li>
+          <li>MQTT</li>
+          <li>Home Assistant</li>
+          <li>Webhooks</li>
+          <li class="none">No Hozz relay</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="process" id="export" aria-labelledby="process-title" data-reveal>
+      <p class="eyebrow">The handoff</p>
+      <h2 id="process-title">Export in three moves.</h2>
+      <ol class="steps">
+        <li>
+          <span>01</span>
+          <h3>Choose</h3>
+          <p>Pick the health categories you need.</p>
+        </li>
+        <li>
+          <span>02</span>
+          <h3>Route</h3>
+          <p>Select a file or destination.</p>
+        </li>
+        <li>
+          <span>03</span>
+          <h3>Approve</h3>
+          <p>Grant Apple Health access. Hozz moves it.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section class="how" aria-labelledby="how-title" data-reveal>
+      <p class="eyebrow">Quick answer</p>
+      <h2 id="how-title">How do I export my Apple Health data?</h2>
+      <p>
+        Open Hozz on your iPhone. Choose categories, select your destination, then approve
+        Apple Health access. Your records export without a Hozz account, cloud, or relay.
+      </p>
+    </section>
+
+    <section class="close" aria-labelledby="close-title" data-reveal>
+      <div>
+        <p class="eyebrow">Free · open source · early alpha</p>
+        <h2 id="close-title">Your history should travel.</h2>
+      </div>
+      <a class="button primary" href={GITHUB_URL}>Get Hozz on GitHub</a>
+    </section>
+
+    <footer class="colophon">
+      <p>Hozz is an iPhone app with a companion Mac app, by Brandon Moore.</p>
+      <a href={GITHUB_URL}>thatcube/hozz</a>
+    </footer>
+  </main>
+
+  <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  <script is:inline>
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.documentElement.classList.add('take-js');
+      const reveals = document.querySelectorAll('[data-reveal]');
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              entry.target.setAttribute('data-visible', '');
+              observer.unobserve(entry.target);
+            }
+          }
+        },
+        { rootMargin: '0px 0px -8% 0px', threshold: 0.08 },
+      );
+      reveals.forEach((item) => observer.observe(item));
+    }
+  </script>
+</SketchLayout>

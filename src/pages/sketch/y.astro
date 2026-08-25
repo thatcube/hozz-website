@@ -1,0 +1,696 @@
+---
+import SketchLayout from '../../layouts/SketchLayout.astro';
+import '../../styles/sketch-y.css';
+
+const destinations = [
+  {
+    name: 'Your Mac',
+    detail: 'The companion Mac app catches batches over your local network and files them away.',
+    mono: 'NDJSON · token auth · Bonjour _hozz._tcp · port 54330',
+  },
+  {
+    name: 'Folder',
+    detail: 'Any folder in Files — iCloud Drive, Dropbox, OneDrive, Google Drive, an SMB share, or on-device.',
+    mono: 'Files picker',
+  },
+  {
+    name: 'Home Assistant',
+    detail: 'Your readings become entities in the dashboard you already run.',
+    mono: 'Metrics JSON · webhook or REST',
+  },
+  {
+    name: 'Web address',
+    detail: 'POST straight to an endpoint you control. Retries are safe.',
+    mono: 'NDJSON / JSON / CSV / Metrics JSON · Idempotency-Key',
+  },
+  {
+    name: 'MQTT',
+    detail: 'Publish to your own broker. Anything already listening on a topic gets it.',
+    mono: 'MQTT 3.1.1 · mqtt:// or mqtts:// · retained, QoS 0',
+  },
+];
+
+const faq = [
+  {
+    q: 'How do I export my Apple Health data?',
+    a: 'Install Hozz on your iPhone, add a destination you control — your Mac, a folder in Files, or a URL — choose which Health types to send, run a test export to confirm it arrived, then pick a schedule. Hozz sends new records from then on, automatically.',
+  },
+  {
+    q: 'Does my Health data go through anyone else’s server?',
+    a: 'No. Hozz has no account, no hosted relay and no default destination. Nothing leaves the phone until you add a destination and confirm it.',
+  },
+  {
+    q: 'What format does Hozz export Apple Health data in?',
+    a: 'NDJSON by default, plus JSON, CSV and Metrics JSON. CSV is lossy on purpose — metadata and nested workout detail do not fit a grid. Encoding is deterministic, so output is byte-identical regardless of locale or time zone.',
+  },
+  {
+    q: 'Can an export miss records?',
+    a: 'Hozz keeps an opaque per-type anchor using HKAnchoredObjectQuery and only advances it once records are durably staged, so there are no date-window watermarks. An interruption can repeat work, but it cannot skip records.',
+  },
+];
+
+// machine names stay in mono, even inside prose
+const IDENT = /(HKAnchoredObjectQuery|Idempotency-Key|NDJSON|Metrics JSON|MQTT|CSV|JSON)/g;
+const parts = (t: string) => t.split(IDENT);
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'SoftwareApplication',
+      name: 'Hozz',
+      applicationCategory: 'HealthApplication',
+      operatingSystem: 'iOS, macOS',
+      description:
+        'Free, open-source app that exports Apple Health data to destinations you own: a Mac on your local network, a folder, Home Assistant, your own web endpoint, or an MQTT broker.',
+      license: 'https://www.gnu.org/licenses/gpl-3.0.html',
+      isAccessibleForFree: true,
+      author: { '@type': 'Person', name: 'Brandon Moore' },
+      codeRepository: 'https://github.com/thatcube/hozz',
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      featureList: [
+        'Automatic export of new Apple Health records on a schedule you choose',
+        'NDJSON, JSON, CSV and Metrics JSON output',
+        'Deletions carried as tombstones',
+        'Resumable manual export with durable checkpoints',
+        'Read-only MCP server for assistants',
+      ],
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: faq.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  ],
+};
+---
+
+<SketchLayout title="Sketch Y — Throughline · Hozz" letter="Y" name="Throughline">
+  <main class="y">
+    <div class="y-wrap">
+      <div class="rail" aria-hidden="true"><span class="rail-ink"></span></div>
+
+      <!-- ------------------------------------------------------------ hero -->
+      <header class="hero">
+        <span class="node" data-i="01" aria-hidden="true"></span>
+        <div class="hero-grid">
+          <div>
+            <p class="eyebrow"><i></i> Hozz · iPhone &amp; Mac · GPL-3.0</p>
+            <h1>Export Apple&nbsp;Health <br />to somewhere <span class="em">you own</span>.</h1>
+            <p class="lede">
+              Your Health data lives on exactly one device. Hozz makes a second copy — in a
+              file, on a machine, in a format that is yours.
+            </p>
+            <div class="cta">
+              <a class="btn btn-a" href="https://github.com/thatcube/hozz">
+                Get Hozz on GitHub
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true"
+                  ><path d="M3 10L10 3M10 3H4.4M10 3v5.6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg
+                >
+              </a>
+              <a class="btn btn-b" href="https://github.com/sponsors/thatcube">Sponsor the work</a>
+            </div>
+            <p class="alpha"><b>Early alpha</b> <span>It works. Coverage is still partial.</span></p>
+          </div>
+
+          <figure class="fig reveal">
+            <svg class="dia-wide" viewBox="0 0 560 336" role="img"
+              aria-label="Diagram: Apple Health records on your iPhone fan out along five dotted routes to Your Mac, a Folder, Home Assistant, a Web address, and MQTT.">
+              <rect class="hair-2" x="2" y="132" width="152" height="72" rx="18" fill="#fff" />
+              <text class="lbl-b" x="22" y="163">Apple Health</text>
+              <text class="lbl-s" x="22" y="183">ON YOUR IPHONE</text>
+
+              <path class="guide" d="M154 146 C 240 146, 252 31, 352 31" />
+              <path class="guide" style="animation-delay:-0.3s" d="M154 157 C 240 157, 252 97, 352 97" />
+              <path class="guide" style="animation-delay:-0.6s" d="M154 168 C 240 168, 252 163, 352 163" />
+              <path class="guide" style="animation-delay:-0.9s" d="M154 179 C 240 179, 252 229, 352 229" />
+              <path class="guide" style="animation-delay:-1.2s" d="M154 190 C 240 190, 252 295, 352 295" />
+
+              <g>
+                <rect class="hair" x="352" y="10" width="206" height="42" rx="21" fill="#fff" />
+                <text class="lbl" x="374" y="36">Your Mac</text>
+                <text class="lbl-r" x="536" y="36">local network</text>
+                <rect class="hair" x="352" y="76" width="206" height="42" rx="21" fill="#fff" />
+                <text class="lbl" x="374" y="102">Folder</text>
+                <text class="lbl-r" x="536" y="102">Files</text>
+                <rect class="hair" x="352" y="142" width="206" height="42" rx="21" fill="#fff" />
+                <text class="lbl" x="374" y="168">Home Assistant</text>
+                <text class="lbl-r" x="536" y="168">webhook / REST</text>
+                <rect class="hair" x="352" y="208" width="206" height="42" rx="21" fill="#fff" />
+                <text class="lbl" x="374" y="234">Web address</text>
+                <text class="lbl-r" x="536" y="234">POST</text>
+                <rect class="hair" x="352" y="274" width="206" height="42" rx="21" fill="#fff" />
+                <text class="lbl" x="374" y="300">MQTT</text>
+                <text class="lbl-r" x="536" y="300">broker</text>
+              </g>
+
+              <circle class="pkt p1" cx="0" cy="0" r="3.2" />
+              <circle class="pkt p2" cx="0" cy="0" r="3.2" />
+              <circle class="pkt p3" cx="0" cy="0" r="3.2" />
+              <circle class="pkt p4" cx="0" cy="0" r="3.2" />
+              <circle class="pkt p5" cx="0" cy="0" r="3.2" />
+            </svg>
+
+            <svg class="dia-narrow" viewBox="0 0 300 380" role="img"
+              aria-label="Diagram: Apple Health records on your iPhone travel to Your Mac, a Folder, Home Assistant, a Web address, and MQTT.">
+              <rect class="hair-2" x="4" y="4" width="180" height="56" rx="16" fill="#fff" />
+              <text class="lbl-b" x="20" y="30">Apple Health</text>
+              <text class="lbl-s" x="20" y="48">ON YOUR IPHONE</text>
+
+              <path class="guide" d="M30 60 L30 348" />
+              <path class="guide" style="animation-delay:-0.3s" d="M30 100 L54 100" />
+              <path class="guide" style="animation-delay:-0.6s" d="M30 162 L54 162" />
+              <path class="guide" style="animation-delay:-0.9s" d="M30 224 L54 224" />
+              <path class="guide" style="animation-delay:-1.2s" d="M30 286 L54 286" />
+              <path class="guide" style="animation-delay:-1.5s" d="M30 348 L54 348" />
+
+              <rect class="hair" x="52" y="80" width="244" height="40" rx="20" fill="#fff" />
+              <text class="lbl" x="70" y="105">Your Mac</text>
+              <rect class="hair" x="52" y="142" width="244" height="40" rx="20" fill="#fff" />
+              <text class="lbl" x="70" y="167">Folder</text>
+              <rect class="hair" x="52" y="204" width="244" height="40" rx="20" fill="#fff" />
+              <text class="lbl" x="70" y="229">Home Assistant</text>
+              <rect class="hair" x="52" y="266" width="244" height="40" rx="20" fill="#fff" />
+              <text class="lbl" x="70" y="291">Web address</text>
+              <rect class="hair" x="52" y="328" width="244" height="40" rx="20" fill="#fff" />
+              <text class="lbl" x="70" y="353">MQTT</text>
+
+              <circle class="pkt n1" cx="0" cy="0" r="3.2" />
+              <circle class="pkt n2" cx="0" cy="0" r="3.2" />
+              <circle class="pkt n3" cx="0" cy="0" r="3.2" />
+              <circle class="pkt n4" cx="0" cy="0" r="3.2" />
+              <circle class="pkt n5" cx="0" cy="0" r="3.2" />
+            </svg>
+            <figcaption>
+              Five destinations. No account, no relay, no default. Nothing moves until you add one
+              and confirm it.
+            </figcaption>
+          </figure>
+        </div>
+      </header>
+
+      <!-- ------------------------------------------------------- what it does -->
+      <section class="sec" aria-labelledby="what">
+        <span class="node" data-i="02" aria-hidden="true"></span>
+        <div class="sec-head">
+          <h2 id="what">Set it once. It <span class="em">keeps up</span>.</h2>
+        </div>
+        <div class="claims">
+          <div class="claim reveal">
+            <svg width="30" height="30" viewBox="0 0 30 30" fill="none" aria-hidden="true">
+              <circle cx="15" cy="15" r="10.5" stroke="currentColor" stroke-width="1" />
+              <path d="M15 9v6.4l4.2 2.4" stroke="currentColor" stroke-width="1" stroke-linecap="round" />
+            </svg>
+            <h3>New records, on your schedule</h3>
+            <p>On arrival, hourly, daily, or only when you tap. Per destination, not one global switch.</p>
+          </div>
+          <div class="claim reveal">
+            <svg width="30" height="30" viewBox="0 0 30 30" fill="none" aria-hidden="true">
+              <rect x="5.5" y="7.5" width="19" height="15" rx="3" stroke="currentColor" stroke-width="1" />
+              <path d="M9 12h9M9 15.5h12M9 19h6" stroke="currentColor" stroke-width="1" stroke-linecap="round" />
+              <path d="M7.5 19h9.5" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-dasharray="1 2.6" />
+            </svg>
+            <h3>A file, not a feed</h3>
+            <p>NDJSON, JSON, CSV or Metrics JSON. Deletions travel as tombstones instead of quietly vanishing.</p>
+          </div>
+          <div class="claim reveal">
+            <svg width="30" height="30" viewBox="0 0 30 30" fill="none" aria-hidden="true">
+              <path d="M5 15h7M18 15h7" stroke="currentColor" stroke-width="1" stroke-linecap="round" />
+              <circle cx="15" cy="15" r="3" stroke="currentColor" stroke-width="1" />
+              <path d="M15 5v4M15 21v4" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-dasharray="1 3" />
+            </svg>
+            <h3>One failure stays local</h3>
+            <p>Every destination carries its own cursor, so a broken one can’t block or skip the others.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- --------------------------------------------------------------- how -->
+      <section class="sec" aria-labelledby="how">
+        <span class="node" data-i="03" aria-hidden="true"></span>
+        <div class="how">
+          <div>
+            <div class="sec-head" style="margin-bottom:0">
+              <h2 id="how">How do I export my Apple&nbsp;Health data?</h2>
+              <p>
+                Four steps, about two minutes. Hozz never guesses a destination for you, so nothing
+                is sent until step four.
+              </p>
+            </div>
+            <p class="count"><b>475</b> <span>XCTest tests behind it</span></p>
+          </div>
+          <ol class="steps">
+            <li class="reveal">
+              <h3>Add a destination</h3>
+              <p>Your Mac on the local network, a folder in Files, Home Assistant, a URL, or an MQTT broker.</p>
+            </li>
+            <li class="reveal">
+              <h3>Choose the Health types</h3>
+              <p>
+                <code>heartRate</code>, <code>sleepAnalysis</code>, <code>stepCount</code>,
+                <code>vo2Max</code> — a handful or the lot.
+              </p>
+            </li>
+            <li class="reveal">
+              <h3>Send a test batch</h3>
+              <p>Watch it land before you trust it. Testing is a step, not an afterthought.</p>
+            </li>
+            <li class="reveal">
+              <h3>Pick a schedule and walk away</h3>
+              <p>New records go out from then on. Shortcuts and a home-screen widget report the last sync state.</p>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ------------------------------------------------------ destinations -->
+      <section class="sec" aria-labelledby="dest">
+        <span class="node" data-i="04" aria-hidden="true"></span>
+        <div class="sec-head">
+          <h2 id="dest">Where it <span class="em">sends</span></h2>
+          <p>Five places, all of them yours. Hozz runs no server of its own.</p>
+        </div>
+        <div class="tbl-scroll reveal">
+          <table>
+            <caption class="sr-only">Hozz export destinations and how each one delivers data</caption>
+            <thead>
+              <tr>
+                <th scope="col">Destination</th>
+                <th scope="col">How it gets there</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                destinations.map((d) => (
+                  <tr>
+                    <th scope="row">{d.name}</th>
+                    <td>
+                      {d.detail}
+                      <span class="mono">{d.mono}</span>
+                    </td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="sub">Four formats</h3>
+        <ul class="fmts">
+          <li class="fmt reveal">
+            <b>NDJSON</b>
+            <span>The default. Streamable, and lossless for encoded fields.</span>
+          </li>
+          <li class="fmt reveal">
+            <b>JSON</b>
+            <span>The same records, as one document.</span>
+          </li>
+          <li class="fmt fmt-lossy reveal">
+            <b>CSV</b>
+            <span>Metadata and nested workout detail don’t fit a grid. Hozz says so rather than pretending.</span>
+            <span class="tag">Lossy on purpose</span>
+          </li>
+          <li class="fmt reveal">
+            <b>Metrics JSON</b>
+            <span>The shape Home Assistant takes.</span>
+          </li>
+        </ul>
+        <p class="mono" style="margin-top:0.95rem">
+          Deterministic encoding — byte-identical output regardless of locale or time zone.
+        </p>
+      </section>
+
+      <!-- ---------------------------------------------------------- anchors -->
+      <section class="sec" aria-labelledby="dur">
+        <span class="node" data-i="05" aria-hidden="true"></span>
+        <div class="sec-head">
+          <h2 id="dur">It can repeat&nbsp;work. <br />It <span class="em">can’t skip</span> a&nbsp;record.</h2>
+          <p>
+            No date-window watermarks. Hozz holds an opaque anchor per type and only advances it
+            once records are durably staged.
+          </p>
+        </div>
+        <div class="dur">
+          <figure class="fig reveal">
+            <svg class="dia-wide" viewBox="0 0 560 112" role="img"
+              aria-label="Diagram: a row of tick marks, one per Health record. Marks left of the anchor are already written. The anchor can slide backwards and repeat them, but never moves past a mark it has not written.">
+              <defs>
+                <clipPath id="y-ink" clipPathUnits="userSpaceOnUse">
+                  <rect class="ruler-ink" x="0" y="0" width="560" height="112" />
+                </clipPath>
+              </defs>
+                <line class="tick-todo" x1="12.0" y1="30" x2="12.0" y2="54" />
+                <line class="tick-todo" x1="23.7" y1="38" x2="23.7" y2="54" />
+                <line class="tick-todo" x1="35.4" y1="38" x2="35.4" y2="54" />
+                <line class="tick-todo" x1="47.1" y1="38" x2="47.1" y2="54" />
+                <line class="tick-todo" x1="58.8" y1="30" x2="58.8" y2="54" />
+                <line class="tick-todo" x1="70.5" y1="38" x2="70.5" y2="54" />
+                <line class="tick-todo" x1="82.2" y1="38" x2="82.2" y2="54" />
+                <line class="tick-todo" x1="93.9" y1="38" x2="93.9" y2="54" />
+                <line class="tick-todo" x1="105.6" y1="30" x2="105.6" y2="54" />
+                <line class="tick-todo" x1="117.3" y1="38" x2="117.3" y2="54" />
+                <line class="tick-todo" x1="129.0" y1="38" x2="129.0" y2="54" />
+                <line class="tick-todo" x1="140.7" y1="38" x2="140.7" y2="54" />
+                <line class="tick-todo" x1="152.4" y1="30" x2="152.4" y2="54" />
+                <line class="tick-todo" x1="164.1" y1="38" x2="164.1" y2="54" />
+                <line class="tick-todo" x1="175.8" y1="38" x2="175.8" y2="54" />
+                <line class="tick-todo" x1="187.5" y1="38" x2="187.5" y2="54" />
+                <line class="tick-todo" x1="199.2" y1="30" x2="199.2" y2="54" />
+                <line class="tick-todo" x1="210.9" y1="38" x2="210.9" y2="54" />
+                <line class="tick-todo" x1="222.6" y1="38" x2="222.6" y2="54" />
+                <line class="tick-todo" x1="234.3" y1="38" x2="234.3" y2="54" />
+                <line class="tick-todo" x1="246.0" y1="30" x2="246.0" y2="54" />
+                <line class="tick-todo" x1="257.7" y1="38" x2="257.7" y2="54" />
+                <line class="tick-todo" x1="269.4" y1="38" x2="269.4" y2="54" />
+                <line class="tick-todo" x1="281.1" y1="38" x2="281.1" y2="54" />
+                <line class="tick-todo" x1="292.8" y1="30" x2="292.8" y2="54" />
+                <line class="tick-todo" x1="304.5" y1="38" x2="304.5" y2="54" />
+                <line class="tick-todo" x1="316.2" y1="38" x2="316.2" y2="54" />
+                <line class="tick-todo" x1="327.9" y1="38" x2="327.9" y2="54" />
+                <line class="tick-todo" x1="339.6" y1="30" x2="339.6" y2="54" />
+                <line class="tick-todo" x1="351.3" y1="38" x2="351.3" y2="54" />
+                <line class="tick-todo" x1="363.0" y1="38" x2="363.0" y2="54" />
+                <line class="tick-todo" x1="374.7" y1="38" x2="374.7" y2="54" />
+                <line class="tick-todo" x1="386.4" y1="30" x2="386.4" y2="54" />
+                <line class="tick-todo" x1="398.1" y1="38" x2="398.1" y2="54" />
+                <line class="tick-todo" x1="409.8" y1="38" x2="409.8" y2="54" />
+                <line class="tick-todo" x1="421.5" y1="38" x2="421.5" y2="54" />
+                <line class="tick-todo" x1="433.2" y1="30" x2="433.2" y2="54" />
+                <line class="tick-todo" x1="444.9" y1="38" x2="444.9" y2="54" />
+                <line class="tick-todo" x1="456.6" y1="38" x2="456.6" y2="54" />
+                <line class="tick-todo" x1="468.3" y1="38" x2="468.3" y2="54" />
+                <line class="tick-todo" x1="480.0" y1="30" x2="480.0" y2="54" />
+                <line class="tick-todo" x1="491.7" y1="38" x2="491.7" y2="54" />
+                <line class="tick-todo" x1="503.4" y1="38" x2="503.4" y2="54" />
+                <line class="tick-todo" x1="515.1" y1="38" x2="515.1" y2="54" />
+                <line class="tick-todo" x1="526.8" y1="30" x2="526.8" y2="54" />
+                <line class="tick-todo" x1="538.5" y1="38" x2="538.5" y2="54" />
+                <line class="tick-todo" x1="550.2" y1="38" x2="550.2" y2="54" />
+              <g clip-path="url(#y-ink)">
+                <line class="tick-done" x1="12.0" y1="30" x2="12.0" y2="54" />
+                <line class="tick-done" x1="23.7" y1="38" x2="23.7" y2="54" />
+                <line class="tick-done" x1="35.4" y1="38" x2="35.4" y2="54" />
+                <line class="tick-done" x1="47.1" y1="38" x2="47.1" y2="54" />
+                <line class="tick-done" x1="58.8" y1="30" x2="58.8" y2="54" />
+                <line class="tick-done" x1="70.5" y1="38" x2="70.5" y2="54" />
+                <line class="tick-done" x1="82.2" y1="38" x2="82.2" y2="54" />
+                <line class="tick-done" x1="93.9" y1="38" x2="93.9" y2="54" />
+                <line class="tick-done" x1="105.6" y1="30" x2="105.6" y2="54" />
+                <line class="tick-done" x1="117.3" y1="38" x2="117.3" y2="54" />
+                <line class="tick-done" x1="129.0" y1="38" x2="129.0" y2="54" />
+                <line class="tick-done" x1="140.7" y1="38" x2="140.7" y2="54" />
+                <line class="tick-done" x1="152.4" y1="30" x2="152.4" y2="54" />
+                <line class="tick-done" x1="164.1" y1="38" x2="164.1" y2="54" />
+                <line class="tick-done" x1="175.8" y1="38" x2="175.8" y2="54" />
+                <line class="tick-done" x1="187.5" y1="38" x2="187.5" y2="54" />
+                <line class="tick-done" x1="199.2" y1="30" x2="199.2" y2="54" />
+                <line class="tick-done" x1="210.9" y1="38" x2="210.9" y2="54" />
+                <line class="tick-done" x1="222.6" y1="38" x2="222.6" y2="54" />
+                <line class="tick-done" x1="234.3" y1="38" x2="234.3" y2="54" />
+                <line class="tick-done" x1="246.0" y1="30" x2="246.0" y2="54" />
+                <line class="tick-done" x1="257.7" y1="38" x2="257.7" y2="54" />
+                <line class="tick-done" x1="269.4" y1="38" x2="269.4" y2="54" />
+                <line class="tick-done" x1="281.1" y1="38" x2="281.1" y2="54" />
+                <line class="tick-done" x1="292.8" y1="30" x2="292.8" y2="54" />
+                <line class="tick-done" x1="304.5" y1="38" x2="304.5" y2="54" />
+                <line class="tick-done" x1="316.2" y1="38" x2="316.2" y2="54" />
+                <line class="tick-done" x1="327.9" y1="38" x2="327.9" y2="54" />
+                <line class="tick-done" x1="339.6" y1="30" x2="339.6" y2="54" />
+                <line class="tick-done" x1="351.3" y1="38" x2="351.3" y2="54" />
+                <line class="tick-done" x1="363.0" y1="38" x2="363.0" y2="54" />
+                <line class="tick-done" x1="374.7" y1="38" x2="374.7" y2="54" />
+                <line class="tick-done" x1="386.4" y1="30" x2="386.4" y2="54" />
+                <line class="tick-done" x1="398.1" y1="38" x2="398.1" y2="54" />
+                <line class="tick-done" x1="409.8" y1="38" x2="409.8" y2="54" />
+                <line class="tick-done" x1="421.5" y1="38" x2="421.5" y2="54" />
+                <line class="tick-done" x1="433.2" y1="30" x2="433.2" y2="54" />
+                <line class="tick-done" x1="444.9" y1="38" x2="444.9" y2="54" />
+                <line class="tick-done" x1="456.6" y1="38" x2="456.6" y2="54" />
+                <line class="tick-done" x1="468.3" y1="38" x2="468.3" y2="54" />
+                <line class="tick-done" x1="480.0" y1="30" x2="480.0" y2="54" />
+                <line class="tick-done" x1="491.7" y1="38" x2="491.7" y2="54" />
+                <line class="tick-done" x1="503.4" y1="38" x2="503.4" y2="54" />
+                <line class="tick-done" x1="515.1" y1="38" x2="515.1" y2="54" />
+                <line class="tick-done" x1="526.8" y1="30" x2="526.8" y2="54" />
+                <line class="tick-done" x1="538.5" y1="38" x2="538.5" y2="54" />
+                <line class="tick-done" x1="550.2" y1="38" x2="550.2" y2="54" />
+              </g>
+              <line class="hair-2" x1="0" y1="66" x2="560" y2="66" />
+              <g class="ruler-mark">
+                <path d="M0 62 L0 90" stroke="#12141a" stroke-width="1.4" stroke-linecap="round" />
+                <path d="M-5 90 L5 90" stroke="#12141a" stroke-width="1.4" stroke-linecap="round" />
+                <text class="lbl-s" x="-27" y="106" fill="#12141a">ANCHOR</text>
+              </g>
+            </svg>
+
+            <svg class="dia-narrow" viewBox="0 0 300 108" role="img"
+              aria-label="Diagram: a row of tick marks, one per Health record. Marks left of the anchor are already written. The anchor can slide backwards and repeat them, but never moves past a mark it has not written.">
+              <defs>
+                <clipPath id="y-ink-n" clipPathUnits="userSpaceOnUse">
+                  <rect class="ruler-ink" x="0" y="0" width="300" height="108" />
+                </clipPath>
+              </defs>
+                <line class="tick-todo" x1="10.0" y1="28" x2="10.0" y2="50" />
+                <line class="tick-todo" x1="21.7" y1="35" x2="21.7" y2="50" />
+                <line class="tick-todo" x1="33.4" y1="35" x2="33.4" y2="50" />
+                <line class="tick-todo" x1="45.1" y1="35" x2="45.1" y2="50" />
+                <line class="tick-todo" x1="56.8" y1="28" x2="56.8" y2="50" />
+                <line class="tick-todo" x1="68.5" y1="35" x2="68.5" y2="50" />
+                <line class="tick-todo" x1="80.2" y1="35" x2="80.2" y2="50" />
+                <line class="tick-todo" x1="91.9" y1="35" x2="91.9" y2="50" />
+                <line class="tick-todo" x1="103.6" y1="28" x2="103.6" y2="50" />
+                <line class="tick-todo" x1="115.3" y1="35" x2="115.3" y2="50" />
+                <line class="tick-todo" x1="127.0" y1="35" x2="127.0" y2="50" />
+                <line class="tick-todo" x1="138.7" y1="35" x2="138.7" y2="50" />
+                <line class="tick-todo" x1="150.4" y1="28" x2="150.4" y2="50" />
+                <line class="tick-todo" x1="162.1" y1="35" x2="162.1" y2="50" />
+                <line class="tick-todo" x1="173.8" y1="35" x2="173.8" y2="50" />
+                <line class="tick-todo" x1="185.5" y1="35" x2="185.5" y2="50" />
+                <line class="tick-todo" x1="197.2" y1="28" x2="197.2" y2="50" />
+                <line class="tick-todo" x1="208.9" y1="35" x2="208.9" y2="50" />
+                <line class="tick-todo" x1="220.6" y1="35" x2="220.6" y2="50" />
+                <line class="tick-todo" x1="232.3" y1="35" x2="232.3" y2="50" />
+                <line class="tick-todo" x1="244.0" y1="28" x2="244.0" y2="50" />
+                <line class="tick-todo" x1="255.7" y1="35" x2="255.7" y2="50" />
+                <line class="tick-todo" x1="267.4" y1="35" x2="267.4" y2="50" />
+                <line class="tick-todo" x1="279.1" y1="35" x2="279.1" y2="50" />
+                <line class="tick-todo" x1="290.8" y1="28" x2="290.8" y2="50" />
+              <g clip-path="url(#y-ink-n)">
+                <line class="tick-done" x1="10.0" y1="28" x2="10.0" y2="50" />
+                <line class="tick-done" x1="21.7" y1="35" x2="21.7" y2="50" />
+                <line class="tick-done" x1="33.4" y1="35" x2="33.4" y2="50" />
+                <line class="tick-done" x1="45.1" y1="35" x2="45.1" y2="50" />
+                <line class="tick-done" x1="56.8" y1="28" x2="56.8" y2="50" />
+                <line class="tick-done" x1="68.5" y1="35" x2="68.5" y2="50" />
+                <line class="tick-done" x1="80.2" y1="35" x2="80.2" y2="50" />
+                <line class="tick-done" x1="91.9" y1="35" x2="91.9" y2="50" />
+                <line class="tick-done" x1="103.6" y1="28" x2="103.6" y2="50" />
+                <line class="tick-done" x1="115.3" y1="35" x2="115.3" y2="50" />
+                <line class="tick-done" x1="127.0" y1="35" x2="127.0" y2="50" />
+                <line class="tick-done" x1="138.7" y1="35" x2="138.7" y2="50" />
+                <line class="tick-done" x1="150.4" y1="28" x2="150.4" y2="50" />
+                <line class="tick-done" x1="162.1" y1="35" x2="162.1" y2="50" />
+                <line class="tick-done" x1="173.8" y1="35" x2="173.8" y2="50" />
+                <line class="tick-done" x1="185.5" y1="35" x2="185.5" y2="50" />
+                <line class="tick-done" x1="197.2" y1="28" x2="197.2" y2="50" />
+                <line class="tick-done" x1="208.9" y1="35" x2="208.9" y2="50" />
+                <line class="tick-done" x1="220.6" y1="35" x2="220.6" y2="50" />
+                <line class="tick-done" x1="232.3" y1="35" x2="232.3" y2="50" />
+                <line class="tick-done" x1="244.0" y1="28" x2="244.0" y2="50" />
+                <line class="tick-done" x1="255.7" y1="35" x2="255.7" y2="50" />
+                <line class="tick-done" x1="267.4" y1="35" x2="267.4" y2="50" />
+                <line class="tick-done" x1="279.1" y1="35" x2="279.1" y2="50" />
+                <line class="tick-done" x1="290.8" y1="28" x2="290.8" y2="50" />
+              </g>
+              <line class="hair-2" x1="0" y1="62" x2="300" y2="62" />
+              <g class="ruler-mark-n">
+                <path d="M0 58 L0 84" stroke="#12141a" stroke-width="1.4" stroke-linecap="round" />
+                <path d="M-5 84 L5 84" stroke="#12141a" stroke-width="1.4" stroke-linecap="round" />
+                <text class="lbl-s" x="-24" y="102" fill="#12141a">ANCHOR</text>
+              </g>
+            </svg>
+            <figcaption>
+              Each mark is a record. An interruption drags the anchor back, never forward.
+            </figcaption>
+          </figure>
+
+          <div class="notes">
+            <div class="note reveal">
+              <b>Manual export resumes</b>
+              <span>Kill it, reboot, background it — it picks up from the last durable checkpoint.</span>
+            </div>
+            <div class="note reveal">
+              <b>No green tick you haven’t earned</b>
+              <span>
+                Apple won’t let an app tell “you denied this type” from “you have no data”. So Hozz
+                reports the state it actually knows:
+              </span>
+              <ul class="states">
+                <li>denied-or-empty</li>
+                <li>unavailable</li>
+                <li>unsupported</li>
+                <li>failed</li>
+              </ul>
+            </div>
+            <div class="note reveal">
+              <b>iOS sets the pace</b>
+              <span>
+                The system decides when background work runs. Most types cap near hourly, and Health
+                can’t be read while the phone is locked.
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- -------------------------------------------------------------- mac -->
+      <section class="sec" aria-labelledby="mac">
+        <span class="node" data-i="06" aria-hidden="true"></span>
+        <div class="mcp">
+          <div>
+            <div class="sec-head" style="margin-bottom:0">
+              <h2 id="mac">Then <span class="em">ask</span> it things.</h2>
+              <p>
+                The Mac app keeps every batch in <span class="inline-code">hozz-received.sqlite</span>
+                and charts it by hour, day, week or month. A read-only MCP server points an assistant
+                at the same file.
+              </p>
+            </div>
+            <p class="caveat">
+              It cannot change or delete anything. But a cloud assistant may upload whatever it
+              reads — that’s the assistant’s behaviour, not Hozz’s.
+            </p>
+          </div>
+          <div class="reveal">
+            <ul class="tools">
+              <li>list_health_types <em>what’s there</em></li>
+              <li>summarise_health_data <em>the shape of it</em></li>
+              <li>aggregate_health_data <em>by hour, day, week, month</em></li>
+              <li>list_health_samples <em>the raw readings</em></li>
+            </ul>
+            <p class="mono" style="margin-top:0.7rem">
+              JSON-RPC 2.0 over stdio · protocol 2024-11-05 · read-only
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- -------------------------------------------------------------- faq -->
+      <section class="sec" aria-labelledby="faq">
+        <span class="node" data-i="07" aria-hidden="true"></span>
+        <div class="sec-head">
+          <h2 id="faq">Questions</h2>
+        </div>
+        <dl class="qa">
+          {
+            faq.slice(1).map((f) => (
+              <div class="qa-row reveal">
+                <dt>{f.q}</dt>
+                <dd>
+                  {
+                    parts(f.a).map((bit, i) =>
+                      i % 2 ? <code>{bit}</code> : <Fragment>{bit}</Fragment>,
+                    )
+                  }
+                </dd>
+              </div>
+            ))
+          }
+        </dl>
+      </section>
+
+      <!-- ------------------------------------------------------------ close -->
+      <footer class="close">
+        <span class="node" data-i="08" aria-hidden="true"></span>
+        <h2>Take the <span class="em">copy</span> home.</h2>
+        <p class="lede">
+          Free forever, source and all. One developer, no company behind it, and nothing to sell you
+          later.
+        </p>
+        <div class="cta">
+          <a class="btn btn-a" href="https://github.com/thatcube/hozz">
+            Read the source
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true"
+              ><path d="M3 10L10 3M10 3H4.4M10 3v5.6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg
+            >
+          </a>
+          <a class="btn btn-b" href="https://github.com/sponsors/thatcube">Sponsor Brandon Moore</a>
+        </div>
+        <p class="fine">
+          <span>GPL-3.0 with App Store exception</span>
+          <span>No account · no analytics · no ads</span>
+          <span><a href="https://github.com/thatcube/hozz">github.com/thatcube/hozz</a></span>
+        </p>
+      </footer>
+    </div>
+  </main>
+
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+
+  <script is:inline>
+    (function () {
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+      if (reduce.matches) return;
+
+      document.documentElement.classList.add('motion');
+
+      var io = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) {
+              e.target.classList.add('in');
+              io.unobserve(e.target);
+            }
+          });
+        },
+        { rootMargin: '0px 0px -8% 0px', threshold: 0.08 }
+      );
+      document.querySelectorAll('.reveal').forEach(function (el) {
+        io.observe(el);
+      });
+
+      /* The rail inks in behind the reader: the page is read the way an export
+         is written — start to finish. */
+      var ink = document.querySelector('.rail-ink');
+      var wrap = document.querySelector('.y-wrap');
+      if (!ink || !wrap) return;
+      var ticking = false;
+
+      function paint() {
+        ticking = false;
+        var r = wrap.getBoundingClientRect();
+        var travel = r.height - window.innerHeight * 0.35;
+        var p = travel <= 0 ? 1 : (window.innerHeight * 0.65 - r.top) / travel;
+        ink.style.setProperty('--p', Math.max(0, Math.min(1, p)).toFixed(4));
+      }
+
+      function onScroll() {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(paint);
+        }
+      }
+
+      paint();
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll);
+    })();
+  </script>
+
+  <style is:global>
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+      border: 0;
+    }
+  </style>
+</SketchLayout>

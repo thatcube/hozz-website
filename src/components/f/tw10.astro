@@ -1,0 +1,50 @@
+---
+/**
+ * tw10 · Chat column
+ *
+ * A single scrolling column has a stepped, ragged message edge. Its four line
+ * rows are equally spaced: rows one and four are ordinary slots, while rows two
+ * and three are the bars of the knockout ZZ. Move or resize the letters and the
+ * transcript rhythm breaks.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.twozz;
+const uid = `tw10-${Math.random().toString(36).slice(2, 9)}`;
+
+const Z = { y: 16.5, w: 14, h: 15, bar: 4, diag: 7.2, cap: 'angled' as const };
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} live-chat column mark`}
+>
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <rect x="9" y="6.5" width="23" height="4" rx="2" fill="#000" />
+      <path d={zPath({ ...Z, x: 7.5 })} fill="#000" />
+      <path d={zPath({ ...Z, x: 26.5 })} fill="#000" />
+      <rect x="9" y="37.5" width="20" height="4" rx="2" fill="#000" />
+    </mask>
+  </defs>
+
+  <g mask={`url(#${uid})`}>
+    <path
+      d="M8 4H34Q38 4 38 8V11H42Q45 11 45 14Q45 17 42 17H40V22H43Q46 22 46 25.5Q46 29 43 29H39V34H34Q38 34 38 38V40Q38 44 34 44H8Q4 44 4 40V8Q4 4 8 4Z"
+      fill={app.hue}
+    />
+    <path d="M4 8Q4 4 8 4H12V44H8Q4 44 4 40V8Z" fill={app.deep} opacity="0.52" />
+  </g>
+</svg>

@@ -1,0 +1,88 @@
+---
+/**
+ * m07 · Window — a cassette, and the tape you can see through it.
+ *
+ * The tape fills the opening completely — it is taller than the window and
+ * exactly as wide, so the window crops the ribbon's top and bottom edges and
+ * both outer ends butt against its sides. There is no margin for the letters to
+ * sit in; the opening is the letters. The bars are the ribbon lying flat and
+ * the diagonals are the same ribbon crossing the span, which is why the two
+ * weights differ.
+ *
+ * Three shapes plus one bite: shell, window, tape, and the head opening cut up
+ * into the bottom edge so the silhouette is not a plain rectangle.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.mozz;
+
+const uid = `m07-${Math.random().toString(36).slice(2, 9)}`;
+
+// 40 : 25.6 is 1.5625 — a Compact Cassette is 100 x 64.
+const SHELL = { x: 4, y: 11.2, w: 40, h: 25.6, r: 3 };
+const WIN = { x: 8, y: 15.6, w: 32, h: 13.6, r: 1.6 };
+
+// bar 3.2 against diag 4.4. The tape is taller than the opening and exactly
+// as wide, so the window crops its top and bottom edges and stops its ends.
+const Z = { y: 15, h: 14.8, w: 14, bar: 3.2, diag: 4.4 };
+const ZX = [8, 26];
+
+// The head opening is cut clean out of the bottom edge, not printed on it.
+const SLOT = { x: 15.2, y: 32.6, w: 17.6, h: 5, r: 2.5 };
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    <clipPath id={`${uid}-w`}>
+      <rect x={WIN.x} y={WIN.y} width={WIN.w} height={WIN.h} rx={WIN.r} />
+    </clipPath>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <rect
+        x={SLOT.x}
+        y={SLOT.y}
+        width={SLOT.w}
+        height={SLOT.h}
+        rx={SLOT.r}
+        fill="#000"
+      />
+    </mask>
+  </defs>
+
+  <g mask={`url(#${uid})`}>
+
+  <rect
+    x={SHELL.x}
+    y={SHELL.y}
+    width={SHELL.w}
+    height={SHELL.h}
+    rx={SHELL.r}
+    fill={app.hue}
+  />
+  <rect
+    x={WIN.x}
+    y={WIN.y}
+    width={WIN.w}
+    height={WIN.h}
+    rx={WIN.r}
+    fill={app.deep}
+  />
+  <g clip-path={`url(#${uid}-w)`}>
+    {ZX.map((zx) => <path d={zPath({ ...Z, x: zx })} fill={app.light} />)}
+  </g>
+  </g>
+</svg>

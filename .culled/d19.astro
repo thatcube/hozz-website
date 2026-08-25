@@ -1,0 +1,32 @@
+---
+/**
+ * 19 · Field — a perfect circle, and a very small ZZ left alone inside it.
+ *
+ * The restraint is the design. The ZZ measures 25.5 units across a 60-unit
+ * disc — 42% of the diameter, where a conventional icon would sit nearer 60%
+ * — so the mark is mostly empty field. Nothing else is added to fill it: no
+ * gradient, no ring, no second element.
+ *
+ * The letterforms are the same construction as the rest of this set, scaled
+ * down and then re-weighted rather than simply shrunk: bars are 3.7 units and
+ * the diagonal band is cut so its perpendicular weight lands at 3.79, which
+ * keeps the two strokes optically equal at this size.
+ */
+import { APP_BY_KEY, type AppKey } from '../../data/brand';
+
+interface Props {
+  app: AppKey;
+  size?: number;
+}
+const { app, size = 96 } = Astro.props;
+const a = APP_BY_KEY[app];
+---
+
+<svg width={size} height={size} viewBox="0 0 64 64" role="img" aria-label={`${a.name} mark`} style="display:block">
+  <circle cx="32" cy="32" r="30" fill={a.hue} />
+
+  <g fill="#fff">
+    <path d="M19.25 24L30.75 24L30.75 27.7L24.05 36.3L30.75 36.3L30.75 40L19.25 40L19.25 36.3L25.95 27.7L19.25 27.7Z" />
+    <path d="M33.25 24L44.75 24L44.75 27.7L38.05 36.3L44.75 36.3L44.75 40L33.25 40L33.25 36.3L39.95 27.7L33.25 27.7Z" />
+  </g>
+</svg>

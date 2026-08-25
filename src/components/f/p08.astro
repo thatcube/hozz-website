@@ -1,0 +1,60 @@
+---
+/**
+ * p08 · Under — a door shut on a lit room, with the light getting out around it.
+ *
+ * The dependency is the position of the light, and it is the only thing holding
+ * the letters up. Every bit of light in this mark comes from one L, down the
+ * leading edge of the door and out across the floor — so it rakes the raised
+ * panel from below and to the right, its face goes pale, and it throws its
+ * shadow up and to the left onto the door behind it. Nothing is cut out here:
+ * take the spill away and the panel has no face tone, no shadow and no reason
+ * to be visible. Hang the door on the other jamb and every stroke shades the
+ * other way.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.plozz;
+const uid = `p08-${Math.random().toString(36).slice(2, 9)}`;
+
+const DOOR = { x: 8, y: 3, w: 30, h: 37 };
+// Down the leading edge, then out across the floor. One shape, one source.
+const SPILL = 'M38.6 3H41V42.4H6V40H38.6Z';
+const CAST = 1.1; // light is below and right, so the shadow goes up and left
+
+const Z = { y: 16, w: 11.8, h: 13, bar: 3.6, diag: 6.6, cap: 'flat' as const };
+const zLeft = 11.5;
+const zRight = 24.7;
+const lit = ground === 'dark' ? app.light : app.light;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <g id={uid}>
+    <path d={SPILL} fill={lit} />
+    <rect
+      x={DOOR.x}
+      y={DOOR.y}
+      width={DOOR.w}
+      height={DOOR.h}
+      rx="1.2"
+      fill={app.deep}
+    />
+    <path d={zPath({ ...Z, y: Z.y - CAST, x: zLeft - CAST })} fill={app.hue} />
+    <path d={zPath({ ...Z, y: Z.y - CAST, x: zRight - CAST })} fill={app.hue} />
+    <path d={zPath({ ...Z, x: zLeft })} fill={lit} />
+    <path d={zPath({ ...Z, x: zRight })} fill={lit} />
+  </g>
+</svg>

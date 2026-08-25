@@ -1,0 +1,407 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Callout from '../../components/docs/Callout.astro';
+import Code from '../../components/docs/Code.astro';
+import Table from '../../components/docs/Table.astro';
+import { page } from '../../data/docs-nav';
+
+const entry = page('/docs/delivery-schema/');
+
+const record = `{
+  "schemaVersion": 1,
+  "catalogVersion": 6,
+  "id": "2f1a9c04-8e2b-4a1d-9f30-11c4e6a7b920",
+  "type": "HKQuantityTypeIdentifierHeartRate",
+  "kind": "quantity",
+  "startDate": "2026-08-22T21:10:46.500Z",
+  "endDate": "2026-08-22T21:10:46.500Z",
+  "quantity": { "unit": "count/min", "value": 62.5, "description": "62.5 count/min" },
+  "source": {
+    "name": "Brandon's Apple Watch",
+    "bundleIdentifier": "com.apple.health.ABC123",
+    "version": "11.2",
+    "productType": "Watch7,1",
+    "operatingSystem": { "major": 26, "minor": 5, "patch": 0 }
+  },
+  "device": {
+    "name": "Apple Watch",
+    "manufacturer": "Apple Inc.",
+    "model": "Watch",
+    "hardwareVersion": "Watch7,1",
+    "softwareVersion": "26.5"
+  },
+  "metadata": {
+    "HKWasUserEntered": { "type": "bool", "value": true },
+    "HKTimeZone": { "type": "string", "value": "Europe/London" }
+  }
+}`;
+
+const ndjson = `{"catalogVersion":6,"endDate":"2026-08-22T21:10:46.500Z","id":"2f1a…","kind":"quantity","metadata":{},"quantity":{"description":"62.5 count/min","unit":"count/min","value":62.5},"schemaVersion":1,"source":{"bundleIdentifier":"com.apple.health.ABC","name":"Apple Watch"},"startDate":"2026-08-22T21:10:46.500Z","type":"HKQuantityTypeIdentifierHeartRate"}
+{"id":"9c40…","kind":"deletion","schemaVersion":1,"type":"HKQuantityTypeIdentifierStepCount"}`;
+
+const json = `[
+{"catalogVersion":6,"id":"2f1a…","kind":"quantity","…":"…"},
+{"id":"9c40…","kind":"deletion","schemaVersion":1,"type":"HKQuantityTypeIdentifierStepCount"}
+]`;
+
+const csv = `id,type,kind,startDate,endDate,value,unit,sourceName,deleted
+2f1a…,HKQuantityTypeIdentifierHeartRate,quantity,2026-08-22T21:10:46.500Z,2026-08-22T21:10:46.500Z,62.5,count/min,Apple Watch,false
+9c40…,HKQuantityTypeIdentifierStepCount,deletion,,,,,,true`;
+
+const metrics = `{
+  "data": {
+    "metrics": [
+      {
+        "name": "heart_rate",
+        "units": "count/min",
+        "data": [
+          {
+            "date": "2026-08-22T21:10:46.500Z",
+            "qty": 62.5,
+            "units": "count/min",
+            "source": "Apple Watch"
+          }
+        ]
+      },
+      {
+        "name": "sleep_analysis",
+        "units": "count",
+        "data": [
+          {
+            "date": "2026-08-22T22:00:00.000Z",
+            "endDate": "2026-08-22T22:30:00.000Z",
+            "qty": 3,
+            "units": "count",
+            "source": "Apple Watch"
+          }
+        ]
+      }
+    ],
+    "workouts": [
+      { "id": "7b21…", "name": "Workout", "start": "…", "end": "…" }
+    ],
+    "deletions": [
+      { "id": "9c40…", "name": "step_count", "type": "HKQuantityTypeIdentifierStepCount", "date": "" }
+    ]
+  }
+}`;
+
+const route = `{
+  "kind": "workoutRouteLocations",
+  "route": "…",
+  "sequence": 0,
+  "offset": 0,
+  "count": 500,
+  "locations": [
+    {
+      "timestamp": "2026-08-22T07:00:00.000Z",
+      "latitude": 51.5007,
+      "longitude": -0.1246,
+      "altitude": 11.2,
+      "horizontalAccuracy": 4.1,
+      "verticalAccuracy": 3.0,
+      "course": 182.0,
+      "speed": 3.1
+    }
+  ]
+}`;
+
+const kinds = [
+  ['quantity', 'quantity', 'A measurement — steps, heart rate, weight.'],
+  ['category', 'value (Integer)', 'A classified event — a sleep stage, a stand hour.'],
+  ['workout', 'activityType, duration, events', 'One workout.'],
+  ['correlation', 'members', 'A grouping, such as a blood pressure reading.'],
+  ['workoutRoute', 'workout', 'A GPS route’s own record.'],
+  [
+    'workoutRouteLocations',
+    'route, sequence, offset, count, locations',
+    'One page of route points.',
+  ],
+  ['workoutRouteEnd', 'route, locations', 'Marks a route as completely written.'],
+  ['deletion', '—', 'A tombstone. Carries only kind, id, type, schemaVersion.'],
+  [
+    'sampleEncodingError',
+    'message',
+    'A sample Hozz could not encode, written in its place so the batch never silently omits it.',
+  ],
+  ['sample', '—', 'An HKSample subclass this build has no specific handling for.'],
+];
+
+const fields = [
+  ['schemaVersion', 'Integer', 'Currently 1.'],
+  ['catalogVersion', 'Integer', 'Version of Hozz’s Health type catalogue.'],
+  ['id', 'String', 'Lowercase UUID. Stable across redeliveries.'],
+  ['type', 'String', 'HealthKit type identifier.'],
+  ['kind', 'String', 'See below.'],
+  ['startDate', 'String', 'ISO 8601 UTC.'],
+  ['endDate', 'String', 'ISO 8601 UTC. Equals startDate for instantaneous samples.'],
+  ['source', 'Object', 'Where the sample came from.'],
+  ['device', 'Object', 'Optional. The hardware, when HealthKit named one.'],
+  ['metadata', 'Object', 'Optional. HealthKit metadata, type-tagged.'],
+];
+---
+
+<DocsLayout page={entry}>
+  <p>
+    This is what Hozz sends to an automatic destination, field by field. It exists so you can build
+    against Hozz without reading the source. Manual exports use the same record shape packaged
+    differently — <a href="/docs/formats/">Export formats</a> covers those.
+  </p>
+
+  <h2>Conventions</h2>
+
+  <ul>
+    <li>
+      <strong>Timestamps</strong> are ISO 8601 in UTC with fractional seconds and a{' '}
+      <code>Z</code> suffix: <code>2026-08-22T21:10:46.500Z</code>. The one exception is the opt-in{' '}
+      <a href="/docs/switching-from-health-auto-export/">Health Auto Export compatibility mode</a>,
+      which uses local time in that app's format.
+    </li>
+    <li>
+      <strong>Units</strong> are HealthKit's own unit strings, untranslated. A heart rate arrives as{' '}
+      <code>count/min</code>, not <code>bpm</code>. This is deliberate — a unit Hozz invented a
+      nicer name for is a unit you cannot map back.
+    </li>
+    <li>
+      <strong>Identifiers</strong> are lowercase UUID strings. A sample keeps the UUID HealthKit
+      gave it, so the same record delivered twice is recognisably the same record.
+    </li>
+    <li>
+      <strong>Nothing is null.</strong> A field Hozz has no value for is absent rather than present
+      and empty. An absent <code>device</code> means HealthKit reported no device, not that Hozz
+      dropped it.
+    </li>
+  </ul>
+
+  <h2 id="the-record">The record</h2>
+
+  <p>
+    NDJSON and JSON deliver this shape unchanged. CSV, Metrics JSON and line protocol are
+    projections of it.
+  </p>
+
+  <Table caption="Fields present on every record" columns={['Field', 'Type', 'Notes']} mono>
+    {
+      fields.map(([field, type, note]) => (
+        <tr>
+          <th scope="row">{field}</th>
+          <td>{type}</td>
+          <td>{note}</td>
+        </tr>
+      ))
+    }
+  </Table>
+
+  <Code caption="A complete quantity record" code={record} />
+
+  <h3><code>kind</code></h3>
+
+  <Table caption="Record kinds and their extra fields" columns={['kind', 'Extra fields', 'What it is']} mono>
+    {
+      kinds.map(([kind, extra, what]) => (
+        <tr>
+          <th scope="row">{kind}</th>
+          <td>
+            <code>{extra}</code>
+          </td>
+          <td>{what}</td>
+        </tr>
+      ))
+    }
+  </Table>
+
+  <h3>Metadata is type-tagged</h3>
+
+  <p>
+    HealthKit metadata is <code>[String: Any]</code>, and an untagged value cannot be read back
+    reliably — so each value carries its own type. <code>type</code> is one of <code>string</code>,{' '}
+    <code>number</code>, <code>bool</code>, <code>date</code>, <code>data</code> (base64),{' '}
+    <code>quantity</code> (which carries a <code>description</code> string rather than a{' '}
+    <code>value</code>), <code>array</code> (whose <code>value</code> is an array of tagged values),
+    or <code>unsupported</code> (with a <code>class</code> naming what it was).
+  </p>
+
+  <h3>Workout routes</h3>
+
+  <p>
+    A route arrives as three record kinds, because a long ride holds hundreds of thousands of points
+    and cannot be one record.
+  </p>
+
+  <Code caption="One page of route points" code={route} />
+
+  <p>
+    Pages are 500 points, split at fixed offsets so a replayed page is byte identical to the one it
+    replaces. Core Location reports "unknown" as a negative accuracy, course or speed, and those
+    keys are <strong>omitted rather than written as negative numbers that look like measurements</strong>.{' '}
+    <code>workoutRouteEnd</code> carries the final <code>locations</code> count, so a complete route
+    is distinguishable from a truncated one.
+  </p>
+
+  <p>
+    <code>workout.state</code> on a <code>workoutRoute</code> is <code>resolved</code> or{' '}
+    <code>unresolved</code>. An unresolved route carries a <code>reason</code> instead of a workout,
+    because a route attached to a workout Hozz only guessed at is worse than one that says it does
+    not know.
+  </p>
+
+  <h2 id="ndjson">NDJSON</h2>
+
+  <p>
+    The default. One record per line, <code>\n</code> terminated,{' '}
+    <code>application/x-ndjson</code>. <strong>Lossless.</strong>
+  </p>
+
+  <Code caption="application/x-ndjson" code={ndjson} />
+
+  <p>
+    Keys within a record are sorted, so the same records always produce the same bytes. That is what
+    lets the batch identifier be derived from the payload.
+  </p>
+
+  <h2 id="json">JSON</h2>
+
+  <p>
+    The same records as one array, <code>application/json</code>. <strong>Lossless.</strong>
+    Convenient for tools that want a single JSON value; NDJSON is better for anything streaming.
+  </p>
+
+  <Code caption="application/json" code={json} />
+
+  <h2 id="csv">CSV</h2>
+
+  <p>
+    One flat table, <code>text/csv</code>, with a header row.
+  </p>
+
+  <Callout kind="lossy">
+    <p>
+      Metadata, device, workout detail and route points do not fit a grid and are not included.
+    </p>
+  </Callout>
+
+  <Code caption="text/csv" code={csv} />
+
+  <p>
+    Whole numbers are written without a decimal point. <code>deleted</code> is <code>true</code> only
+    for <code>kind</code> <code>deletion</code>. A batch spans several Health types, so this is one
+    table rather than a file per type — splitting it would defeat appending on the receiving end.
+  </p>
+
+  <h2 id="metrics-json">Metrics JSON</h2>
+
+  <p>
+    Grouped by metric rather than by sample, <code>application/json</code>. What Home Assistant,
+    MQTT subscribers and most dashboards want.
+  </p>
+
+  <Callout kind="lossy">
+    <p>Metadata, device and workout detail are dropped.</p>
+  </Callout>
+
+  <Code caption="application/json" code={metrics} />
+
+  <Table caption="Metrics JSON fields" columns={['Field', 'Type', 'Notes']} mono>
+    <tr>
+      <th scope="row">metrics[].name</th>
+      <td>String</td>
+      <td>Short snake_case name — see below.</td>
+    </tr>
+    <tr>
+      <th scope="row">metrics[].units</th>
+      <td>String</td>
+      <td>HealthKit’s unit string, or <code>count</code> when the type has none.</td>
+    </tr>
+    <tr>
+      <th scope="row">…data[].date</th>
+      <td>String</td>
+      <td>ISO 8601 UTC. The sample’s <code>startDate</code>.</td>
+    </tr>
+    <tr>
+      <th scope="row">…data[].qty</th>
+      <td>Number</td>
+      <td>Absent when the record has no numeric value.</td>
+    </tr>
+    <tr>
+      <th scope="row">…data[].units</th>
+      <td>String</td>
+      <td>Repeated per point.</td>
+    </tr>
+    <tr>
+      <th scope="row">…data[].source</th>
+      <td>String</td>
+      <td>Absent when HealthKit named no source.</td>
+    </tr>
+    <tr>
+      <th scope="row">…data[].endDate</th>
+      <td>String</td>
+      <td><strong>Present only when the sample covers an interval.</strong></td>
+    </tr>
+    <tr>
+      <th scope="row">workouts[]</th>
+      <td>Array</td>
+      <td>Absent when the batch has none.</td>
+    </tr>
+    <tr>
+      <th scope="row">deletions[]</th>
+      <td>Array</td>
+      <td>Absent when the batch has none.</td>
+    </tr>
+  </Table>
+
+  <p>
+    <strong><code>endDate</code> is a Hozz addition.</strong> Hozz sends the individual samples
+    HealthKit returned rather than hourly or daily rollups, because that is the only shape that can
+    honestly claim no gaps and no duplicates. Sleep and exercise samples are intervals, and
+    flattening one to an instant loses the span it covered.
+  </p>
+
+  <p>
+    <strong><code>deletions</code> is a Hozz addition too</strong>, and a tombstone carries no date —
+    Health does not tell an app when a record was removed, only that it was. A receiver that ignores
+    the key behaves exactly as though it were not there.
+  </p>
+
+  <h3 id="metric-names">Metric names</h3>
+
+  <p>
+    Lowercase snake_case. A curated name is used where one exists:{' '}
+    <code>HKQuantityTypeIdentifierStepCount</code> becomes <code>step_count</code>,{' '}
+    <code>HKQuantityTypeIdentifierActiveEnergyBurned</code> becomes <code>active_energy</code>,{' '}
+    <code>HKQuantityTypeIdentifierOxygenSaturation</code> becomes{' '}
+    <code>blood_oxygen_saturation</code>.
+  </p>
+
+  <p>
+    Anything uncurated has its <code>HKQuantityTypeIdentifier</code> or{' '}
+    <code>HKCategoryTypeIdentifier</code> prefix removed and the rest snake cased, so a type Hozz has
+    never heard of still gets a stable, predictable name instead of being dropped.
+  </p>
+
+  <h2 id="influxdb-line-protocol">InfluxDB line protocol</h2>
+
+  <p>
+    <code>text/plain; charset=utf-8</code>. One line per record, ready for InfluxDB's write endpoint
+    or for Telegraf with no translator in between. Measurements, tags, fields, timestamp precision
+    and the escaping rules are all documented on{' '}
+    <a href="/docs/destinations/influxdb/">the InfluxDB page</a>, because they only matter if you are
+    using it.
+  </p>
+
+  <h2 id="delivery-mechanics">Delivery mechanics</h2>
+
+  <p>
+    Headers, status-code handling and how the idempotency key is derived are on{' '}
+    <a href="/docs/destinations/web/">Your own endpoint</a>. Folder file naming is on{' '}
+    <a href="/docs/destinations/folder/">Folder</a>, and topic layout is on{' '}
+    <a href="/docs/destinations/mqtt/">MQTT</a>.
+  </p>
+
+  <Callout kind="note" title="Connection tests carry no Health data">
+    <p>
+      A test sends a small probe in the destination's own format and reports what came back. The
+      format matters: a JSON probe posted to InfluxDB is rejected as unparseable, which would report
+      a correctly configured database as broken.
+    </p>
+  </Callout>
+</DocsLayout>

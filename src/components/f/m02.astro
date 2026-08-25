@@ -1,0 +1,84 @@
+---
+/**
+ * m02 · Sheen — a record with one sweep of light across it.
+ *
+ * The dependency, and it is h00's in a different material: **the letters exist
+ * only where the light is.** They are clipped to the sweep, so each Z reaches
+ * exactly as far as the highlight does and simply stops where the light runs
+ * out. Narrow the sweep and the letters lose their corners; take the light away
+ * and there is no letter left at all.
+ *
+ * Not a knockout, and on purpose: white through pink is 2.2:1 and the letters
+ * would wash out. Deep on light is 5.2:1, the strongest pair in the palette,
+ * and the only one that holds at 24px against a highlight.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.mozz;
+const uid = `m02-${Math.random().toString(36).slice(2, 9)}`;
+
+const R = 19;
+const RAKE = -14; // the angle the light comes in at
+const SHEEN = { rx: 24, ry: 11.4 };
+
+// 15 + 6 + 15 = 36, running 6 to 42, well inside the disc: the rim has no part
+// in this one, the light does all the cutting.
+const GAP = 7; // wider than the hole on purpose: the spacing is not its job
+const Z = { y: 15, w: 14, h: 18, bar: 3.2, diag: 6, cap: 'angled' as const };
+const zLeft = 24 - GAP / 2 - Z.w;
+const zRight = 24 + GAP / 2;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    <clipPath id={`${uid}-disc`}>
+      <circle cx="24" cy="24" r={R} />
+    </clipPath>
+    <clipPath id={`${uid}-sheen`}>
+      <ellipse
+        cx="24"
+        cy="24"
+        rx={SHEEN.rx}
+        ry={SHEEN.ry}
+        transform={`rotate(${RAKE} 24 24)`}
+      />
+    </clipPath>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <circle cx="24" cy="24" r="1.6" fill="#000" />
+    </mask>
+  </defs>
+
+  <g mask={`url(#${uid})`}>
+    <circle cx="24" cy="24" r={R} fill={app.hue} />
+    <g clip-path={`url(#${uid}-disc)`}>
+      <ellipse
+        cx="24"
+        cy="24"
+        rx={SHEEN.rx}
+        ry={SHEEN.ry}
+        transform={`rotate(${RAKE} 24 24)`}
+        fill={app.light}
+      />
+      {/* The only place a letter can exist. */}
+      <g clip-path={`url(#${uid}-sheen)`}>
+        <path d={zPath({ ...Z, x: zLeft })} fill={app.deep} />
+        <path d={zPath({ ...Z, x: zRight })} fill={app.deep} />
+      </g>
+    </g>
+  </g>
+</svg>

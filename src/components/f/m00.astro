@@ -1,0 +1,73 @@
+---
+/**
+ * m00 · Spindle — reference exemplar for Mozz.
+ *
+ * A record, and the ZZ cut clean through it. The move that makes it belong to
+ * the object rather than sit on it: **the spindle hole is the gap between the
+ * two Zs**. The disc's one defining feature becomes the letterspacing, so the
+ * pair cannot be slid, resized or moved without the hole going wrong.
+ *
+ * Both tests pass. Cover the letters and a record is plainly there. Glance at
+ * it and you plainly read ZZ, because the letters are a full knockout with
+ * complete tonal separation — nothing hatched, nothing fragmented.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.mozz;
+const uid = `m00-${Math.random().toString(36).slice(2, 9)}`;
+
+const R = 19; // disc spans 5–43
+const Z = { y: 17, w: 10, h: 14, bar: 3.4, diag: 6.4, cap: 'angled' as const };
+
+// 10 + 4 + 10 = 24 wide, running 12 to 36, so the pair centres on 24 and the
+// 4-unit gap lands exactly on the spindle.
+const zLeft = 12;
+const zRight = 26;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
+      <path d={zPath({ ...Z, x: zRight })} fill="#000" />
+      <circle cx="24" cy="24" r="2" fill="#000" />
+    </mask>
+  </defs>
+
+  <g mask={`url(#${uid})`}>
+    <circle cx="24" cy="24" r={R} fill={app.hue} />
+    {/* A single groove near the rim is enough to say record; a bevel is not. */}
+    <circle
+      cx="24"
+      cy="24"
+      r={R - 2.8}
+      fill="none"
+      stroke={app.deep}
+      stroke-width="1.3"
+      opacity="0.5"
+    />
+    {/* A true crescent — the disc minus a disc pushed off toward the light. */}
+    <path
+      d={`M24 ${24 - R}A${R} ${R} 0 0 0 24 ${24 + R}A${R - 3.2} ${R - 3.2} 0 0 1 24 ${
+        24 - R
+      }Z`}
+      fill={app.deep}
+      opacity="0.28"
+    />
+  </g>
+</svg>

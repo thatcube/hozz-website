@@ -1,0 +1,47 @@
+---
+/**
+ * 09 · Afterimage — one crisp Z followed by its offset signal echo.
+ */
+import { APP_BY_KEY, type AppKey } from '../../data/brand';
+
+interface Props {
+  app: AppKey;
+  size?: number;
+}
+
+const { app, size = 96 } = Astro.props;
+const a = APP_BY_KEY[app];
+const crispId = `g-d09-crisp-${app}`;
+const echoId = `g-d09-echo-${app}`;
+---
+
+<svg width={size} height={size} viewBox="0 0 64 64" role="img" aria-label={`${a.name} mark`} style="display:block">
+  <defs>
+    <linearGradient id={crispId} x1="16.5" y1="17" x2="32.5" y2="31" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color={a.light} />
+      <stop offset="0.45" stop-color={a.hue} />
+      <stop offset="1" stop-color={a.deep} />
+    </linearGradient>
+    <linearGradient id={echoId} x1="31.5" y1="32" x2="47.5" y2="46" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color={a.hue} stop-opacity="0.68" />
+      <stop offset="1" stop-color={a.light} stop-opacity="0.52" />
+    </linearGradient>
+  </defs>
+
+  <path
+    d="M16.5 17H32.5L18.5 31H32.5"
+    fill="none"
+    stroke={`url(#${crispId})`}
+    stroke-width="4.5"
+    stroke-linecap="butt"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M31.5 32H47.5L33.5 46H47.5"
+    fill="none"
+    stroke={`url(#${echoId})`}
+    stroke-width="4.5"
+    stroke-linecap="butt"
+    stroke-linejoin="round"
+  />
+</svg>

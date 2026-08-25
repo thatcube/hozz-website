@@ -1,0 +1,85 @@
+---
+/**
+ * tw03 · Turn — the bubble stood at a slight angle.
+ *
+ * Not a flat bubble with shading applied: a bubble with a front face and a side
+ * face meeting at a vertical fold, drawn in perspective, so the far side is
+ * shorter top to bottom and compressed across. The tail hangs off the front.
+ *
+ * The letters are cut through the object, not printed on it, so the right-hand Z
+ * runs into the fold and turns the corner with it — its far end is foreshortened
+ * exactly as much as the side face is. Cover the object and that Z has no reason
+ * to bend; cover the letters and the corner is just a corner. The mouth is a slot
+ * cut in the front face, because two Zs and no mouth is a sleeping app.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.twozz;
+
+const uid = `tw03-${Math.random().toString(36).slice(2, 9)}`;
+const frontMaskId = `${uid}-mf`;
+const sideMaskId = `${uid}-ms`;
+
+/** Front face, tail included: 29 wide, square at the fold, rounded away from it. */
+const FRONT = [
+  'M11 7',
+  'H33',
+  'V35',
+  'H15.6',
+  'L8.6 43.6',
+  'L12.4 35',
+  'H7',
+  'A3 3 0 0 1 4 32',
+  'V14',
+  'A7 7 0 0 1 11 7',
+  'Z',
+].join(' ');
+
+/** The side, seen edge-on: 8 across, and 6.8 shorter than the front. */
+const SIDE = 'M33 7L41 10.4V31.6L33 35Z';
+
+/** The pair spans 8.8–36.2, so the right Z runs 3.2 units past the fold at 33. */
+const Z = { y: 11, w: 12.4, h: 15, bar: 3.2, diag: 5.4, cap: 'angled' as const };
+const zLeft = 8.8;
+const zRight = 23.8;
+
+/** Slot mouth, centred under the part of the face we can see square on. */
+const MOUTH = 'M15.6 28.2H27.6A1.2 1.2 0 0 1 27.6 30.6H15.6A1.2 1.2 0 0 1 15.6 28.2Z';
+
+const sideFill = ground === 'dark' ? app.light : app.deep;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    <mask id={frontMaskId}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
+      <path d={zPath({ ...Z, x: zRight })} fill="#000" />
+      <path d={MOUTH} fill="#000" />
+    </mask>
+    <mask id={sideMaskId}>
+      <rect width="48" height="48" fill="#fff" />
+      {/* The same Z, foreshortened about the fold exactly as the side face is. */}
+      <g transform="translate(33 21) scale(0.68 0.88) translate(-33 -21)">
+        <path d={zPath({ ...Z, x: zRight })} fill="#000" />
+      </g>
+    </mask>
+  </defs>
+
+  <path d={SIDE} fill={sideFill} mask={`url(#${sideMaskId})`} />
+  <path d={FRONT} fill={app.hue} mask={`url(#${frontMaskId})`} />
+</svg>

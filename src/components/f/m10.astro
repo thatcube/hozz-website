@@ -1,0 +1,53 @@
+---
+/**
+ * m10 · Flag Aperture
+ *
+ * One unmistakable note silhouette carries one broad flag. Its two folds are
+ * full, high-contrast Z reliefs: a lit lip above a deep pressed face.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.mozz;
+const Z = { y: 12, w: 10.8, h: 11.5, bar: 3, diag: 5.6, cap: 'angled' as const };
+const zLeft = 17.5;
+const zRight = 30.5;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} folded note flag mark`}
+>
+  <rect x="13" y="8" width="3" height="29" rx="1.5" fill={app.deep} />
+  <ellipse
+    cx="10.8"
+    cy="37"
+    rx="5"
+    ry="3"
+    transform="rotate(-18 10.8 37)"
+    fill={app.deep}
+  />
+  <path
+    d="M13 8H38C42.6 8 45 10.8 43.3 15L40 26.7C39.3 29.2 36.8 30.2 33.8 28.8L13 25Z"
+    fill={app.hue}
+  />
+  <path
+    d={`${zPath({ ...Z, y: 11.2, x: zLeft })}${zPath({ ...Z, y: 11.2, x: zRight })}`}
+    fill={app.light}
+    opacity="0.72"
+  />
+  <path
+    d={`${zPath({ ...Z, x: zLeft })}${zPath({ ...Z, x: zRight })}`}
+    fill={app.deep}
+  />
+</svg>

@@ -1,0 +1,1121 @@
+/**
+ * Sketch W — "Day Dial".
+ *
+ * The argument: Hozz is not an event you perform, it is a clock that runs.
+ * So the page is built on a 24-hour dial. A hand ticks one hour per second;
+ * as it passes the hour a destination is scheduled for, that destination's
+ * batch flies outward along a dotted spoke. Every divider on the page is the
+ * same ruler of twenty-four hours, flattened.
+ *
+ * Near-monochrome on warm white. One accent (a deep Health-Mind teal). The
+ * fourteen category hues appear exactly once, as 6px dots against real
+ * HealthKit identifiers — colour as data, never as decoration.
+ */
+
+@font-face {
+  font-family: 'Ranade W';
+  src: url('/fonts/ranade-w-variable.woff2') format('woff2-variations'),
+    url('/fonts/ranade-w-variable.woff2') format('woff2');
+  font-weight: 300 700;
+  font-display: swap;
+}
+
+:root {
+  --paper: #fcfcfb;
+  --paper-sunk: #f4f4f1;
+  --ink: #16181a;
+  --ink-2: #4a4e52;
+  --ink-3: #5a5f63;
+  --faint: #e3e3df;
+  --faint-2: #eeeeeb;
+  --line-1: #d6d6d0;
+  --line-2: #bfbfb8;
+  --accent: #0f6b5c;
+  --accent-line: #17907c;
+  --accent-wash: #eef5f3;
+
+  --display: 'Ranade W', 'Switzer', system-ui, sans-serif;
+  --shell: min(100% - 2.5rem, 1280px);
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--paper);
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  overflow-x: hidden;
+  font-family: var(--sans);
+  font-size: clamp(1rem, 0.97rem + 0.16vw, 1.0625rem);
+  line-height: 1.56;
+}
+
+main {
+  min-width: 0;
+}
+
+[id] {
+  scroll-margin-top: 2.5rem;
+}
+
+::selection {
+  background: var(--accent-wash);
+  color: var(--accent);
+}
+
+/* ---------- shared atoms ------------------------------------------------ */
+
+.w-skip {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  padding: 0.7rem 1.1rem;
+  background: var(--ink);
+  color: #fff;
+  border-radius: 0 0 12px 0;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.w-skip:focus-visible {
+  left: 0;
+}
+
+/* every section is marked with the same fragment of the dial's hour ruler */
+.w-h2::before,
+.w-close h2::before {
+  content: '';
+  display: block;
+  width: 1px;
+  height: 12px;
+  background: var(--accent-line);
+  box-shadow: 6px 0 0 #cdcdc8, 12px 0 0 #cdcdc8, 18px 0 0 #cdcdc8;
+  margin: 0 0 1.15rem;
+}
+
+.w-close h2::before {
+  margin-inline: auto;
+  transform: translateX(-9px);
+}
+
+.w-h2 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(1.55rem, 1.15rem + 1.75vw, 2.3rem);
+  line-height: 1.08;
+  letter-spacing: -0.032em;
+  max-width: 20ch;
+}
+
+.w-band-lede {
+  margin-top: 0.85rem;
+  max-width: 46ch;
+  color: var(--ink-2);
+}
+
+.w-band-lede code {
+  font-family: var(--mono);
+  font-size: 0.86em;
+  color: var(--ink);
+  background: var(--paper-sunk);
+  border-radius: 5px;
+  padding: 0.1em 0.34em;
+}
+
+.w-fact,
+.w-hero-fact,
+.w-close-fact {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  letter-spacing: 0.005em;
+  color: var(--ink-3);
+}
+
+.w-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 999px;
+  padding: 0.66rem 1.15rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+
+.w-pill-solid {
+  background: var(--ink);
+  color: #fff;
+}
+
+.w-pill-solid:hover {
+  background: var(--accent);
+  transform: translateY(-1px);
+}
+
+.w-pill-ghost {
+  border: 1px solid var(--faint);
+  color: var(--ink);
+  background: var(--paper);
+}
+
+.w-pill-ghost:hover {
+  border-color: var(--ink);
+  transform: translateY(-1px);
+}
+
+.w-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* The connective tissue: a flattened day. Twenty-four ticks on a hairline. */
+.w-ruler {
+  border: 0;
+  width: var(--shell);
+  height: 11px;
+  margin: clamp(3.4rem, 6vw, 5.6rem) auto;
+  background-image: linear-gradient(var(--faint), var(--faint)),
+    repeating-linear-gradient(to right, #d5d5d0 0 1px, transparent 1px 4.1666%);
+  background-size: 100% 1px, 100% 100%;
+  background-position: 0 100%, 0 0;
+  background-repeat: no-repeat, no-repeat;
+}
+
+/* ---------- nav --------------------------------------------------------- */
+
+.w-nav {
+  width: var(--shell);
+  margin: 0 auto;
+  padding: 1.35rem 0;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.w-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.18rem;
+  letter-spacing: -0.035em;
+  text-decoration: none;
+}
+
+.w-mark-dial {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ink);
+  position: relative;
+}
+
+.w-mark-dial::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1.5px;
+  height: 5px;
+  background: var(--accent);
+  transform-origin: 50% 100%;
+  transform: translate(-50%, -100%) rotate(105deg);
+}
+
+.w-nav-links {
+  margin-left: auto;
+  display: flex;
+  gap: 1.4rem;
+  font-size: 0.9375rem;
+}
+
+.w-nav-links a {
+  color: var(--ink-2);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.w-nav-links a:hover {
+  color: var(--accent);
+}
+
+/* ---------- hero -------------------------------------------------------- */
+
+.w-hero {
+  width: var(--shell);
+  margin: clamp(0.75rem, 2vw, 2rem) auto 0;
+  display: grid;
+  gap: clamp(2.5rem, 4vw, 4rem);
+  align-items: center;
+}
+
+.w-hero-copy,
+.w-dial {
+  min-width: 0;
+}
+
+.w-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.w-eyebrow-tick {
+  width: 1px;
+  height: 12px;
+  background: var(--accent-line);
+  box-shadow: 6px 0 0 #cdcdc8, 12px 0 0 #cdcdc8, 18px 0 0 #cdcdc8;
+  margin-right: 20px;
+}
+
+.w-hero h1 {
+  margin-top: 1.05rem;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(2.5rem, 1.35rem + 5vw, 4.4rem);
+  line-height: 1.015;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+
+.w-hero h1 em {
+  font-style: normal;
+  color: var(--accent);
+  position: relative;
+}
+
+.w-hero h1 em::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0.06em;
+  height: 2px;
+  background: var(--accent);
+  opacity: 0.28;
+  border-radius: 2px;
+}
+
+.w-lede {
+  margin-top: 1.25rem;
+  max-width: 42ch;
+  font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.1875rem);
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+.w-actions {
+  margin-top: 1.7rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.w-hero-fact {
+  margin-top: 1.5rem;
+}
+
+/* ---------- the dial ---------------------------------------------------- */
+
+.w-dial {
+  margin: 0;
+}
+
+.w-dial-box {
+  position: relative;
+  width: min(100%, 620px);
+  margin-inline: auto;
+  aspect-ratio: 1;
+}
+
+/* a single soft wash, so the dial sits in daylight rather than on a plate */
+.w-dial-box::before {
+  content: '';
+  position: absolute;
+  inset: 4%;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--accent-wash) 0%, rgba(238, 245, 243, 0) 62%);
+  opacity: 0.85;
+}
+
+.w-dial-svg {
+  position: absolute;
+  inset: 16%;
+  width: 68%;
+  height: 68%;
+  overflow: visible;
+}
+
+.w-own-ring {
+  fill: none;
+  stroke: var(--line-1);
+  stroke-width: 1.2;
+  stroke-dasharray: 1.5 8;
+  stroke-linecap: round;
+}
+
+.w-hub {
+  fill: #fff;
+  stroke: var(--line-1);
+  stroke-width: 1.2;
+}
+
+.w-hour-ring {
+  fill: none;
+  stroke: var(--line-1);
+  stroke-width: 1.2;
+}
+
+/* the day filling up: one tick of arc per hour the hand passes */
+.w-day-arc {
+  fill: none;
+  stroke: var(--accent-line);
+  stroke-width: 2.4;
+  stroke-linecap: butt;
+  stroke-dasharray: 879.65;
+  stroke-dashoffset: 879.65;
+  transform-box: view-box;
+  transform-origin: 300px 300px;
+  transform: rotate(-90deg);
+  opacity: 0.85;
+  animation: w-day 24s steps(24, end) infinite;
+}
+
+@keyframes w-day {
+  from {
+    stroke-dashoffset: 879.65;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.w-tick {
+  stroke: var(--line-2);
+  stroke-width: 1.1;
+}
+
+.w-tick-major {
+  stroke: #a9a9a2;
+  stroke-width: 1.6;
+}
+
+.w-numeral {
+  font-family: var(--mono);
+  font-size: 15px;
+  fill: #6b7074;
+  letter-spacing: 0.04em;
+}
+
+.w-hub-line {
+  font-family: var(--sans);
+  fill: var(--ink);
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.w-hub-line-2 {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 400;
+  fill: var(--ink-3);
+  letter-spacing: 0;
+}
+
+.w-spoke-line {
+  stroke: var(--line-2);
+  stroke-width: 1.8;
+  stroke-dasharray: 0.1 8;
+  stroke-linecap: round;
+}
+
+.w-gate {
+  fill: var(--paper);
+  stroke: #adada6;
+  stroke-width: 1.4;
+  animation: w-land 24s linear infinite;
+  animation-delay: calc(var(--delay) + 0.9s);
+}
+
+.w-flyer {
+  fill: var(--accent-line);
+  transform-box: view-box;
+  opacity: 0;
+  animation: w-fly 24s linear infinite;
+  animation-delay: var(--delay);
+}
+
+.w-hand-group {
+  transform-box: view-box;
+  transform-origin: 300px 300px;
+  animation: w-hand 24s steps(24, end) infinite;
+}
+
+.w-hand {
+  stroke: var(--accent-line);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+}
+
+.w-hand-tip {
+  fill: var(--accent-line);
+}
+
+@keyframes w-hand {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes w-fly {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  1.2% {
+    opacity: 1;
+  }
+  5% {
+    transform: translateY(-82px);
+    opacity: 1;
+  }
+  6.6% {
+    transform: translateY(-82px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(-82px);
+    opacity: 0;
+  }
+}
+
+@keyframes w-land {
+  0%,
+  100% {
+    stroke: #adada6;
+    stroke-width: 1.4;
+  }
+  0.4% {
+    stroke: var(--accent-line);
+    stroke-width: 3;
+  }
+  5% {
+    stroke: #adada6;
+    stroke-width: 1.4;
+  }
+}
+
+.w-dial-labels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.w-dial-label {
+  position: absolute;
+  max-width: 21%;
+  line-height: 1.25;
+}
+
+.w-dial-label b {
+  display: block;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(0.8rem, 0.6rem + 0.55vw, 0.98rem);
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.w-dial-label span {
+  display: block;
+  margin-top: 0.16rem;
+  font-family: var(--mono);
+  font-size: clamp(0.62rem, 0.52rem + 0.28vw, 0.72rem);
+  color: var(--ink-3);
+}
+
+.w-align-right {
+  transform: translate(0, -50%);
+  text-align: left;
+}
+
+.w-align-left {
+  transform: translate(-100%, -50%);
+  text-align: right;
+}
+
+.w-align-centre {
+  transform: translate(-50%, -50%);
+  text-align: center;
+  max-width: 34%;
+}
+
+.w-dial figcaption {
+  margin-top: clamp(0.25rem, 0.6vw, 0.6rem);
+  max-width: 44ch;
+  margin-inline: auto;
+  text-align: center;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+
+/* ---------- bands ------------------------------------------------------- */
+
+.w-band {
+  width: var(--shell);
+  margin: 0 auto;
+}
+
+.w-two {
+  display: grid;
+  gap: clamp(1.6rem, 3.5vw, 3.4rem);
+  align-items: start;
+}
+
+.w-grid-3 {
+  margin-top: clamp(1.6rem, 3vw, 2.4rem);
+  display: grid;
+  gap: 1px;
+  background: var(--faint);
+  border: 1px solid var(--faint);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.w-grid-3 > li {
+  background: var(--paper);
+  padding: clamp(1.35rem, 2.4vw, 1.9rem);
+}
+
+.w-num {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+
+.w-grid-3 h3,
+.w-steps h3,
+.w-dests h3,
+.w-honest h3 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(1.02rem, 0.95rem + 0.3vw, 1.15rem);
+  letter-spacing: -0.024em;
+  line-height: 1.2;
+}
+
+.w-grid-3 h3 {
+  margin-top: 0.55rem;
+}
+
+.w-grid-3 p {
+  margin-top: 0.5rem;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+/* ---------- identifier strip ------------------------------------------- */
+
+.w-types {
+  margin-top: clamp(1.4rem, 2.5vw, 2rem);
+  padding: clamp(1.15rem, 2.2vw, 1.6rem);
+  border: 1px solid var(--faint);
+  border-radius: 16px;
+  background: linear-gradient(var(--paper-sunk), rgba(244, 244, 241, 0));
+}
+
+.w-types-head {
+  font-size: 0.875rem;
+  color: var(--ink-2);
+}
+
+.w-types-list {
+  margin-top: 0.9rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.2rem;
+}
+
+.w-types-list li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+  font-family: var(--mono);
+  font-size: 0.7825rem;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+.w-hue {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--hue);
+  flex: none;
+}
+
+/* ---------- steps ------------------------------------------------------- */
+
+.w-steps {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.w-steps > li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.95rem;
+  align-items: start;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--faint-2);
+}
+
+.w-steps > li:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.w-step-mark {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--faint);
+  display: grid;
+  place-items: center;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--accent);
+  margin-top: 0.1rem;
+}
+
+.w-steps p {
+  margin-top: 0.28rem;
+  font-size: 0.9375rem;
+  color: var(--ink-2);
+}
+
+/* ---------- destinations ----------------------------------------------- */
+
+.w-dests {
+  margin-top: clamp(1.6rem, 3vw, 2.3rem);
+  display: grid;
+  gap: 1px;
+  background: var(--faint);
+  border-top: 1px solid var(--faint);
+  border-bottom: 1px solid var(--faint);
+}
+
+.w-dests > li {
+  background: var(--paper);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: clamp(0.9rem, 2vw, 2rem);
+  padding: clamp(1.1rem, 2vw, 1.45rem) 0;
+  align-items: baseline;
+  transition: background-color 0.18s ease;
+}
+
+.w-dests > li:hover {
+  background: var(--accent-wash);
+}
+
+.w-dest-hour {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  line-height: 1.45;
+  min-width: 8ch;
+}
+
+.w-dest-hour b {
+  display: block;
+  font-weight: 500;
+  color: var(--accent);
+}
+
+.w-dest-hour i {
+  display: block;
+  font-style: normal;
+  color: var(--ink-3);
+}
+
+.w-dest-body p {
+  margin-top: 0.28rem;
+  font-size: 0.9375rem;
+  color: var(--ink-2);
+  max-width: 52ch;
+}
+
+.w-dest-body .w-fact {
+  margin-top: 0.4rem;
+  font-size: 0.72rem;
+}
+
+/* ---------- table ------------------------------------------------------- */
+
+.w-table-wrap {
+  border: 1px solid var(--faint);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.w-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.w-table th,
+.w-table td {
+  padding: 0.85rem 1.1rem;
+  vertical-align: top;
+  font-size: 0.9375rem;
+}
+
+.w-table thead th {
+  font-family: var(--mono);
+  font-weight: 400;
+  font-size: 0.7rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  background: var(--paper-sunk);
+  border-bottom: 1px solid var(--faint);
+}
+
+.w-table tbody th {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 0.8125rem;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.w-table tbody td {
+  color: var(--ink-2);
+}
+
+.w-table tbody tr + tr th,
+.w-table tbody tr + tr td {
+  border-top: 1px solid var(--faint-2);
+}
+
+/* ---------- mac / mcp --------------------------------------------------- */
+
+.w-mcp {
+  border: 1px solid var(--faint);
+  border-radius: 16px;
+  padding: clamp(1.2rem, 2.4vw, 1.7rem);
+  background: var(--paper);
+}
+
+.w-mcp-head {
+  font-size: 0.875rem;
+  color: var(--ink-2);
+}
+
+.w-mcp-tools {
+  margin: 0.9rem 0;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.w-mcp-tools li {
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.w-mcp-tools li::before {
+  content: '';
+  width: 14px;
+  height: 1.5px;
+  background: var(--accent-line);
+  flex: none;
+}
+
+.w-mcp-note {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--ink-3);
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--faint-2);
+}
+
+/* ---------- honest ------------------------------------------------------ */
+
+.w-honest {
+  margin-top: clamp(1.6rem, 3vw, 2.3rem);
+  display: grid;
+  gap: clamp(1.4rem, 2.5vw, 2.2rem);
+}
+
+.w-honest > li {
+  padding-top: 1rem;
+  border-top: 1px solid var(--faint);
+}
+
+.w-honest p {
+  margin-top: 0.45rem;
+  font-size: 0.9375rem;
+  color: var(--ink-2);
+  max-width: 42ch;
+}
+
+.w-honest em {
+  font-style: italic;
+  color: var(--ink);
+}
+
+.w-honest b {
+  font-family: var(--mono);
+  font-size: 0.86em;
+  font-weight: 500;
+  color: var(--accent);
+}
+
+/* ---------- close ------------------------------------------------------- */
+
+.w-close {
+  margin-top: clamp(3.5rem, 7vw, 6rem);
+  padding: clamp(3rem, 6vw, 5rem) 0 clamp(5.5rem, 8vw, 7rem);
+  border-top: 1px solid var(--faint);
+  background: linear-gradient(rgba(244, 244, 241, 0.85), rgba(252, 252, 251, 0));
+}
+
+.w-close-inner {
+  width: var(--shell);
+  margin: 0 auto;
+  text-align: center;
+}
+
+.w-close h2 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(1.85rem, 1.2rem + 2.8vw, 3rem);
+  line-height: 1.05;
+  letter-spacing: -0.038em;
+}
+
+.w-close p {
+  margin: 1rem auto 0;
+  max-width: 40ch;
+  color: var(--ink-2);
+}
+
+.w-close .w-actions {
+  justify-content: center;
+}
+
+.w-close .w-close-fact {
+  margin: 1.9rem auto 0;
+  max-width: 64ch;
+}
+
+/* ---------- reveal ------------------------------------------------------ */
+
+.w-reveal {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.36s ease, transform 0.36s cubic-bezier(0.22, 0.61, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.w-reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- responsive -------------------------------------------------- */
+
+@media (min-width: 720px) {
+  .w-grid-3,
+  .w-honest {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .w-honest {
+    gap: clamp(1.4rem, 3vw, 2.6rem);
+  }
+
+  .w-dests > li {
+    align-items: start;
+  }
+}
+
+@media (min-width: 900px) {
+  .w-two {
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  }
+}
+
+@media (min-width: 1040px) {
+  .w-hero {
+    grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
+    align-items: center;
+  }
+
+  .w-dial figcaption {
+    max-width: 40ch;
+    margin-top: -2rem;
+  }
+}
+
+@media (max-width: 719px) {
+  .w-nav-links {
+    display: none;
+  }
+
+  .w-nav {
+    justify-content: space-between;
+  }
+
+  .w-mark {
+    margin-right: auto;
+  }
+}
+
+/* Below this the ring is too small to hang five labels off it, so the dial
+   fills the column and the same five labels drop underneath as a legend. */
+@media (max-width: 679px) {
+  .w-dial-box {
+    width: min(100%, 430px);
+    margin-inline: auto;
+    aspect-ratio: auto;
+  }
+
+  .w-dial-box::before {
+    inset: 4% 4% auto;
+    aspect-ratio: 1;
+  }
+
+  .w-dial-svg {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+  }
+
+  .w-numeral {
+    font-size: 21px;
+  }
+
+  .w-hub-line-1 {
+    font-size: 26px;
+  }
+
+  .w-hub-line-2 {
+    font-size: 17px;
+  }
+
+  .w-dial-labels {
+    position: static;
+    margin-top: 1.1rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.4rem 1.35rem;
+  }
+
+  .w-dial-label {
+    position: static;
+    transform: none;
+    max-width: none;
+    text-align: center;
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+  }
+
+  .w-dial-label span {
+    margin-top: 0;
+  }
+
+  .w-types-list {
+    gap: 0.35rem 0.9rem;
+  }
+
+  .w-table th,
+  .w-table td {
+    padding: 0.7rem 0.8rem;
+  }
+
+  .w-table tbody th {
+    white-space: normal;
+  }
+}
+
+/* ---------- reduced motion ---------------------------------------------
+   The dial keeps every bit of its information: the hand still points at an
+   hour, every batch still sits on its spoke. It simply stops moving.        */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.001ms !important;
+    transition-delay: 0ms !important;
+  }
+
+  .w-reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  .w-hand-group {
+    animation: none !important;
+    transform: rotate(105deg);
+  }
+
+  .w-flyer {
+    animation: none !important;
+    opacity: 1;
+    transform: translateY(-42px);
+  }
+
+  .w-gate {
+    animation: none !important;
+  }
+
+  .w-day-arc {
+    animation: none !important;
+    stroke-dashoffset: 623;
+  }
+}

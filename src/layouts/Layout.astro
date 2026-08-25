@@ -1,0 +1,75 @@
+---
+import '../styles/global.css';
+import { SITE } from '../data/site';
+
+export interface Props {
+  title?: string;
+  description?: string;
+  noindex?: boolean;
+}
+
+const {
+  title = 'Hozz — take your Apple Health data somewhere you own',
+  description =
+    'A free, open-source iPhone app with a companion Mac app that exports your Apple Health data to a file or a server you control. No subscription, no account, no analytics, and no server in the middle.',
+  noindex = false,
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site ?? SITE).href;
+const ogImage = new URL('/og-image.png', Astro.site ?? SITE).href;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large'} />
+    <meta name="author" content="Brandon Moore" />
+    <meta name="theme-color" content="#fbfcf8" />
+    <meta name="color-scheme" content="light" />
+
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Self-hosted, so a page about not being tracked does not hand you to a
+         font CDN on the way in. Only the two faces above the fold preload. -->
+    <link rel="preload" href="/fonts/sentient-500.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/general-sans-400.woff2" as="font" type="font/woff2" crossorigin />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Hozz — take your Apple Health data somewhere you own" />
+    <meta property="og:site_name" content="Hozz" />
+    <meta property="og:locale" content="en_US" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <slot />
+
+    <script>
+      // The header rule appears only after the page moves. One class, no
+      // dependency, and it costs nothing when the page never scrolls.
+      const onScroll = () => {
+        document.body.classList.toggle('is-scrolled', window.scrollY > 8);
+      };
+      onScroll();
+      addEventListener('scroll', onScroll, { passive: true });
+    </script>
+  </body>
+</html>

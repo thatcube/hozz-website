@@ -1,0 +1,27 @@
+---
+/**
+ * A boxed aside. Three kinds only, because a fourth would mean none of them
+ * carries a reliable meaning.
+ *
+ *   note   context worth knowing
+ *   warn   something that will cost you time if you skip it
+ *   lossy  this format or path throws detail away, deliberately
+ */
+interface Props {
+  kind?: 'note' | 'warn' | 'lossy';
+  title?: string;
+}
+
+const { kind = 'note', title } = Astro.props;
+
+const mark = { note: 'i', warn: '!', lossy: '↯' }[kind];
+const label = { note: 'Note', warn: 'Careful', lossy: 'Lossy' }[kind];
+---
+
+<aside class={`callout callout--${kind}`}>
+  <span class="callout-mark" aria-hidden="true">{mark}</span>
+  <div class="callout-body">
+    <p class="callout-title">{title ?? label}</p>
+    <slot />
+  </div>
+</aside>

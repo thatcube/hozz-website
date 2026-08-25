@@ -1,0 +1,25 @@
+---
+/** 39 · Counterpoise — two weighted Z paths balance transfer in both directions. */
+import { APP_BY_KEY, type AppKey } from '../../data/brand';
+
+interface Props {
+  app: AppKey;
+  size?: number;
+}
+
+const { app, size = 96 } = Astro.props;
+const a = APP_BY_KEY[app];
+---
+
+<svg width={size} height={size} viewBox="0 0 64 64" role="img" aria-label={`${a.name} mark`} style="display:block">
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M15 19H31L15 35H31" stroke={a.light} stroke-width="8" />
+    <path d="M33 29H49L33 45H49" stroke={a.light} stroke-width="8" />
+    <path d="M15 19H31L15 35H31" stroke={a.hue} stroke-width="5" />
+    <path d="M33 29H49L33 45H49" stroke={a.hue} stroke-width="5" />
+  </g>
+  <g fill={a.deep} stroke={a.light} stroke-width="2">
+    <circle cx="15" cy="19" r="5" />
+    <circle cx="49" cy="45" r="5" />
+  </g>
+</svg>

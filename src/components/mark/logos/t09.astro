@@ -1,0 +1,31 @@
+---
+/**
+ * t09 · Void
+ *
+ * The same bubble, knocked out of the purple instead of drawn on it. Nothing is
+ * added — the square and the bubble were both already there, as figure and as
+ * ground; this swaps which one is which, and the face inverts with it.
+ *
+ * The frame is 3 px so it survives the 16 px column, which a 2 px one does not.
+ * The face is centred on the bubble body (16, 13) — 7 px of air left and right,
+ * 5 above and below.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Twozz — Void">
+  <path d="M4 4h22v1h-22z M4 5h22v1h-22z M4 6h22v1h-22z M4 7h22v1h-22z M4 8h22v1h-22z M4 9h22v1h-22z M4 10h22v1h-22z M4 11h22v1h-22z M4 12h22v1h-22z M4 13h22v1h-22z M4 14h22v1h-22z M4 15h22v1h-22z M4 16h22v1h-22z M4 17h22v1h-22z M4 18h22v1h-22z M4 19h22v1h-22z M4 20h22v1h-22z M4 21h22v1h-22z M4 22h22v1h-22z M4 23h22v1h-22z M4 24h22v1h-22z M4 25h21v1h-21z" fill="#ffffff" />
+  <path d="M26 3h2v1h-2z M26 4h2v1h-2z M26 5h2v1h-2z M26 6h2v1h-2z M26 7h2v1h-2z M26 8h2v1h-2z M26 9h2v1h-2z M26 10h2v1h-2z M26 11h2v1h-2z M26 12h2v1h-2z M26 13h2v1h-2z M26 14h2v1h-2z M26 15h2v1h-2z M26 16h2v1h-2z M26 17h2v1h-2z M26 18h2v1h-2z M26 19h2v1h-2z M26 20h2v1h-2z M26 21h2v1h-2z M26 22h2v1h-2z M26 23h2v1h-2z M26 24h2v1h-2z M25 25h3v1h-3z M3 26h25v1h-25z M3 27h24v1h-24z" fill="#c2c2c2" />
+  <path d="M28 4h1v1h-1z M28 5h1v1h-1z M28 6h1v1h-1z M28 7h1v1h-1z M28 8h1v1h-1z M28 9h1v1h-1z M28 10h1v1h-1z M28 11h1v1h-1z M28 12h1v1h-1z M28 13h1v1h-1z M28 14h1v1h-1z M28 15h1v1h-1z M28 16h1v1h-1z M28 17h1v1h-1z M28 18h1v1h-1z M28 19h1v1h-1z M28 20h1v1h-1z M28 21h1v1h-1z M28 22h1v1h-1z M28 23h1v1h-1z M28 24h1v1h-1z M28 25h1v1h-1z M28 26h1v1h-1z M27 27h2v1h-2z M4 28h24v1h-24z" fill="#8c8c8c" />
+  <path d="M4 3h22v1h-22z M3 4h1v1h-1z M3 5h1v1h-1z M3 6h1v1h-1z M3 7h1v1h-1z M3 8h1v1h-1z M3 9h1v1h-1z M3 10h1v1h-1z M3 11h1v1h-1z M3 12h1v1h-1z M3 13h1v1h-1z M3 14h1v1h-1z M3 15h1v1h-1z M3 16h1v1h-1z M3 17h1v1h-1z M3 18h1v1h-1z M3 19h1v1h-1z M3 20h1v1h-1z M3 21h1v1h-1z M3 22h1v1h-1z M3 23h1v1h-1z M3 24h1v1h-1z M3 25h1v1h-1z" fill="#f2f2f2" />
+  <path d="M4 2h24v1h-24z M3 3h1v1h-1z M28 3h1v1h-1z M2 4h1v1h-1z M29 4h1v1h-1z M2 5h1v1h-1z M29 5h1v1h-1z M2 6h1v1h-1z M29 6h1v1h-1z M2 7h1v1h-1z M29 7h1v1h-1z M2 8h1v1h-1z M29 8h1v1h-1z M2 9h1v1h-1z M29 9h1v1h-1z M2 10h1v1h-1z M29 10h1v1h-1z M2 11h1v1h-1z M29 11h1v1h-1z M2 12h1v1h-1z M29 12h1v1h-1z M2 13h1v1h-1z M29 13h1v1h-1z M2 14h1v1h-1z M29 14h1v1h-1z M2 15h1v1h-1z M29 15h1v1h-1z M2 16h1v1h-1z M29 16h1v1h-1z M2 17h1v1h-1z M29 17h1v1h-1z M2 18h1v1h-1z M29 18h1v1h-1z M2 19h1v1h-1z M29 19h1v1h-1z M2 20h1v1h-1z M29 20h1v1h-1z M2 21h1v1h-1z M29 21h1v1h-1z M2 22h1v1h-1z M29 22h1v1h-1z M2 23h1v1h-1z M29 23h1v1h-1z M2 24h1v1h-1z M29 24h1v1h-1z M2 25h1v1h-1z M29 25h1v1h-1z M2 26h1v1h-1z M29 26h1v1h-1z M2 27h1v1h-1z M29 27h1v1h-1z M3 28h1v1h-1z M28 28h1v1h-1z M4 29h24v1h-24z" fill="#474747" />
+  <g fill="#8f52f6" shape-rendering="crispEdges">
+    {facePathsAt({ cx: 16, cy: 13, size: 'md', smile: 'wide' }).map((d) => (
+      <path d={d} />
+    ))}
+  </g>
+</MarkFrame>

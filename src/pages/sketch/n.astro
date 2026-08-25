@@ -1,0 +1,337 @@
+---
+import SketchLayout from '../../layouts/SketchLayout.astro';
+import { GITHUB_URL, DONATE_URL, LICENSE_URL } from '../../data/site';
+import '../../styles/sketch-n.css';
+
+/**
+ * Sketch N — "Redline".
+ *
+ * The page is a manuscript being proofed. Confident marketing lines are struck
+ * through in red; the sentence that survives contact with the product is set
+ * below in Erode. Two passages are deliberately *not* struck and are marked
+ * "stet" in the margin — which is how the page says what Hozz actually does,
+ * and how to start, without stepping outside the conceit.
+ */
+
+const DESTINATIONS = [
+  { name: 'Your Mac', note: 'NDJSON over your own network' },
+  { name: 'A folder', note: 'iCloud, Dropbox, SMB, on-device' },
+  { name: 'Home Assistant', note: 'Metrics JSON webhook' },
+  { name: 'Your own URL', note: 'NDJSON, JSON, CSV or Metrics JSON' },
+  { name: 'An MQTT broker', note: 'retained, QoS 0' },
+];
+
+const STEPS = [
+  'Install Hozz on your iPhone. It is free and the source is public.',
+  'Add a destination you own — your Mac, a folder, a URL, Home Assistant or MQTT.',
+  'Tick the Health types it may read. iOS asks; you answer.',
+  'Send a test batch, then pick a schedule: on arrival, hourly, daily, or only when you tap.',
+];
+
+const ITEMS = [
+  {
+    n: '1',
+    mark: 'Coverage',
+    draft: 'All your health data. Fully covered.',
+    correction:
+      'Quantities, categories, workouts and deletions export today. ECGs, routes, audiograms and clinical records are catalogued — not claimed.',
+    hue: 'var(--h-activity)',
+    why: 'Early alpha. The gaps get listed, not glossed.',
+  },
+  {
+    n: '2',
+    mark: 'Authorization',
+    draft: 'See at a glance what synced.',
+    correction:
+      'Apple will not tell an app whether you denied a type or simply have none of it. Hozz reports both, instead of guessing the flattering one.',
+    hue: 'var(--h-symptoms)',
+    why: 'Denied and empty are indistinguishable from inside any app.',
+  },
+  {
+    n: '3',
+    mark: 'File formats',
+    draft: 'Export to a spreadsheet. Nothing lost.',
+    correction:
+      'CSV is a grid. Workout detail and sample metadata are not. Hozz says so where you pick the format, not after you spot the gap.',
+    hue: 'var(--h-nutrition)',
+    why: 'A format admitting its limits, printed at the point of choice.',
+  },
+  {
+    n: '4',
+    mark: 'Background delivery',
+    draft: 'Always current. Automatically.',
+    correction:
+      'iOS decides when background work runs. Most types cap near hourly, and a locked phone cannot be read at all. Hozz shows the wait.',
+    hue: 'var(--h-sleep)',
+    why: 'A tick you cannot verify is worth less than a timestamp you can.',
+  },
+  {
+    n: '5',
+    mark: 'The MCP server',
+    draft: 'Ask your assistant anything about your health.',
+    correction:
+      'It is local and read-only. Point a cloud assistant at it and whatever that assistant uploads is its behaviour, not Hozz’s.',
+    hue: 'var(--h-mind)',
+    why: 'Where Hozz’s control ends, stated at the feature itself.',
+  },
+  {
+    n: '6',
+    mark: 'Interruption',
+    draft: 'Never miss a sync.',
+    correction:
+      'A dropped connection can make Hozz repeat a batch. It cannot make it skip one. Retries show as retries.',
+    hue: 'var(--h-heart)',
+    why: 'Correctness first, and the difference left visible.',
+  },
+];
+
+const FAQ = [
+  {
+    q: 'How do I export my Apple Health data?',
+    a:
+      'Apple’s Health app exports once, by hand, as a zip you then have to deal with. Hozz keeps a running copy flowing to a destination you own. Install Hozz on your iPhone, add a destination — your Mac, a folder, a web address, Home Assistant or an MQTT broker — grant the Health types it may read, send a test batch, then choose a schedule: on arrival, hourly, daily or manual. New records go on their own after that.',
+  },
+  {
+    q: 'What does Hozz cost?',
+    a:
+      'Nothing. Hozz is free and open source under GPL-3.0 with an App Store exception. There is no subscription, no account and no paid tier.',
+  },
+  {
+    q: 'Where does my health data go?',
+    a:
+      'Only to destinations you add and confirm. There is no default destination, no hosted relay and no server belonging to the developer. Nothing leaves the phone until you set one up.',
+  },
+  {
+    q: 'What file formats can Hozz write?',
+    a:
+      'NDJSON, JSON, CSV and Metrics JSON. NDJSON is the default because it streams and stays lossless for encoded fields. CSV is explicitly lossy — sample metadata and nested workout detail do not fit a grid — and Hozz labels it that way where you choose it.',
+  },
+];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'SoftwareApplication',
+      name: 'Hozz',
+      applicationCategory: 'HealthApplication',
+      operatingSystem: 'iOS, macOS',
+      description:
+        'Free, open-source iPhone and Mac app that exports Apple Health data to destinations you own: a Mac on your own network, a folder, a web address, Home Assistant or an MQTT broker.',
+      url: GITHUB_URL,
+      codeRepository: GITHUB_URL,
+      license: LICENSE_URL,
+      isAccessibleForFree: true,
+      author: { '@type': 'Person', name: 'Brandon Moore' },
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      featureList: [
+        'Automatic export of new Apple Health records on a schedule you set',
+        'Destinations: a Mac on your network, a folder, Home Assistant, a web address, an MQTT broker',
+        'Formats: NDJSON, JSON, CSV, Metrics JSON',
+        'Deletions carried as tombstones rather than dropped',
+        'Read-only local MCP server for your own Mac',
+      ],
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: FAQ.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  ],
+};
+---
+
+<SketchLayout title="Sketch N — Redline · Hozz" letter="N" name="Redline">
+  <div class="n-page">
+    <header class="n-masthead">
+      <a class="n-wordmark" href="#hero-title">Hozz</a>
+      <p class="n-status"><i aria-hidden="true"></i> Early alpha — first draft, not final</p>
+    </header>
+
+    <main>
+      <section class="n-hero" aria-labelledby="hero-title">
+        <p class="n-eyebrow">Proofed against the product</p>
+
+        <del
+          class="n-draft n-draft--lead"
+          aria-hidden="true"
+          data-strike="Hozz syncs all your health data, everywhere, automatically."
+          >Hozz syncs all your health data, everywhere, automatically.</del
+        >
+        <h1 id="hero-title" class="n-final">Hozz exports what you allow, to places you <em>own</em>.</h1>
+
+        <p class="n-lede">
+          Every health app writes the confident line first. This one keeps it — struck out — beside the sentence
+          that survived. Free, open source, and nothing leaves your phone until you name a destination.
+        </p>
+
+        <div class="n-cta">
+          <a class="n-pill n-pill--solid" href={GITHUB_URL}>Get Hozz on GitHub</a>
+          <a class="n-pill" href={DONATE_URL}>Sponsor the work</a>
+        </div>
+        <p class="n-fine">Free forever · GPL-3.0 · iPhone + Mac · no account</p>
+      </section>
+
+      <section class="n-row n-stet" aria-labelledby="stet-title">
+        <div class="n-main">
+          <h2 id="stet-title" class="n-h2">What it does</h2>
+          <ins class="n-correction n-correction--lead"
+            >Reads your Apple Health records. Writes them where you say. That is the whole product.</ins
+          >
+
+          <figure class="n-fig">
+            <p class="n-fig-src">
+              <span class="n-node">Apple Health</span>
+              <span class="n-vh">sends to</span>
+              <svg class="n-arrow" width="52" height="8" viewBox="0 0 52 8" fill="none" aria-hidden="true">
+                <path d="M0 4h40" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3"></path>
+                <path
+                  d="M40 1.2 45.5 4 40 6.8"
+                  stroke="currentColor"
+                  stroke-width="1"
+                  stroke-linejoin="round"
+                  stroke-linecap="round"></path>
+              </svg>
+              <span class="n-node n-node--hozz">Hozz</span>
+              <span class="n-vh">, which delivers to any of these, on your instruction:</span>
+            </p>
+
+            <ul class="n-fig-out">
+              {DESTINATIONS.map((d, i) => (
+                <li style={`--i:${i}`}>
+                  <i class="n-spark" aria-hidden="true"></i>
+                  <b>{d.name}</b>
+                  <span>{d.note}</span>
+                </li>
+              ))}
+            </ul>
+
+            <figcaption>Fig. 1 — where one record goes. You add the destination; there is no default.</figcaption>
+          </figure>
+        </div>
+
+        <p class="n-annot">
+          <span class="n-dot n-dot--stet" aria-hidden="true"></span>
+          <span><b>Stet.</b> This passage survived the proof unaltered. Most of what follows did not.</span>
+        </p>
+      </section>
+
+      <section class="n-row n-how" aria-labelledby="how-title">
+        <div class="n-main">
+          <h2 id="how-title" class="n-h2">How do I export my Apple Health data?</h2>
+          <p class="n-answer">
+            Apple’s Health app exports once, by hand, as a zip you then have to deal with. Hozz keeps a running copy
+            flowing to a destination you own, in a format you pick.
+          </p>
+          <ol class="n-steps">
+            {STEPS.map((s) => (
+              <li>{s}</li>
+            ))}
+          </ol>
+          <p class="n-note">
+            New records go on their own after that. Each destination keeps its own place in the queue, so one broken
+            endpoint cannot stall or skip the others.
+          </p>
+        </div>
+
+        <p class="n-annot">
+          <span class="n-dot n-dot--stet" aria-hidden="true"></span>
+          <span><b>Stet.</b> Four steps, and not one of them is “create an account”.</span>
+        </p>
+      </section>
+
+      <section class="n-manuscript" aria-labelledby="corrections-title">
+        <h2 id="corrections-title" class="n-h2 n-h2--rule">Six lines we struck out</h2>
+
+        {ITEMS.map((item) => (
+          <article class="n-row n-item">
+            <div class="n-main">
+              <h3 class="n-mark"><span aria-hidden="true">§{item.n} — </span>{item.mark}</h3>
+              <del class="n-draft" aria-hidden="true" data-strike={item.draft}>
+                {item.draft}
+              </del>
+              <ins class="n-correction">{item.correction}</ins>
+            </div>
+            <p class="n-annot">
+              <span class="n-dot" style={`background:${item.hue}`} aria-hidden="true"></span>
+              <span><b>Why it reads this way.</b> {item.why}</span>
+            </p>
+          </article>
+        ))}
+      </section>
+
+      <section class="n-close" aria-labelledby="close-title">
+        <h2 id="close-title" class="n-final n-final--close">Get your health history <em>out</em>.</h2>
+        <p class="n-close-body">
+          It is yours. Put it somewhere you own — a file, your Mac, your server — and keep it there. Free forever, no
+          account, nothing in the middle.
+        </p>
+        <div class="n-cta">
+          <a class="n-pill n-pill--solid" href={GITHUB_URL}>Get Hozz on GitHub</a>
+          <a class="n-pill" href={DONATE_URL}>Sponsor the work</a>
+        </div>
+        <p class="n-signoff">Filed by one developer · GPL-3.0 with an App Store exception · early alpha</p>
+      </section>
+    </main>
+  </div>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
+
+  <script is:inline>
+    /* Progressive enhancement only. The red rules and the delivery dots are
+       drawn in CSS by default, so with no JavaScript — or with reduced motion —
+       the page is already finished; it simply was not drawn in front of you. */
+    (function () {
+      var page = document.querySelector('.n-page');
+      if (!page || !('IntersectionObserver' in window)) return;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      page.classList.add('is-anim');
+
+      var pending = [].slice.call(
+        page.querySelectorAll('.n-hero, .n-row, .n-fig, .n-close')
+      );
+
+      function light(el) {
+        var i = pending.indexOf(el);
+        if (i < 0) return;
+        pending.splice(i, 1);
+        el.classList.add('is-lit');
+        io.unobserve(el);
+        if (!pending.length) window.removeEventListener('scroll', sweep);
+      }
+
+      var io = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) light(e.target);
+          });
+        },
+        { rootMargin: '0px 0px -8% 0px', threshold: 0.12 }
+      );
+
+      /* An anchor jump or a restored scroll position can carry an element from
+         below the fold to above it without ever intersecting, and the observer
+         stays silent. Sweep on scroll so nothing is ever stranded invisible. */
+      var queued = false;
+      function sweep() {
+        if (queued) return;
+        queued = true;
+        requestAnimationFrame(function () {
+          queued = false;
+          pending.slice().forEach(function (el) {
+            if (el.getBoundingClientRect().top < window.innerHeight) light(el);
+          });
+        });
+      }
+
+      pending.forEach(function (el) {
+        io.observe(el);
+      });
+      window.addEventListener('scroll', sweep, { passive: true });
+    })();
+  </script>
+</SketchLayout>

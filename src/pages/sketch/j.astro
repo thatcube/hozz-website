@@ -1,0 +1,169 @@
+---
+import SketchLayout from '../../layouts/SketchLayout.astro';
+import { GITHUB_URL } from '../../data/site';
+import '../../styles/sketch-j.css';
+
+const exportAnswer =
+  'Hozz is in early alpha. Its export flow is: choose the Apple Health types you want, add and confirm a destination, send a test batch, then choose automatic or manual export. Destinations include your Mac, a folder in Files, an HTTPS endpoint, an MQTT broker, or Home Assistant. Nothing leaves your iPhone before you confirm where it should go.';
+
+const faq = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'How do I export my Apple Health data?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: exportAnswer,
+      },
+    },
+  ],
+};
+---
+
+<SketchLayout title="Sketch J — Unsellable · Hozz" letter="J" name="Unsellable">
+  <script type="application/ld+json" set:html={JSON.stringify(faq)} />
+
+  <main class="j-page">
+    <header class="j-topbar">
+      <a class="j-wordmark" href="/" aria-label="Hozz home">hozz<span>_</span></a>
+      <p class="j-topnote">Apple Health export <span aria-hidden="true">/</span> early alpha</p>
+      <a class="j-toplink" href="#product">What it does <span aria-hidden="true">↘</span></a>
+    </header>
+
+    <section class="j-hero" aria-labelledby="hero-title">
+      <div class="j-hero-copy" data-reveal>
+        <p class="j-eyebrow"><span class="j-eyebrow-mark" aria-hidden="true">+</span> Economics as privacy</p>
+        <h1 id="hero-title">Free forever is a <em>security</em> feature.</h1>
+        <p class="j-lede">
+          Hozz exports Apple Health data where you choose. No account, relay, or future upsell.
+        </p>
+        <a class="j-cta" href="#product">See where it goes <span aria-hidden="true">↘</span></a>
+      </div>
+
+      <div class="j-zero" aria-label="Hozz has no price, paid tier, or upsell" data-reveal>
+        <div class="j-zero-orbit j-zero-orbit-one" aria-hidden="true"></div>
+        <div class="j-zero-orbit j-zero-orbit-two" aria-hidden="true"></div>
+        <div class="j-zero-core">
+          <span class="j-zero-value">0</span>
+          <span class="j-zero-label">price<br />forever</span>
+        </div>
+        <div class="j-zero-sticker">nothing<br />to upsell</div>
+        <p class="j-zero-caption">the lock is the business model</p>
+      </div>
+    </section>
+
+    <aside class="j-thesis" aria-label="The central argument" data-reveal>
+      <div class="j-thesis-label">Promises can change.</div>
+      <div class="j-thesis-rule" aria-hidden="true"></div>
+      <p class="j-thesis-statement">No model to turn against you.</p>
+    </aside>
+
+    <section class="j-product" id="product" aria-labelledby="product-title">
+      <div class="j-product-copy" data-reveal>
+        <p class="j-eyebrow"><span class="j-eyebrow-mark" aria-hidden="true">+</span> What Hozz does</p>
+        <h2 id="product-title">Your health.<br /><em>Your route.</em></h2>
+        <p>Choose the Health types. Confirm a destination. Hozz keeps it current.</p>
+      </div>
+
+      <div class="j-route" role="img" aria-label="Apple Health data travels directly from your iPhone to a destination you choose" data-reveal>
+        <div class="j-route-node">
+          <span>from</span>
+          <strong>Apple Health</strong>
+          <code>on your iPhone</code>
+        </div>
+        <div class="j-route-line" aria-hidden="true">
+          <svg viewBox="0 0 320 70" preserveAspectRatio="none">
+            <path d="M4 35 C88 4 226 66 316 35"></path>
+          </svg>
+          <i class="j-route-dot"></i>
+        </div>
+        <div class="j-route-node j-route-node-end">
+          <span>to</span>
+          <strong>Where you choose</strong>
+          <code>Mac · folder · HTTPS · MQTT · Home Assistant</code>
+        </div>
+      </div>
+    </section>
+
+    <section class="j-proof" id="proof" aria-labelledby="proof-title">
+      <div class="j-proof-heading" data-reveal>
+        <p class="j-eyebrow"><span class="j-eyebrow-mark" aria-hidden="true">+</span> Check the structure</p>
+        <h2 id="proof-title">Free,<br /><em>proved.</em></h2>
+        <p>Read the source. Follow the data. Find the missing incentive.</p>
+      </div>
+
+      <div class="j-proof-grid">
+        <article class="j-proof-card j-proof-card-source" data-reveal>
+          <div class="j-card-index">01 <span>source</span></div>
+          <h3>Forkable.</h3>
+          <p>Public code. Read it, verify it, or keep it alive.</p>
+          <code>GPL-3.0 + App Store exception</code>
+        </article>
+
+        <article class="j-proof-card j-proof-card-path" data-reveal>
+          <div class="j-card-index">02 <span>path</span></div>
+          <h3>No middle.</h3>
+          <p>Your iPhone sends straight to your confirmed destination.</p>
+          <code>Health → your destination</code>
+        </article>
+
+        <article class="j-proof-card j-proof-card-money" data-reveal>
+          <div class="j-card-index">03 <span>money</span></div>
+          <h3>No conversion.</h3>
+          <p>No Pro tier, ads, analytics, telemetry, or paywall.</p>
+          <code>revenue pressure = 0</code>
+        </article>
+      </div>
+    </section>
+
+    <section class="j-answer" aria-labelledby="answer-title" data-reveal>
+      <p class="j-answer-kicker">A useful answer</p>
+      <div>
+        <h2 id="answer-title">How do I export my Apple Health data?</h2>
+        <p>
+          Hozz is in early alpha. Choose the Health types you want, add and confirm a destination,
+          send a test batch, then export automatically or manually. Send to your Mac, a folder in
+          Files, your HTTPS endpoint, MQTT broker, or Home Assistant. Nothing leaves first.
+        </p>
+      </div>
+    </section>
+
+    <section class="j-close" aria-labelledby="close-title" data-reveal>
+      <p class="j-eyebrow"><span class="j-eyebrow-mark" aria-hidden="true">+</span> Built in the open</p>
+      <h2 id="close-title">Take your history.<br /><em>Leave no trail here.</em></h2>
+      <p>Free. Open source. Yours to inspect.</p>
+      <a class="j-cta j-cta-light" href={GITHUB_URL}>Follow Hozz on GitHub <span aria-hidden="true">↗</span></a>
+    </section>
+
+    <footer class="j-footer">
+      <span>Hozz · free, open source, early alpha</span>
+      <span>built by one person, in the open</span>
+    </footer>
+  </main>
+
+  <script is:inline>
+    document.documentElement.classList.add('j-js');
+
+    const reveals = document.querySelectorAll('[data-reveal]');
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (reduced || !('IntersectionObserver' in window)) {
+      reveals.forEach((element) => element.classList.add('is-visible'));
+    } else {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          });
+        },
+        { rootMargin: '0px 0px -8% 0px', threshold: 0.08 },
+      );
+
+      reveals.forEach((element) => observer.observe(element));
+    }
+  </script>
+</SketchLayout>

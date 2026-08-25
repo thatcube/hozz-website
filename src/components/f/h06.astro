@@ -1,0 +1,35 @@
+---
+/**
+ * h06 · Transfer Gate
+ *
+ * A single gate leaf between two posts. Each Z diagonal follows the gate's
+ * anti-sag load path, rising from the lower hinge side toward the upper latch.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.hozz;
+
+const Z = { y: 12, w: 12, h: 24, bar: 4, diag: 7, cap: 'angled' as const };
+const braces = `${zPath({ ...Z, x: 10 })}${zPath({ ...Z, x: 25 })}`;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+  data-ground={ground}
+>
+  <path d="M4 7H8V41H4ZM40 7H44V41H40Z" fill={app.deep} />
+  <rect x="8" y="12" width="31" height="24" fill={app.hue} />
+  <path d={braces} fill={app.deep} />
+</svg>

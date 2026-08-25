@@ -1,0 +1,50 @@
+---
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.twozz;
+const uid = `tw05-${Math.random().toString(36).slice(2, 9)}`;
+const LIGHTBOX = 'M6 11H42L45 14V34L42 37H6L3 34V14Z';
+const Z = {
+  y: 17,
+  w: 15,
+  h: 14,
+  bar: 3.2,
+  diag: 6.8,
+  cap: 'angled' as const,
+};
+const frame = ground === 'dark' ? app.light : app.deep;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} broadcast mast mark`}
+>
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#000" />
+      <path d={LIGHTBOX} fill="#fff" />
+      <path d={zPath({ ...Z, x: 8 })} fill="#000" />
+      <path d={zPath({ ...Z, x: 25 })} fill="#000" />
+    </mask>
+  </defs>
+
+  <path d={LIGHTBOX} fill={app.hue} mask={`url(#${uid})`} />
+  <path
+    d={LIGHTBOX}
+    fill="none"
+    stroke={frame}
+    stroke-width="2.4"
+    stroke-linejoin="round"
+  />
+</svg>

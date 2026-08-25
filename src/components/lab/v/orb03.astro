@@ -1,0 +1,641 @@
+---
+/**
+ * orb03 — Tilted orbits
+ *
+ * The centre is the machine the copy lands on and stays on: a plain laptop
+ * outline, hairline only, never a mock of an app that does not exist yet. Its
+ * name and the real Bonjour service and port sit in the caption below the
+ * orbits, where nothing moving can ever cross them.
+ *
+ * Three dashed ellipses at three tilts cross one another, so the orbits read at
+ * an angle rather than as flat concentric rings. Every radius is a percentage of
+ * the ring's own box, so the whole figure is derived from the width it is given
+ * and cannot outgrow its column.
+ *
+ * Chips ride the drawn line itself — `offset-path: ellipse()` on the very
+ * percentages the dashed ellipse is drawn from — so they genuinely follow it,
+ * including behind the machine. The ring carries the tilt; each chip cancels it
+ * with an equal counter-rotation, which is what keeps a label horizontal on a
+ * tilted orbit.
+ *
+ * Depth is one number, computed here rather than eyeballed: how far a rider is
+ * from the screen is the orbit's own radius times the sine of its angle. That
+ * single number drives size, opacity and stacking order together, sampled at
+ * eight points around each lap and handed to the keyframes as plain custom
+ * properties. Because it is shared, orbits cross the way orbits do: the nearer
+ * body is always the larger, the more opaque and the one on top.
+ */
+import { CHIPS } from '../../../data/chips';
+
+const pick = (id: string) => CHIPS.find((c) => c.id === id)!;
+
+/** The box the ellipses are measured in, at the figure's own aspect ratio. */
+const ASPECT = 1.85;
+const STOPS = 8;
+
+/**
+ * `offset-distance` is arc length, not angle, so a rider on a flat ellipse
+ * hurries through the tight ends and dawdles along the long sides. Depth has to
+ * be sampled the same way or it drifts out of step with the position. This walks
+ * the ellipse once and reads the angle back at equal distances along it.
+ */
+function anglesByArc(rx: number, ry: number, stops: number) {
+  const N = 4096;
+  const cum = [0];
+  let prev = { x: rx, y: 0 };
+  for (let i = 1; i <= N; i++) {
+    const a = (i / N) * 2 * Math.PI;
+    const p = { x: rx * Math.cos(a), y: ry * Math.sin(a) };
+    cum.push(cum[i - 1] + Math.hypot(p.x - prev.x, p.y - prev.y));
+    prev = p;
+  }
+  const total = cum[N];
+  const out: number[] = [];
+  let j = 0;
+  for (let s = 0; s < stops; s++) {
+    const target = (s / stops) * total;
+    while (j < N && cum[j + 1] < target) j++;
+    const f = (target - cum[j]) / (cum[j + 1] - cum[j] || 1);
+    out.push(((j + f) / N) * 2 * Math.PI);
+  }
+  return out;
+}
+
+interface Rider {
+  /** A HealthKit id for a labelled chip, or a bare category for a silent dot. */
+  id?: string;
+  cat?: string;
+  /** Where on the lap it rides, 0–1 of the way round. */
+  d: number;
+  /**
+   * The column width, in rem, at or below which this label gives up its word
+   * and rides on as a dot. Narrow columns cannot hold five labels, and a label
+   * that overlaps another one has stopped being a label.
+   */
+  drop?: 30 | 21 | 17;
+}
+
+interface Ring {
+  tilt: number;
+  /** Semi-axes as a share of the ring's box. */
+  rx: number;
+  ry: number;
+  /** Seconds per lap. 96, 72 and 48 share a 288-second cycle. */
+  dur: number;
+  riders: Rider[];
+}
+
+/**
+ * Radii chosen so that no labelled chip ever crosses the machine: a chip is wide
+ * and short, so what matters is whether the path's height at the machine's width
+ * clears the machine's height. Phases chosen by walking the whole 288-second
+ * cycle and pushing the crossings apart.
+ */
+const RINGS: Ring[] = [
+  {
+    tilt: -23.4,
+    rx: 38.5,
+    ry: 31.39,
+    dur: 96,
+    riders: [
+      { id: 'heartRate', d: 0.364 },
+      { cat: 'respiratory', d: 0.584 },
+      { id: 'sleepAnalysis', d: 0.856, drop: 30 },
+      { cat: 'mind', d: 0.09 },
+    ],
+  },
+  {
+    tilt: 9.5,
+    rx: 25.2,
+    ry: 29.60,
+    dur: 72,
+    riders: [
+      { id: 'stepCount', d: 0.709, drop: 21 },
+      { cat: 'hearing', d: 0.083 },
+      { id: 'dietaryProtein', d: 0.199, drop: 30 },
+      { cat: 'mobility', d: 0.584 },
+    ],
+  },
+  {
+    tilt: 46,
+    rx: 25.6,
+    ry: 43.21,
+    dur: 48,
+    riders: [
+      { id: 'bodyMass', d: 0.948, drop: 17 },
+      { cat: 'cycle', d: 0.433 },
+      { cat: 'vitals', d: 0.607 },
+    ],
+  },
+];
+
+/** The widest orbit sets the depth scale; the others are nearer the middle. */
+const SPAN = Math.max(...RINGS.map((r) => r.rx));
+const MID_Z = 20;
+const Z_REACH = 18;
+/**
+ * Depth is not symmetric: coming toward you does much less to a shape than going
+ * away from you does. The near half grows a little and stays fully opaque; only
+ * the far half shrinks and sinks into the page.
+ *
+ * The far fade is deliberately shallow. Depth is carried by scale, by stacking
+ * order and by the pool of paper around the machine — not by dimming type past
+ * the point where it can still be read.
+ */
+const NEAR_GROW = 0.05;
+const FAR_SHRINK = 0.11;
+const FAR_FADE = 0.14;
+
+/** `n` is where a rider is between the far point (−1) and the near one (1). */
+const sizeAt = (n: number, reach: number) =>
+  1 + reach * (n > 0 ? NEAR_GROW * n : FAR_SHRINK * n);
+const fadeAt = (n: number, reach: number) => (n > 0 ? 1 : 1 + reach * FAR_FADE * n);
+
+const rings = RINGS.map((r) => {
+  const reach = r.rx / SPAN;
+  const angles = anglesByArc(r.rx, r.ry / ASPECT, STOPS);
+  /* Depth, −1 (far) to 1 (near), sampled at eight equal steps along the lap.
+     Stacking and fade belong to the lane, size belongs to the rider inside it. */
+  const depth = angles.map((a) => Math.sin(a));
+  const vars = depth
+    .map(
+      (n, i) =>
+        `--o${i}:${fadeAt(n, reach).toFixed(4)};--z${i}:${Math.round(MID_Z + Z_REACH * reach * n)}`
+    )
+    .join(';');
+  const svars = depth.map((n, i) => `--s${i}:${sizeAt(n, reach).toFixed(4)}`).join(';');
+
+  return {
+    ...r,
+    vars,
+    svars,
+    riders: r.riders.map((rider) => {
+      const chip = rider.id ? pick(rider.id) : null;
+      /* The still arrangement a browser without basic-shape offset-path falls
+         back to: same angle-by-arc-length, so it lands where the animation would
+         have held it, at the depth that belongs to that spot. */
+      const a = anglesByArc(r.rx, r.ry / ASPECT, 1024)[
+        Math.round(rider.d * 1024) % 1024
+      ];
+      const n = Math.sin(a);
+      return {
+        name: chip?.name ?? null,
+        cat: chip?.cat ?? rider.cat!,
+        drop: rider.drop ?? 0,
+        d: rider.d,
+        cx: Math.cos(a).toFixed(4),
+        cy: n.toFixed(4),
+        s: sizeAt(n, reach).toFixed(4),
+        o: fadeAt(n, reach).toFixed(4),
+        z: Math.round(MID_Z + Z_REACH * reach * n),
+      };
+    }),
+  };
+});
+---
+
+<figure class="orb03">
+  <div
+    class="scene"
+    role="img"
+    aria-label="Heart rate, sleep, steps, protein and weight, with more types as unlabelled dots, orbiting on three tilted elliptical paths around a Mac at the centre — passing behind it and in front of it."
+  >
+    {
+      rings.map((r) => {
+        const geom = `--tilt:${r.tilt}deg;--rxb:${r.rx}%;--ryb:${r.ry}%;--dur:${r.dur}s;`;
+        return (
+          <>
+            <div class="ring" style={`${geom}--anti:${-r.tilt}deg;`}>
+              <span class="path" aria-hidden="true" />
+            </div>
+            {r.riders.map((c) => (
+              /* One lane per rider, tilted like its ring but a sibling of every
+                 other lane, so a rider's depth — not which ring it belongs to —
+                 decides what it passes in front of. */
+              <div
+                class={`lane${c.name ? '' : ' quiet'}`}
+                style={`${geom}--d:${c.d};--o:${c.o};--z:${c.z};${r.vars}`}
+              >
+                <span
+                  class={`rider ${c.name ? 'chip' : 'dot'}${c.drop ? ` d${c.drop}` : ''}`}
+                  style={`--hue:var(--h-${c.cat});--anti:${-r.tilt}deg;--cx:${c.cx};--cy:${c.cy};--s:${c.s};${r.svars}`}
+                >
+                  {c.name ? (
+                    <>
+                      <i aria-hidden="true" />
+                      <span class="t">{c.name}</span>
+                    </>
+                  ) : null}
+                </span>
+              </div>
+            ))}
+          </>
+        );
+      })
+    }
+
+    <span class="wash" aria-hidden="true"></span>
+
+    <svg class="mac" viewBox="0 0 132 92" aria-hidden="true">
+      <rect
+        x="17.5"
+        y="2.5"
+        width="97"
+        height="64"
+        rx="6.5"
+        fill="#fff"
+        stroke="#b9c1ca"
+        stroke-width="1.6"></rect>
+      <g stroke="#dbe0e7" stroke-width="2.6" stroke-linecap="round">
+        <path d="M28 17h42"></path>
+        <path d="M28 26h56"></path>
+        <path d="M28 35h35"></path>
+        <path d="M28 44h49"></path>
+        <path d="M28 53h28"></path>
+      </g>
+      <path
+        d="M3.5 70.5h125c0 4.4-3.6 8-8 8h-109c-4.4 0-8-3.6-8-8Z"
+        fill="#fff"
+        stroke="#b9c1ca"
+        stroke-width="1.6"
+        stroke-linejoin="round"></path>
+      <path d="M55 70.5h22" stroke="#b9c1ca" stroke-width="1.6"></path>
+    </svg>
+  </div>
+
+  <figcaption class="cap">
+    <b>Your Mac</b>
+    <code>_hozz._tcp · 54330</code>
+  </figcaption>
+</figure>
+
+<style>
+  .orb03 {
+    --paper: #fafbfc;
+    container-type: inline-size;
+    inline-size: 100%;
+    max-inline-size: 35rem;
+    margin: 0;
+    display: grid;
+    justify-items: center;
+    gap: clamp(0.35rem, 1.6cqi, 0.85rem);
+  }
+
+  .scene {
+    --k: 1;
+    position: relative;
+    inline-size: 100%;
+    aspect-ratio: 1.85;
+    isolation: isolate;
+  }
+
+  /* One box per orbit, so a radius is a share of the figure rather than a length
+     and scales with whatever column the figure is dropped into. The tilt lives
+     here; every label undoes it. Rings hold only the drawn line, and sit under
+     everything, so a path can never be drawn across a word. */
+  .ring,
+  .lane {
+    --rx: calc(var(--rxb) * var(--k));
+    --ry: calc(var(--ryb) * var(--k));
+    position: absolute;
+    inset: 0;
+    rotate: var(--tilt);
+  }
+
+  .ring {
+    z-index: 1;
+  }
+
+  /* The travelling half of an orbit. A lane is tilted like its ring but stacked
+     by the depth of the one rider it carries, so what decides whether something
+     passes in front or behind is how near it is — not which ring it is on. */
+  .lane {
+    --om: 1;
+    z-index: var(--z);
+    opacity: calc(var(--o) * var(--om));
+    animation: depth var(--dur) linear infinite;
+    animation-delay: calc(var(--d) * var(--dur) * -1);
+  }
+
+  .lane.quiet {
+    --om: 0.9;
+  }
+
+  /* The visible path. A border-radius ellipse is exactly the shape the riders
+     travel: both are rx/ry of this same box. */
+  .path {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    inline-size: calc(var(--rx) * 2);
+    block-size: calc(var(--ry) * 2);
+    translate: -50% -50%;
+    border: 1px dashed #d0d6dd;
+    border-radius: 50%;
+  }
+
+  .ring:nth-of-type(2) .path {
+    border-color: #d7dce3;
+  }
+
+  .ring:nth-of-type(3) .path {
+    border-color: #dde2e8;
+  }
+
+  .rider {
+    position: absolute;
+    inset-block-start: calc(50% + var(--ry) * var(--cy));
+    inset-inline-start: calc(50% + var(--rx) * var(--cx));
+    transform: translate(-50%, -50%) rotate(var(--anti)) scale(var(--s));
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.38em;
+    white-space: nowrap;
+    padding: 0.34em 0.72em 0.34em 0.56em;
+    border-radius: 999px;
+    border: 1px solid #dfe4ea;
+    background: #fff;
+    /* The ring of page colour is what makes a crossing read as one chip in front
+       of another rather than as two chips smeared together. */
+    box-shadow:
+      0 0 0 2.5px var(--paper),
+      0 1px 2px rgb(20 22 26 / 0.06);
+    font-family: var(--sans);
+    font-size: clamp(0.625rem, 0.36rem + 1.24cqi, 0.8125rem);
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.012em;
+    color: #23262b;
+  }
+
+  .chip i,
+  .dot {
+    inline-size: 0.5em;
+    block-size: 0.5em;
+    border-radius: 50%;
+    background: var(--hue);
+    flex: none;
+  }
+
+  /* The unlabelled ones: the rest of the thirty-four types, riding the same
+     orbits without asking for the room a label needs. */
+  .dot {
+    font-size: clamp(0.625rem, 0.36rem + 1.24cqi, 0.8125rem);
+    inline-size: 0.64em;
+    block-size: 0.64em;
+    box-shadow: 0 0 0 2.5px var(--paper);
+  }
+
+  /* Where offset-path takes a basic shape, a rider stops being placed and starts
+     travelling — along the very line drawn above. */
+  @supports (offset-path: ellipse(30% 20% at 50% 50%)) {
+    .rider {
+      inset-block-start: 0;
+      inset-inline-start: 0;
+      offset-path: ellipse(var(--rx) var(--ry) at 50% 50%);
+      offset-anchor: 50% 50%;
+      offset-rotate: 0deg;
+      offset-distance: calc(var(--d) * 100%);
+      transform: rotate(var(--anti)) scale(var(--s));
+      animation: ride var(--dur) linear infinite;
+      /* Spread by delay, not by a different start distance: one set of keyframes
+         then keeps depth in step with position for every rider. */
+      animation-delay: calc(var(--d) * var(--dur) * -1);
+    }
+  }
+
+  /* Eight stops, one lap. The rider walks the ellipse; its lane runs the same
+     eight stops on the same clock, so how near a thing looks is always the
+     depth of the point it is actually standing on. */
+  @keyframes ride {
+    0% {
+      offset-distance: 0%;
+      transform: rotate(var(--anti)) scale(var(--s0));
+    }
+    12.5% {
+      offset-distance: 12.5%;
+      transform: rotate(var(--anti)) scale(var(--s1));
+    }
+    25% {
+      offset-distance: 25%;
+      transform: rotate(var(--anti)) scale(var(--s2));
+    }
+    37.5% {
+      offset-distance: 37.5%;
+      transform: rotate(var(--anti)) scale(var(--s3));
+    }
+    50% {
+      offset-distance: 50%;
+      transform: rotate(var(--anti)) scale(var(--s4));
+    }
+    62.5% {
+      offset-distance: 62.5%;
+      transform: rotate(var(--anti)) scale(var(--s5));
+    }
+    75% {
+      offset-distance: 75%;
+      transform: rotate(var(--anti)) scale(var(--s6));
+    }
+    87.5% {
+      offset-distance: 87.5%;
+      transform: rotate(var(--anti)) scale(var(--s7));
+    }
+    100% {
+      offset-distance: 100%;
+      transform: rotate(var(--anti)) scale(var(--s0));
+    }
+  }
+
+  @keyframes depth {
+    0% {
+      z-index: var(--z0);
+      opacity: calc(var(--o0) * var(--om));
+    }
+    12.5% {
+      z-index: var(--z1);
+      opacity: calc(var(--o1) * var(--om));
+    }
+    25% {
+      z-index: var(--z2);
+      opacity: calc(var(--o2) * var(--om));
+    }
+    37.5% {
+      z-index: var(--z3);
+      opacity: calc(var(--o3) * var(--om));
+    }
+    50% {
+      z-index: var(--z4);
+      opacity: calc(var(--o4) * var(--om));
+    }
+    62.5% {
+      z-index: var(--z5);
+      opacity: calc(var(--o5) * var(--om));
+    }
+    75% {
+      z-index: var(--z6);
+      opacity: calc(var(--o6) * var(--om));
+    }
+    87.5% {
+      z-index: var(--z7);
+      opacity: calc(var(--o7) * var(--om));
+    }
+    100% {
+      z-index: var(--z0);
+      opacity: calc(var(--o0) * var(--om));
+    }
+  }
+
+  .wash {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    inline-size: 30%;
+    block-size: 48%;
+    translate: -50% -50%;
+    z-index: 19;
+    background: radial-gradient(
+      closest-side,
+      var(--paper) 62%,
+      color-mix(in srgb, var(--paper) 68%, transparent) 82%,
+      transparent 100%
+    );
+  }
+
+  .mac {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    translate: -50% -50%;
+    z-index: 20;
+    inline-size: clamp(3.5rem, 17.5cqi, 6.125rem);
+    height: auto;
+  }
+
+  .cap {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.2rem 0.55rem;
+    text-align: center;
+  }
+
+  .cap b {
+    font-family: var(--sans);
+    font-size: clamp(0.75rem, 0.6rem + 0.7cqi, 0.9375rem);
+    font-weight: 700;
+    letter-spacing: -0.028em;
+    color: #14161a;
+  }
+
+  .cap code {
+    font-family: var(--mono);
+    font-size: clamp(0.5625rem, 0.46rem + 0.5cqi, 0.6875rem);
+    letter-spacing: 0.01em;
+    color: #4e565f;
+  }
+
+  /* Type does not shrink as fast as the box does, so each step down in width
+     spends one label fewer. The orbits, the tilts, the machine and all eleven
+     riders stay exactly as they are; only the number that speak changes. */
+  @container (max-width: 30rem) {
+    .scene {
+      --k: 0.95;
+      aspect-ratio: 1.934;
+    }
+
+    .chip.d30 {
+      padding: 0;
+      border: 0;
+      background: none;
+      box-shadow: none;
+    }
+
+    .chip.d30 .t {
+      display: none;
+    }
+
+    .chip.d30 i {
+      inline-size: 0.64em;
+      block-size: 0.64em;
+      box-shadow: 0 0 0 2.5px var(--paper);
+    }
+  }
+
+  /* On a phone the stage is taller than it is wide, so the box stops being a
+     letterbox and takes the height on offer. The orbits grow into it, which is
+     what keeps the machine clear once the chips are this large next to them. */
+  @container (max-width: 21rem) {
+    .scene {
+      --k: 1.02;
+      aspect-ratio: 1.18;
+    }
+
+    .chip.d21 {
+      padding: 0;
+      border: 0;
+      background: none;
+      box-shadow: none;
+    }
+
+    .chip.d21 .t {
+      display: none;
+    }
+
+    .chip.d21 i {
+      inline-size: 0.64em;
+      block-size: 0.64em;
+      box-shadow: 0 0 0 2.5px var(--paper);
+    }
+  }
+
+  @container (max-width: 17rem) {
+    /* The machine gives up a little size so the one remaining label can pass it
+       without touching, and the orbits take the room back. */
+    .scene {
+      --k: 1.06;
+    }
+
+    .mac {
+      inline-size: 2.75rem;
+    }
+
+    .chip.d17 {
+      padding: 0;
+      border: 0;
+      background: none;
+      box-shadow: none;
+    }
+
+    .chip.d17 .t {
+      display: none;
+    }
+
+    .chip.d17 i {
+      inline-size: 0.64em;
+      block-size: 0.64em;
+      box-shadow: 0 0 0 2.5px var(--paper);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Not hidden, not collapsed into the middle. The animation is dropped and
+       each rider falls back to the still placement it is already given — the
+       same point on the same ellipse, at the depth that belongs to that spot —
+       so the figure keeps all eleven of them and none of it moves. */
+    .lane {
+      animation: none;
+    }
+
+    .rider {
+      animation: none;
+      offset-path: none;
+      inset-block-start: calc(50% + var(--ry) * var(--cy));
+      inset-inline-start: calc(50% + var(--rx) * var(--cx));
+      transform: translate(-50%, -50%) rotate(var(--anti)) scale(var(--s));
+    }
+  }
+</style>

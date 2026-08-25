@@ -1,0 +1,38 @@
+---
+/**
+ * h05 · Crossing
+ *
+ * A bridge in two fills. The Z top bars are the deck edge; their bottom bars
+ * meet the arch springline, so the diagonals are the span's trusswork.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.hozz;
+
+const Z = { y: 10, w: 12, h: 20, bar: 3.5, diag: 6.5, cap: 'angled' as const };
+const truss = `${zPath({ ...Z, x: 9.5 })}${zPath({ ...Z, x: 26.5 })}`;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+  data-ground={ground}
+>
+  <path
+    d="M4 10H44V42H4ZM12 42C13 34 18 30 24 30C30 30 35 34 36 42Z"
+    fill={app.hue}
+    fill-rule="evenodd"
+  />
+  <path d={truss} fill={app.deep} />
+</svg>

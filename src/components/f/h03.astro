@@ -1,0 +1,76 @@
+---
+/**
+ * h03 · Cask — a barrel, and the ZZ punched out of its two hoops.
+ *
+ * The dependency: **each bar is one hoop.** Same centre line, and the bar is
+ * the hoop swollen by half a unit either side so a sliver of stave frames it,
+ * which is what keeps the letters separated on a dark ground. The letters are
+ * holes in the only parts that hold a barrel together, and each hoop runs on
+ * dark either side of them. Slide a hoop and its bar slides with it.
+ *
+ * Four shapes: two chimes, the bulged body, the pair of hoops. The bulge does
+ * the rest — a barrel is the one vessel whose widest point is its middle, which
+ * is where the diagonals live, so the letters get their room from the swell.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.hozz;
+const uid = `h03-${Math.random().toString(36).slice(2, 9)}`;
+
+const BARREL = 'M15 8.5C6.5 15.5 6.5 32.5 15 39.5H33C41.5 32.5 41.5 15.5 33 8.5Z';
+
+const HOOP = 2.4;
+const BAR = 3.4; // the hoop, swollen just enough to hold an edge of stave
+const HOOPS = [17, 29];
+
+// h is set by the gap between the hoops; bar is set by their thickness.
+const Z = {
+  y: HOOPS[0] - (BAR - HOOP) / 2,
+  w: 10.6,
+  h: HOOPS[1] - HOOPS[0] + BAR,
+  bar: BAR,
+  diag: 6,
+  cap: 'angled' as const,
+};
+// 10.6 + 2.4 + 10.6 = 23.6, running 12.2 to 35.8, centred on 24.
+const zLeft = 12.2;
+const zRight = 25.2;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...Z, x: zLeft })} fill="#000" />
+      <path d={zPath({ ...Z, x: zRight })} fill="#000" />
+    </mask>
+    <clipPath id={`${uid}-b`}>
+      <path d={BARREL} />
+    </clipPath>
+  </defs>
+
+  <g mask={`url(#${uid})`}>
+    <g fill={app.deep}>
+      <rect x="13.6" y="6" width="20.8" height="2.9" rx="1.15" />
+      <rect x="13.6" y="39.1" width="20.8" height="2.9" rx="1.15" />
+    </g>
+    <path d={BARREL} fill={app.hue} />
+    <g clip-path={`url(#${uid}-b)`} fill={app.deep}>
+      {HOOPS.map((y) => <rect x="4" y={y} width="40" height={HOOP} />)}
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,45 @@
+---
+/**
+ * 12 · Counter — heavy ZZ, drawn by its negative space.
+ *
+ * The two Z's are set upright and side by side at a weight where the ink is no
+ * longer the interesting part: what you actually read are the two triangular
+ * counters cut out of each letter, and the narrow channel of paper between the
+ * pair. The whitespace is the drawing.
+ *
+ * To keep those voids crisp at a heavy weight, the terminals are cut parallel
+ * to the diagonal — so the top-left and bottom-right of each Z lean with the
+ * stroke instead of ending flat, and every counter closes on the same angle.
+ * Drawn as paths, so no font dependency.
+ *
+ * Colour: heavy lettering can take a long ramp without turning muddy, so one
+ * gradient runs across the whole pair — the left Z opening at light and the
+ * right settling toward deep, which quietly separates the two letters without
+ * a rule or a gap. The gradient vector overshoots the mark, so the deepest
+ * tone is never actually reached and the right-hand Z still reads on black.
+ */
+import { APP_BY_KEY, type AppKey } from '../../data/brand';
+
+interface Props {
+  app: AppKey;
+  size?: number;
+}
+const { app, size = 96 } = Astro.props;
+const a = APP_BY_KEY[app];
+const id = `g-d12-${app}`;
+---
+
+<svg width={size} height={size} viewBox="0 0 64 64" role="img" aria-label={`${a.name} mark`} style="display:block">
+  <defs>
+    <linearGradient id={id} gradientUnits="userSpaceOnUse" x1="11" y1="14" x2="68" y2="58">
+      <stop offset="0" stop-color={a.light} />
+      <stop offset="0.38" stop-color={a.hue} />
+      <stop offset="1" stop-color={a.deep} />
+    </linearGradient>
+  </defs>
+
+  <g fill={`url(#${id})`}>
+    <path d="M15.7 19 L30 19 L30 25 L23.6 39 L30 39 L27.3 45 L13 45 L13 39 L19.4 25 L13 25 Z" />
+    <path d="M36.7 19 L51 19 L51 25 L44.6 39 L51 39 L48.3 45 L34 45 L34 39 L40.4 25 L34 25 Z" />
+  </g>
+</svg>

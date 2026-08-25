@@ -1,0 +1,1095 @@
+/**
+ * Sketch R — "The Break".
+ *
+ * One idea, held all the way through: every path out of your phone is drawn
+ * with a visible gap in it, and only you can close that gap. Near-monochrome
+ * chalk paper, hairline line-art, a single deep teal that appears only where
+ * consent has been given.
+ */
+
+@font-face {
+  font-family: 'Chillax';
+  src: url('/fonts/chillax-r-variable.woff2') format('woff2-variations');
+  font-weight: 200 700;
+  font-display: swap;
+}
+
+.r {
+  --paper: #f4f5f7;
+  --card: #ffffff;
+  --tint: #eef1f0;
+  --ink: #15171b;
+  --ink-2: #565c66;
+  --rule: rgba(21, 23, 27, 0.14);
+  --rule-2: rgba(21, 23, 27, 0.28);
+  --go: #0b7a63;
+  --go-text: #0e6e5b;
+  --go-soft: rgba(11, 122, 99, 0.1);
+  --display: 'Chillax', var(--sans);
+  --r-max: 1080px;
+  --pad: clamp(1.15rem, 4vw, 2.5rem);
+
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: clamp(1rem, 0.95rem + 0.22vw, 1.0625rem);
+  line-height: 1.55;
+  letter-spacing: -0.011em;
+  min-height: 100svh;
+  padding: 0 var(--pad) clamp(4.5rem, 9vw, 7rem);
+  overflow-x: hidden;
+}
+
+.r-wrap {
+  max-width: var(--r-max);
+  margin: 0 auto;
+}
+
+/* ---------- shared bits ---------- */
+
+.r h2 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(1.65rem, 1.15rem + 2.1vw, 2.5rem);
+  line-height: 1.06;
+  letter-spacing: -0.032em;
+  margin: 0;
+}
+
+.r h3 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.0625rem;
+  line-height: 1.25;
+  letter-spacing: -0.024em;
+}
+
+.r-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.r-eyebrow::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--go);
+  flex: none;
+}
+
+.r-mono {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: -0.005em;
+  color: var(--ink-2);
+}
+
+.r-sec {
+  padding-block: clamp(3rem, 7vw, 5.25rem);
+  position: relative;
+}
+
+/* Every rule on the page carries the same cut as the stems, at the same place. */
+.r-sec::before,
+.r-close::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    var(--rule) 0 26px,
+    transparent 26px 46px,
+    var(--rule) 46px 100%
+  );
+}
+
+.r-sec-head {
+  display: grid;
+  gap: 0.7rem;
+  max-width: 46ch;
+  margin-bottom: clamp(1.75rem, 4vw, 2.75rem);
+}
+
+.r-sec-head p:not(.r-eyebrow) {
+  color: var(--ink-2);
+  font-size: 1.0625rem;
+}
+
+/* The shared focus ring is currentColor, which goes invisible on the white
+   text of the dark and teal pills. Pin it to ink instead. */
+.r a:focus-visible,
+.r button:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+}
+
+/* pills */
+
+.r-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 999px;
+  padding: 0.72rem 1.35rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+
+.r-pill--solid {
+  background: var(--ink);
+  color: #fff;
+}
+
+.r-pill--solid:hover {
+  background: var(--go);
+  transform: translateY(-1px);
+}
+
+.r-pill--ghost {
+  border-color: var(--rule-2);
+  color: var(--ink);
+  background: transparent;
+}
+
+.r-pill--ghost:hover {
+  background: var(--card);
+  border-color: var(--ink);
+  transform: translateY(-1px);
+}
+
+.r-pill svg {
+  flex: none;
+}
+
+/* ---------- masthead ---------- */
+
+.r-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 1.35rem;
+  flex-wrap: wrap;
+}
+
+.r-brand {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.35rem;
+  letter-spacing: -0.045em;
+}
+
+.r-alpha {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: 1px solid var(--rule-2);
+  border-radius: 999px;
+  padding: 0.3rem 0.75rem;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.02em;
+  color: var(--ink-2);
+}
+
+.r-alpha i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--go);
+  display: block;
+}
+
+/* ---------- hero ---------- */
+
+.r-hero {
+  padding-block: clamp(2.75rem, 7vw, 5rem) clamp(2rem, 4vw, 3rem);
+}
+
+.r-h1 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(2.6rem, 1.3rem + 5.6vw, 5.1rem);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+  margin: 1.1rem 0 0;
+  max-width: 15ch;
+  text-wrap: balance;
+}
+
+.r-h1 em {
+  font-style: normal;
+  position: relative;
+  white-space: nowrap;
+}
+
+/* The headline carries the same device as the diagram: the word that matters
+   is underlined by a hairline with a break cut out of it. */
+.r-h1 em::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0.06em;
+  height: 2px;
+  background: linear-gradient(
+    to right,
+    var(--go) 0 38%,
+    transparent 38% 56%,
+    var(--go) 56% 100%
+  );
+  border-radius: 2px;
+}
+
+.r-lede {
+  margin-top: 1.4rem;
+  max-width: 44ch;
+  font-size: clamp(1.0625rem, 1rem + 0.4vw, 1.25rem);
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+
+.r-lede strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.r-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1.85rem;
+}
+
+.r-fineprint {
+  margin-top: 1.1rem;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--ink-2);
+  letter-spacing: -0.005em;
+}
+
+/* ---------- the stage ---------- */
+
+.r-stage {
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 20px;
+  padding: clamp(1.1rem, 2.4vw, 1.75rem);
+  box-shadow: 0 1px 2px rgba(21, 23, 27, 0.04), 0 14px 34px -26px rgba(21, 23, 27, 0.4);
+}
+
+.r-inside {
+  border-radius: 13px 13px 0 0;
+  padding: 0.85rem 0.95rem 0.7rem;
+  background: repeating-linear-gradient(
+    -45deg,
+    rgba(21, 23, 27, 0.045) 0 1px,
+    transparent 1px 7px
+  );
+}
+
+.r-stage-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  flex-wrap: wrap;
+}
+
+.r-stage-head b {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+}
+
+/* records staged inside the boundary — hairline strokes of varying height */
+.r-ticks {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2px;
+  height: 28px;
+  margin-top: 0.7rem;
+  margin-left: auto;
+  width: min(360px, 72%);
+}
+
+.r-ticks span {
+  display: block;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--ink);
+  opacity: 0.22;
+  animation: r-arrive 7.5s ease-in-out infinite;
+}
+
+@keyframes r-arrive {
+  0%,
+  72%,
+  100% {
+    opacity: 0.2;
+  }
+  14% {
+    opacity: 0.72;
+  }
+}
+
+/* the boundary itself */
+.r-edge {
+  position: relative;
+  margin-top: 0.55rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--ink);
+  display: flex;
+  justify-content: space-between;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.r-edge::before,
+.r-edge::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  width: 1px;
+  height: 8px;
+  background: var(--ink);
+}
+
+.r-edge::before {
+  left: 0;
+}
+
+.r-edge::after {
+  right: 0;
+}
+
+.r-edge span {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.02em;
+  color: var(--ink-2);
+}
+
+/* destinations */
+.r-dests {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.55rem;
+  margin-top: 0;
+}
+
+.r-dest {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.r-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.r-stem {
+  width: 16px;
+  height: 58px;
+  flex: none;
+  margin-inline: auto;
+  overflow: visible;
+}
+
+.r-stem [stroke] {
+  stroke: var(--rule-2);
+  fill: none;
+}
+
+.r-stem .r-dash {
+  stroke-width: 1.25;
+  stroke-dasharray: 1.6 4.4;
+  stroke-linecap: round;
+}
+
+.r-stem .r-cut {
+  stroke: var(--ink);
+  opacity: 0.5;
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  transition: opacity 0.18s ease;
+}
+
+.r-dest.is-on .r-cut {
+  opacity: 0;
+}
+
+.r-stem .r-end {
+  stroke-width: 1.25;
+  fill: var(--card);
+  transition: fill 0.2s ease, stroke 0.2s ease;
+}
+
+.r-stem .r-bridge {
+  stroke: var(--go);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  transform-origin: 8px 29px;
+  scale: 1 0;
+  transition: scale 0.24s cubic-bezier(0.22, 0.9, 0.3, 1);
+}
+
+.r-stem .r-flow {
+  fill: var(--go);
+  opacity: 0;
+}
+
+.r-card {
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  padding: 1rem 0.95rem 0.9rem;
+  background: var(--card);
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  flex: 1;
+  min-height: 158px;
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.r-card h3 {
+  margin: 0;
+}
+
+.r-card .r-transport {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  color: var(--ink-2);
+  overflow-wrap: anywhere;
+  flex: 1;
+}
+
+.r-arm {
+  appearance: none;
+  border: 1px solid var(--rule-2);
+  background: transparent;
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 0.42rem 0.7rem;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+
+.r-dest:hover .r-card {
+  border-color: var(--rule-2);
+}
+
+.r-arm:hover {
+  border-color: var(--ink);
+  background: var(--tint);
+}
+
+.r-state {
+  font-family: var(--mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.02em;
+  color: var(--ink-2);
+  text-transform: uppercase;
+}
+
+/* armed */
+.r-dest.is-on .r-card {
+  border-color: var(--go);
+  background: linear-gradient(var(--go-soft), transparent 62%);
+}
+
+.r-dest.is-on .r-arm {
+  background: var(--go);
+  border-color: var(--go);
+  color: #fff;
+}
+
+.r-dest.is-on .r-state {
+  color: var(--go-text);
+}
+
+.r-dest.is-on .r-bridge {
+  scale: 1 1;
+}
+
+.r-dest.is-on .r-end {
+  fill: var(--go);
+  stroke: var(--go);
+}
+
+.r-dest.is-on .r-dash {
+  stroke: var(--go);
+}
+
+.r-dest.is-on .r-flow {
+  animation: r-travel 1.5s linear infinite;
+}
+
+.r-dest.is-on .r-flow:nth-of-type(2) {
+  animation-delay: 0.5s;
+}
+
+.r-dest.is-on .r-flow:nth-of-type(3) {
+  animation-delay: 1s;
+}
+
+@keyframes r-travel {
+  0% {
+    translate: 0 0;
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 1;
+  }
+  100% {
+    translate: 0 54px;
+    opacity: 0;
+  }
+}
+
+/* the wire — one shared line showing what actually went out */
+.r-wire {
+  margin-top: 0.7rem;
+  border: 1px solid var(--rule);
+  border-radius: 13px;
+  background: var(--paper);
+  padding: 0.6rem 0.75rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  min-height: 3.1rem;
+}
+
+.r-wire-key {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  color: var(--go-text);
+  flex: none;
+}
+
+.r-wire.is-idle .r-wire-key {
+  color: var(--ink-2);
+}
+
+.r-wire:not(.is-idle) .r-wire-line {
+  color: var(--ink);
+}
+
+.r-wire-line {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  line-height: 1.5;
+  color: var(--ink-2);
+  overflow-wrap: anywhere;
+}
+
+.r-wire-line b {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.r-caption {
+  margin-top: 0.75rem;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  color: var(--ink-2);
+}
+
+/* ---------- three claims ---------- */
+
+.r-claims {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1rem, 2.4vw, 1.5rem);
+}
+
+.r-claim {
+  border-top: 1px solid var(--ink);
+  padding-top: 0.9rem;
+  display: grid;
+  gap: 0.45rem;
+  align-content: start;
+}
+
+.r-claim h3 {
+  font-size: clamp(1.1rem, 1rem + 0.5vw, 1.35rem);
+  margin: 0;
+}
+
+.r-claim p {
+  color: var(--ink-2);
+  font-size: 0.9375rem;
+}
+
+.r-claim .r-glyph {
+  width: 100%;
+  height: 54px;
+  margin-bottom: 0.4rem;
+}
+
+.r-glyph [stroke] {
+  fill: none;
+  stroke: var(--rule-2);
+  stroke-width: 1.25;
+}
+
+.r-glyph .go {
+  stroke: var(--go);
+}
+
+.r-glyph .dot {
+  fill: var(--go);
+  stroke: none;
+}
+
+/* ---------- how ---------- */
+
+.r-how {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: start;
+}
+
+.r-answer {
+  color: var(--ink-2);
+  max-width: 40ch;
+}
+
+.r-answer strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.r-steps {
+  counter-reset: step;
+  display: grid;
+}
+
+.r-steps li {
+  counter-increment: step;
+  display: grid;
+  grid-template-columns: 2.2rem minmax(0, 1fr);
+  gap: 0.85rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--rule);
+}
+
+.r-steps li:last-child {
+  border-bottom: 1px solid var(--rule);
+}
+
+.r-steps li::before {
+  content: counter(step, decimal-leading-zero);
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--go-text);
+  padding-top: 0.2rem;
+}
+
+.r-steps b {
+  font-family: var(--display);
+  font-weight: 600;
+  letter-spacing: -0.022em;
+  font-size: 1.0625rem;
+  display: block;
+}
+
+.r-steps span {
+  color: var(--ink-2);
+  font-size: 0.9375rem;
+}
+
+/* ---------- table ---------- */
+
+.r-table-wrap {
+  border: 1px solid var(--rule);
+  border-radius: 18px;
+  background: var(--card);
+  overflow: hidden;
+}
+
+.r-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.r-table caption {
+  text-align: left;
+  padding: 0.9rem 1.05rem;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.02em;
+  color: var(--ink-2);
+  border-bottom: 1px solid var(--rule);
+  text-transform: uppercase;
+}
+
+.r-table th,
+.r-table td {
+  padding: 0.8rem 1.05rem;
+  border-top: 1px solid var(--rule);
+  vertical-align: top;
+  font-size: 0.9375rem;
+}
+
+.r-table thead th {
+  border-top: 0;
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.r-table tbody th {
+  font-family: var(--display);
+  font-weight: 600;
+  letter-spacing: -0.022em;
+  white-space: nowrap;
+}
+
+.r-table td {
+  color: var(--ink-2);
+}
+
+.r-table code {
+  font-family: var(--mono);
+  font-size: 0.8125em;
+  overflow-wrap: anywhere;
+}
+
+.r-note {
+  margin-top: clamp(1.1rem, 2.5vw, 1.5rem);
+  max-width: 62ch;
+  color: var(--ink-2);
+  font-size: 0.9375rem;
+}
+
+.r-note code {
+  font-family: var(--mono);
+  font-size: 0.8125em;
+  color: var(--ink);
+}
+
+.r-lossy {
+  color: var(--go-text);
+  font-weight: 600;
+}
+
+/* ---------- honesty ---------- */
+
+.r-honest {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 clamp(1.5rem, 4vw, 3rem);
+}
+
+.r-honest li {
+  padding: 0.95rem 0;
+  border-top: 1px solid var(--rule);
+  display: grid;
+  gap: 0.25rem;
+}
+
+.r-honest b {
+  font-family: var(--display);
+  font-weight: 600;
+  letter-spacing: -0.022em;
+  font-size: 1rem;
+}
+
+.r-honest span {
+  color: var(--ink-2);
+  font-size: 0.9375rem;
+}
+
+/* chips */
+.r-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: clamp(1.75rem, 4vw, 2.5rem);
+}
+
+.r-chips li {
+  border: 1px solid var(--rule);
+  background: var(--card);
+  border-radius: 999px;
+  padding: 0.36rem 0.8rem;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  color: var(--ink-2);
+}
+
+.r-chips li b {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+/* ---------- close ---------- */
+
+.r-close {
+  position: relative;
+  padding-top: clamp(3rem, 7vw, 5rem);
+  padding-bottom: clamp(3.5rem, 7vw, 4rem);
+  display: grid;
+  gap: 1.4rem;
+  justify-items: start;
+}
+
+.r-close h2 {
+  font-size: clamp(2rem, 1.2rem + 3.6vw, 3.6rem);
+  letter-spacing: -0.042em;
+  max-width: 16ch;
+  text-wrap: balance;
+}
+
+.r-close p {
+  color: var(--ink-2);
+  max-width: 46ch;
+}
+
+.r-foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.1rem;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  color: var(--ink-2);
+  border-top: 1px solid var(--rule);
+  padding-top: 1.2rem;
+  margin-top: 0.5rem;
+  width: 100%;
+}
+
+.r-foot a {
+  color: var(--go-text);
+}
+
+/* ---------- reveals ---------- */
+
+.r-js .rv {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.42s ease, transform 0.42s cubic-bezier(0.22, 0.9, 0.3, 1);
+}
+
+.r-js .rv.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- responsive ---------- */
+
+/* Below the wide grid the five stems would look like they were plumbed into
+   each other, so the diagram turns into a bus: one dotted spine down from the
+   boundary, each destination branching off it through its own cut. */
+@media (max-width: 980px) {
+  .r-dests {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 640px;
+    position: relative;
+    gap: 0.5rem;
+  }
+
+  .r-dests::before {
+    content: '';
+    position: absolute;
+    left: 28px;
+    top: 0;
+    bottom: 42px;
+    border-left: 1px dashed var(--rule-2);
+  }
+
+  .r-dest {
+    display: grid;
+    grid-template-columns: 58px minmax(0, 1fr);
+    align-items: center;
+  }
+
+  .r-stem {
+    width: 58px;
+    height: 58px;
+    rotate: -90deg;
+    margin: 0;
+  }
+
+  .r-card {
+    min-height: 0;
+    padding: 0.9rem 1rem;
+  }
+
+  .r-arm {
+    width: auto;
+    align-self: flex-start;
+    padding-inline: 1.15rem;
+    margin-top: 0.15rem;
+  }
+
+  .r-dest.is-on .r-flow {
+    animation-name: r-travel-x;
+  }
+
+  .r-how {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .r-claims {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@keyframes r-travel-x {
+  0% {
+    translate: 0 0;
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 1;
+  }
+  100% {
+    translate: 0 54px;
+    opacity: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .r-honest {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .r-table thead {
+    display: none;
+  }
+
+  .r-table tbody th,
+  .r-table td {
+    display: block;
+    border-top: 0;
+    padding: 0 1.05rem;
+  }
+
+  .r-table tbody th {
+    border-top: 1px solid var(--rule);
+    padding-top: 0.9rem;
+    white-space: normal;
+  }
+
+  .r-table tbody td:last-child {
+    padding-bottom: 0.9rem;
+  }
+
+  .r-table td::before {
+    content: attr(data-label) ' — ';
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+}
+
+@media (max-width: 560px) {
+  .r-claims {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .r-dest {
+    grid-template-columns: 40px minmax(0, 1fr);
+  }
+
+  .r-dests::before {
+    left: 19px;
+  }
+
+  .r-stem {
+    width: 40px;
+    height: 58px;
+  }
+
+  .r-wire {
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+}
+
+/* ---------- reduced motion: keep every state, stop every movement ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .r *,
+  .r *::before,
+  .r *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .r-js .rv {
+    opacity: 1;
+    transform: none;
+  }
+
+  .r-ticks span {
+    opacity: 0.4;
+  }
+
+  /* the dots stop travelling but stay on the path, so the picture still says
+     "records are going down this line" */
+  .r-dest.is-on .r-flow {
+    opacity: 1;
+  }
+
+  .r-dest.is-on .r-flow:nth-of-type(1) {
+    translate: 0 12px;
+  }
+
+  .r-dest.is-on .r-flow:nth-of-type(2) {
+    translate: 0 30px;
+  }
+
+  .r-dest.is-on .r-flow:nth-of-type(3) {
+    translate: 0 48px;
+  }
+
+  .r-pill:hover {
+    transform: none;
+  }
+}

@@ -1,0 +1,40 @@
+---
+/**
+ * 36 · Two Circles
+ *
+ * The plainest of the breath references: two concentric circles, the inner
+ * one the field the face sits on and the outer a four-pixel surround — the
+ * widest ring on the board. The
+ * breath is the inner circle; the room around it is the argument. Hozz keeps
+ * your data in a place that has space around it.
+ *
+ * Both circles are canonical — the shipped Mozz disc at 28 across and the
+ * derived one at 22 — so they are the same circle at two sizes rather than
+ * two different rasterisations, and they agree.
+ *
+ * Six tones. The surround carries the Hozz hue so the mark still reads teal
+ * at 16px, and it darkens along its underside; the inner circle takes a
+ * near-white arc over the top and a soft one beneath. No keyline between the
+ * two circles: they meet tone to tone, which is what keeps this the quiet
+ * one of the four.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Hozz — Two Circles">
+  <path d="M12 3h8v1h-8z M10 4h12v1h-12z M8 5h16v1h-16z M7 6h6v1h-6z M19 6h6v1h-6z M6 7h5v1h-5z M21 7h5v1h-5z M5 8h5v1h-5z M22 8h5v1h-5z M5 9h4v1h-4z M23 9h4v1h-4z M4 10h4v1h-4z M24 10h4v1h-4z M4 11h4v1h-4z M24 11h4v1h-4z M3 12h4v1h-4z M25 12h4v1h-4z M3 13h4v1h-4z M25 13h4v1h-4z M3 14h3v1h-3z M26 14h3v1h-3z M3 15h3v1h-3z M26 15h3v1h-3z M3 16h3v1h-3z M26 16h3v1h-3z M3 17h3v1h-3z M26 17h3v1h-3z M3 18h4v1h-4z M25 18h4v1h-4z M3 19h4v1h-4z M25 19h4v1h-4z M4 20h4v1h-4z M24 20h4v1h-4z M4 21h4v1h-4z M24 21h4v1h-4z M5 22h4v1h-4z M23 22h4v1h-4z M5 23h5v1h-5z M22 23h5v1h-5z M6 24h5v1h-5z M21 24h5v1h-5z M7 25h6v1h-6z M19 25h6v1h-6z M8 26h16v1h-16z M10 27h12v1h-12z M12 28h8v1h-8z" fill="#12b39a" />
+  <path d="M3 18h1v1h-1z M28 18h1v1h-1z M3 19h1v1h-1z M28 19h1v1h-1z M4 20h1v1h-1z M27 20h1v1h-1z M4 21h1v1h-1z M27 21h1v1h-1z M5 22h1v1h-1z M26 22h1v1h-1z M5 23h2v1h-2z M25 23h2v1h-2z M6 24h2v1h-2z M24 24h2v1h-2z M7 25h3v1h-3z M22 25h3v1h-3z M8 26h4v1h-4z M20 26h4v1h-4z M10 27h12v1h-12z M12 28h8v1h-8z" fill="#08574b" />
+  <path d="M6 16h1v1h-1z M25 16h1v1h-1z M6 17h1v1h-1z M25 17h1v1h-1z M7 18h1v1h-1z M24 18h1v1h-1z M7 19h1v1h-1z M24 19h1v1h-1z M8 20h1v1h-1z M23 20h1v1h-1z M8 21h1v1h-1z M23 21h1v1h-1z M9 22h1v1h-1z M22 22h1v1h-1z M10 23h1v1h-1z M21 23h1v1h-1z M11 24h2v1h-2z M19 24h2v1h-2z M13 25h6v1h-6z" fill="#4fd0b9" />
+  <path d="M13 7h6v1h-6z M11 8h10v1h-10z M10 9h12v1h-12z M9 10h14v1h-14z M9 11h14v1h-14z M8 12h16v1h-16z M8 13h16v1h-16z M7 14h18v1h-18z M7 15h18v1h-18z M7 16h18v1h-18z M7 17h18v1h-18z M8 18h16v1h-16z M8 19h16v1h-16z M9 20h14v1h-14z M9 21h14v1h-14z M10 22h12v1h-12z M11 23h10v1h-10z M13 24h6v1h-6z" fill="#82e5d3" />
+  <path d="M13 6h6v1h-6z M11 7h2v1h-2z M19 7h2v1h-2z M10 8h1v1h-1z M21 8h1v1h-1z M9 9h1v1h-1z M22 9h1v1h-1z M8 10h1v1h-1z M23 10h1v1h-1z M8 11h1v1h-1z M23 11h1v1h-1z M7 12h1v1h-1z M24 12h1v1h-1z M7 13h1v1h-1z M24 13h1v1h-1z M6 14h1v1h-1z M25 14h1v1h-1z M6 15h1v1h-1z M25 15h1v1h-1z" fill="#dff8f2" />
+  <path d="M12 2h8v1h-8z M10 3h2v1h-2z M20 3h2v1h-2z M8 4h2v1h-2z M22 4h2v1h-2z M7 5h1v1h-1z M24 5h1v1h-1z M6 6h1v1h-1z M25 6h1v1h-1z M5 7h1v1h-1z M26 7h1v1h-1z M4 8h1v1h-1z M27 8h1v1h-1z M4 9h1v1h-1z M27 9h1v1h-1z M3 10h1v1h-1z M28 10h1v1h-1z M3 11h1v1h-1z M28 11h1v1h-1z M2 12h1v1h-1z M29 12h1v1h-1z M2 13h1v1h-1z M29 13h1v1h-1z M2 14h1v1h-1z M29 14h1v1h-1z M2 15h1v1h-1z M29 15h1v1h-1z M2 16h1v1h-1z M29 16h1v1h-1z M2 17h1v1h-1z M29 17h1v1h-1z M2 18h1v1h-1z M29 18h1v1h-1z M2 19h1v1h-1z M29 19h1v1h-1z M3 20h1v1h-1z M28 20h1v1h-1z M3 21h1v1h-1z M28 21h1v1h-1z M4 22h1v1h-1z M27 22h1v1h-1z M4 23h1v1h-1z M27 23h1v1h-1z M5 24h1v1h-1z M26 24h1v1h-1z M6 25h1v1h-1z M25 25h1v1h-1z M7 26h1v1h-1z M24 26h1v1h-1z M8 27h2v1h-2z M22 27h2v1h-2z M10 28h2v1h-2z M20 28h2v1h-2z M12 29h8v1h-8z" fill="#04302a" />
+  <g fill="#04302a" shape-rendering="crispEdges">
+    {facePathsAt({ cx: 16, cy: 16, size: 'md', smile: 'wide', gap: 1 }).map((d) => (
+      <path d={d} />
+    ))}
+  </g>
+</MarkFrame>

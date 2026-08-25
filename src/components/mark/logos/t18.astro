@@ -1,0 +1,38 @@
+---
+/**
+ * t18 · Held
+ *
+ * A single recessed field, not a screen inside a bubble. A near-black violet
+ * keyline contains the full contour, including the tail. Inside it, one
+ * upper-left light falls monotonically across the held plane to lower right:
+ * every step right or down stays at the same tone or becomes darker.
+ *
+ * The body is symmetric about x=16; only the speech tail is exempt. The shipped
+ * 10-wide face and 28-wide body have matching even parity. Its measured y8–17
+ * box sits in the y2–23 body with six rows of air above and six below.
+ *
+ * Ten tones. Bounds x2–29, y2–29. Body and silhouette pass the no-spur check.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Twozz — Held">
+  <path d="M9 2h14v1h-14z M7 3h2v1h-2z M23 3h2v1h-2z M5 4h2v1h-2z M25 4h2v1h-2z M4 5h1v1h-1z M27 5h1v1h-1z M3 6h1v1h-1z M28 6h1v1h-1z M3 7h1v1h-1z M28 7h1v1h-1z M2 8h1v1h-1z M29 8h1v1h-1z M2 9h1v1h-1z M29 9h1v1h-1z M2 10h1v1h-1z M29 10h1v1h-1z M2 11h1v1h-1z M29 11h1v1h-1z M2 12h1v1h-1z M29 12h1v1h-1z M2 13h1v1h-1z M29 13h1v1h-1z M2 14h1v1h-1z M29 14h1v1h-1z M2 15h1v1h-1z M29 15h1v1h-1z M2 16h1v1h-1z M29 16h1v1h-1z M2 17h1v1h-1z M29 17h1v1h-1z M2 18h1v1h-1z M29 18h1v1h-1z M3 19h1v1h-1z M28 19h1v1h-1z M3 20h1v1h-1z M28 20h1v1h-1z M4 21h1v1h-1z M27 21h1v1h-1z M5 22h2v1h-2z M25 22h2v1h-2z M7 23h1v1h-1z M14 23h11v1h-11z M7 24h1v1h-1z M13 24h1v1h-1z M7 25h1v1h-1z M12 25h1v1h-1z M7 26h1v1h-1z M11 26h1v1h-1z M7 27h1v1h-1z M10 27h1v1h-1z M7 28h1v1h-1z M9 28h1v1h-1z M7 29h3v1h-3z" fill="#211532" />
+  <path d="M9 3h1v1h-1z M7 4h2v1h-2z M5 5h3v1h-3z M4 6h3v1h-3z M4 7h2v1h-2z M3 8h2v1h-2z M3 9h1v1h-1z" fill="#d2c0ed" />
+  <path d="M10 3h3v1h-3z M9 4h3v1h-3z M8 5h3v1h-3z M7 6h3v1h-3z M6 7h3v1h-3z M5 8h3v1h-3z M4 9h3v1h-3z M3 10h3v1h-3z M3 11h2v1h-2z M3 12h1v1h-1z" fill="#b89ae3" />
+  <path d="M13 3h3v1h-3z M12 4h3v1h-3z M11 5h3v1h-3z M10 6h3v1h-3z M9 7h3v1h-3z M8 8h3v1h-3z M7 9h3v1h-3z M6 10h3v1h-3z M5 11h3v1h-3z M4 12h3v1h-3z M3 13h3v1h-3z M3 14h2v1h-2z M3 15h1v1h-1z" fill="#a27bda" />
+  <path d="M16 3h6v1h-6z M15 4h6v1h-6z M14 5h6v1h-6z M13 6h6v1h-6z M12 7h6v1h-6z M11 8h6v1h-6z M10 9h6v1h-6z M9 10h6v1h-6z M8 11h6v1h-6z M7 12h6v1h-6z M6 13h6v1h-6z M5 14h6v1h-6z M4 15h6v1h-6z M3 16h6v1h-6z M3 17h5v1h-5z M3 18h4v1h-4z M4 19h2v1h-2z M4 20h1v1h-1z" fill="#8b58d1" />
+  <path d="M22 3h1v1h-1z M21 4h4v1h-4z M20 5h6v1h-6z M19 6h6v1h-6z M18 7h6v1h-6z M17 8h6v1h-6z M16 9h6v1h-6z M15 10h6v1h-6z M14 11h6v1h-6z M13 12h6v1h-6z M12 13h6v1h-6z M11 14h6v1h-6z M10 15h6v1h-6z M9 16h6v1h-6z M8 17h6v1h-6z M7 18h6v1h-6z M6 19h6v1h-6z M5 20h6v1h-6z M5 21h5v1h-5z M7 22h2v1h-2z" fill="#7e45cd" />
+  <path d="M26 5h1v1h-1z M25 6h3v1h-3z M24 7h4v1h-4z M23 8h6v1h-6z M22 9h6v1h-6z M21 10h6v1h-6z M20 11h6v1h-6z M19 12h6v1h-6z M18 13h6v1h-6z M17 14h6v1h-6z M16 15h6v1h-6z M15 16h6v1h-6z M14 17h6v1h-6z M13 18h6v1h-6z M12 19h6v1h-6z M11 20h6v1h-6z M10 21h6v1h-6z M9 22h6v1h-6z M8 23h6v1h-6z M8 24h5v1h-5z M8 25h4v1h-4z M8 26h3v1h-3z M8 27h2v1h-2z M8 28h1v1h-1z" fill="#7134c1" />
+  <path d="M28 9h1v1h-1z M27 10h2v1h-2z M26 11h3v1h-3z M25 12h4v1h-4z M24 13h5v1h-5z M23 14h6v1h-6z M22 15h6v1h-6z M21 16h6v1h-6z M20 17h6v1h-6z M19 18h6v1h-6z M18 19h6v1h-6z M17 20h6v1h-6z M16 21h6v1h-6z M15 22h6v1h-6z" fill="#622ca7" />
+  <path d="M28 15h1v1h-1z M27 16h2v1h-2z M26 17h3v1h-3z M25 18h4v1h-4z M24 19h4v1h-4z M23 20h5v1h-5z M22 21h5v1h-5z M21 22h4v1h-4z" fill="#54258f" />
+  <g fill="#fffaf3" shape-rendering="crispEdges">
+    {facePathsAt({ cx: 16, cy: 13, size: 'lg', smile: 'wide', gap: 1 }).map((d) => (
+      <path d={d} />
+    ))}
+  </g>
+</MarkFrame>

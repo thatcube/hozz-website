@@ -1,0 +1,224 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Callout from '../../components/docs/Callout.astro';
+import Table from '../../components/docs/Table.astro';
+import { page } from '../../data/docs-nav';
+
+const entry = page('/docs/data-coverage/');
+
+const coverage = [
+  {
+    area: 'Quantity and category samples',
+    keeps: 'Values, units, dates, source, device, metadata, and deletion tombstones.',
+    limits:
+      'Hozz asks for the types it reads. Where Health cannot distinguish denied from empty, Hozz says so rather than guessing.',
+  },
+  {
+    area: 'Workouts',
+    keeps:
+      'Activity type, duration, events, and Health’s own aggregate statistics, including per-leg figures for multi-sport workouts.',
+    limits: 'These are summaries of samples exported separately, not duplicate samples.',
+  },
+  {
+    area: 'Workout routes',
+    keeps:
+      'The route sample, the confirmed workout relationship when Health can prove it, 500-point location pages, and an end marker with the final point count.',
+    limits: 'Hozz does not guess a workout from time overlap alone. Unresolved routes say why.',
+  },
+  {
+    area: 'Electrocardiograms',
+    keeps:
+      'Classification, raw classification value, symptoms status, average heart rate, sampling frequency, expected waveform count, and 500-reading voltage pages.',
+    limits:
+      'Missing voltage readings stay gaps, not zeros, and a partial waveform is never presented as a whole one.',
+  },
+  {
+    area: 'Audiograms',
+    keeps:
+      'One row per hearing threshold, with ear, frequency, sensitivity, clamping bounds, and where supported, conduction and masking.',
+    limits: 'An unmeasured ear is absent, not written as 0 dBHL.',
+  },
+  {
+    area: 'State of Mind',
+    keeps:
+      'Valence, Health’s classification, momentary emotion versus daily mood, labels, associations, and raw enum values.',
+    limits:
+      'iOS 18+. Zero valence is neutral, not missing. An empty label list means none were chosen.',
+  },
+  {
+    area: 'Medication doses',
+    keeps:
+      'Dose status, schedule type, optional dose quantities, medication resolution state, form, nickname, archived and schedule flags, and codings.',
+    limits:
+      'iOS 26+. This is the dose-logging API, not clinical medication records. Only “taken” means taken.',
+  },
+  {
+    area: 'Health characteristics',
+    keeps:
+      'Date of birth, biological sex, blood type, Fitzpatrick skin type, wheelchair use, and activity move mode, each with a state.',
+    limits:
+      'These are facts about the person, not samples. They have no UUID, source, dates, or anchor.',
+  },
+  {
+    area: 'Quantity series',
+    keeps:
+      'The aggregate sample, with its count, marked as aggregating a series when it stands for more than one reading.',
+    limits: 'Hozz does not expand quantity series into individual readings yet.',
+  },
+];
+---
+
+<DocsLayout page={entry}>
+  <p>
+    Hozz is early alpha and its coverage is partial. This page says what is covered and what is not,
+    because the alternative — implying completeness and letting you discover the gaps — is the thing
+    an archive tool can least afford to do.
+  </p>
+
+  <h2>What Hozz exports today</h2>
+
+  <p>
+    Quantity samples, category samples, workout records and Health's workout statistics, paged
+    workout routes, electrocardiograms with voltage waveforms, audiograms, State of Mind entries,
+    medication dose events, historical deletions, and the six Health characteristics.
+  </p>
+
+  <p>
+    Correlations, documents, scored assessments and most other series are <strong>catalogued or
+      reported as unsupported</strong>, rather than silently claimed as coverage.
+  </p>
+
+  <Table
+    caption="Health data areas, what Hozz keeps, and the limits on each"
+    columns={['Area', 'What Hozz keeps', 'Important limits']}
+  >
+    {
+      coverage.map((row) => (
+        <tr>
+          <th scope="row">{row.area}</th>
+          <td>{row.keeps}</td>
+          <td>{row.limits}</td>
+        </tr>
+      ))
+    }
+  </Table>
+
+  <h2>The join Hozz refuses to make up</h2>
+
+  <Callout kind="warn" title="Hozz does not export which samples belonged to a workout">
+    <p>
+      HealthKit will list the objects belonging to a workout, but offers nothing in the other
+      direction — a sample does not know its workout, and no workout identifier appears in its
+      metadata. Recording the link would require a query per workout per type, which is prohibitive.
+    </p>
+  </Callout>
+
+  <p>
+    Matching by time range is therefore an approximation, and worth knowing you are making one. It
+    is a good approximation for most workouts, and wrong in two situations: <strong>workouts that
+      overlap in time</strong>, and <strong>samples recorded inside the window by something other
+      than the workout</strong> — a phone counting steps in a pocket during a ride, for instance.
+  </p>
+
+  <p>
+    The workout's own statistics are exact, because Health computed them. A time-range join is your
+    reconstruction, not Health's answer. Both are useful; they are not the same thing, and only one
+    of them is a fact.
+  </p>
+
+  <h2>Denied and empty look identical</h2>
+
+  <p>
+    Apple does not let apps distinguish "the user denied this Health type" from "there is no
+    matching data". That is a deliberate privacy decision — telling an app would leak the existence
+    of data you chose to withhold.
+  </p>
+
+  <p>
+    So Hozz reports authorization-scoped coverage, and keeps denied-or-empty, unavailable,
+    unsupported and failed as distinct visible states rather than flattening them into a number. A
+    type with no records says so; it does not claim you have none.
+  </p>
+
+  <h2>Health records (clinical records)</h2>
+
+  <p>
+    Clinical records are FHIR resources from a connected provider: lab results, conditions, clinical
+    medications, immunisations, procedures, vital signs, coverage records, allergies and notes.
+  </p>
+
+  <Callout kind="warn" title="Built, and switched off in every default build">
+    <p>
+      The code that would read them is <strong>compiled out</strong>. Reading them needs the{' '}
+      <code>com.apple.developer.healthkit.access</code> entitlement with <code>health-records</code>.
+      The entitlement array ships empty and the Swift flag that enables the code is undefined by
+      default, so shipping them stays a deliberate decision rather than a default.
+    </p>
+    <p>
+      When it is off — which is every default build today — the app says health records are{' '}
+      <strong>not available in this build</strong>, and says explicitly that this is not a statement
+      about whether you have any.
+    </p>
+  </Callout>
+
+  <p>Turning them on takes two separate, deliberate steps: a build flag, and a visible edit to a
+    tracked file that changes the entitlement. They are separate switches on purpose, so that
+    enabling one without the other fails loudly rather than becoming a quietly disabled feature.</p>
+
+  <p>Three things about the data itself, if it is ever enabled:</p>
+
+  <ul>
+    <li>
+      <strong>Consent is per record.</strong> Health asks which records to share one by one, and
+      Hozz cannot see what was withheld. Partial access is the normal case, not a failure.
+    </li>
+    <li>
+      <strong>The FHIR resource is carried through as the provider sent it</strong>, not reshaped
+      into Hozz's vocabulary. A result's units, reference ranges and coding systems <em>are</em> the
+      clinical meaning. A resource Hozz cannot parse is kept as bytes rather than dropped.
+    </li>
+    <li>
+      <strong>A clinical record's identity is not its HealthKit UUID.</strong> Apple says that UUID
+      is not stable for these records, so identity is derived from source, resource type and FHIR
+      identifier, with the UUID kept alongside and labelled for tracing.
+    </li>
+  </ul>
+
+  <h2 id="what-hozz-will-never-do">What Hozz will never do</h2>
+
+  <p>
+    <strong>Hozz will never write anything back into Apple Health.</strong> That is a decision, not
+    an oversight, and not something waiting on time.
+  </p>
+
+  <ul>
+    <li>
+      Health permanently attributes every sample to the app that wrote it. Anything Hozz imported
+      would be stamped as Hozz's data forever, so a heart rate your Watch recorded in 2019 and Hozz
+      restored in 2027 would be indistinguishable from one Hozz invented. That destroys exactly the
+      provenance an archive exists to preserve.
+    </li>
+    <li>
+      HealthKit has no upsert. There is no way to say "store this unless it is already there", so
+      importing the same export twice silently doubles it, with no reliable way afterwards to tell
+      the copies apart. A tool whose whole argument is that it never loses or duplicates a record
+      cannot ship an operation that duplicates records by design.
+    </li>
+    <li>
+      It could not be complete anyway: characteristics and clinical records cannot be written by an
+      app at all, so even a perfect importer would restore some of your data and quietly skip the
+      rest.
+    </li>
+  </ul>
+
+  <h2>Not yet</h2>
+
+  <ul>
+    <li>Every Health type — coverage is partial, and this page is the current boundary.</li>
+    <li>Expanding quantity series into individual readings.</li>
+    <li>Clinical records in a shipped build.</li>
+    <li>Handover between two devices.</li>
+    <li>An accessibility and localisation pass.</li>
+    <li>An App Store release.</li>
+  </ul>
+</DocsLayout>

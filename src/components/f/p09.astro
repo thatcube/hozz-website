@@ -1,0 +1,77 @@
+---
+/**
+ * p09 · Stack — light through a slatted blind, and the two places it crosses.
+ *
+ * Five slots of light at one pitch and one thickness. In two of them the run
+ * does not stay in its slot: it drops a slat and carries on. That crossing is
+ * the whole letter — the bars are the blind's own slots, and the diagonal is
+ * the crossing. Nothing is drawn on anything; the slats are the gaps between
+ * the light, and where the slats pinch shut is the space between the two Zs.
+ *
+ * The two crossing runs are the bright ones; the slots that carry no letter sit
+ * back in the deep tone, which is the only shading and also what keeps letter
+ * and slat cleanly separated as figure and ground.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.plozz;
+const uid = `p09-${Math.random().toString(36).slice(2, 9)}`;
+
+const BAR = 3.7; // one slot of light
+const PITCH = 8.6;
+const Y0 = 5.6;
+const yAt = (i: number) => Y0 + i * PITCH; // 5.6 · 14.2 · 22.8 · 31.4 · 40.0
+
+const XL = 3.4;
+const XR = 44.6;
+
+// The two crossings live in slots 1 and 2, so their bars are those slots.
+const Z = {
+  y: yAt(1),
+  w: 13.6,
+  h: yAt(2) + BAR - yAt(1), // 12.3 — exactly one pitch plus a slot
+  bar: BAR,
+  diag: 6.9,
+  cap: 'flat' as const,
+};
+const zLeft = 9.1;
+const zRight = 25.3;
+
+// One shading step: a plain slot sits back in the deep tone, so the two runs
+// that carry the letters are the only bright ones.
+const slat = ground === 'dark' ? app.deep : app.deep;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <g id={uid}>
+    <rect x={XL} y={yAt(0)} width={XR - XL} height={BAR} fill={slat} />
+    {/* The run enters on the upper slot at one edge and leaves on the lower
+        slot at the other, so both crossings belong to one length of light. */}
+    <rect x={XL} y={yAt(1)} width={zLeft - XL} height={BAR} fill={app.hue} />
+    <path d={zPath({ ...Z, x: zLeft })} fill={app.hue} />
+    <path d={zPath({ ...Z, x: zRight })} fill={app.hue} />
+    <rect
+      x={zRight + Z.w}
+      y={yAt(2)}
+      width={XR - zRight - Z.w}
+      height={BAR}
+      fill={app.hue}
+    />
+    <rect x={XL} y={yAt(3)} width={XR - XL} height={BAR} fill={slat} />
+    <rect x={XL} y={yAt(4)} width={XR - XL} height={BAR} fill={slat} />
+  </g>
+</svg>

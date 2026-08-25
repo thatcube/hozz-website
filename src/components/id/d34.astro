@@ -1,0 +1,62 @@
+---
+/**
+ * 34 · Corner — one squircle, one ZZ, one changing glyph.
+ *
+ * The whole frame is held rigid: the same superellipse, the same diagonal
+ * gradient ramp, the same ZZ at the same size in the same place. The only
+ * thing that moves between the four apps is a single small glyph tucked into
+ * the top-right corner — a play triangle, a disc, a bubble, a droplet.
+ *
+ * The bet: if every other variable is frozen, one 10-unit glyph is enough to
+ * say which app this is without ever putting the family read at risk. The ZZ
+ * sits low-left with a clear 12 units of air, so the corner is genuinely empty
+ * space the glyph moves into rather than a crowded shoulder.
+ */
+import { APP_BY_KEY, type AppKey } from '../../data/brand';
+
+interface Props {
+  app: AppKey;
+  size?: number;
+}
+const { app, size = 96 } = Astro.props;
+const a = APP_BY_KEY[app];
+const id = `g-d34-${app}`;
+
+const c = '#fff';
+/** The one variable in the system. Same optical mass, same optical centre. */
+const MOTIF: Record<AppKey, string> = {
+  plozz: `<path d="M43.07 12.99L51.3 17.6L43.07 22.21Z" fill="${c}" stroke="${c}" stroke-width="1.96" stroke-linejoin="round"/>`,
+  mozz: `<circle cx="46.4" cy="17.6" r="3.68" fill="none" stroke="${c}" stroke-width="2.73"/>`,
+  twozz: `<g fill="${c}" stroke="${c}" stroke-width="1.16" stroke-linejoin="round"><path d="M44.87 12.36H47.93A3.32 3.32 0 0 1 51.25 15.68V16.42A3.32 3.32 0 0 1 47.93 19.73H44.87A3.32 3.32 0 0 1 41.55 16.42V15.68A3.32 3.32 0 0 1 44.87 12.36Z"/><path d="M43.68 18.93L42.03 22.84L47.76 18.93Z"/></g>`,
+  hozz: `<path d="M46.4 11.6C49.38 14.58 50.91 16.74 50.91 19.09A4.51 4.51 0 1 1 41.89 19.09C41.89 16.74 43.42 14.58 46.4 11.6Z" fill="${c}"/>`,
+};
+---
+
+<svg width={size} height={size} viewBox="0 0 64 64" role="img" aria-label={`${a.name} mark`} style="display:block">
+  <defs>
+    <linearGradient id={id} gradientUnits="userSpaceOnUse" x1="6" y1="4" x2="58" y2="60">
+      <stop offset="0" stop-color={a.light} />
+      <stop offset="0.52" stop-color={a.hue} />
+      <stop offset="1" stop-color={a.deep} />
+    </linearGradient>
+  </defs>
+
+  <!-- Constant: the frame. -->
+  <path d="M32 3C53.4 3 61 10.6 61 32S53.4 61 32 61 3 53.4 3 32 10.6 3 32 3Z" fill={`url(#${id})`} />
+
+  <!-- Constant: the ZZ. Drawn as two stroked centrelines, not a typeface. -->
+  <g
+    fill="none"
+    stroke="#fff"
+    stroke-width="4.3"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    opacity="0.96"
+  >
+    <path d="M16.65 30.6H25.95L16.65 42.4H25.95" />
+    <path d="M34.05 30.6H43.35L34.05 42.4H43.35" />
+  </g>
+
+  <!-- Variable: the motif, and nothing else. -->
+  <g opacity="0.96" set:html={MOTIF[app]} />
+</svg>

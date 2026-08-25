@@ -1,0 +1,56 @@
+---
+/**
+ * 28 · Draft — one ribbon that narrows as it travels.
+ *
+ * The strip enters wide at the top left of the first Z and leaves narrow at
+ * the bottom right of the second, tapering continuously through all six folds.
+ * The first Z's bottom bar and the second Z's top bar share a weight, so the
+ * two letters read as one run of ribbon rather than a letter repeated.
+ *
+ * That taper gives the mark a direction — which suits four apps whose whole
+ * job is moving something from one place to another. Two tones: the face, and
+ * the diagonal turned away from the light.
+ */
+import { APP_BY_KEY, type AppKey } from '../../data/brand';
+
+interface Props {
+  app: AppKey;
+  size?: number;
+}
+const { app, size = 96 } = Astro.props;
+const a = APP_BY_KEY[app];
+const id = `g-d28-${app}`;
+
+const mix = (from: string, to: string, t: number) =>
+  '#' +
+  [1, 3, 5]
+    .map((i) => {
+      const x = parseInt(from.slice(i, i + 2), 16);
+      const y = parseInt(to.slice(i, i + 2), 16);
+      return Math.round(x * (1 - t) + y * t)
+        .toString(16)
+        .padStart(2, '0');
+    })
+    .join('');
+const head = mix(a.light, a.hue, 0.4);
+---
+
+<svg width={size} height={size} viewBox="0 0 64 64" role="img" aria-label={`${a.name} mark`} style="display:block">
+  <defs>
+    <linearGradient id={id} x1="0.05" y1="0" x2="0.95" y2="1">
+      <stop offset="0" stop-color={head} />
+      <stop offset="1" stop-color={a.hue} />
+    </linearGradient>
+  </defs>
+
+  <!-- Bars run 7.0 → 4.7 units thick across the pair, inside x/y 14–50. -->
+  <g fill={`url(#${id})`}>
+    <path d="M14 21L30 21L21.4 37.1L30 37.1L30 43L14 43L14 37.1L21.3 28L14 28Z" />
+    <path d="M34 21L50 21L39.9 38.3L50 38.3L50 43L34 43L34 38.3L42.6 26.9L34 26.9Z" />
+  </g>
+
+  <g fill={a.deep} fill-opacity="0.33">
+    <path d="M30 21L21.4 37.1L14 43L14 37.1L21.3 28Z" />
+    <path d="M50 21L39.9 38.3L34 43L34 38.3L42.6 26.9Z" />
+  </g>
+</svg>

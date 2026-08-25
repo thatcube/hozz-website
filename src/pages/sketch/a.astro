@@ -1,0 +1,697 @@
+---
+/**
+ * Sketch A — "Manifest"
+ *
+ * The page is shaped around the manifest Hozz writes beside every export. The
+ * verdict column carries the argument: uncertainty is reported, never hidden.
+ */
+import SketchLayout from '../../layouts/SketchLayout.astro';
+import { GITHUB_URL, SITE } from '../../data/site';
+
+const ROWS = [
+  { id: 'stepCount', cat: 'activity', label: 'Activity', state: 'copied', detail: 'data returned' },
+  { id: 'activeEnergyBurned', cat: 'activity', label: 'Activity', state: 'copied', detail: 'data returned' },
+  { id: 'heartRate', cat: 'heart', label: 'Heart', state: 'copied', detail: 'data returned' },
+  { id: 'heartRateVariabilitySDNN', cat: 'heart', label: 'Heart', state: 'copied', detail: 'data returned' },
+  { id: 'electrocardiogram', cat: 'heart', label: 'Heart', state: 'unknown', detail: 'denied or empty' },
+  { id: 'sleepAnalysis', cat: 'sleep', label: 'Sleep', state: 'copied', detail: 'data returned' },
+  { id: 'bodyMass', cat: 'body', label: 'Body', state: 'copied', detail: 'data returned' },
+  { id: 'bloodGlucose', cat: 'vitals', label: 'Vitals', state: 'unknown', detail: 'denied or empty' },
+  { id: 'clinicalRecords', cat: 'other', label: 'Other', state: 'refused', detail: 'excluded by design' },
+  { id: 'menstrualFlow', cat: 'cycle', label: 'Cycle', state: 'unknown', detail: 'denied or empty' },
+];
+
+const STATE_COPY: Record<string, string> = {
+  copied: 'Copied',
+  unknown: 'Unknown',
+  refused: 'Not read',
+};
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'SoftwareApplication',
+      name: 'Hozz',
+      url: SITE,
+      codeRepository: GITHUB_URL,
+      applicationCategory: 'HealthApplication',
+      operatingSystem: 'iOS',
+      isAccessibleForFree: true,
+      description:
+        'A free, open-source Apple Health exporter that writes to a file, your server, or your Mac and reports incomplete coverage.',
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'How do I export my Apple Health data?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text:
+              'In Hozz, choose the Health categories you want to share, then choose a destination: a file, your own server, or your Mac. Hozz reads directly from HealthKit, resumes interrupted exports, and writes a manifest showing what was copied, unknown, or not read. Your data never passes through a Hozz account or server.',
+          },
+        },
+      ],
+    },
+  ],
+};
+---
+
+<SketchLayout title="Sketch A — Manifest · Hozz" letter="A" name="Manifest">
+  <main>
+    <header class="hero">
+      <p class="kicker">Hozz <span>Apple Health, exported honestly</span></p>
+      <h1>
+        Every export tool tells you it worked.<br />
+        This one tells you <em>where it couldn't.</em>
+      </h1>
+      <p class="stand">
+        HealthKit cannot say whether a type is denied or empty. Hozz records
+        that uncertainty instead of calling the export complete.
+      </p>
+      <a class="jump" href="#manifest">Read an example manifest <span aria-hidden="true">↓</span></a>
+
+      <svg class="route-art" viewBox="0 0 760 150" role="img" aria-labelledby="route-title route-desc">
+        <title id="route-title">Your health data takes a direct, documented route</title>
+        <desc id="route-desc">A phone connects through a manifest to a file, server, and Mac.</desc>
+        <g class="route-shape">
+          <rect x="2" y="39" width="70" height="112" rx="15"></rect>
+          <line x1="26" y1="50" x2="48" y2="50"></line>
+          <path d="M28 94h18M37 85v18"></path>
+          <path d="M73 94C172 94 169 37 272 37"></path>
+          <path d="M73 94H272"></path>
+          <path d="M73 94c99 0 96 57 199 57"></path>
+          <rect x="272" y="13" width="162" height="48" rx="14"></rect>
+          <path d="M291 30h94M291 42h124"></path>
+          <rect x="272" y="70" width="162" height="48" rx="14"></rect>
+          <path d="M291 87h124M291 99h76"></path>
+          <rect x="272" y="127" width="162" height="48" rx="14"></rect>
+          <path d="M291 144h84M291 156h124"></path>
+          <path d="M434 37h86M434 94h86M434 151h86"></path>
+          <path d="M520 37h54v114h-54"></path>
+          <path d="M574 94h80"></path>
+          <path d="M675 55h83v76h-83zM696 43h41M695 143h43"></path>
+        </g>
+        <g class="route-dots" aria-hidden="true">
+          <circle class="traveller traveller-a" r="3"></circle>
+          <circle class="traveller traveller-b" r="3"></circle>
+          <circle class="traveller traveller-c" r="3"></circle>
+        </g>
+      </svg>
+    </header>
+
+    <section class="doc reveal" id="manifest" aria-labelledby="manifest-h" data-reveal>
+      <div class="doc-head">
+        <div>
+          <p class="eyebrow">Example output</p>
+          <h2 id="manifest-h">manifest.json</h2>
+        </div>
+        <p>Illustrative statuses. No invented counts.</p>
+      </div>
+
+      <ol class="ledger">
+        {
+          ROWS.map((r) => (
+            <li class={`entry entry--${r.state}`} style={`--hue: var(--h-${r.cat})`}>
+              <span class="cat">{r.label}</span>
+              <code>{r.id}</code>
+              <span class="detail">{r.detail}</span>
+              <span class="state">{STATE_COPY[r.state]}</span>
+            </li>
+          ))
+        }
+      </ol>
+
+      <p class="tally">
+        <b>Unknown stays unknown.</b> Hozz never guesses.
+      </p>
+    </section>
+
+    <section class="product reveal" aria-labelledby="product-h" data-reveal>
+      <div class="product-lead">
+        <p class="eyebrow">What it does</p>
+        <h2 id="product-h">Your records.<br />Your destination.</h2>
+      </div>
+      <div class="product-copy">
+        <p>
+          Hozz copies Apple Health data, resumes safely, and accounts for every
+          type it can—or cannot—read.
+        </p>
+        <ul aria-label="Export destinations">
+          <li><span>A file</span> you keep</li>
+          <li><span>A server</span> you run</li>
+          <li><span>A Mac</span> you own</li>
+        </ul>
+        <p class="aside">No Hozz account. No Hozz server.</p>
+      </div>
+    </section>
+
+    <section class="answer reveal" aria-labelledby="answer-h" data-reveal>
+      <p class="eyebrow">Quick answer</p>
+      <h2 id="answer-h">How do I export my Apple Health data?</h2>
+      <p>
+        In Hozz, choose the Health categories you want to share. Pick a file,
+        your server, or your Mac. Hozz reads from HealthKit, resumes interrupted
+        exports, and writes a manifest of what was copied, unknown, or not read.
+        Nothing passes through a Hozz account or server.
+      </p>
+    </section>
+
+    <footer class="ends reveal" data-reveal>
+      <div>
+        <p class="eyebrow">Keep what is yours</p>
+        <h2>Free. Open source.<br />No strings attached.</h2>
+      </div>
+      <a class="button" href={GITHUB_URL} rel="noopener">Follow Hozz on GitHub <span aria-hidden="true">→</span></a>
+    </footer>
+  </main>
+
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+
+  <script is:inline>
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (!reduceMotion.matches) {
+      document.documentElement.classList.add('motion-ok');
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          }
+        },
+        { threshold: 0.12 }
+      );
+      document.querySelectorAll('[data-reveal]').forEach((item) => observer.observe(item));
+    }
+  </script>
+</SketchLayout>
+
+<style>
+  :global(body) {
+    background: #fbfaf8;
+    color: #16161a;
+  }
+
+  :global(html) {
+    scroll-behavior: smooth;
+  }
+
+  main {
+    width: min(calc(100% - 2.5rem), 1120px);
+    margin-inline: auto;
+    padding-block: clamp(3.5rem, 9vw, 8rem) 8rem;
+  }
+
+  .hero {
+    position: relative;
+    min-height: min(820px, 88vh);
+  }
+
+  .kicker,
+  .eyebrow {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: #625e57;
+  }
+
+  .kicker {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    margin-bottom: clamp(2rem, 5vw, 3.5rem);
+  }
+
+  .kicker::after {
+    content: '';
+    width: 2.5rem;
+    height: 1px;
+    background: #c8c2b8;
+    order: 1;
+  }
+
+  .kicker span {
+    order: 2;
+    color: #6b6760;
+    font-weight: 500;
+    letter-spacing: 0.045em;
+    text-transform: none;
+  }
+
+  h1,
+  h2 {
+    margin: 0;
+  }
+
+  h1 {
+    font-size: clamp(2.65rem, 1.2rem + 5.1vw, 6rem);
+    font-weight: 800;
+    line-height: 0.98;
+    letter-spacing: -0.052em;
+    text-wrap: balance;
+    max-width: 18ch;
+  }
+
+  h1 em {
+    font-style: normal;
+    color: #b3421c;
+  }
+
+  .stand {
+    margin-top: clamp(1.5rem, 3vw, 2.25rem);
+    max-width: 48ch;
+    font-size: clamp(1.05rem, 1rem + 0.35vw, 1.22rem);
+    line-height: 1.5;
+    letter-spacing: -0.012em;
+    color: #49463f;
+  }
+
+  .jump {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-top: 1.75rem;
+    padding: 0.68rem 1rem;
+    border: 1px solid #bdb7ad;
+    border-radius: 999px;
+    color: #24231f;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .jump:hover {
+    border-color: #b3421c;
+    background: #fff;
+    color: #943616;
+  }
+
+  .route-art {
+    width: min(62%, 650px);
+    height: auto;
+    margin: clamp(2.5rem, 5vw, 4.75rem) 0 0 auto;
+    overflow: visible;
+  }
+
+  .route-shape {
+    fill: none;
+    stroke: #8f8980;
+    stroke-width: 1;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .route-shape > path:nth-of-type(3),
+  .route-shape > path:nth-of-type(4),
+  .route-shape > path:nth-of-type(5),
+  .route-shape > path:nth-of-type(9),
+  .route-shape > path:nth-of-type(10),
+  .route-shape > path:nth-of-type(11),
+  .route-shape > path:nth-of-type(12) {
+    stroke-dasharray: 2 5;
+  }
+
+  .traveller {
+    fill: #b3421c;
+    offset-rotate: 0deg;
+  }
+
+  .traveller-a {
+    offset-path: path('M73 94C172 94 169 37 272 37');
+    animation: travel 7s linear infinite;
+  }
+
+  .traveller-b {
+    offset-path: path('M73 94H272');
+    animation: travel 6s 1.8s linear infinite;
+  }
+
+  .traveller-c {
+    offset-path: path('M434 151H520C550 151 547 94 574 94H654');
+    animation: travel 8s 0.6s linear infinite;
+  }
+
+  @keyframes travel {
+    from { offset-distance: 0%; }
+    to { offset-distance: 100%; }
+  }
+
+  .doc,
+  .product,
+  .answer,
+  .ends {
+    border-top: 1px solid #24231f;
+  }
+
+  .doc {
+    scroll-margin-top: 2rem;
+    padding-top: 1.25rem;
+  }
+
+  .doc-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 0.75rem 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .doc-head h2 {
+    margin-top: 0.35rem;
+    font-family: var(--mono);
+    font-size: 1.05rem;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+
+  .doc-head > p {
+    font-size: 0.875rem;
+    color: #625e57;
+  }
+
+  .ledger {
+    border-top: 1px solid #dedad2;
+  }
+
+  .entry {
+    display: grid;
+    grid-template-columns: 7.5rem minmax(0, 1fr) auto;
+    gap: 0.2rem 1.5rem;
+    align-items: baseline;
+    padding: 0.82rem 0;
+    border-bottom: 1px solid #dedad2;
+  }
+
+  .cat {
+    grid-row: span 2;
+    align-self: center;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: color-mix(in oklab, var(--hue) 60%, #16161a);
+  }
+
+  .cat::before {
+    content: '';
+    inline-size: 7px;
+    block-size: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    flex: none;
+  }
+
+  .entry code {
+    min-width: 0;
+    font-family: var(--mono);
+    font-size: clamp(0.78rem, 0.72rem + 0.25vw, 0.94rem);
+    letter-spacing: -0.025em;
+    overflow-wrap: anywhere;
+  }
+
+  .detail {
+    grid-column: 2;
+    font-size: 0.82rem;
+    color: #625e57;
+  }
+
+  .state {
+    grid-row: span 2;
+    align-self: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.28rem 0.7rem;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  .entry--copied .state {
+    background: #e3f1e5;
+    color: #195a25;
+  }
+
+  .entry--unknown .state {
+    background: #f8ead6;
+    color: #744300;
+  }
+
+  .entry--refused .state {
+    background: #eae7e1;
+    color: #47443e;
+  }
+
+  .tally {
+    margin-top: 1.5rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #49463f;
+  }
+
+  .tally b {
+    color: #16161a;
+  }
+
+  .product,
+  .answer,
+  .ends {
+    margin-top: clamp(5rem, 11vw, 9rem);
+    padding-top: clamp(1.5rem, 3vw, 2.25rem);
+  }
+
+  .product {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(18rem, 1fr);
+    gap: clamp(3rem, 8vw, 8rem);
+  }
+
+  .product h2,
+  .answer h2,
+  .ends h2 {
+    font-size: clamp(2rem, 1.25rem + 3vw, 4rem);
+    line-height: 1.02;
+    letter-spacing: -0.045em;
+  }
+
+  .product h2,
+  .answer h2,
+  .ends h2 {
+    margin-top: 0.65rem;
+  }
+
+  .product-copy {
+    padding-top: 0.15rem;
+  }
+
+  .product-copy > p:first-child {
+    max-width: 40ch;
+    font-size: 1.125rem;
+    line-height: 1.5;
+    color: #49463f;
+  }
+
+  .product-copy ul {
+    margin-top: 2rem;
+    border-top: 1px solid #dedad2;
+  }
+
+  .product-copy li {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid #dedad2;
+    color: #625e57;
+  }
+
+  .product-copy li span {
+    color: #16161a;
+    font-weight: 650;
+  }
+
+  .product-copy .aside {
+    margin-top: 1.2rem;
+    color: #943616;
+    font-weight: 600;
+  }
+
+  .answer {
+    display: grid;
+    grid-template-columns: 10rem minmax(0, 0.95fr) minmax(19rem, 0.8fr);
+    gap: clamp(1.5rem, 5vw, 5rem);
+    align-items: start;
+  }
+
+  .answer h2 {
+    margin-top: 0;
+    font-size: clamp(1.8rem, 1.25rem + 2vw, 3rem);
+  }
+
+  .answer > p:last-child {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: #49463f;
+  }
+
+  .ends {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 2rem;
+    padding-bottom: 2rem;
+  }
+
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    flex: none;
+    min-height: 3rem;
+    padding: 0.8rem 1.15rem;
+    border: 1px solid #16161a;
+    border-radius: 999px;
+    background: #16161a;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 650;
+    text-decoration: none;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .button:hover {
+    border-color: #b3421c;
+    background: #b3421c;
+    transform: translateY(-2px);
+  }
+
+  :global(.motion-ok) [data-reveal] {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  :global(.motion-ok) [data-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (max-width: 760px) {
+    .hero {
+      min-height: auto;
+      padding-bottom: 4rem;
+    }
+
+    .route-art {
+      width: 100%;
+      margin-top: 3rem;
+    }
+
+    .product,
+    .answer {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .answer {
+      gap: 1rem;
+    }
+  }
+
+  @media (max-width: 620px) {
+    main {
+      width: min(calc(100% - 2rem), 1120px);
+      padding-top: 3rem;
+    }
+
+    .kicker {
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 0.45rem 0.7rem;
+    }
+
+    .kicker::after {
+      display: none;
+    }
+
+    .kicker span {
+      flex-basis: 100%;
+    }
+
+    h1 {
+      font-size: clamp(2.5rem, 11.5vw, 3.25rem);
+    }
+
+    .entry {
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 0.35rem 0.75rem;
+      padding: 0.9rem 0;
+    }
+
+    .cat {
+      grid-row: auto;
+      grid-column: 1;
+    }
+
+    .entry code {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+
+    .detail {
+      grid-column: 1;
+      grid-row: 3;
+    }
+
+    .state {
+      grid-column: 2;
+      grid-row: 1;
+    }
+
+    .ends {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+
+  @media (max-width: 390px) {
+    .route-art {
+      margin-top: 2rem;
+    }
+
+    .doc-head > p {
+      max-width: 25ch;
+    }
+
+    .button {
+      width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(html) {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0.001ms !important;
+    }
+
+    .traveller {
+      animation: none !important;
+      offset-distance: 64%;
+    }
+  }
+</style>

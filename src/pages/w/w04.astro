@@ -1,0 +1,1553 @@
+---
+import Mark from '../../components/mark/logos/c07.astro';
+import {
+  CATEGORIES,
+  COVERAGE_STATES,
+  DESTINATIONS,
+  DURABILITY,
+  FAQ,
+  FORMATS,
+  GITHUB_URL,
+  MCP_TOOLS,
+  NOT_YET,
+  PROMISES,
+  SITE,
+  STEPS,
+  WORKING,
+} from '../../data/site';
+
+const categoryHues = Object.fromEntries(CATEGORIES.map(({ key, hue }) => [key, hue]));
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'SoftwareApplication',
+      name: 'Hozz',
+      applicationCategory: 'HealthApplication',
+      operatingSystem: 'iOS, macOS',
+      url: SITE,
+      downloadUrl: GITHUB_URL,
+      isAccessibleForFree: true,
+      license: `${GITHUB_URL}/blob/main/LICENSE`,
+      description:
+        'A free, open-source iPhone app with a companion Mac app that exports Apple Health data to destinations you own.',
+      softwareHelp: `${SITE}/#faq`,
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: FAQ.map(({ q, a }) => ({
+        '@type': 'Question',
+        name: q,
+        acceptedAnswer: { '@type': 'Answer', text: a },
+      })),
+    },
+  ],
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta
+      name="description"
+      content="Hozz makes a durable copy of your Apple Health history in files and systems you control."
+    />
+    <meta name="theme-color" content="#eef0c8" />
+    <title>Hozz — A copy costs the original nothing</title>
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="Hozz, back to top">
+        <Mark size={28} />
+        <span>Hozz</span>
+      </a>
+      <nav aria-label="Main navigation">
+        <a href="#export">How to export</a>
+        <a href="#destinations">Destinations</a>
+        <a href="#honest">Trust</a>
+        <a class="source-link" href={GITHUB_URL}>View source <span aria-hidden="true">↗</span></a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="kicker">A field guide to keeping your health history</p>
+          <h1 id="hero-title">A copy costs the <em>original</em> nothing.</h1>
+          <p class="lede">
+            Hozz makes your Apple Health history exist somewhere you also control. Your
+            original stays exactly where it is.
+          </p>
+          <div class="hero-actions">
+            <a class="button" href="#export">See how it copies</a>
+            <span>Free · open source · early alpha</span>
+          </div>
+        </div>
+
+        <figure class="copy-study">
+          <div class="rings" aria-hidden="true">
+            <div class="ring ring-4">
+              <span class="ring-label label-mac">Mac</span>
+              <span class="ring-label label-folder">folder</span>
+              <div class="ring ring-3">
+                <span class="ring-label label-ha">Home Assistant</span>
+                <span class="ring-label label-mqtt">MQTT</span>
+                <div class="ring ring-2">
+                  <span class="ring-label label-web">web</span>
+                  <span class="ring-label label-influx">InfluxDB</span>
+                  <div class="ring ring-1">
+                    <div class="core">
+                      <Mark size={62} />
+                      <span>Apple Health<br />stays whole</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <figcaption>
+            One kept source. As many useful copies as you choose.
+          </figcaption>
+        </figure>
+      </section>
+
+      <section class="principle">
+        <div>
+          <p class="section-label">The useful distinction</p>
+          <h2>Not extraction. <em>Multiplication.</em></h2>
+        </div>
+        <p>
+          Export usually sounds like removal. Hozz only reads Apple Health. It never writes
+          back, changes a record or chooses a destination for you. Nothing leaves your phone
+          until you add one and confirm it.
+        </p>
+      </section>
+
+      <section class="chapter" id="export" aria-labelledby="export-title">
+        <div class="chapter-heading">
+          <p class="section-label">How do I export my Apple Health data?</p>
+          <h2 id="export-title">Plant the copy once.</h2>
+          <p>
+            Install Hozz on your iPhone, then make three choices. After that, new records
+            copy automatically when iOS gives Hozz time to run.
+          </p>
+        </div>
+        <ol class="steps">
+          {STEPS.map((step, index) => (
+            <li style={`--step-hue: ${categoryHues[step.category]}`}>
+              <span class="step-number">{String(index + 1).padStart(2, '0')}</span>
+              <div>
+                <h3>{step.title}</h3>
+                <p>{step.body}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <aside class="answer-note">
+          <strong>Before you begin</strong>
+          <p>
+            Hozz is early alpha. It works, but Health type coverage is still partial. Apple
+            decides when background work runs, and Health cannot be read while your phone is
+            locked.
+          </p>
+        </aside>
+      </section>
+
+      <section class="chapter tinted" id="destinations" aria-labelledby="destinations-title">
+        <div class="chapter-heading">
+          <p class="section-label">Where the copies live</p>
+          <h2 id="destinations-title">Six places. <em>All yours.</em></h2>
+          <p>
+            There is no Hozz cloud in the middle. Choose one destination or several; each
+            keeps its own place in the queue.
+          </p>
+        </div>
+        <ul class="destination-grid">
+          {DESTINATIONS.map((destination) => (
+            <li>
+              <span
+                class="destination-dot"
+                style={`--item-hue: ${categoryHues[destination.category]}`}
+                aria-hidden="true"
+              />
+              <h3>{destination.title}</h3>
+              <p>{destination.body}</p>
+              <code>{destination.fact}</code>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section class="chapter formats" aria-labelledby="formats-title">
+        <div class="chapter-heading">
+          <p class="section-label">What comes out</p>
+          <h2 id="formats-title">A file you can keep.</h2>
+          <p>
+            Seven shapes for the same purpose: data that remains useful without Hozz.
+          </p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Format</th>
+                <th scope="col">Made for</th>
+                <th scope="col">Fidelity</th>
+              </tr>
+            </thead>
+            <tbody>
+              {FORMATS.map((format) => (
+                <tr>
+                  <th scope="row">{format.name}</th>
+                  <td data-label="Made for">{format.use}</td>
+                  <td data-label="Fidelity">
+                    <span class:list={{ warning: format.note.startsWith('Lossy') }}>
+                      {format.note}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="chapter durability" id="honest" aria-labelledby="durability-title">
+        <div class="chapter-heading light-heading">
+          <p class="section-label">Why the copy holds</p>
+          <h2 id="durability-title">Interruption can repeat work. It cannot skip records.</h2>
+          <p>
+            Hozz moves an anchor only after records are durably staged. That quiet rule is
+            the foundation of every export.
+          </p>
+        </div>
+        <ul class="durability-grid">
+          {DURABILITY.map((item) => (
+            <li>
+              <code>{item.fact}</code>
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </li>
+          ))}
+        </ul>
+        <div class="test-strip">
+          <strong>475</strong>
+          <span>XCTest tests exercise the details behind that promise.</span>
+        </div>
+      </section>
+
+      <section class="chapter honesty" aria-labelledby="honesty-title">
+        <div class="chapter-heading">
+          <p class="section-label">Honest coverage</p>
+          <h2 id="honesty-title">No green tick for an unknown.</h2>
+          <p>
+            Apple will not let an app distinguish “you denied this type” from “you have no
+            data.” Hozz names the ambiguity instead of guessing.
+          </p>
+        </div>
+        <dl class="states">
+          {COVERAGE_STATES.map((item) => (
+            <div class={`state state-${item.tone}`}>
+              <dt>{item.state}</dt>
+              <dd>{item.body}</dd>
+            </div>
+          ))}
+        </dl>
+        <ul class="promises" aria-label="Privacy promises">
+          {PROMISES.map((promise) => (
+            <li>
+              <strong>{promise.title}</strong>
+              <span>{promise.body}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section class="chapter assistant" aria-labelledby="assistant-title">
+        <div class="assistant-copy">
+          <p class="section-label">A local field assistant</p>
+          <h2 id="assistant-title">Ask your copy. <em>Read only.</em></h2>
+          <p>
+            The companion Mac app includes an MCP server. Your own assistant can query the
+            local database, but the server cannot change or delete anything.
+          </p>
+          <aside>
+            <strong>The important caveat</strong>
+            <p>
+              A cloud assistant may upload whatever it reads. That is the assistant’s
+              behaviour, not Hozz’s.
+            </p>
+          </aside>
+        </div>
+        <div class="specimen" aria-label="Things the MCP server can query">
+          <div class="specimen-top">
+            <span>local database</span>
+            <span>permission: read</span>
+          </div>
+          <ul>
+            {MCP_TOOLS.map((tool) => <li>{tool}</li>)}
+          </ul>
+        </div>
+      </section>
+
+      <section class="chapter status" id="status" aria-labelledby="status-title">
+        <div class="chapter-heading">
+          <p class="section-label">Field notes · early alpha</p>
+          <h2 id="status-title">It works. It is not finished.</h2>
+          <p>Both statements belong together. The repository is the record.</p>
+        </div>
+        <div class="status-columns">
+          <div>
+            <h3>Working now</h3>
+            <ul>
+              {WORKING.map((item) => <li>{item}</li>)}
+            </ul>
+          </div>
+          <div>
+            <h3>Not yet</h3>
+            <ul>
+              {NOT_YET.map((item) => <li>{item}</li>)}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter faq" id="faq" aria-labelledby="faq-title">
+        <div class="chapter-heading">
+          <p class="section-label">Plain answers</p>
+          <h2 id="faq-title">Before you make a copy.</h2>
+        </div>
+        <div class="faq-list">
+          {FAQ.map((item) => (
+            <details>
+              <summary>{item.q}</summary>
+              <p>{item.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      <section class="closing" aria-labelledby="closing-title">
+        <Mark size={72} />
+        <p class="section-label">Free forever · GPL-3.0</p>
+        <h2 id="closing-title">Keep what your body recorded.</h2>
+        <p>
+          Hozz is being built in the open by Brandon Moore. Read every line before you trust
+          it with a single record.
+        </p>
+        <a class="button button-light" href={GITHUB_URL}>Read the source <span aria-hidden="true">↗</span></a>
+      </section>
+    </main>
+
+    <footer>
+      <a class="brand" href="#top">
+        <Mark size={28} />
+        <span>Hozz</span>
+      </a>
+      <p>Your history, growing somewhere you control.</p>
+      <a href={GITHUB_URL}>GitHub <span aria-hidden="true">↗</span></a>
+    </footer>
+  </body>
+</html>
+
+<style is:global>
+  @font-face {
+    font-family: 'Erode';
+    src: url('/fonts/erode-g-400.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Erode';
+    src: url('/fonts/erode-g-500.woff2') format('woff2');
+    font-weight: 500;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'General Sans';
+    src: url('/fonts/general-sans-400.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'General Sans';
+    src: url('/fonts/general-sans-600.woff2') format('woff2');
+    font-weight: 600;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'IBM Plex Mono';
+    src: url('/fonts/ibm-plex-mono-400.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
+  }
+
+  :root {
+    --ink: #33382b;
+    --deep: #555f44;
+    --sage: #818c68;
+    --leaf: #b4bf8e;
+    --glow: #eef0c8;
+    --ground: #f5f3e8;
+    --paper: #fbfaf3;
+    --line: rgba(51, 56, 43, 0.23);
+    --measure: 72rem;
+    --gutter: clamp(1.15rem, 4vw, 4rem);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: var(--ground);
+    color: var(--ink);
+  }
+
+  body {
+    margin: 0;
+    min-width: 0;
+    overflow-x: hidden;
+    font-family: 'General Sans', sans-serif;
+    font-size: 1rem;
+    line-height: 1.6;
+    background:
+      linear-gradient(rgba(51, 56, 43, 0.026) 1px, transparent 1px),
+      var(--ground);
+    background-size: 100% 2rem;
+  }
+
+  a {
+    color: inherit;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.22em;
+  }
+
+  a:hover {
+    text-decoration-thickness: 2px;
+  }
+
+  :focus-visible {
+    outline: 3px solid #33382b;
+    outline-offset: 4px;
+    border-radius: 2px;
+  }
+
+  h1,
+  h2,
+  h3,
+  p {
+    margin-top: 0;
+  }
+
+  h1,
+  h2 {
+    font-family: 'Erode', serif;
+    font-weight: 400;
+    line-height: 0.98;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+
+  h1 em,
+  h2 em {
+    color: var(--deep);
+    font-weight: 500;
+  }
+
+  h1 {
+    max-width: 12ch;
+    margin-bottom: 1.75rem;
+    font-size: clamp(3.6rem, 7.8vw, 7.9rem);
+  }
+
+  h2 {
+    margin-bottom: 1.4rem;
+    font-size: clamp(2.5rem, 5vw, 5rem);
+  }
+
+  h3 {
+    margin-bottom: 0.45rem;
+    font-size: 1.05rem;
+    line-height: 1.3;
+  }
+
+  code,
+  .section-label,
+  .step-number,
+  .specimen {
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .site-header,
+  footer {
+    width: min(100%, calc(var(--measure) + 2 * var(--gutter)));
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .site-header {
+    display: flex;
+    position: relative;
+    z-index: 10;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 5.5rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .brand svg {
+    flex: none;
+  }
+
+  nav {
+    display: flex;
+    align-items: center;
+    gap: clamp(1rem, 2.7vw, 2.3rem);
+    font-size: 0.84rem;
+  }
+
+  nav a {
+    text-decoration: none;
+  }
+
+  .source-link {
+    padding: 0.58rem 0.9rem;
+    border: 1px solid var(--ink);
+  }
+
+  .hero,
+  .chapter,
+  .principle,
+  .closing {
+    padding-inline: max(var(--gutter), calc((100vw - var(--measure)) / 2));
+  }
+
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.07fr) minmax(24rem, 0.93fr);
+    align-items: center;
+    min-height: min(53rem, calc(100vh - 5.5rem));
+    padding-block: clamp(4rem, 9vw, 8rem);
+    gap: clamp(2rem, 6vw, 7rem);
+  }
+
+  .kicker,
+  .section-label {
+    margin-bottom: 1.1rem;
+    color: var(--deep);
+    font-size: 0.7rem;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  .lede {
+    max-width: 36rem;
+    margin-bottom: 2.2rem;
+    font-size: clamp(1.2rem, 2vw, 1.55rem);
+    line-height: 1.45;
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    color: var(--deep);
+    font-size: 0.78rem;
+  }
+
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3.2rem;
+    padding: 0.7rem 1.25rem;
+    color: var(--glow);
+    border: 1px solid var(--ink);
+    background: var(--ink);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .button:hover {
+    color: var(--ink);
+    background: var(--leaf);
+  }
+
+  .copy-study {
+    width: 100%;
+    margin: 0;
+  }
+
+  .rings {
+    display: grid;
+    position: relative;
+    place-items: center;
+    width: min(100%, 34rem);
+    aspect-ratio: 1;
+    margin-inline: auto;
+  }
+
+  .ring {
+    display: grid;
+    position: relative;
+    place-items: center;
+    aspect-ratio: 1;
+    border: 1px solid;
+    border-radius: 50%;
+  }
+
+  .ring-4 {
+    width: 100%;
+    border-color: var(--sage);
+    background: rgba(180, 191, 142, 0.12);
+  }
+
+  .ring-3 {
+    width: 76%;
+    border-color: var(--sage);
+    background: rgba(180, 191, 142, 0.15);
+  }
+
+  .ring-2 {
+    width: 68%;
+    border-color: var(--deep);
+    background: rgba(238, 240, 200, 0.4);
+  }
+
+  .ring-1 {
+    width: 60%;
+    border-color: var(--deep);
+    background: var(--glow);
+  }
+
+  .core {
+    display: grid;
+    place-items: center;
+    color: var(--ink);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: clamp(0.52rem, 1.25vw, 0.7rem);
+    line-height: 1.35;
+    text-align: center;
+  }
+
+  .core svg {
+    margin-bottom: 0.35rem;
+  }
+
+  .ring-label {
+    position: absolute;
+    padding: 0.18rem 0.42rem;
+    color: var(--ink);
+    border: 1px solid var(--sage);
+    background: var(--paper);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: clamp(0.5rem, 1vw, 0.65rem);
+    line-height: 1.3;
+    white-space: nowrap;
+  }
+
+  .label-mac {
+    top: 8%;
+    left: 19%;
+  }
+
+  .label-folder {
+    right: 2%;
+    bottom: 26%;
+  }
+
+  .label-ha {
+    top: 43%;
+    left: -12%;
+  }
+
+  .label-mqtt {
+    top: 14%;
+    right: 2%;
+  }
+
+  .label-web {
+    right: -12%;
+    bottom: 25%;
+  }
+
+  .label-influx {
+    bottom: -5%;
+    left: 12%;
+  }
+
+  .copy-study figcaption {
+    max-width: 25rem;
+    margin: 1.5rem auto 0;
+    color: var(--deep);
+    font-family: 'Erode', serif;
+    font-size: 1rem;
+    text-align: center;
+  }
+
+  .principle {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.75fr);
+    padding-block: clamp(4.5rem, 9vw, 8rem);
+    color: var(--glow);
+    background: var(--deep);
+    gap: clamp(2rem, 8vw, 8rem);
+  }
+
+  .principle .section-label,
+  .light-heading .section-label,
+  .closing .section-label {
+    color: var(--glow);
+  }
+
+  .principle h2 {
+    max-width: 13ch;
+    margin-bottom: 0;
+  }
+
+  .principle h2 em,
+  .light-heading h2 em {
+    color: var(--glow);
+  }
+
+  .principle > p {
+    align-self: end;
+    max-width: 34rem;
+    margin: 0;
+    font-size: clamp(1.1rem, 1.7vw, 1.35rem);
+  }
+
+  .chapter {
+    padding-block: clamp(5.5rem, 11vw, 10rem);
+  }
+
+  .chapter-heading {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(18rem, 0.62fr);
+    margin-bottom: clamp(3rem, 6vw, 5rem);
+    column-gap: clamp(2rem, 8vw, 8rem);
+  }
+
+  .chapter-heading .section-label {
+    grid-column: 1 / -1;
+  }
+
+  .chapter-heading h2 {
+    max-width: 14ch;
+    margin-bottom: 0;
+  }
+
+  .chapter-heading > p:last-child {
+    align-self: end;
+    max-width: 34rem;
+    margin-bottom: 0.25rem;
+    color: var(--deep);
+    font-size: 1.05rem;
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+    list-style: none;
+  }
+
+  .steps li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    min-width: 0;
+    padding: 1.6rem clamp(1rem, 2.5vw, 2rem) 2rem 0;
+    border-bottom: 1px solid var(--line);
+    gap: 1rem;
+  }
+
+  .steps li + li {
+    padding-left: clamp(1rem, 2.5vw, 2rem);
+    border-left: 1px solid var(--line);
+  }
+
+  .step-number {
+    color: var(--deep);
+    font-size: 0.7rem;
+  }
+
+  .steps h3 {
+    color: var(--ink);
+    font-family: 'Erode', serif;
+    font-size: 1.4rem;
+    font-weight: 500;
+  }
+
+  .steps p {
+    margin-bottom: 0;
+    color: var(--deep);
+    font-size: 0.9rem;
+  }
+
+  .steps li::before {
+    content: '';
+    grid-column: 1 / -1;
+    width: 2.8rem;
+    height: 0.35rem;
+    background: var(--step-hue);
+  }
+
+  .answer-note {
+    display: grid;
+    grid-template-columns: 11rem 1fr;
+    margin-top: 2rem;
+    padding: 1.35rem;
+    border: 1px solid var(--sage);
+    background: rgba(238, 240, 200, 0.4);
+    gap: 2rem;
+  }
+
+  .answer-note p {
+    max-width: 48rem;
+    margin: 0;
+  }
+
+  .tinted {
+    background: var(--glow);
+  }
+
+  .destination-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--deep);
+    list-style: none;
+  }
+
+  .destination-grid li {
+    display: flex;
+    min-width: 0;
+    min-height: 17rem;
+    flex-direction: column;
+    padding: 1.5rem;
+    border-right: 1px solid var(--deep);
+    border-bottom: 1px solid var(--deep);
+  }
+
+  .destination-grid li:nth-child(3n) {
+    border-right: 0;
+  }
+
+  .destination-dot {
+    width: 0.7rem;
+    height: 0.7rem;
+    margin-bottom: 2.5rem;
+    border-radius: 50%;
+    background: var(--item-hue);
+  }
+
+  .destination-grid h3 {
+    font-family: 'Erode', serif;
+    font-size: 1.5rem;
+    font-weight: 500;
+  }
+
+  .destination-grid p {
+    color: var(--deep);
+    font-size: 0.92rem;
+  }
+
+  .destination-grid code {
+    display: block;
+    overflow-wrap: anywhere;
+    margin-top: auto;
+    padding-top: 1rem;
+    color: var(--ink);
+    font-size: 0.66rem;
+    line-height: 1.5;
+  }
+
+  .formats {
+    background: var(--paper);
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    border-top: 1px solid var(--ink);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+
+  th,
+  td {
+    padding: 1.25rem 1rem;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+
+  thead th {
+    color: var(--deep);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.66rem;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  tbody th {
+    width: 17%;
+    font-family: 'Erode', serif;
+    font-size: 1.2rem;
+    font-weight: 500;
+  }
+
+  tbody td {
+    color: var(--deep);
+    font-size: 0.9rem;
+  }
+
+  tbody td:nth-child(2) {
+    width: 43%;
+  }
+
+  .warning {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .durability {
+    color: var(--glow);
+    background: var(--ink);
+  }
+
+  .light-heading > p:last-child {
+    color: var(--glow);
+  }
+
+  .durability-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid rgba(238, 240, 200, 0.48);
+    list-style: none;
+  }
+
+  .durability-grid li {
+    min-width: 0;
+    padding: 1.5rem;
+    border-right: 1px solid rgba(238, 240, 200, 0.32);
+    border-bottom: 1px solid rgba(238, 240, 200, 0.32);
+  }
+
+  .durability-grid li:last-child {
+    border-right: 0;
+  }
+
+  .durability-grid code {
+    display: block;
+    min-height: 3rem;
+    color: var(--leaf);
+    font-size: 0.68rem;
+    overflow-wrap: anywhere;
+  }
+
+  .durability-grid h3 {
+    color: var(--glow);
+    font-family: 'Erode', serif;
+    font-size: 1.3rem;
+    font-weight: 500;
+  }
+
+  .durability-grid p {
+    margin-bottom: 0;
+    color: #eef0c8;
+    font-size: 0.88rem;
+  }
+
+  .test-strip {
+    display: flex;
+    align-items: baseline;
+    margin-top: clamp(3rem, 6vw, 5rem);
+    gap: 1.5rem;
+  }
+
+  .test-strip strong {
+    color: var(--glow);
+    font-family: 'Erode', serif;
+    font-size: clamp(4rem, 10vw, 9rem);
+    font-weight: 400;
+    letter-spacing: -0.06em;
+    line-height: 0.8;
+  }
+
+  .test-strip span {
+    max-width: 20rem;
+    color: var(--glow);
+  }
+
+  .honesty {
+    background: var(--ground);
+  }
+
+  .states {
+    display: grid;
+    margin: 0;
+    border-top: 1px solid var(--ink);
+  }
+
+  .state {
+    display: grid;
+    grid-template-columns: minmax(11rem, 0.35fr) 1fr;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--line);
+    gap: 2rem;
+  }
+
+  .state dt {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+  }
+
+  .state dt::before {
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.5rem;
+    margin-right: 0.7rem;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    content: '';
+  }
+
+  .state-good dt::before {
+    background: var(--deep);
+  }
+
+  .state-unknown dt::before {
+    background: var(--leaf);
+  }
+
+  .state-bad dt::before {
+    background: #8e4038;
+  }
+
+  .state dd {
+    margin: 0;
+    color: var(--deep);
+  }
+
+  .promises {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin: 4rem 0 0;
+    padding: 0;
+    border-top: 1px solid var(--ink);
+    list-style: none;
+  }
+
+  .promises li {
+    display: flex;
+    min-height: 7.5rem;
+    flex-direction: column;
+    padding: 1rem 1rem 1rem 0;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .promises li:nth-child(3n) {
+    padding-left: 1rem;
+    border-right: 0;
+  }
+
+  .promises li:nth-child(3n + 2) {
+    padding-left: 1rem;
+  }
+
+  .promises span {
+    margin-top: auto;
+    color: var(--deep);
+    font-size: 0.85rem;
+  }
+
+  .assistant {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(24rem, 1.15fr);
+    background: var(--leaf);
+    gap: clamp(3rem, 10vw, 10rem);
+  }
+
+  .assistant-copy h2 {
+    max-width: 10ch;
+  }
+
+  .assistant .section-label {
+    color: var(--ink);
+  }
+
+  .assistant-copy > p:not(.section-label) {
+    max-width: 34rem;
+    color: var(--ink);
+    font-size: 1.05rem;
+  }
+
+  .assistant-copy aside {
+    margin-top: 3rem;
+    padding: 1.2rem;
+    border-top: 1px solid var(--ink);
+    background: rgba(238, 240, 200, 0.58);
+  }
+
+  .assistant-copy aside p {
+    margin: 0.4rem 0 0;
+    color: var(--ink);
+    font-size: 0.88rem;
+  }
+
+  .specimen {
+    align-self: start;
+    border: 1px solid var(--ink);
+    background: var(--ground);
+    font-size: 0.75rem;
+  }
+
+  .specimen-top {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.8rem 1rem;
+    color: var(--glow);
+    background: var(--ink);
+    gap: 1rem;
+  }
+
+  .specimen ul {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin: 0;
+    padding: 1rem;
+    list-style: none;
+  }
+
+  .specimen li {
+    padding: 0.9rem 0.5rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .specimen li::before {
+    margin-right: 0.6rem;
+    color: var(--sage);
+    content: '↳';
+  }
+
+  .status {
+    background: var(--paper);
+  }
+
+  .status-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-top: 1px solid var(--ink);
+  }
+
+  .status-columns > div {
+    padding: 1.5rem 2rem 0 0;
+  }
+
+  .status-columns > div + div {
+    padding-left: 2rem;
+    border-left: 1px solid var(--line);
+  }
+
+  .status-columns h3 {
+    margin-bottom: 1.5rem;
+    font-family: 'Erode', serif;
+    font-size: 1.5rem;
+    font-weight: 500;
+  }
+
+  .status-columns ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .status-columns li {
+    padding: 0.7rem 0;
+    border-bottom: 1px solid var(--line);
+    color: var(--deep);
+    font-size: 0.9rem;
+  }
+
+  .status-columns li::before {
+    margin-right: 0.7rem;
+    color: var(--sage);
+    content: '—';
+  }
+
+  .faq {
+    background: var(--ground);
+  }
+
+  .faq-list {
+    border-top: 1px solid var(--ink);
+  }
+
+  details {
+    border-bottom: 1px solid var(--line);
+  }
+
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.3rem 0;
+    cursor: pointer;
+    font-family: 'Erode', serif;
+    font-size: clamp(1.2rem, 2vw, 1.55rem);
+    font-weight: 500;
+    list-style: none;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary::after {
+    margin-left: 2rem;
+    color: var(--deep);
+    content: '+';
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  details[open] summary::after {
+    content: '−';
+  }
+
+  details p {
+    max-width: 50rem;
+    padding: 0 2rem 1.5rem 0;
+    color: var(--deep);
+  }
+
+  .closing {
+    display: flex;
+    align-items: center;
+    min-height: 42rem;
+    flex-direction: column;
+    justify-content: center;
+    color: var(--glow);
+    background: var(--deep);
+    text-align: center;
+  }
+
+  .closing > svg {
+    margin-bottom: 2rem;
+  }
+
+  .closing h2 {
+    max-width: 14ch;
+  }
+
+  .closing > p:not(.section-label) {
+    max-width: 38rem;
+    margin-bottom: 2rem;
+  }
+
+  .button-light {
+    color: var(--ink);
+    border-color: var(--glow);
+    background: var(--glow);
+  }
+
+  .button-light:hover {
+    background: var(--leaf);
+  }
+
+  footer {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    min-height: 7.5rem;
+    gap: 2rem;
+    font-size: 0.8rem;
+  }
+
+  footer p {
+    margin: 0;
+    color: var(--deep);
+    text-align: center;
+  }
+
+  @media (max-width: 850px) {
+    nav a:not(.source-link) {
+      display: none;
+    }
+
+    .hero {
+      grid-template-columns: 1fr;
+      min-height: auto;
+    }
+
+    .hero-copy {
+      max-width: 42rem;
+    }
+
+    .copy-study {
+      max-width: 34rem;
+      margin-inline: auto;
+    }
+
+    .principle,
+    .chapter-heading,
+    .assistant {
+      grid-template-columns: 1fr;
+    }
+
+    .chapter-heading > p:last-child {
+      margin-top: 1.5rem;
+    }
+
+    .steps {
+      grid-template-columns: 1fr;
+    }
+
+    .steps li + li {
+      padding-left: 0;
+      border-left: 0;
+    }
+
+    .destination-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .destination-grid li:nth-child(3n) {
+      border-right: 1px solid var(--deep);
+    }
+
+    .destination-grid li:nth-child(2n) {
+      border-right: 0;
+    }
+
+    .durability-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .durability-grid li:nth-child(2n) {
+      border-right: 0;
+    }
+
+    .assistant {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .site-header {
+      min-height: 4.5rem;
+    }
+
+    .source-link {
+      padding: 0.45rem 0.65rem;
+    }
+
+    .hero {
+      padding-block: 3.5rem 4.5rem;
+    }
+
+    h1 {
+      font-size: clamp(3.15rem, 15vw, 4.4rem);
+    }
+
+    h2 {
+      font-size: clamp(2.4rem, 12vw, 3.3rem);
+    }
+
+    .hero-actions {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .rings {
+      width: 94%;
+    }
+
+    .ring-label {
+      font-size: 0.48rem;
+    }
+
+    .label-ha {
+      left: -5%;
+    }
+
+    .label-web {
+      right: -4%;
+    }
+
+    .principle {
+      grid-template-columns: 1fr;
+    }
+
+    .chapter-heading {
+      grid-template-columns: 1fr;
+    }
+
+    .answer-note {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+
+    .destination-grid,
+    .durability-grid,
+    .promises,
+    .status-columns {
+      grid-template-columns: 1fr;
+    }
+
+    .formats .table-wrap {
+      overflow: visible;
+      border-top: 0;
+    }
+
+    .formats table,
+    .formats tbody,
+    .formats tr,
+    .formats th,
+    .formats td {
+      display: block;
+      width: 100%;
+    }
+
+    .formats thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+
+    .formats tr {
+      padding: 1.25rem 0;
+      border-top: 1px solid var(--ink);
+    }
+
+    .formats th,
+    .formats td {
+      padding: 0;
+      border: 0;
+    }
+
+    .formats tbody th {
+      margin-bottom: 1rem;
+      font-size: 1.4rem;
+    }
+
+    .formats td {
+      display: grid;
+      grid-template-columns: 5.4rem 1fr;
+      padding-block: 0.35rem;
+      gap: 0.75rem;
+    }
+
+    .formats td::before {
+      color: var(--deep);
+      content: attr(data-label);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .destination-grid li,
+    .destination-grid li:nth-child(3n) {
+      min-height: 14rem;
+      border-right: 0;
+    }
+
+    .durability-grid li {
+      border-right: 0;
+    }
+
+    .test-strip {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .state {
+      grid-template-columns: 1fr;
+      gap: 0.35rem;
+    }
+
+    .promises li,
+    .promises li:nth-child(3n),
+    .promises li:nth-child(3n + 2) {
+      min-height: 6rem;
+      padding-inline: 0;
+      border-right: 0;
+    }
+
+    .specimen-top {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .specimen ul {
+      grid-template-columns: 1fr;
+    }
+
+    .status-columns > div,
+    .status-columns > div + div {
+      padding: 1.5rem 0 2rem;
+      border-left: 0;
+    }
+
+    .status-columns > div + div {
+      border-top: 1px solid var(--ink);
+    }
+
+    footer {
+      grid-template-columns: 1fr auto;
+      padding-block: 1.5rem;
+    }
+
+    footer p {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      scroll-behavior: auto !important;
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+</style>

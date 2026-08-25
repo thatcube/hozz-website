@@ -1,0 +1,65 @@
+---
+/**
+ * p02 · Turn — a bezel-less panel, turned a few degrees off square.
+ *
+ * The one structural dependency: **the turn sets the two Zs' sizes.** Both are
+ * drawn to the same vanishing point as the panel, so the far one is the near
+ * one at 78% — they cannot be equal while the screen is turned, and squaring
+ * the screen up would make them match. The panel's thin edge is visible at the
+ * far side, which is the only other thing in the drawing.
+ *
+ * Cover the letters and a screen seen from an angle is plainly there. Glance at
+ * it and you read ZZ: both letters are upright and both are a full knockout.
+ */
+import { zPath } from '../../data/zstroke';
+import { APP_BY_KEY } from '../../data/brand';
+
+interface Props {
+  size?: number;
+  ground?: 'light' | 'dark';
+}
+const { size = 96, ground = 'light' } = Astro.props as Props;
+const app = APP_BY_KEY.plozz;
+const uid = `p02-${Math.random().toString(36).slice(2, 9)}`;
+
+// Near edge 25 tall, far edge 18.8 — the panel converges to the right.
+const FACE = 'M5 11.5L43 14.6L43 33.4L5 36.5Z';
+// The panel's own thickness, running away from us at the far edge.
+const EDGE = 'M43 14.6L45.6 16.5L45.6 31.5L43 33.4Z';
+
+const NEAR = 16;
+const FAR = NEAR * 0.78; // the same convergence the panel has
+const k = (h: number) => ({
+  y: 24 - h / 2,
+  w: 0.936 * h,
+  h,
+  bar: 0.287 * h,
+  diag: 0.511 * h,
+  cap: 'angled' as const,
+});
+const ZN = k(NEAR);
+const ZF = k(FAR);
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={`${app.name} mark`}
+>
+  <defs>
+    <mask id={uid}>
+      <rect width="48" height="48" fill="#fff" />
+      <path d={zPath({ ...ZN, x: 9.4 })} fill="#000" />
+      <path d={zPath({ ...ZF, x: 26.9 })} fill="#000" />
+    </mask>
+  </defs>
+
+  <g mask={`url(#${uid})`}>
+    <path d={FACE} fill={app.hue} />
+    <path d={EDGE} fill={app.deep} />
+  </g>
+</svg>
