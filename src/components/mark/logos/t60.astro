@@ -1,0 +1,61 @@
+---
+/**
+ * t60 · Soft Carrier
+ *
+ * The same carrier with the corners opened to 9 and the tail raked blunt
+ * rather than pointed — as friendly as this silhouette gets before it stops
+ * reading as a message at all.
+ *
+ * The tail is the lower-left corner rather than an addition to it: the left
+ * edge runs straight past the bottom edge and rakes back up to it over 3
+ * rows, taper 8-5-3. Because that corner is never rounded the bottom edge
+ * stays 23 pixels unbroken, and that edge is what still reads as a message
+ * at 16px, where the tail itself is barely a pixel and a half.
+ *
+ * Light from almost straight above, the shallowest band offset in the set
+ * and a single key tone: the roundest of the four wants the quietest
+ * direction, or the corner radius and the light source end up arguing about
+ * where the top of the shape is.
+ *
+ * 7 tones peel inward as contour rings, one step per ring, so every band
+ * bends around the corners and around the tail — Hozz's meniscus rather than
+ * a rectangle dropped inside an outline. The direction is Mozz's, but spent
+ * on where the bands sit instead of on extra tones: a pixel's effective
+ * depth is pushed inward by up to 0.9 rings on the side facing away from the
+ * light, so the meniscus is wide on the lit shoulder and the deep field
+ * rises nearly to the keyline on the far one. The keyline carries it too — a
+ * single key tone and the shallowest offset in the set.
+ *
+ * Spending the direction that way is what keeps the middle calm. The field
+ * is one flat tone, 133 pixels of it, and no two touching pixels anywhere in
+ * the mark are more than one tone apart.
+ *
+ * The face is supplied and untouched — facePathsAt at md with the compact
+ * smile and the family gap of 2, which is exactly 8×8 — centred on the body
+ * with the tail ignored: 7 rows of air above and 7 below, measured. Nothing
+ * is cleared for it; white on the field is 6.9:1.
+ *
+ * 9 tones.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Twozz — Soft Carrier">
+  <path d="M7 3h18v1h-18z M5 4h2v1h-2z M25 4h2v1h-2z M4 5h1v1h-1z M27 5h1v1h-1z M3 6h1v1h-1z M28 6h1v1h-1z M3 7h1v1h-1z M28 7h1v1h-1z M2 8h1v1h-1z M29 8h1v1h-1z M2 9h1v1h-1z M29 9h1v1h-1z M2 10h1v1h-1z M29 10h1v1h-1z M2 11h1v1h-1z M29 11h1v1h-1z M2 12h1v1h-1z M29 12h1v1h-1z M2 13h1v1h-1z M29 13h1v1h-1z M2 14h1v1h-1z M29 14h1v1h-1z M2 15h1v1h-1z M29 15h1v1h-1z M2 16h1v1h-1z M29 16h1v1h-1z M2 17h1v1h-1z M29 17h1v1h-1z M2 18h1v1h-1z M29 18h1v1h-1z M2 19h1v1h-1z M29 19h1v1h-1z M2 20h1v1h-1z M28 20h1v1h-1z M2 21h1v1h-1z M28 21h1v1h-1z M2 22h1v1h-1z M27 22h1v1h-1z M2 23h1v1h-1z M25 23h2v1h-2z M2 24h1v1h-1z M10 24h15v1h-15z M2 25h1v1h-1z M7 25h3v1h-3z M2 26h1v1h-1z M5 26h2v1h-2z M2 27h3v1h-3z" fill="#1e1039" />
+  <path d="M7 4h18v1h-18z M5 5h2v1h-2z M25 5h2v1h-2z M4 6h1v1h-1z M27 6h1v1h-1z M4 7h1v1h-1z M27 7h1v1h-1z M3 8h1v1h-1z M28 8h1v1h-1z M3 9h1v1h-1z M28 9h1v1h-1z M3 10h1v1h-1z M28 10h1v1h-1z M3 11h1v1h-1z M28 11h1v1h-1z M3 12h1v1h-1z M3 13h1v1h-1z M3 14h1v1h-1z M3 15h1v1h-1z M3 16h1v1h-1z M3 17h1v1h-1z M3 18h1v1h-1z M3 19h1v1h-1z" fill="#c08ae0" />
+  <path d="M7 5h18v1h-18z M5 6h2v1h-2z M25 6h2v1h-2z M5 7h1v1h-1z M26 7h1v1h-1z M4 8h1v1h-1z M27 8h1v1h-1z M4 9h1v1h-1z M27 9h1v1h-1z M4 10h1v1h-1z M27 10h1v1h-1z M4 11h1v1h-1z M27 11h1v1h-1z M4 12h1v1h-1z M28 12h1v1h-1z M4 13h1v1h-1z M28 13h1v1h-1z M4 14h1v1h-1z M28 14h1v1h-1z M4 15h1v1h-1z M28 15h1v1h-1z M4 16h1v1h-1z M28 16h1v1h-1z M4 17h1v1h-1z M28 17h1v1h-1z M4 18h1v1h-1z M28 18h1v1h-1z M4 19h1v1h-1z M28 19h1v1h-1z M3 20h1v1h-1z M27 20h1v1h-1z M3 21h1v1h-1z M27 21h1v1h-1z M3 22h1v1h-1z M25 22h2v1h-2z M3 23h1v1h-1z M10 23h15v1h-15z M3 24h1v1h-1z M7 24h3v1h-3z M3 25h1v1h-1z M5 25h2v1h-2z M3 26h2v1h-2z" fill="#b67bdb" />
+  <path d="M7 6h18v1h-18z M6 7h1v1h-1z M25 7h1v1h-1z M5 8h1v1h-1z M26 8h1v1h-1z M5 9h1v1h-1z M26 9h1v1h-1z M5 10h1v1h-1z M26 10h1v1h-1z M5 11h1v1h-1z M26 11h1v1h-1z M5 12h1v1h-1z M26 12h2v1h-2z M5 13h1v1h-1z M27 13h1v1h-1z M5 14h1v1h-1z M27 14h1v1h-1z M5 15h1v1h-1z M27 15h1v1h-1z M5 16h1v1h-1z M27 16h1v1h-1z M5 17h1v1h-1z M27 17h1v1h-1z M5 18h1v1h-1z M27 18h1v1h-1z M5 19h1v1h-1z M27 19h1v1h-1z M4 20h1v1h-1z M26 20h1v1h-1z M4 21h1v1h-1z M25 21h2v1h-2z M4 22h1v1h-1z M10 22h15v1h-15z M4 23h1v1h-1z M7 23h3v1h-3z M4 24h3v1h-3z M4 25h1v1h-1z" fill="#aa6bd6" />
+  <path d="M7 7h18v1h-18z M6 8h1v1h-1z M25 8h1v1h-1z M6 9h1v1h-1z M25 9h1v1h-1z M6 10h1v1h-1z M25 10h1v1h-1z M6 11h1v1h-1z M25 11h1v1h-1z M6 12h1v1h-1z M25 12h1v1h-1z M6 13h1v1h-1z M26 13h1v1h-1z M6 14h1v1h-1z M26 14h1v1h-1z M6 15h1v1h-1z M26 15h1v1h-1z M6 16h1v1h-1z M26 16h1v1h-1z M6 17h1v1h-1z M26 17h1v1h-1z M6 18h1v1h-1z M26 18h1v1h-1z M6 19h1v1h-1z M26 19h1v1h-1z M5 20h1v1h-1z M25 20h1v1h-1z M5 21h1v1h-1z M10 21h15v1h-15z M5 22h1v1h-1z M7 22h3v1h-3z M5 23h2v1h-2z" fill="#9e5cd1" />
+  <path d="M7 8h18v1h-18z M7 9h1v1h-1z M24 9h1v1h-1z M7 10h1v1h-1z M24 10h1v1h-1z M7 11h1v1h-1z M24 11h1v1h-1z M7 12h1v1h-1z M24 12h1v1h-1z M7 13h1v1h-1z M25 13h1v1h-1z M7 14h1v1h-1z M25 14h1v1h-1z M7 15h1v1h-1z M25 15h1v1h-1z M7 16h1v1h-1z M25 16h1v1h-1z M7 17h1v1h-1z M25 17h1v1h-1z M7 18h1v1h-1z M25 18h1v1h-1z M7 19h1v1h-1z M25 19h1v1h-1z M6 20h1v1h-1z M10 20h15v1h-15z M6 21h4v1h-4z M6 22h1v1h-1z" fill="#924dcc" />
+  <path d="M8 9h16v1h-16z M8 10h1v1h-1z M23 10h1v1h-1z M8 11h1v1h-1z M23 11h1v1h-1z M8 12h1v1h-1z M23 12h1v1h-1z M8 13h1v1h-1z M24 13h1v1h-1z M8 14h1v1h-1z M24 14h1v1h-1z M8 15h1v1h-1z M24 15h1v1h-1z M8 16h1v1h-1z M24 16h1v1h-1z M8 17h1v1h-1z M24 17h1v1h-1z M8 18h1v1h-1z M24 18h1v1h-1z M8 19h1v1h-1z M10 19h15v1h-15z M7 20h3v1h-3z" fill="#853ec6" />
+  <path d="M9 10h14v1h-14z M9 11h14v1h-14z M9 12h14v1h-14z M9 13h15v1h-15z M9 14h15v1h-15z M9 15h15v1h-15z M9 16h15v1h-15z M9 17h15v1h-15z M9 18h15v1h-15z M9 19h1v1h-1z" fill="#7837b9" />
+  <g fill="#ffffff" shape-rendering="crispEdges">
+    {facePathsAt({ cx: 16, cy: 14, size: 'md', smile: 'compact', gap: 2 }).map((d) => (
+      <path d={d} />
+    ))}
+  </g>
+</MarkFrame>

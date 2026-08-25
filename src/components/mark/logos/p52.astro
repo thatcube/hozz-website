@@ -1,0 +1,48 @@
+---
+/**
+ * p52 · Letterbox
+ *
+ * The same cut opening in the proportion the thing behind it is actually in,
+ * and lit from one direction instead of none. 28 by 18: wide enough that the
+ * shape alone says viewport at 16px, without any help from what is inside
+ * it.
+ *
+ * The light comes from above and the opening is cut into the surface rather
+ * than raised out of it, so the walls take it the way a recess does — the
+ * head wall faces away and goes dark, the sill wall faces up into the light
+ * and goes pale, the jambs sit between the two. That is the whole difference
+ * between this and p51: same measurement, one light source added. Getting
+ * the direction the other way round would have made a raised button of it,
+ * which is the one thing a window is not.
+ *
+ * Three steps a side and no step skipped. Because the light falls across the
+ * opening rather than out of it, the field cannot be the palest tone in the
+ * ramp; it sits in the middle of it, and the face still reads on it at
+ * 8.2:1. 20 by 10 of flat field, with nothing in it.
+ *
+ * Nine blues including the family keyline, and the supplied face at
+ * md/compact, 8 by 8, centred at (16, 16).
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Plozz — Letterbox">
+  <path d="M3 8h26v1h-26z" fill="#1b83ad" />
+  <path d="M3 9h25v1h-25z M3 10h1v1h-1z M3 11h1v1h-1z M3 12h1v1h-1z M3 13h1v1h-1z M3 14h1v1h-1z M3 15h1v1h-1z M3 16h1v1h-1z M3 17h1v1h-1z M3 18h1v1h-1z M3 19h1v1h-1z M3 20h1v1h-1z M3 21h1v1h-1z M3 22h1v1h-1z M3 23h1v1h-1z" fill="#2b95c1" />
+  <path d="M4 10h23v1h-23z M4 11h1v1h-1z M4 12h1v1h-1z M4 13h1v1h-1z M4 14h1v1h-1z M4 15h1v1h-1z M4 16h1v1h-1z M4 17h1v1h-1z M4 18h1v1h-1z M4 19h1v1h-1z M4 20h1v1h-1z M4 21h1v1h-1z M4 22h1v1h-1z" fill="#3ea7d3" />
+  <path d="M5 11h1v1h-1z M5 12h1v1h-1z M5 13h1v1h-1z M5 14h1v1h-1z M5 15h1v1h-1z M5 16h1v1h-1z M5 17h1v1h-1z M5 18h1v1h-1z M5 19h1v1h-1z M5 20h1v1h-1z M5 21h1v1h-1z" fill="#55b8e1" />
+  <path d="M6 11h21v1h-21z M6 12h21v1h-21z M6 13h21v1h-21z M6 14h21v1h-21z M6 15h21v1h-21z M6 16h21v1h-21z M6 17h21v1h-21z M6 18h21v1h-21z M6 19h21v1h-21z M6 20h21v1h-21z M26 21h1v1h-1z" fill="#6ec8ec" />
+  <path d="M27 10h1v1h-1z M27 11h1v1h-1z M27 12h1v1h-1z M27 13h1v1h-1z M27 14h1v1h-1z M27 15h1v1h-1z M27 16h1v1h-1z M27 17h1v1h-1z M27 18h1v1h-1z M27 19h1v1h-1z M27 20h1v1h-1z M6 21h20v1h-20z M27 21h1v1h-1z M27 22h1v1h-1z" fill="#8bd8f5" />
+  <path d="M28 9h1v1h-1z M28 10h1v1h-1z M28 11h1v1h-1z M28 12h1v1h-1z M28 13h1v1h-1z M28 14h1v1h-1z M28 15h1v1h-1z M28 16h1v1h-1z M28 17h1v1h-1z M28 18h1v1h-1z M28 19h1v1h-1z M28 20h1v1h-1z M28 21h1v1h-1z M5 22h22v1h-22z M28 22h1v1h-1z M28 23h1v1h-1z" fill="#a9e5fb" />
+  <path d="M4 23h24v1h-24z" fill="#c9f2fe" />
+  <path d="M3 7h26v1h-26z M2 8h1v1h-1z M29 8h1v1h-1z M2 9h1v1h-1z M29 9h1v1h-1z M2 10h1v1h-1z M29 10h1v1h-1z M2 11h1v1h-1z M29 11h1v1h-1z M2 12h1v1h-1z M29 12h1v1h-1z M2 13h1v1h-1z M29 13h1v1h-1z M2 14h1v1h-1z M29 14h1v1h-1z M2 15h1v1h-1z M29 15h1v1h-1z M2 16h1v1h-1z M29 16h1v1h-1z M2 17h1v1h-1z M29 17h1v1h-1z M2 18h1v1h-1z M29 18h1v1h-1z M2 19h1v1h-1z M29 19h1v1h-1z M2 20h1v1h-1z M29 20h1v1h-1z M2 21h1v1h-1z M29 21h1v1h-1z M2 22h1v1h-1z M29 22h1v1h-1z M2 23h1v1h-1z M29 23h1v1h-1z M3 24h26v1h-26z" fill="#063347" />
+  <g fill="#132638" shape-rendering="crispEdges">
+    {facePathsAt({ cx: 16, cy: 16, size: 'md', smile: 'compact', gap: 2 }).map((d) => (
+      <path d={d} />
+    ))}
+  </g>
+</MarkFrame>
