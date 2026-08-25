@@ -1,0 +1,64 @@
+---
+/**
+ * p70 · Clipped
+ *
+ * Plozz keeps a wall of covers, and a cover is the flattest thing there is: a
+ * rectangle standing in for something you have not watched yet. These four
+ * marks are four ways of stopping it being flat.
+ *
+ * Every case in a rack is gripped in the same place, and the corner that
+ * gets gripped is the corner that gets cut. That is the whole mark: a plain
+ * cover, and one corner taken off where a hand would go.
+ *
+ * The cut is on the lower right, which is the side facing away from the
+ * light, so the new facet lands near the bottom of the ramp. It reads as a
+ * real chamfer on a real edge rather than as a notch, because it is the only
+ * part of the silhouette that gets darker as it turns.
+ *
+ * The other three corners keep the family's soft rounding. The asymmetry is
+ * what makes it legible at 16px — a shape with one thing wrong with it is
+ * recognisable in a way a symmetrical one is not.
+ *
+ * All four are lit by one law, so they read as a family rather than as four
+ * ideas. Depth inside the silhouette is measured as a blurred signed distance
+ * — blurred because the raw nearest-outside vector flips between straight and
+ * diagonal at every step of a stepped edge, and quantising that puts notches
+ * in a shape that has none. Tone is then `5 + 5 · lambert · shell(depth)`,
+ * where `shell` reaches zero at seven pixels in. Beyond that the field is a
+ * single flat tone: the centre is where the face lives and nothing competes
+ * with it. The light is upper left in every one of them.
+ *
+ * The normal is bent outward by the body's own curvature as well as by the
+ * nearest edge, so the bands taper along an edge instead of tracking it at a
+ * constant offset. A constant offset is a closed loop, and a closed loop reads
+ * as a frame drawn around a plaque rather than as light falling on a solid.
+ *
+ * 11 tones and one ink. The face is `md` with the `compact` smile,
+ * sitting entirely on the flat centre — nothing is cleared for it.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Plozz — Clipped">
+  <path d="M7 2h18v1h-18z M6 3h1v1h-1z M25 3h1v1h-1z M6 4h1v1h-1z M25 4h1v1h-1z M6 5h1v1h-1z M25 5h1v1h-1z M6 6h1v1h-1z M25 6h1v1h-1z M6 7h1v1h-1z M25 7h1v1h-1z M6 8h1v1h-1z M25 8h1v1h-1z M6 9h1v1h-1z M25 9h1v1h-1z M6 10h1v1h-1z M25 10h1v1h-1z M6 11h1v1h-1z M25 11h1v1h-1z M6 12h1v1h-1z M25 12h1v1h-1z M6 13h1v1h-1z M25 13h1v1h-1z M6 14h1v1h-1z M25 14h1v1h-1z M6 15h1v1h-1z M25 15h1v1h-1z M6 16h1v1h-1z M25 16h1v1h-1z M6 17h1v1h-1z M25 17h1v1h-1z M6 18h1v1h-1z M25 18h1v1h-1z M6 19h1v1h-1z M25 19h1v1h-1z M6 20h1v1h-1z M25 20h1v1h-1z M6 21h1v1h-1z M25 21h1v1h-1z M6 22h1v1h-1z M25 22h1v1h-1z M6 23h1v1h-1z M25 23h1v1h-1z M6 24h1v1h-1z M24 24h1v1h-1z M6 25h1v1h-1z M23 25h1v1h-1z M6 26h1v1h-1z M22 26h1v1h-1z M6 27h1v1h-1z M21 27h1v1h-1z M6 28h1v1h-1z M20 28h1v1h-1z M7 29h13v1h-13z" fill="#072936" />
+  <path d="M24 23h1v1h-1z M23 24h1v1h-1z M22 25h1v1h-1z M21 26h1v1h-1z M20 27h1v1h-1z M19 28h1v1h-1z" fill="#06364f" />
+  <path d="M24 21h1v1h-1z M23 22h2v1h-2z M22 23h2v1h-2z M22 24h1v1h-1z M21 25h1v1h-1z M19 26h2v1h-2z M18 27h2v1h-2z M17 28h2v1h-2z" fill="#085072" />
+  <path d="M24 6h1v1h-1z M24 7h1v1h-1z M24 8h1v1h-1z M24 9h1v1h-1z M24 10h1v1h-1z M24 11h1v1h-1z M24 12h1v1h-1z M24 13h1v1h-1z M24 14h1v1h-1z M24 15h1v1h-1z M24 16h1v1h-1z M24 17h1v1h-1z M24 18h1v1h-1z M24 19h1v1h-1z M23 20h2v1h-2z M23 21h1v1h-1z M22 22h1v1h-1z M21 23h1v1h-1z M20 24h2v1h-2z M19 25h2v1h-2z M18 26h1v1h-1z M16 27h2v1h-2z M10 28h7v1h-7z" fill="#0b6892" />
+  <path d="M24 5h1v1h-1z M23 6h1v1h-1z M23 7h1v1h-1z M23 8h1v1h-1z M23 9h1v1h-1z M23 10h1v1h-1z M23 11h1v1h-1z M23 12h1v1h-1z M22 13h2v1h-2z M22 14h2v1h-2z M22 15h2v1h-2z M22 16h2v1h-2z M22 17h2v1h-2z M22 18h2v1h-2z M22 19h2v1h-2z M22 20h1v1h-1z M22 21h1v1h-1z M21 22h1v1h-1z M20 23h1v1h-1z M19 24h1v1h-1z M18 25h1v1h-1z M14 26h4v1h-4z M10 27h6v1h-6z M8 28h2v1h-2z" fill="#0f7fae" />
+  <path d="M24 4h1v1h-1z M23 5h1v1h-1z M22 6h1v1h-1z M22 7h1v1h-1z M21 8h2v1h-2z M21 9h2v1h-2z M21 10h2v1h-2z M21 11h2v1h-2z M21 12h2v1h-2z M21 13h1v1h-1z M21 14h1v1h-1z M21 15h1v1h-1z M21 16h1v1h-1z M21 17h1v1h-1z M21 18h1v1h-1z M21 19h1v1h-1z M21 20h1v1h-1z M20 21h2v1h-2z M19 22h2v1h-2z M18 23h2v1h-2z M17 24h2v1h-2z M11 25h7v1h-7z M10 26h4v1h-4z M9 27h1v1h-1z" fill="#1594c4" />
+  <path d="M24 3h1v1h-1z M23 4h1v1h-1z M22 5h1v1h-1z M21 6h1v1h-1z M12 7h10v1h-10z M11 8h10v1h-10z M11 9h10v1h-10z M11 10h10v1h-10z M11 11h10v1h-10z M11 12h10v1h-10z M11 13h10v1h-10z M11 14h10v1h-10z M11 15h10v1h-10z M11 16h10v1h-10z M11 17h10v1h-10z M11 18h10v1h-10z M11 19h10v1h-10z M11 20h10v1h-10z M11 21h9v1h-9z M11 22h8v1h-8z M11 23h7v1h-7z M10 24h7v1h-7z M10 25h1v1h-1z M9 26h1v1h-1z M8 27h1v1h-1z M7 28h1v1h-1z" fill="#45aad2" />
+  <path d="M22 4h1v1h-1z M18 5h4v1h-4z M11 6h10v1h-10z M10 7h2v1h-2z M10 8h1v1h-1z M10 9h1v1h-1z M10 10h1v1h-1z M10 11h1v1h-1z M10 12h1v1h-1z M10 13h1v1h-1z M10 14h1v1h-1z M10 15h1v1h-1z M10 16h1v1h-1z M10 17h1v1h-1z M10 18h1v1h-1z M9 19h2v1h-2z M9 20h2v1h-2z M9 21h2v1h-2z M9 22h2v1h-2z M9 23h2v1h-2z M9 24h1v1h-1z M9 25h1v1h-1z M8 26h1v1h-1z M7 27h1v1h-1z" fill="#6dbfde" />
+  <path d="M22 3h2v1h-2z M13 4h9v1h-9z M10 5h8v1h-8z M9 6h2v1h-2z M9 7h1v1h-1z M9 8h1v1h-1z M9 9h1v1h-1z M9 10h1v1h-1z M8 11h2v1h-2z M8 12h2v1h-2z M8 13h2v1h-2z M8 14h2v1h-2z M8 15h2v1h-2z M8 16h2v1h-2z M8 17h2v1h-2z M8 18h2v1h-2z M8 19h1v1h-1z M8 20h1v1h-1z M8 21h1v1h-1z M8 22h1v1h-1z M8 23h1v1h-1z M8 24h1v1h-1z M8 25h1v1h-1z M7 26h1v1h-1z" fill="#90d1e8" />
+  <path d="M11 3h11v1h-11z M9 4h4v1h-4z M8 5h2v1h-2z M8 6h1v1h-1z M8 7h1v1h-1z M7 8h2v1h-2z M7 9h2v1h-2z M7 10h2v1h-2z M7 11h1v1h-1z M7 12h1v1h-1z M7 13h1v1h-1z M7 14h1v1h-1z M7 15h1v1h-1z M7 16h1v1h-1z M7 17h1v1h-1z M7 18h1v1h-1z M7 19h1v1h-1z M7 20h1v1h-1z M7 21h1v1h-1z M7 22h1v1h-1z M7 23h1v1h-1z M7 24h1v1h-1z M7 25h1v1h-1z" fill="#b1e1f1" />
+  <path d="M9 3h2v1h-2z M8 4h1v1h-1z M7 5h1v1h-1z M7 6h1v1h-1z M7 7h1v1h-1z" fill="#cfeef9" />
+  <path d="M7 3h2v1h-2z M7 4h1v1h-1z" fill="#ebfaff" />
+  <g fill="#072936" shape-rendering="crispEdges">
+    {facePathsAt({ cx: 15.5, cy: 15.5, size: 'md', smile: 'compact', gap: 2 }).map((d) => (
+      <path d={d} />
+    ))}
+  </g>
+</MarkFrame>

@@ -1,0 +1,69 @@
+---
+/**
+ * p69 · Turned
+ *
+ * Plozz keeps a wall of covers, and a cover is the flattest thing there is: a
+ * rectangle standing in for something you have not watched yet. These four
+ * marks are four ways of stopping it being flat.
+ *
+ * The cover has been turned until it has a side, and a thing with a side
+ * is an object rather than a picture of one.
+ *
+ * The perspective is stepped by hand — five columns of fore-edge, then the
+ * face falling away in even four-column terraces. A swept edge rounded by a
+ * disc frays, and frayed pixels read as damage rather than as depth, so every
+ * step here is placed rather than derived.
+ *
+ * The lit fore-edge is the point of the mark, and it is the one part that had
+ * to be got right twice. Shaded on its own it detached — bright metal sitting
+ * beside a dark seam. Shaded against the *whole* silhouette, with only a
+ * small bias to say which way it faces, it stays attached: one solid, two
+ * planes, one light.
+ *
+ * All four are lit by one law, so they read as a family rather than as four
+ * ideas. Depth inside the silhouette is measured as a blurred signed distance
+ * — blurred because the raw nearest-outside vector flips between straight and
+ * diagonal at every step of a stepped edge, and quantising that puts notches
+ * in a shape that has none. Tone is then `5 + 5 · lambert · shell(depth)`,
+ * where `shell` reaches zero at seven pixels in. Beyond that the field is a
+ * single flat tone: the centre is where the face lives and nothing competes
+ * with it. The light is upper left in every one of them.
+ *
+ * The normal is bent outward by the body's own curvature as well as by the
+ * nearest edge, so the bands taper along an edge instead of tracking it at a
+ * constant offset. A constant offset is a closed loop, and a closed loop reads
+ * as a frame drawn around a plaque rather than as light falling on a solid.
+ *
+ * 11 tones and one ink. The face is `md` with the `compact` smile,
+ * sitting entirely on the flat centre — nothing is cleared for it.
+ *
+ * This is the one to pick. Filed needs two objects to say the tile is an
+ * object; Tipped and Clipped say it with an edge. Turned says it with a
+ * whole second plane, and it is still the clearest of the four at 16px.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Plozz — Turned">
+  <path d="M9 2h5v1h-5z M7 3h3v1h-3z M14 3h5v1h-5z M6 4h1v1h-1z M9 4h1v1h-1z M19 4h5v1h-5z M5 5h1v1h-1z M9 5h1v1h-1z M24 5h3v1h-3z M5 6h1v1h-1z M9 6h1v1h-1z M27 6h1v1h-1z M5 7h1v1h-1z M9 7h1v1h-1z M27 7h1v1h-1z M5 8h1v1h-1z M9 8h1v1h-1z M27 8h1v1h-1z M5 9h1v1h-1z M9 9h1v1h-1z M27 9h1v1h-1z M5 10h1v1h-1z M9 10h1v1h-1z M27 10h1v1h-1z M5 11h1v1h-1z M9 11h1v1h-1z M27 11h1v1h-1z M5 12h1v1h-1z M9 12h1v1h-1z M27 12h1v1h-1z M5 13h1v1h-1z M9 13h1v1h-1z M27 13h1v1h-1z M5 14h1v1h-1z M9 14h1v1h-1z M27 14h1v1h-1z M5 15h1v1h-1z M9 15h1v1h-1z M27 15h1v1h-1z M5 16h1v1h-1z M9 16h1v1h-1z M27 16h1v1h-1z M5 17h1v1h-1z M9 17h1v1h-1z M27 17h1v1h-1z M5 18h1v1h-1z M9 18h1v1h-1z M27 18h1v1h-1z M5 19h1v1h-1z M9 19h1v1h-1z M27 19h1v1h-1z M5 20h1v1h-1z M9 20h1v1h-1z M27 20h1v1h-1z M5 21h1v1h-1z M9 21h1v1h-1z M27 21h1v1h-1z M5 22h1v1h-1z M9 22h1v1h-1z M27 22h1v1h-1z M5 23h1v1h-1z M9 23h1v1h-1z M27 23h1v1h-1z M5 24h1v1h-1z M9 24h1v1h-1z M27 24h1v1h-1z M5 25h1v1h-1z M9 25h1v1h-1z M24 25h3v1h-3z M6 26h1v1h-1z M9 26h1v1h-1z M19 26h5v1h-5z M7 27h3v1h-3z M14 27h5v1h-5z M9 28h5v1h-5z" fill="#072936" />
+  <path d="M26 23h1v1h-1z M25 24h2v1h-2z M23 25h1v1h-1z" fill="#06364f" />
+  <path d="M26 21h1v1h-1z M26 22h1v1h-1z M25 23h1v1h-1z M23 24h2v1h-2z M18 25h5v1h-5z M16 26h3v1h-3z M12 27h2v1h-2z" fill="#085072" />
+  <path d="M26 8h1v1h-1z M26 9h1v1h-1z M26 10h1v1h-1z M26 11h1v1h-1z M26 12h1v1h-1z M26 13h1v1h-1z M26 14h1v1h-1z M26 15h1v1h-1z M26 16h1v1h-1z M26 17h1v1h-1z M26 18h1v1h-1z M26 19h1v1h-1z M25 20h2v1h-2z M25 21h1v1h-1z M24 22h2v1h-2z M22 23h3v1h-3z M18 24h5v1h-5z M14 25h4v1h-4z M12 26h4v1h-4z M11 27h1v1h-1z" fill="#0b6892" />
+  <path d="M26 7h1v1h-1z M25 9h1v1h-1z M25 10h1v1h-1z M25 11h1v1h-1z M25 12h1v1h-1z M24 13h2v1h-2z M24 14h2v1h-2z M24 15h2v1h-2z M24 16h2v1h-2z M24 17h2v1h-2z M24 18h2v1h-2z M24 19h2v1h-2z M24 20h1v1h-1z M23 21h2v1h-2z M22 22h2v1h-2z M18 23h4v1h-4z M13 24h5v1h-5z M11 25h3v1h-3z M10 26h2v1h-2z M10 27h1v1h-1z" fill="#0f7fae" />
+  <path d="M25 8h1v1h-1z M24 9h1v1h-1z M23 10h2v1h-2z M23 11h2v1h-2z M23 12h2v1h-2z M23 13h1v1h-1z M23 14h1v1h-1z M23 15h1v1h-1z M23 16h1v1h-1z M23 17h1v1h-1z M23 18h1v1h-1z M23 19h1v1h-1z M23 20h1v1h-1z M21 21h2v1h-2z M17 22h5v1h-5z M12 23h6v1h-6z M10 24h3v1h-3z M10 25h1v1h-1z" fill="#1594c4" />
+  <path d="M26 6h1v1h-1z M25 7h1v1h-1z M11 8h8v1h-8z M22 8h3v1h-3z M10 9h14v1h-14z M10 10h13v1h-13z M10 11h13v1h-13z M10 12h13v1h-13z M10 13h13v1h-13z M10 14h13v1h-13z M10 15h13v1h-13z M10 16h13v1h-13z M10 17h13v1h-13z M10 18h13v1h-13z M10 19h13v1h-13z M10 20h13v1h-13z M10 21h11v1h-11z M10 22h7v1h-7z M10 23h2v1h-2z M8 26h1v1h-1z" fill="#45aad2" />
+  <path d="M11 6h7v1h-7z M25 6h1v1h-1z M10 7h15v1h-15z M10 8h1v1h-1z M19 8h3v1h-3z M8 25h1v1h-1z M7 26h1v1h-1z" fill="#6dbfde" />
+  <path d="M12 4h2v1h-2z M18 4h1v1h-1z M11 5h9v1h-9z M22 5h2v1h-2z M10 6h1v1h-1z M18 6h7v1h-7z M8 23h1v1h-1z M8 24h1v1h-1z M6 25h2v1h-2z" fill="#90d1e8" />
+  <path d="M12 3h2v1h-2z M10 4h2v1h-2z M14 4h4v1h-4z M10 5h1v1h-1z M20 5h2v1h-2z M8 8h1v1h-1z M8 9h1v1h-1z M8 10h1v1h-1z M8 11h1v1h-1z M8 12h1v1h-1z M8 13h1v1h-1z M8 14h1v1h-1z M8 15h1v1h-1z M8 16h1v1h-1z M8 17h1v1h-1z M8 18h1v1h-1z M8 19h1v1h-1z M8 20h1v1h-1z M8 21h1v1h-1z M8 22h1v1h-1z M7 23h1v1h-1z M6 24h2v1h-2z" fill="#b1e1f1" />
+  <path d="M10 3h2v1h-2z M8 7h1v1h-1z M7 8h1v1h-1z M7 9h1v1h-1z M7 10h1v1h-1z M7 11h1v1h-1z M7 12h1v1h-1z M7 13h1v1h-1z M7 14h1v1h-1z M7 15h1v1h-1z M7 16h1v1h-1z M7 17h1v1h-1z M7 18h1v1h-1z M7 19h1v1h-1z M7 20h1v1h-1z M6 21h2v1h-2z M6 22h2v1h-2z M6 23h1v1h-1z" fill="#cfeef9" />
+  <path d="M7 4h2v1h-2z M6 5h3v1h-3z M6 6h3v1h-3z M6 7h2v1h-2z M6 8h1v1h-1z M6 9h1v1h-1z M6 10h1v1h-1z M6 11h1v1h-1z M6 12h1v1h-1z M6 13h1v1h-1z M6 14h1v1h-1z M6 15h1v1h-1z M6 16h1v1h-1z M6 17h1v1h-1z M6 18h1v1h-1z M6 19h1v1h-1z M6 20h1v1h-1z" fill="#ebfaff" />
+  <g fill="#072936" shape-rendering="crispEdges">
+    {facePathsAt({ cx: 18, cy: 16, size: 'md', smile: 'compact', gap: 2 }).map((d) => (
+      <path d={d} />
+    ))}
+  </g>
+</MarkFrame>
