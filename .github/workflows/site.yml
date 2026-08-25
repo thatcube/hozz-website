@@ -99,12 +99,17 @@ jobs:
 
       # The screenshots are the evidence for anything that failed, and are worth
       # having even when nothing did.
+      #
+      # include-hidden-files because the directory is .shots — upload-artifact
+      # skips dot-paths by default and says so only in a warning, so this
+      # uploaded nothing at all until somebody went looking for the evidence.
       - name: Keep the screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: page-screenshots
           path: .shots/
+          include-hidden-files: true
           retention-days: 7
 
   # Publishing to Cloudflare, on main only.
