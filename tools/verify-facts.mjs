@@ -58,6 +58,7 @@ const FILES = {
   manualExporter: 'Sources/HozzHealth/HealthKitManualExporter.swift',
   stdio: 'Sources/HozzMCP/MCPStdioTransport.swift',
   readme: 'README.md',
+  contributing: 'CONTRIBUTING.md',
   typeRegistry: 'Sources/HozzHealth/HealthKitTypeRegistry.swift',
 };
 
@@ -234,6 +235,7 @@ try {
     manualExporter,
     stdio,
     readme,
+    contributing,
     typeRegistry,
   ] = await Promise.all([
     load('preset'),
@@ -250,6 +252,7 @@ try {
     load('manualExporter'),
     load('stdio'),
     load('readme'),
+    load('contributing'),
     load('typeRegistry'),
   ]);
 
@@ -428,12 +431,21 @@ try {
   );
 
   // --- What you need to build it -----------------------------------------
-  // Getting started names two tool versions. They are the app README's to
-  // change, so they are read from it rather than remembered here.
-  const xcode = readme.match(/Xcode (\d+) or newer/);
+  // Getting started names two tool versions. They are the app's to change, so
+  // they are read from it rather than remembered here.
+  //
+  // Both files are searched because the answer has already moved once: the
+  // build requirements lived in README.md and were moved to CONTRIBUTING.md
+  // during a restructure, at which point this reported the versions as "not
+  // found" -- drift in the checker rather than in the docs. A fact that lives
+  // in one of two places should be looked for in both, or the next tidy-up
+  // reads as a documentation error.
+  const buildDocs = `${readme}\n${contributing}`;
+
+  const xcode = buildDocs.match(/Xcode (\d+) or newer/);
   equal('Xcode version required', REQUIREMENTS.xcode, xcode ? Number(xcode[1]) : 'not found');
 
-  const xcodegen = readme.match(/XcodeGen\]\([^)]*\) ([\d.]+) or newer/);
+  const xcodegen = buildDocs.match(/XcodeGen\]?\(?[^)\n]*\)? ?([\d.]+) or newer/);
   equal('XcodeGen version required', REQUIREMENTS.xcodegen, xcodegen ? xcodegen[1] : 'not found');
 
   // Two areas on Data coverage are annotated with the OS that introduced them.
