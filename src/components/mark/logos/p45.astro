@@ -1,0 +1,42 @@
+---
+/**
+ * p45 · Reflector
+ *
+ * Glass, which is the other honest way to say *screen* without drawing a
+ * button. A two-pixel case carries a lit upper edge and a shaded lower one,
+ * then a black bezel, then a front surface with a rim vignette falling into
+ * the corners.
+ *
+ * Two specular streaks are struck at 45° across the left band. They are
+ * deliberately asymmetric — a reflection is a fact about where the light is,
+ * and a mirrored pair would read as decoration — and they are clipped a pixel
+ * clear of the face box, so the field under the ZZ is one flat tone.
+ *
+ * 9 tones. Face: `md` + `compact` + gap 2, which is exactly 8x8,
+ * centred on the container with 10 px of air either side and 7 above
+ * and below. Nothing is cleared for it.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Plozz — Reflector">
+  <path d="M3 21h1v1h-1z M28 21h1v1h-1z M3 22h1v1h-1z M28 22h1v1h-1z M4 23h2v1h-2z M26 23h2v1h-2z M4 24h24v1h-24z M6 25h20v1h-20z" fill="#07445f" />
+  <path d="M4 9h1v1h-1z M27 9h1v1h-1z M4 10h1v1h-1z M27 10h1v1h-1z M3 11h2v1h-2z M27 11h2v1h-2z M3 12h2v1h-2z M27 12h2v1h-2z M3 13h2v1h-2z M27 13h2v1h-2z M3 14h2v1h-2z M27 14h2v1h-2z M3 15h2v1h-2z M27 15h2v1h-2z M3 16h2v1h-2z M27 16h2v1h-2z M3 17h2v1h-2z M27 17h2v1h-2z M3 18h2v1h-2z M27 18h2v1h-2z M3 19h2v1h-2z M27 19h2v1h-2z M3 20h2v1h-2z M27 20h2v1h-2z M4 21h1v1h-1z M27 21h1v1h-1z M4 22h1v1h-1z M27 22h1v1h-1z" fill="#096b94" />
+  <path d="M6 6h20v1h-20z M4 7h24v1h-24z M4 8h2v1h-2z M26 8h2v1h-2z M3 9h1v1h-1z M28 9h1v1h-1z M3 10h1v1h-1z M28 10h1v1h-1z" fill="#22a7d6" />
+  <path d="M6 8h20v1h-20z M5 9h1v1h-1z M26 9h1v1h-1z M5 10h1v1h-1z M26 10h1v1h-1z M5 11h1v1h-1z M26 11h1v1h-1z M5 12h1v1h-1z M26 12h1v1h-1z M5 13h1v1h-1z M26 13h1v1h-1z M5 14h1v1h-1z M26 14h1v1h-1z M5 15h1v1h-1z M26 15h1v1h-1z M5 16h1v1h-1z M26 16h1v1h-1z M5 17h1v1h-1z M26 17h1v1h-1z M5 18h1v1h-1z M26 18h1v1h-1z M5 19h1v1h-1z M26 19h1v1h-1z M5 20h1v1h-1z M26 20h1v1h-1z M5 21h1v1h-1z M26 21h1v1h-1z M5 22h1v1h-1z M26 22h1v1h-1z M6 23h20v1h-20z" fill="#08587a" />
+  <path d="M6 9h20v1h-20z M6 10h1v1h-1z M25 10h1v1h-1z M6 11h1v1h-1z M25 11h1v1h-1z M6 12h1v1h-1z M25 12h1v1h-1z M25 13h1v1h-1z M6 14h1v1h-1z M25 14h1v1h-1z M6 15h1v1h-1z M25 15h1v1h-1z M6 16h1v1h-1z M25 16h1v1h-1z M6 17h1v1h-1z M25 17h1v1h-1z M6 18h1v1h-1z M25 18h1v1h-1z M6 19h1v1h-1z M25 19h1v1h-1z M25 20h1v1h-1z M6 21h1v1h-1z M25 21h1v1h-1z M6 22h20v1h-20z" fill="#22a7d6" />
+  <path d="M7 10h18v1h-18z M7 11h1v1h-1z M24 11h1v1h-1z M24 12h1v1h-1z M24 13h1v1h-1z M7 14h1v1h-1z M24 14h1v1h-1z M7 15h1v1h-1z M24 15h1v1h-1z M7 16h1v1h-1z M24 16h1v1h-1z M7 17h1v1h-1z M24 17h1v1h-1z M7 18h1v1h-1z M24 18h1v1h-1z M24 19h1v1h-1z M24 20h1v1h-1z M7 21h18v1h-18z" fill="#8dddf3" />
+  <path d="M8 11h16v1h-16z M9 12h15v1h-15z M8 13h16v1h-16z M8 14h16v1h-16z M8 15h16v1h-16z M8 16h2v1h-2z M11 16h13v1h-13z M8 17h1v1h-1z M11 17h13v1h-13z M10 18h14v1h-14z M9 19h15v1h-15z M8 20h16v1h-16z" fill="#d5f4fc" />
+  <path d="M7 12h2v1h-2z M6 13h2v1h-2z" fill="#b2eaf8" />
+  <path d="M10 16h1v1h-1z M9 17h2v1h-2z M8 18h2v1h-2z M7 19h2v1h-2z M6 20h2v1h-2z" fill="#eafaff" />
+  <path d="M6 5h20v1h-20z M4 6h2v1h-2z M26 6h2v1h-2z M3 7h1v1h-1z M28 7h1v1h-1z M3 8h1v1h-1z M28 8h1v1h-1z M2 9h1v1h-1z M29 9h1v1h-1z M2 10h1v1h-1z M29 10h1v1h-1z M2 11h1v1h-1z M29 11h1v1h-1z M2 12h1v1h-1z M29 12h1v1h-1z M2 13h1v1h-1z M29 13h1v1h-1z M2 14h1v1h-1z M29 14h1v1h-1z M2 15h1v1h-1z M29 15h1v1h-1z M2 16h1v1h-1z M29 16h1v1h-1z M2 17h1v1h-1z M29 17h1v1h-1z M2 18h1v1h-1z M29 18h1v1h-1z M2 19h1v1h-1z M29 19h1v1h-1z M2 20h1v1h-1z M29 20h1v1h-1z M2 21h1v1h-1z M29 21h1v1h-1z M2 22h1v1h-1z M29 22h1v1h-1z M3 23h1v1h-1z M28 23h1v1h-1z M3 24h1v1h-1z M28 24h1v1h-1z M4 25h2v1h-2z M26 25h2v1h-2z M6 26h20v1h-20z" fill="#04202f" />
+  <g fill="#04202f" shape-rendering="crispEdges">
+    {facePathsAt({ cx: 16, cy: 16, size: 'md', smile: 'compact', gap: 2 }).map((d) => (
+      <path d={d} />
+    ))}
+  </g>
+</MarkFrame>
