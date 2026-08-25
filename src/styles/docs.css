@@ -62,8 +62,8 @@ h4 {
 
 h1 em,
 h2 em {
-  /* The homepage's emphasis blue, which clears 4.5:1 on every wash here. */
-  color: #355f80;
+  /* The reading blue, which clears 4.5:1 on every wash here. */
+  color: var(--blue-deep);
   font-weight: 400;
   font-style: italic;
 }
@@ -113,92 +113,6 @@ kbd {
 
 .skip-link:focus {
   transform: none;
-}
-
-/* --------------------------------------------------------------------------
-   Header — sticky, because a document you scroll needs its way out to stay
-   reachable. The homepage's header is absolute over the hero; this one has to
-   sit on a solid background, so it gets a blur and a hairline instead.
-   -------------------------------------------------------------------------- */
-
-.docs-header {
-  position: sticky;
-  z-index: 30;
-  top: 0;
-  background: color-mix(in srgb, var(--air) 88%, transparent);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--line-soft);
-}
-
-.docs-header-inner {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-  width: min(100% - var(--gutter) * 2, var(--max));
-  min-height: 4.4rem;
-  margin-inline: auto;
-}
-
-.docs-brand {
-  display: inline-flex;
-  gap: 0.6rem;
-  align-items: center;
-  color: var(--ink);
-  font-family: 'Sentient', Georgia, serif;
-  font-size: 1.2rem;
-  font-weight: 500;
-  letter-spacing: -0.025em;
-  text-decoration: none;
-}
-
-/* "Docs" reads as part of the wordmark rather than as a link beside it. */
-.docs-brand-suffix {
-  color: var(--ink-muted);
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.68rem;
-  font-weight: 400;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  padding-top: 0.25rem;
-}
-
-.docs-header-links {
-  display: flex;
-  gap: clamp(0.9rem, 2vw, 1.75rem);
-  align-items: center;
-  margin-left: auto;
-  color: var(--ink-soft);
-  font-size: 0.82rem;
-}
-
-.docs-header-links a {
-  text-decoration: none;
-  white-space: nowrap;
-}
-
-.docs-header-links a:hover {
-  text-decoration: underline;
-}
-
-.docs-header-source {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.68rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-/* The menu button only exists where the sidebar is a drawer. */
-.docs-menu-button {
-  display: none;
-  gap: 0.5rem;
-  align-items: center;
-  padding: 0.5rem 0.85rem;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: var(--white);
-  color: var(--ink);
-  font: 500 0.78rem 'General Sans', sans-serif;
-  cursor: pointer;
 }
 
 /* --------------------------------------------------------------------------
@@ -279,29 +193,33 @@ kbd {
   min-width: 0;
 }
 
-.docs-breadcrumb {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
+/*
+  The section this page belongs to, marked the way the homepage marks its own
+  sections — the same dot, the same small capitals. It replaced a breadcrumb
+  reading "Hozz / Docs / Destinations", of which the header now says the first
+  two and says them as links.
+*/
+.docs-eyebrow {
+  display: inline-flex;
+  gap: 0.55rem;
   align-items: center;
-  margin-bottom: 1.4rem;
+  margin-bottom: 1.25rem;
   color: var(--ink-muted);
   font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.68rem;
-  letter-spacing: 0.06em;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.115em;
   text-transform: uppercase;
 }
 
-.docs-breadcrumb a {
-  text-decoration: none;
-}
-
-.docs-breadcrumb a:hover {
-  text-decoration: underline;
-}
-
-.docs-breadcrumb span[aria-hidden] {
-  opacity: 0.5;
+.docs-eyebrow::before {
+  content: '';
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--blue);
+  box-shadow: 0 0 0 5px rgba(93, 140, 176, 0.1);
 }
 
 .docs-page h1 {
@@ -910,50 +828,6 @@ kbd {
 }
 
 /* --------------------------------------------------------------------------
-   Footer
-   -------------------------------------------------------------------------- */
-
-.docs-footer {
-  border-top: 1px solid var(--line-soft);
-  background: var(--mist);
-}
-
-.docs-footer-inner {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem 1.5rem;
-  align-items: center;
-  width: min(100% - var(--gutter) * 2, var(--max));
-  margin-inline: auto;
-  padding-block: 2rem;
-  color: var(--ink-muted);
-  font-size: 0.82rem;
-}
-
-.docs-footer-inner nav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.1rem;
-  margin-left: auto;
-}
-
-.docs-footer-inner a {
-  text-decoration: none;
-}
-
-.docs-footer-inner a:hover {
-  text-decoration: underline;
-}
-
-.docs-footer-note {
-  width: 100%;
-  color: var(--ink-muted);
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.66rem;
-  letter-spacing: 0.05em;
-}
-
-/* --------------------------------------------------------------------------
    Narrow screens
 
    Below 60rem the sidebar becomes a disclosure at the top of the page. It is a
@@ -993,15 +867,18 @@ kbd {
     display: none;
   }
 
-  .docs-sidebar > summary::after {
-    content: '+';
+  /* A caret, because the list either shows or it does not — "+" and "–" are the
+     affordance for adding and removing something, which this does not do. */
+  .docs-sidebar-caret {
+    width: 1rem;
+    height: 1rem;
     margin-left: auto;
     color: var(--ink-muted);
-    font-family: 'IBM Plex Mono', monospace;
+    transition: transform 160ms ease;
   }
 
-  .docs-sidebar[open] > summary::after {
-    content: '–';
+  .docs-sidebar[open] .docs-sidebar-caret {
+    transform: rotate(180deg);
   }
 
   .docs-nav {
@@ -1108,27 +985,4 @@ kbd {
 
 .heading-link:hover {
   color: var(--blue);
-}
-
-/* ---------------------------------------------------------------------------
-   Touch targets
-   ------------------------------------------------------------------------ */
-
-/*
-  Apple's minimum is 44pt. These links are small on purpose — they are chrome,
-  not content — so the box is grown rather than the type. The header already
-  stands 4.4rem tall, so nothing moves there; the breadcrumb pulls its extra
-  height back with a negative margin so the row keeps the spacing it had.
-*/
-.docs-brand,
-.docs-header-links a,
-.docs-footer-inner nav a,
-.docs-breadcrumb a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-}
-
-.docs-breadcrumb a {
-  margin-block: -0.85rem;
 }

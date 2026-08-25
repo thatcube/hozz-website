@@ -75,6 +75,11 @@
   --blue-wash: #dcecf6;
   --blue-light: #cae1f1;
   --blue: #5d8cb0;
+  /* The reading blue. --blue is a surface colour: at 3.5:1 it is fine behind a
+     hairline and wrong under a word. This is the same hue taken deep enough to
+     clear 4.5:1 on every wash here, and it is what carries emphasis and the
+     section badge in the header. */
+  --blue-deep: #355f80;
   --ink: #132638;
   --ink-soft: #3f5568;
   --ink-muted: #4e6274;

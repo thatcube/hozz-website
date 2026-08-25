@@ -9,9 +9,10 @@
  */
 import '../styles/foundation.css';
 import '../styles/docs.css';
-import Mark from '../components/mark/logos/c45.astro';
+import SiteHeader from '../components/site/SiteHeader.astro';
+import SiteFooter from '../components/site/SiteFooter.astro';
 import { DOC_SECTIONS, neighbours, sectionOf, type DocPage } from '../data/docs-nav';
-import { GITHUB_URL, SITE } from '../data/site';
+import { SITE } from '../data/site';
 
 interface Props {
   /** The page's own entry, so nothing is written down twice. */
@@ -181,20 +182,7 @@ const structured = {
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
 
-    <header class="docs-header">
-      <div class="docs-header-inner">
-        <a class="docs-brand" href="/docs/">
-          <Mark size={26} />
-          <span>Hozz</span>
-          <span class="docs-brand-suffix">Docs</span>
-        </a>
-        <div class="docs-header-links">
-          <a href="/">Home</a>
-          <a href="/privacy/">Privacy</a>
-          <a class="docs-header-source" href={GITHUB_URL}>Source ↗</a>
-        </div>
-      </div>
-    </header>
+    <SiteHeader surface="docs" path={page.href} />
 
     <div class="docs-shell">
       <!-- A <details> rather than a scripted drawer: it collapses on a phone,
@@ -203,11 +191,17 @@ const structured = {
            whole navigation is simply present; the script below closes it on
            narrow screens, where an expanded list would bury the page. -->
       <details class="docs-sidebar" id="docs-sidebar" open>
-        <summary>Documentation</summary>
+        <summary>
+          All documentation
+          <svg class="docs-sidebar-caret" viewBox="0 0 16 16" aria-hidden="true">
+            <path d="M3.5 6 8 10.5 12.5 6" fill="none" stroke="currentColor" stroke-width="1.6"
+              stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </summary>
         <nav class="docs-nav" aria-label="Documentation">
-          <!-- The index is reachable from the brand, but a reader looking at a
-               list of pages should not have to guess that the wordmark is the
-               way back to the top of it. -->
+          <!-- The header's "Docs" badge returns here too, but a reader looking
+               at a list of pages should not have to work out that the word
+               beside the wordmark is the way back to the top of it. -->
           <div class="docs-nav-section">
             <ul class="docs-nav-list">
               <li>
@@ -238,19 +232,12 @@ const structured = {
       </details>
 
       <main class="docs-page" id="main">
-        <nav class="docs-breadcrumb" aria-label="Breadcrumb">
-          <a href="/">Hozz</a>
-          <span aria-hidden="true">/</span>
-          <a href="/docs/">Docs</a>
-          {
-            section && (
-              <>
-                <span aria-hidden="true">/</span>
-                <span>{section}</span>
-              </>
-            )
-          }
-        </nav>
+        <!-- The header already reads "Hozz / Docs" and both halves are live
+             links, so a breadcrumb repeating them was two rows of chrome saying
+             one thing. What it alone knew is the section, and that is worth
+             more as the page's own eyebrow — the same dot-and-small-capitals
+             the homepage marks its sections with. -->
+        {section && <p class="docs-eyebrow">{section}</p>}
 
         <h1>{page.heading}</h1>
         <p class="docs-lede">{page.lede}</p>
@@ -295,20 +282,7 @@ const structured = {
       </main>
     </div>
 
-    <footer class="docs-footer">
-      <div class="docs-footer-inner">
-        <span>Hozz — Apple Health export, without a middleman.</span>
-        <nav aria-label="Site">
-          <a href="/">Home</a>
-          <a href="/docs/">Docs</a>
-          <a href="/privacy/">Privacy</a>
-          <a href={GITHUB_URL}>Source ↗</a>
-        </nav>
-        <span class="docs-footer-note"
-          >No cookies, analytics, storage, or third-party requests.</span
-        >
-      </div>
-    </footer>
+    <SiteFooter surface="docs" />
 
     <!--
       The sidebar is a disclosure below 60rem and a permanent column above it.

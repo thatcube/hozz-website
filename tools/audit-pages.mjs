@@ -101,10 +101,10 @@ const VIEWPORTS = [
 
 /**
  * Apple asks for 44pt. A row of chrome links cannot honour that in both axes —
- * the word "Docs" is 29px wide and padding it to 44 would space a breadcrumb
- * out of recognition — so the rule applied here is 44px in the axis a target
- * can grow in, and never below WCAG 2.5.8's 24px in the other. A link 29px
- * wide and 44px tall is comfortable; one 313px wide and 37px tall is not.
+ * "Docs" is 29px wide and padding it to 44 would space a header row out of
+ * recognition — so the rule applied here is 44px in the axis a target can grow
+ * in, and never below WCAG 2.5.8's 24px in the other. A link 29px wide and 44px
+ * tall is comfortable; one 313px wide and 37px tall is not.
  */
 const MIN_TAP = 44;
 const MIN_CROSS = 24;

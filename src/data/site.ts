@@ -271,9 +271,34 @@ export const SIBLINGS = [
   { name: 'Twozz', href: 'https://github.com/thatcube/Twozz', body: 'Twitch on Apple TV' },
 ];
 
-export const NAV_LINKS = [
-  { href: '#export', label: 'How to export' },
+/**
+ * The site's two surfaces, and the chrome that has to agree about them.
+ *
+ * The header, the footer and the 404 page all read this, so "the marketing
+ * page and the documentation" is one list rather than three that drift. Each
+ * surface names the other: from anywhere on the homepage the way into the
+ * documentation is one link, and from anywhere in the documentation the way
+ * back out is one link. `label` is what the chrome says; `badge` is the word
+ * that sits beside the wordmark while you are inside that surface.
+ */
+export const SURFACES = {
+  home: { href: '/', label: 'Home', badge: undefined },
+  docs: { href: '/docs/', label: 'Docs', badge: 'Docs' },
+} as const;
+
+export type SurfaceKey = keyof typeof SURFACES;
+
+/**
+ * The homepage's own sections, in the order they appear on it.
+ *
+ * The header shows them where there is room and the footer lists them where
+ * there is not, so a phone can still jump down the page rather than only
+ * scroll it.
+ */
+export const HOME_SECTIONS = [
+  { href: '#data', label: 'What it reads' },
   { href: '#destinations', label: 'Destinations' },
-  { href: '#honest', label: 'Honesty' },
+  { href: '#formats', label: 'Formats' },
+  { href: '#how', label: 'How it works' },
   { href: '#status', label: 'Status' },
 ];

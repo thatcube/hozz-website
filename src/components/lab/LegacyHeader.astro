@@ -1,6 +1,16 @@
 ---
-import Mark from './Mark.astro';
-import { NAV_LINKS, GITHUB_URL } from '../data/site';
+/**
+ * The chrome of the superseded first design, kept for /w/v1/ alone.
+ *
+ * The live site's header is src/components/site/SiteHeader.astro. This one
+ * survives only so the concept archive still renders what was actually built at
+ * the time, which is the whole point of keeping an archive. Its link list comes
+ * from src/data/archive.ts, because the anchors it points at exist on those
+ * pages and nowhere on the live site.
+ */
+import Mark from '../Mark.astro';
+import { GITHUB_URL } from '../../data/site';
+import { ARCHIVE_NAV_LINKS as NAV_LINKS } from '../../data/archive';
 ---
 
 <header class="site-header">

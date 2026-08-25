@@ -50,10 +50,12 @@ npm run deploy   # astro build && wrangler deploy
 src/pages/           Routes: index, privacy, 404, and docs/ (plus noindex
                      review-only pages: v2, directions, sketch, lab, logos…)
 src/pages/docs/      The documentation pages
-src/components/       Reusable sections (SiteHeader, SiteFooter, HealthStream…)
+src/components/site/   The chrome every live page shares (SiteHeader, SiteFooter)
+src/components/       Reusable sections (HealthStream, docs/, health/…)
 src/layouts/          Page shells (Layout, DocsLayout, HealthLayout…)
 src/data/             Site copy + checkable facts (site.ts, docs-nav.ts, docs.ts)
-src/styles/           global.css — the whole design system
+src/styles/           foundation.css — tokens and typefaces every surface shares
+                      docs.css — the documentation shell on top of them
 public/               Static assets, self-hosted fonts, generated OG image/icon
 tools/                Verifiers and image generators
 ```
