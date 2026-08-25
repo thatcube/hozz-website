@@ -3,7 +3,7 @@
   "type": "module",
   "version": "1.0.0",
   "private": true,
-  "description": "Marketing site for Hozz \u2014 a free, open-source Apple Health export app for iPhone and iPad.",
+  "description": "Marketing site for Hozz — a free, open-source Apple Health export app for iPhone and iPad.",
   "engines": {
     "node": ">=22.12.0"
   },
@@ -15,11 +15,13 @@
     "astro": "astro",
     "verify:facts": "node tools/verify-facts.mjs",
     "verify:links": "node tools/check-links.mjs",
-    "verify:layout": "node tools/audit-pages.mjs"
+    "verify:layout": "node tools/audit-pages.mjs",
+    "deploy": "astro build && wrangler deploy"
   },
   "devDependencies": {
     "@astrojs/sitemap": "^3.7.3",
-    "astro": "^7.2.2"
+    "astro": "^7.2.2",
+    "wrangler": "^4.123.0"
   },
   "dependencies": {
     "@iconify-json/ph": "^1.2.2",
