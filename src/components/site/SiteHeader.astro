@@ -77,7 +77,7 @@ const elsewhere = surface === 'home' ? [SURFACES.docs] : [];
 
     {
       atHome && (
-        <nav class="sections" aria-label="On this page">
+        <nav class="sections" aria-label="Page sections">
           {HOME_SECTIONS.map((section) => (
             <a href={section.href}>{section.label}</a>
           ))}
@@ -116,8 +116,11 @@ const elsewhere = surface === 'home' ? [SURFACES.docs] : [];
     position: sticky;
     top: 0;
     background: color-mix(in srgb, var(--mist) 90%, transparent);
+    /* Unprefixed only. The minifier collapses a prefixed/standard pair to
+       whichever it sees last, so there is no way to ship both; Safari has
+       supported the standard property since 18, and an older one keeps the
+       90%-opaque tint and simply loses the blur. */
     backdrop-filter: blur(12px) saturate(1.2);
-    -webkit-backdrop-filter: blur(12px) saturate(1.2);
     border-bottom: 1px solid var(--line);
   }
 

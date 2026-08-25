@@ -867,20 +867,6 @@ kbd {
     display: none;
   }
 
-  /* A caret, because the list either shows or it does not — "+" and "–" are the
-     affordance for adding and removing something, which this does not do. */
-  .docs-sidebar-caret {
-    width: 1rem;
-    height: 1rem;
-    margin-left: auto;
-    color: var(--ink-muted);
-    transition: transform 160ms ease;
-  }
-
-  .docs-sidebar[open] .docs-sidebar-caret {
-    transform: rotate(180deg);
-  }
-
   .docs-nav {
     padding: 0 1.1rem 1.2rem;
   }
@@ -890,9 +876,27 @@ kbd {
   }
 }
 
-/* The disclosure wrapper must not add a summary on a wide screen, where the
-   nav is simply always open. */
-@media (min-width: 60.0625rem) {
+/* A caret, because the list either shows or it does not — "+" and "–" are the
+   affordance for adding and removing something, which this does not do. Sized
+   outside the media query above: an SVG with no intrinsic size falls back to
+   300×150 wherever a rule does not reach it. */
+.docs-sidebar-caret {
+  width: 1rem;
+  height: 1rem;
+  margin-left: auto;
+  color: var(--ink-muted);
+  transition: transform 160ms ease;
+}
+
+.docs-sidebar[open] .docs-sidebar-caret {
+  transform: rotate(180deg);
+}
+
+/* The disclosure wrapper must not add a summary on a wide screen, where the nav
+   is simply always open. Written as the negation of the query above rather than
+   as 60.0625rem, which left a fractional window — reachable by zooming — where
+   neither block applied and the summary appeared unstyled. */
+@media not all and (max-width: 60rem) {
   .docs-sidebar > summary {
     display: none;
   }

@@ -49,8 +49,8 @@ const columns = atHome ? 3 : 2;
 
     {
       atHome && (
-        <nav aria-label="On this page">
-          <h2>This page</h2>
+        <nav aria-labelledby="footer-page">
+          <h2 id="footer-page">This page</h2>
           {HOME_SECTIONS.map((section) => (
             <a href={section.href}>{section.label}</a>
           ))}
@@ -58,8 +58,8 @@ const columns = atHome ? 3 : 2;
       )
     }
 
-    <nav aria-label="Hozz">
-      <h2>Hozz</h2>
+    <nav aria-labelledby="footer-hozz">
+      <h2 id="footer-hozz">Hozz</h2>
       <a href={SURFACES.docs.href}>Documentation</a>
       <a href="/privacy/">Privacy</a>
       <a class="repo" href={GITHUB_URL} rel="noopener">
@@ -70,8 +70,8 @@ const columns = atHome ? 3 : 2;
       <a href={DONATE_URL} rel="noopener">Sponsor the work</a>
     </nav>
 
-    <nav aria-label="Also by Brandon">
-      <h2>Also by Brandon</h2>
+    <nav aria-labelledby="footer-siblings">
+      <h2 id="footer-siblings">Also by Brandon</h2>
       {
         SIBLINGS.map((sibling) => (
           <a href={sibling.href} rel="noopener">
