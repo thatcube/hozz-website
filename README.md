@@ -67,7 +67,28 @@ HOZZ_REPO=~/Development/hozz npm run verify:facts   # against a local checkout
 npm run build && npm run verify:links    # dead internal links and anchors
 ```
 
-Both run in CI on every push and once a week, because the app moves without
+`verify:facts` also holds the four places the site's own hostname is written
+down to each other, and checks the counts the pages quote against the lists they
+describe — "Seven formats", "Thirteen tools" — so a list can gain an entry
+without the sentence beside it going quietly wrong.
+
+A page can be entirely truthful and still be broken, so there is a third check.
+`verify:layout` renders every page built on the documentation shell at 390, 768
+and 1440 and fails on horizontal overflow, tap targets, a navigation that cannot
+be opened on a phone, a missing current-page marker, and links nested inside
+links — which is how an anchor inside a card link was caught taking the index
+apart without changing a single claim on it.
+
+```bash
+npm run build
+npm run preview &
+SHOOT_BASE=http://localhost:4321 npm run verify:layout
+```
+
+It refuses to run against a server that is not serving this build, rather than
+measuring whatever answers and reporting the results as this site's.
+
+All three run in CI on every push and once a week, because the app moves without
 this repository being touched.
 
 This is a verifier rather than a generator on purpose. Generating prose from
@@ -89,9 +110,27 @@ node tools/build-images.mjs
 
 ## Deploying
 
+**Pushing to `main` deploys the site.** The `deploy` job in
+`.github/workflows/site.yml` runs after the fact check and the layout check
+have both passed, so the one action here a reader can see is the last one taken
+on trust.
+
+This needs one repository secret, `CLOUDFLARE_API_TOKEN` — a token from the
+"Edit Cloudflare Workers" template, scoped to the account already named in
+`wrangler.jsonc`. The account id is not secret and stays in that file:
+
 ```bash
-npm run build
-npx wrangler deploy
+gh secret set CLOUDFLARE_API_TOKEN --repo thatcube/hozz-website
+```
+
+Without it the job fails and says so, rather than skipping quietly. The site
+used to be published by running wrangler by hand, which is how `main` and the
+live site came to be different things for a while without anything saying so.
+
+By hand, when that is what you want:
+
+```bash
+npm run deploy        # build, then wrangler deploy
 ```
 
 The Worker owns `hozz.brando.page` as a custom domain, and still answers on the
