@@ -1,0 +1,40 @@
+---
+/**
+ * p50 - Panel and Bar
+ *
+ * The whole room in two pieces: a bezel-thin panel and the bar sitting under
+ * it. Nothing else. At sixteen pixels that is one big block and one small one,
+ * which is the most readable silhouette of the four.
+ *
+ * The picture is deliberately the quietest here - one flat tone across nearly
+ * all of it, ringed by the thin shadow the bezel drops onto the glass. The
+ * only event on the screen is the bar reflected in its lower edge, and because
+ * the bar is eight pixels narrower than the picture that reflection narrows as
+ * it rises and dies out past each end of the bar. It is a lobe struck from the
+ * object below it, not a stripe laid across rows. The bar is a rounded
+ * extrusion: it shades down its section from the lit top face to the shadowed
+ * lip, and dims toward both ends where it turns away from the room.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Plozz — Panel and Bar">
+  <path d="M3 2h26v1h-26z M2 3h1v1h-1z M29 3h1v1h-1z M2 4h1v1h-1z M29 4h1v1h-1z M2 5h1v1h-1z M29 5h1v1h-1z M2 6h1v1h-1z M29 6h1v1h-1z M2 7h1v1h-1z M29 7h1v1h-1z M2 8h1v1h-1z M29 8h1v1h-1z M2 9h1v1h-1z M29 9h1v1h-1z M2 10h1v1h-1z M29 10h1v1h-1z M2 11h1v1h-1z M29 11h1v1h-1z M2 12h1v1h-1z M29 12h1v1h-1z M2 13h1v1h-1z M29 13h1v1h-1z M2 14h1v1h-1z M29 14h1v1h-1z M2 15h1v1h-1z M29 15h1v1h-1z M2 16h1v1h-1z M29 16h1v1h-1z M2 17h1v1h-1z M29 17h1v1h-1z M2 18h1v1h-1z M29 18h1v1h-1z M2 19h1v1h-1z M29 19h1v1h-1z M3 20h26v1h-26z M9 23h14v1h-14z M8 24h1v1h-1z M23 24h1v1h-1z M8 25h1v1h-1z M23 25h1v1h-1z M8 26h1v1h-1z M23 26h1v1h-1z M9 27h14v1h-14z" fill="#02161e" />
+  <path d="M28 4h1v1h-1z M28 5h1v1h-1z M28 6h1v1h-1z M28 7h1v1h-1z M28 8h1v1h-1z M28 9h1v1h-1z M28 10h1v1h-1z M28 11h1v1h-1z M28 12h1v1h-1z M28 13h1v1h-1z M28 14h1v1h-1z M28 15h1v1h-1z M28 16h1v1h-1z M28 17h1v1h-1z M28 18h1v1h-1z M28 19h1v1h-1z M9 26h14v1h-14z" fill="#0b637f" />
+  <path d="M4 19h24v1h-24z" fill="#0d7a9a" />
+  <path d="M3 4h1v1h-1z M3 5h1v1h-1z M3 6h1v1h-1z M3 7h1v1h-1z M3 8h1v1h-1z M3 9h1v1h-1z M3 10h1v1h-1z M3 11h1v1h-1z M3 12h1v1h-1z M3 13h1v1h-1z M3 14h1v1h-1z M3 15h1v1h-1z M3 16h1v1h-1z M3 17h1v1h-1z M3 18h1v1h-1z M3 19h1v1h-1z M9 25h14v1h-14z" fill="#0f92b6" />
+  <path d="M3 3h26v1h-26z M4 4h24v1h-24z M4 5h1v1h-1z M27 5h1v1h-1z M4 6h1v1h-1z M27 6h1v1h-1z M4 7h1v1h-1z M27 7h1v1h-1z M4 8h1v1h-1z M27 8h1v1h-1z M4 9h1v1h-1z M27 9h1v1h-1z M4 10h1v1h-1z M27 10h1v1h-1z M4 11h1v1h-1z M27 11h1v1h-1z M4 12h1v1h-1z M27 12h1v1h-1z M4 13h1v1h-1z M27 13h1v1h-1z M4 14h1v1h-1z M27 14h1v1h-1z M4 15h1v1h-1z M27 15h1v1h-1z M4 16h1v1h-1z M27 16h1v1h-1z M4 17h1v1h-1z M27 17h1v1h-1z M4 18h2v1h-2z M26 18h2v1h-2z M9 24h14v1h-14z" fill="#19a9ce" />
+  <path d="M5 5h22v1h-22z M5 6h22v1h-22z M5 7h22v1h-22z M5 8h22v1h-22z M5 9h22v1h-22z M5 10h22v1h-22z M5 11h22v1h-22z M5 12h22v1h-22z M5 13h22v1h-22z M5 14h22v1h-22z M5 15h22v1h-22z M5 16h3v1h-3z M24 16h3v1h-3z M5 17h2v1h-2z M25 17h2v1h-2z" fill="#3fbcdf" />
+  <path d="M8 16h16v1h-16z M7 17h1v1h-1z M24 17h1v1h-1z M6 18h1v1h-1z M25 18h1v1h-1z" fill="#66cdea" />
+  <path d="M8 17h16v1h-16z M7 18h1v1h-1z M24 18h1v1h-1z" fill="#8ddcf1" />
+  <path d="M8 18h16v1h-16z" fill="#b3e9f7" />
+  <g fill="#02161e" shape-rendering="crispEdges">
+    {facePathsAt({ cx: 16, cy: 11, size: 'md', smile: 'compact', gap: 2 }).map((d) => (
+      <path d={d} />
+    ))}
+  </g>
+</MarkFrame>

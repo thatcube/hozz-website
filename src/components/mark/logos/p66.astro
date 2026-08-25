@@ -1,0 +1,54 @@
+---
+/**
+ * p66 · Recess
+ *
+ * Not glass on a frame — glass *in* one. The screen is sunk.
+ *
+ * Same 28x20 pane as p63, same [3, 1] corner, and the opposite sign on the
+ * light. A raised surface is bright where the light hits and dark where it
+ * falls away; a recess is the reverse, because the wall nearest the light is
+ * the wall that casts into it. So the frame is lit along its top and left and
+ * dropped along its bottom and right, and then the screen inside it is
+ * shadowed along its top and left and bounces light back along its bottom and
+ * right. The two inversions meet at the bezel, which is where a real recess
+ * announces itself.
+ *
+ * The bottom bounce is the tell. One row of the palest blue running the full
+ * width, hard against the inner wall, is what a lit surface does to the lip
+ * below it — and it is a horizontal band, so it says landscape screen at every
+ * size, including the one where the frame has collapsed to two pixels.
+ *
+ * The screen field is a single tone from x6 to x25 and y10 to y21, so the face
+ * sits on plain glass with a pixel of margin on every side before anything
+ * changes: 6 rows of air above, 6 below, 10 columns either side. The shadow
+ * row and the bounce row are outside that box by arithmetic.
+ *
+ * 10 tones. 13.9:1 at the face.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { faceBoxAt, facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+const face = { cx: 16, cy: 16, size: 'md', smile: 'compact', gap: 2 } as const;
+const box = faceBoxAt(face);
+if (box.x !== 12 || box.y !== 12 || box.right !== 19 || box.bottom !== 19) {
+  throw new Error(`p66 face geometry changed: ${JSON.stringify(box)}`);
+}
+---
+
+<MarkFrame size={size} title="Plozz — Recess">
+  <path d="M5 6h22v1h-22z M3 7h2v1h-2z M27 7h2v1h-2z M2 8h1v1h-1z M29 8h1v1h-1z M2 9h1v1h-1z M29 9h1v1h-1z M2 10h1v1h-1z M29 10h1v1h-1z M2 11h1v1h-1z M29 11h1v1h-1z M2 12h1v1h-1z M29 12h1v1h-1z M2 13h1v1h-1z M29 13h1v1h-1z M2 14h1v1h-1z M29 14h1v1h-1z M2 15h1v1h-1z M29 15h1v1h-1z M2 16h1v1h-1z M29 16h1v1h-1z M2 17h1v1h-1z M29 17h1v1h-1z M2 18h1v1h-1z M29 18h1v1h-1z M2 19h1v1h-1z M29 19h1v1h-1z M2 20h1v1h-1z M29 20h1v1h-1z M2 21h1v1h-1z M29 21h1v1h-1z M2 22h1v1h-1z M29 22h1v1h-1z M2 23h1v1h-1z M29 23h1v1h-1z M3 24h2v1h-2z M27 24h2v1h-2z M5 25h22v1h-22z" fill="#05202f" />
+  <path d="M6 22h21v1h-21z" fill="#f6feff" />
+  <path d="M26 10h1v1h-1z M26 11h1v1h-1z M26 12h1v1h-1z M26 13h1v1h-1z M26 14h1v1h-1z M26 15h1v1h-1z M26 16h1v1h-1z M26 17h1v1h-1z M26 18h1v1h-1z M26 19h1v1h-1z M26 20h1v1h-1z M26 21h1v1h-1z" fill="#e4f8ff" />
+  <path d="M6 10h20v1h-20z M6 11h20v1h-20z M6 12h20v1h-20z M6 13h20v1h-20z M6 14h20v1h-20z M6 15h20v1h-20z M6 16h20v1h-20z M6 17h20v1h-20z M6 18h20v1h-20z M6 19h20v1h-20z M6 20h20v1h-20z M6 21h20v1h-20z" fill="#cdf0fe" />
+  <path d="M5 10h1v1h-1z M5 11h1v1h-1z M5 12h1v1h-1z M5 13h1v1h-1z M5 14h1v1h-1z M5 15h1v1h-1z M5 16h1v1h-1z M5 17h1v1h-1z M5 18h1v1h-1z M5 19h1v1h-1z M5 20h1v1h-1z M5 21h1v1h-1z M5 22h1v1h-1z" fill="#9edcf8" />
+  <path d="M5 7h22v1h-22z M3 8h2v1h-2z M27 8h2v1h-2z M5 9h22v1h-22z" fill="#7fcdf2" />
+  <path d="M3 9h1v1h-1z M3 10h1v1h-1z M3 11h1v1h-1z M3 12h1v1h-1z M3 13h1v1h-1z M3 14h1v1h-1z M3 15h1v1h-1z M3 16h1v1h-1z M3 17h1v1h-1z M3 18h1v1h-1z M3 19h1v1h-1z M3 20h1v1h-1z M3 21h1v1h-1z M3 22h1v1h-1z M3 23h1v1h-1z" fill="#5bb8e8" />
+  <path d="M28 9h1v1h-1z M28 10h1v1h-1z M28 11h1v1h-1z M28 12h1v1h-1z M28 13h1v1h-1z M28 14h1v1h-1z M28 15h1v1h-1z M28 16h1v1h-1z M28 17h1v1h-1z M28 18h1v1h-1z M28 19h1v1h-1z M28 20h1v1h-1z M28 21h1v1h-1z M28 22h1v1h-1z" fill="#136694" />
+  <path d="M4 23h1v1h-1z M27 23h2v1h-2z M5 24h22v1h-22z" fill="#0c4b71" />
+  <path d="M5 8h22v1h-22z M4 9h1v1h-1z M27 9h1v1h-1z M4 10h1v1h-1z M27 10h1v1h-1z M4 11h1v1h-1z M27 11h1v1h-1z M4 12h1v1h-1z M27 12h1v1h-1z M4 13h1v1h-1z M27 13h1v1h-1z M4 14h1v1h-1z M27 14h1v1h-1z M4 15h1v1h-1z M27 15h1v1h-1z M4 16h1v1h-1z M27 16h1v1h-1z M4 17h1v1h-1z M27 17h1v1h-1z M4 18h1v1h-1z M27 18h1v1h-1z M4 19h1v1h-1z M27 19h1v1h-1z M4 20h1v1h-1z M27 20h1v1h-1z M4 21h1v1h-1z M27 21h1v1h-1z M4 22h1v1h-1z M27 22h1v1h-1z M5 23h22v1h-22z" fill="#08334f" />
+  <g fill="#05202f" shape-rendering="crispEdges">
+    {facePathsAt(face).map((d) => <path d={d} />)}
+  </g>
+</MarkFrame>

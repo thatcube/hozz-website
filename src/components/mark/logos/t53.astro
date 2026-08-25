@@ -1,0 +1,42 @@
+---
+/**
+ * t53 · Carrier Shoulder
+ *
+ * Same body and tail. The focus moves from the tip of the tail to the point
+ * where the tail meets the body, which is inside the silhouette rather than at
+ * its edge. Contours struck from inside curve far harder: they wrap the lower
+ * left and rise across the bubble at a steep angle, with no chance of reading
+ * as a slab anywhere.
+ *
+ * The face is the exact family 8×8 — `facePathsAt` at `md` with the
+ * `compact` smile and a 2-row gap — centred on the body at (16, 14), tail
+ * ignored, with 8 rows of air above it and 7 below. Nothing is cleared
+ * for it: the calm field is sized from the glyph itself, so no band edge can
+ * reach the face, and white on that one tone measures 5.94:1.
+ *
+ * 9 purple tones, one ink keyline, no gradients, nothing fetched.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Twozz — Carrier Shoulder">
+  <path d="M6 2h20v1h-20z M4 3h2v1h-2z M26 3h2v1h-2z M3 4h1v1h-1z M28 4h1v1h-1z M3 5h1v1h-1z M28 5h1v1h-1z M2 6h1v1h-1z M29 6h1v1h-1z M2 7h1v1h-1z M29 7h1v1h-1z M2 8h1v1h-1z M29 8h1v1h-1z M2 9h1v1h-1z M29 9h1v1h-1z M2 10h1v1h-1z M29 10h1v1h-1z M2 11h1v1h-1z M29 11h1v1h-1z M2 12h1v1h-1z M29 12h1v1h-1z M2 13h1v1h-1z M29 13h1v1h-1z M2 14h1v1h-1z M29 14h1v1h-1z M2 15h1v1h-1z M29 15h1v1h-1z M2 16h1v1h-1z M29 16h1v1h-1z M2 17h1v1h-1z M29 17h1v1h-1z M2 18h1v1h-1z M29 18h1v1h-1z M2 19h1v1h-1z M29 19h1v1h-1z M2 20h1v1h-1z M29 20h1v1h-1z M3 21h1v1h-1z M28 21h1v1h-1z M3 22h1v1h-1z M28 22h1v1h-1z M4 23h2v1h-2z M26 23h2v1h-2z M6 24h1v1h-1z M15 24h11v1h-11z M6 25h1v1h-1z M13 25h2v1h-2z M6 26h1v1h-1z M11 26h2v1h-2z M6 27h1v1h-1z M9 27h2v1h-2z M6 28h1v1h-1z M8 28h1v1h-1z M6 29h2v1h-2z" fill="#1a0e33" />
+  <path d="M23 3h3v1h-3z M25 4h3v1h-3z M26 5h2v1h-2z M27 6h2v1h-2z M28 7h1v1h-1z" fill="#4e2094" />
+  <path d="M19 3h4v1h-4z M21 4h4v1h-4z M23 5h3v1h-3z M24 6h3v1h-3z M25 7h3v1h-3z M26 8h3v1h-3z M27 9h2v1h-2z M28 10h1v1h-1z" fill="#5a28a7" />
+  <path d="M6 3h3v1h-3z M12 3h7v1h-7z M17 4h4v1h-4z M19 5h4v1h-4z M21 6h3v1h-3z M22 7h3v1h-3z M24 8h2v1h-2z M25 9h2v1h-2z M25 10h3v1h-3z M26 11h3v1h-3z M27 12h2v1h-2z M28 13h1v1h-1z M28 14h1v1h-1z" fill="#6833ba" />
+  <path d="M9 3h3v1h-3z M4 4h13v1h-13z M4 5h4v1h-4z M13 5h6v1h-6z M3 6h1v1h-1z M17 6h4v1h-4z M19 7h3v1h-3z M20 8h4v1h-4z M22 9h3v1h-3z M23 10h2v1h-2z M24 11h2v1h-2z M25 12h2v1h-2z M25 13h3v1h-3z M26 14h2v1h-2z M26 15h3v1h-3z M27 16h2v1h-2z M27 17h2v1h-2z M28 18h1v1h-1z M28 19h1v1h-1z M28 20h1v1h-1z" fill="#743ccb" />
+  <path d="M8 5h5v1h-5z M4 6h13v1h-13z M3 7h16v1h-16z M3 8h17v1h-17z M3 9h19v1h-19z M3 10h20v1h-20z M3 11h21v1h-21z M3 12h22v1h-22z M3 13h22v1h-22z M3 14h23v1h-23z M3 15h23v1h-23z M3 16h24v1h-24z M3 17h24v1h-24z M3 18h5v1h-5z M12 18h16v1h-16z M3 19h3v1h-3z M14 19h14v1h-14z M3 20h2v1h-2z M14 20h14v1h-14z M15 21h13v1h-13z M15 22h13v1h-13z M16 23h10v1h-10z" fill="#7a41d4" />
+  <path d="M8 18h4v1h-4z M6 19h8v1h-8z M5 20h2v1h-2z M12 20h2v1h-2z M4 21h2v1h-2z M13 21h2v1h-2z M4 22h2v1h-2z M14 22h1v1h-1z M14 23h2v1h-2z M14 24h1v1h-1z M7 28h1v1h-1z" fill="#8754d9" />
+  <path d="M7 20h5v1h-5z M6 21h3v1h-3z M11 21h2v1h-2z M6 22h1v1h-1z M12 22h2v1h-2z M6 23h1v1h-1z M12 23h2v1h-2z M13 24h1v1h-1z M12 25h1v1h-1z M7 26h1v1h-1z M7 27h2v1h-2z" fill="#a172e4" />
+  <path d="M9 21h2v1h-2z M7 22h5v1h-5z M7 23h1v1h-1z M11 23h1v1h-1z M7 24h1v1h-1z M11 24h2v1h-2z M7 25h2v1h-2z M11 25h1v1h-1z M8 26h3v1h-3z" fill="#b689ee" />
+  <path d="M8 23h3v1h-3z M8 24h3v1h-3z M9 25h2v1h-2z" fill="#c7a2f4" />
+  <g fill="#ffffff" shape-rendering="crispEdges">
+    {facePathsAt({ cx: 16, cy: 14, size: 'md', smile: 'compact', gap: 2 }).map((d) => (
+      <path d={d} />
+    ))}
+  </g>
+</MarkFrame>

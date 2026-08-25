@@ -1,0 +1,63 @@
+---
+/**
+ * t48 · Refracted
+ *
+ * Light that goes *through* rather than off. Three things happen to a beam
+ * that enters glass, and all three are drawn:
+ *
+ *   entry  — the near wall, facing the key, lights from the outside in;
+ *   skim   — walls almost edge-on to the key pass the beam sideways instead
+ *            of catching it, so they go *dark* even though they are lit;
+ *   pile   — the beam that got through crosses the body and stacks up a ring
+ *            or two inside the far wall, brightening it from behind;
+ *   exit   — and the outermost ring of that far wall, where the beam leaves,
+ *            goes dark again as it refracts away.
+ *
+ * The result is deliberately **non-monotonic**: run a finger clockwise round
+ * the rim and the tone goes bright, dark, bright, dark. A reflective solid
+ * physically cannot do that. It is the single most reliable cue that a shape
+ * is transparent, and it is the whole argument of this variant.
+ *
+ * One silhouette, four lights. t47-t50 share a single conventional bubble —
+ * a 28x22 rounded body on rows 2-23 and a five-row tail dropped from its
+ * bottom-left corner, its left edge flush with the body wall and its
+ * hypotenuse a clean 45-degree staircase to a blunt two-pixel tip. Nothing
+ * about the shape changes between the four. Only the optics do, so any
+ * difference you can see is a difference in how the material behaves.
+ *
+ * The tail is not an appliqué. It is part of the same solid, so it is sampled
+ * from the same normal field and the same ring depth as the body and takes
+ * whatever the variant's light is doing at that corner. The ink outline
+ * traces the union of body and tail exactly, one pixel wide, with no seam
+ * where they meet.
+ *
+ * The face is `md` with the `compact` smile at gap 2 — eight rows by eight
+ * columns — centred on the bubble **body**, tail ignored: 7 rows of air above
+ * and 7 below, measured. Nothing is cleared behind it; every tone it lands on
+ * clears 4.5:1 against white.
+ *
+ * 8 tones.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Twozz — Refracted">
+  <path d="M7 2h18v1h-18z M5 3h2v1h-2z M25 3h2v1h-2z M4 4h1v1h-1z M27 4h1v1h-1z M3 5h1v1h-1z M28 5h1v1h-1z M3 6h1v1h-1z M28 6h1v1h-1z M2 7h1v1h-1z M29 7h1v1h-1z M2 8h1v1h-1z M29 8h1v1h-1z M2 9h1v1h-1z M29 9h1v1h-1z M2 10h1v1h-1z M29 10h1v1h-1z M2 11h1v1h-1z M29 11h1v1h-1z M2 12h1v1h-1z M29 12h1v1h-1z M2 13h1v1h-1z M29 13h1v1h-1z M2 14h1v1h-1z M29 14h1v1h-1z M2 15h1v1h-1z M29 15h1v1h-1z M2 16h1v1h-1z M29 16h1v1h-1z M2 17h1v1h-1z M29 17h1v1h-1z M2 18h1v1h-1z M29 18h1v1h-1z M3 19h1v1h-1z M28 19h1v1h-1z M3 20h1v1h-1z M28 20h1v1h-1z M4 21h1v1h-1z M27 21h1v1h-1z M5 22h2v1h-2z M25 22h2v1h-2z M7 23h1v1h-1z M17 23h8v1h-8z M7 24h1v1h-1z M15 24h2v1h-2z M7 25h1v1h-1z M13 25h2v1h-2z M7 26h1v1h-1z M11 26h2v1h-2z M7 27h1v1h-1z M9 27h2v1h-2z M7 28h2v1h-2z" fill="#140c2a" />
+  <path d="M26 4h1v1h-1z M27 5h1v1h-1z M27 6h1v1h-1z M28 7h1v1h-1z M4 20h1v1h-1z M5 21h2v1h-2z M7 22h1v1h-1z M8 26h1v1h-1z" fill="#362067" />
+  <path d="M24 3h1v1h-1z M25 4h1v1h-1z M26 5h1v1h-1z M28 8h1v1h-1z M28 9h1v1h-1z M4 19h1v1h-1z M7 21h1v1h-1z M8 23h2v1h-2z M8 24h1v1h-1z M8 25h1v1h-1z M8 27h1v1h-1z" fill="#432482" />
+  <path d="M24 4h1v1h-1z M24 5h2v1h-2z M25 6h2v1h-2z M26 7h2v1h-2z M28 10h1v1h-1z M28 11h1v1h-1z M28 12h1v1h-1z M28 13h1v1h-1z M28 14h1v1h-1z M28 15h1v1h-1z M28 16h1v1h-1z M28 17h1v1h-1z M3 18h2v1h-2z M5 19h2v1h-2z M5 20h3v1h-3z M8 21h1v1h-1z M8 22h2v1h-2z M17 22h6v1h-6z M9 24h1v1h-1z M9 26h1v1h-1z" fill="#51299d" />
+  <path d="M23 3h1v1h-1z M22 4h2v1h-2z M21 5h3v1h-3z M16 6h9v1h-9z M11 7h15v1h-15z M8 8h20v1h-20z M8 9h20v1h-20z M8 10h19v1h-19z M7 11h20v1h-20z M7 12h19v1h-19z M6 13h20v1h-20z M6 14h20v1h-20z M5 15h21v1h-21z M4 16h22v1h-22z M3 17h23v1h-23z M5 18h21v1h-21z M28 18h1v1h-1z M7 19h18v1h-18z M27 19h1v1h-1z M8 20h9v1h-9z M27 20h1v1h-1z M9 21h6v1h-6z M25 21h2v1h-2z M10 22h3v1h-3z M23 22h2v1h-2z M10 23h1v1h-1z M15 23h2v1h-2z M10 24h1v1h-1z M13 24h2v1h-2z M9 25h1v1h-1z M11 25h2v1h-2z M10 26h1v1h-1z" fill="#6130b8" />
+  <path d="M20 3h3v1h-3z M11 4h11v1h-11z M8 5h13v1h-13z M7 6h9v1h-9z M6 7h5v1h-5z M5 8h3v1h-3z M5 9h3v1h-3z M5 10h3v1h-3z M27 10h1v1h-1z M4 11h3v1h-3z M27 11h1v1h-1z M4 12h3v1h-3z M26 12h2v1h-2z M4 13h2v1h-2z M26 13h2v1h-2z M3 14h3v1h-3z M26 14h2v1h-2z M3 15h2v1h-2z M26 15h1v1h-1z M3 16h1v1h-1z M26 16h1v1h-1z M26 17h1v1h-1z M17 20h7v1h-7z M15 21h2v1h-2z M13 22h2v1h-2z M11 23h2v1h-2z" fill="#733fcb" />
+  <path d="M9 3h11v1h-11z M7 4h4v1h-4z M7 5h1v1h-1z M6 6h1v1h-1z M4 7h2v1h-2z M4 8h1v1h-1z M3 9h2v1h-2z M3 10h2v1h-2z M3 11h1v1h-1z M3 12h1v1h-1z M3 13h1v1h-1z M27 15h1v1h-1z M27 16h1v1h-1z M27 17h1v1h-1z M26 18h1v1h-1z M25 19h1v1h-1z M24 20h1v1h-1z M17 21h7v1h-7z M15 22h2v1h-2z M13 23h1v1h-1z M11 24h2v1h-2z M10 25h1v1h-1z" fill="#895dcf" />
+  <path d="M8 3h1v1h-1z M5 5h2v1h-2z M5 6h1v1h-1z M3 8h1v1h-1z M27 18h1v1h-1z M26 19h1v1h-1z M25 20h2v1h-2z M24 21h1v1h-1z M14 23h1v1h-1z" fill="#9e7bd3" />
+  <path d="M7 3h1v1h-1z M5 4h2v1h-2z M4 5h1v1h-1z M4 6h1v1h-1z M3 7h1v1h-1z" fill="#b399d7" />
+  <g fill="#ffffff" shape-rendering="crispEdges">
+    {facePathsAt({ cx: 16, cy: 13, size: 'md', smile: 'compact', gap: 2 }).map((d) => (
+      <path d={d} />
+    ))}
+  </g>
+</MarkFrame>

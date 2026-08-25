@@ -1,0 +1,42 @@
+---
+/**
+ * p47 - Curved House
+ *
+ * A wide home-theatre panel with a real bend in it, carried on two blade feet.
+ * The cabinet is milled straight, so the silhouette stays a clean rectangle,
+ * and the curve is stated where a curve is actually visible: in the picture,
+ * and in the side rails, which are a pixel deeper than the top and bottom
+ * because the ends of a curved cabinet turn toward the room and show their
+ * flank.
+ *
+ * The picture shades by column and by nothing else - no row here is ever
+ * brighter or darker than the row above it. It falls three steps from the
+ * middle out to each end as the glass turns away: ten flat columns through the
+ * centre for the face to sit on, then 9, 8 and 7 outward. The frame is mitred,
+ * so each border pixel belongs to whichever face of the moulding it is nearest
+ * and the corners join at 45, and it lifts one step along its inside edge
+ * where the picture spills onto it. The feet are lit from above by the screen
+ * and go dark where they meet the floor.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Plozz — Curved House">
+  <path d="M2 4h28v1h-28z M2 5h1v1h-1z M29 5h1v1h-1z M2 6h1v1h-1z M29 6h1v1h-1z M2 7h1v1h-1z M29 7h1v1h-1z M2 8h1v1h-1z M29 8h1v1h-1z M2 9h1v1h-1z M29 9h1v1h-1z M2 10h1v1h-1z M29 10h1v1h-1z M2 11h1v1h-1z M29 11h1v1h-1z M2 12h1v1h-1z M29 12h1v1h-1z M2 13h1v1h-1z M29 13h1v1h-1z M2 14h1v1h-1z M29 14h1v1h-1z M2 15h1v1h-1z M29 15h1v1h-1z M2 16h1v1h-1z M29 16h1v1h-1z M2 17h1v1h-1z M29 17h1v1h-1z M2 18h1v1h-1z M29 18h1v1h-1z M2 19h1v1h-1z M29 19h1v1h-1z M2 20h1v1h-1z M29 20h1v1h-1z M2 21h1v1h-1z M29 21h1v1h-1z M2 22h7v1h-7z M13 22h6v1h-6z M23 22h7v1h-7z M9 23h1v1h-1z M12 23h1v1h-1z M19 23h1v1h-1z M22 23h1v1h-1z M9 24h1v1h-1z M12 24h1v1h-1z M19 24h1v1h-1z M22 24h1v1h-1z M9 25h1v1h-1z M12 25h1v1h-1z M19 25h1v1h-1z M22 25h1v1h-1z M8 26h6v1h-6z M18 26h6v1h-6z" fill="#02161e" />
+  <path d="M28 6h1v1h-1z M27 7h2v1h-2z M27 8h2v1h-2z M27 9h2v1h-2z M27 10h2v1h-2z M27 11h2v1h-2z M27 12h2v1h-2z M27 13h2v1h-2z M27 14h2v1h-2z M27 15h2v1h-2z M27 16h2v1h-2z M27 17h2v1h-2z M27 18h2v1h-2z M27 19h2v1h-2z M5 20h1v1h-1z M26 20h3v1h-3z M4 21h25v1h-25z M9 22h4v1h-4z M19 22h4v1h-4z M10 25h2v1h-2z M20 25h2v1h-2z" fill="#0b637f" />
+  <path d="M26 8h1v1h-1z M26 9h1v1h-1z M26 10h1v1h-1z M26 11h1v1h-1z M26 12h1v1h-1z M26 13h1v1h-1z M26 14h1v1h-1z M26 15h1v1h-1z M26 16h1v1h-1z M26 17h1v1h-1z M26 18h1v1h-1z M26 19h1v1h-1z M6 20h20v1h-20z" fill="#0d7a9a" />
+  <path d="M3 6h1v1h-1z M3 7h2v1h-2z M3 8h2v1h-2z M3 9h2v1h-2z M3 10h2v1h-2z M3 11h2v1h-2z M3 12h2v1h-2z M3 13h2v1h-2z M3 14h2v1h-2z M3 15h2v1h-2z M3 16h2v1h-2z M3 17h2v1h-2z M3 18h2v1h-2z M3 19h2v1h-2z M3 20h2v1h-2z M3 21h1v1h-1z M10 23h2v1h-2z M20 23h2v1h-2z M10 24h2v1h-2z M20 24h2v1h-2z" fill="#0f92b6" />
+  <path d="M6 7h1v1h-1z M25 7h1v1h-1z M5 8h2v1h-2z M25 8h1v1h-1z M5 9h2v1h-2z M25 9h1v1h-1z M5 10h2v1h-2z M25 10h1v1h-1z M5 11h2v1h-2z M25 11h1v1h-1z M5 12h2v1h-2z M25 12h1v1h-1z M5 13h2v1h-2z M25 13h1v1h-1z M5 14h2v1h-2z M25 14h1v1h-1z M5 15h2v1h-2z M25 15h1v1h-1z M5 16h2v1h-2z M25 16h1v1h-1z M5 17h2v1h-2z M25 17h1v1h-1z M5 18h2v1h-2z M25 18h1v1h-1z M5 19h2v1h-2z M25 19h1v1h-1z" fill="#19a9ce" />
+  <path d="M3 5h26v1h-26z M4 6h2v1h-2z M26 6h2v1h-2z M7 7h2v1h-2z M23 7h2v1h-2z M7 8h2v1h-2z M23 8h2v1h-2z M7 9h2v1h-2z M23 9h2v1h-2z M7 10h2v1h-2z M23 10h2v1h-2z M7 11h2v1h-2z M23 11h2v1h-2z M7 12h2v1h-2z M23 12h2v1h-2z M7 13h2v1h-2z M23 13h2v1h-2z M7 14h2v1h-2z M23 14h2v1h-2z M7 15h2v1h-2z M23 15h2v1h-2z M7 16h2v1h-2z M23 16h2v1h-2z M7 17h2v1h-2z M23 17h2v1h-2z M7 18h2v1h-2z M23 18h2v1h-2z M7 19h2v1h-2z M23 19h2v1h-2z" fill="#3fbcdf" />
+  <path d="M6 6h20v1h-20z M5 7h1v1h-1z M9 7h2v1h-2z M21 7h2v1h-2z M26 7h1v1h-1z M9 8h2v1h-2z M21 8h2v1h-2z M9 9h2v1h-2z M21 9h2v1h-2z M9 10h2v1h-2z M21 10h2v1h-2z M9 11h2v1h-2z M21 11h2v1h-2z M9 12h2v1h-2z M21 12h2v1h-2z M9 13h2v1h-2z M21 13h2v1h-2z M9 14h2v1h-2z M21 14h2v1h-2z M9 15h2v1h-2z M21 15h2v1h-2z M9 16h2v1h-2z M21 16h2v1h-2z M9 17h2v1h-2z M21 17h2v1h-2z M9 18h2v1h-2z M21 18h2v1h-2z M9 19h2v1h-2z M21 19h2v1h-2z" fill="#66cdea" />
+  <path d="M11 7h10v1h-10z M11 8h10v1h-10z M11 9h10v1h-10z M11 10h10v1h-10z M11 11h10v1h-10z M11 12h10v1h-10z M11 13h10v1h-10z M11 14h10v1h-10z M11 15h10v1h-10z M11 16h10v1h-10z M11 17h10v1h-10z M11 18h10v1h-10z M11 19h10v1h-10z" fill="#8ddcf1" />
+  <g fill="#02161e" shape-rendering="crispEdges">
+    {facePathsAt({ cx: 16, cy: 13, size: 'md', smile: 'compact', gap: 2 }).map((d) => (
+      <path d={d} />
+    ))}
+  </g>
+</MarkFrame>

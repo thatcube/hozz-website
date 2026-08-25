@@ -1,0 +1,40 @@
+---
+/**
+ * p49 - Pedestal Screen
+ *
+ * A wide panel standing on a column and an oval base. The plainest statement
+ * of the family thesis: the panel is lit by the room, and everything below the
+ * panel is lit by the panel.
+ *
+ * The glass holds a reflection of the room centred on the face, so the middle
+ * of the picture is one flat tone and only its corners fall away - a radial
+ * falloff struck from a point, not a wash laid across rows. The column is a
+ * cylinder and shades across its four visible pixels, highlight just left of
+ * centre, dark edge on the right. The oval foot brightens toward the column
+ * because that is the part of it the screen can see, and darkens along its
+ * front lip where it meets the floor.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Plozz — Pedestal Screen">
+  <path d="M3 3h26v1h-26z M2 4h1v1h-1z M29 4h1v1h-1z M2 5h1v1h-1z M29 5h1v1h-1z M2 6h1v1h-1z M29 6h1v1h-1z M2 7h1v1h-1z M29 7h1v1h-1z M2 8h1v1h-1z M29 8h1v1h-1z M2 9h1v1h-1z M29 9h1v1h-1z M2 10h1v1h-1z M29 10h1v1h-1z M2 11h1v1h-1z M29 11h1v1h-1z M2 12h1v1h-1z M29 12h1v1h-1z M2 13h1v1h-1z M29 13h1v1h-1z M2 14h1v1h-1z M29 14h1v1h-1z M2 15h1v1h-1z M29 15h1v1h-1z M2 16h1v1h-1z M29 16h1v1h-1z M2 17h1v1h-1z M29 17h1v1h-1z M2 18h1v1h-1z M29 18h1v1h-1z M2 19h1v1h-1z M29 19h1v1h-1z M3 20h10v1h-10z M19 20h10v1h-10z M13 21h1v1h-1z M18 21h1v1h-1z M13 22h1v1h-1z M18 22h1v1h-1z M13 23h1v1h-1z M18 23h1v1h-1z M10 24h3v1h-3z M19 24h2v1h-2z M7 25h3v1h-3z M21 25h3v1h-3z M7 26h3v1h-3z M21 26h3v1h-3z M10 27h11v1h-11z" fill="#02161e" />
+  <path d="M17 21h1v1h-1z M17 22h1v1h-1z M17 23h1v1h-1z" fill="#094e64" />
+  <path d="M28 5h1v1h-1z M28 6h1v1h-1z M28 7h1v1h-1z M28 8h1v1h-1z M28 9h1v1h-1z M28 10h1v1h-1z M28 11h1v1h-1z M28 12h1v1h-1z M28 13h1v1h-1z M28 14h1v1h-1z M28 15h1v1h-1z M28 16h1v1h-1z M28 17h1v1h-1z M27 18h2v1h-2z M4 19h25v1h-25z M13 20h6v1h-6z" fill="#0b637f" />
+  <path d="M27 6h1v1h-1z M27 7h1v1h-1z M27 8h1v1h-1z M27 9h1v1h-1z M27 10h1v1h-1z M27 11h1v1h-1z M27 12h1v1h-1z M27 13h1v1h-1z M27 14h1v1h-1z M27 15h1v1h-1z M27 16h1v1h-1z M27 17h1v1h-1z M5 18h22v1h-22z M16 21h1v1h-1z M16 22h1v1h-1z M16 23h1v1h-1z M13 24h6v1h-6z M10 26h2v1h-2z M19 26h2v1h-2z" fill="#0d7a9a" />
+  <path d="M3 5h1v1h-1z M3 6h1v1h-1z M3 7h1v1h-1z M3 8h1v1h-1z M3 9h1v1h-1z M3 10h1v1h-1z M3 11h1v1h-1z M3 12h1v1h-1z M3 13h1v1h-1z M3 14h1v1h-1z M3 15h1v1h-1z M3 16h1v1h-1z M3 17h1v1h-1z M3 18h2v1h-2z M3 19h1v1h-1z M14 21h1v1h-1z M14 22h1v1h-1z M14 23h1v1h-1z M10 25h2v1h-2z M19 25h2v1h-2z M12 26h7v1h-7z" fill="#0f92b6" />
+  <path d="M3 4h26v1h-26z M4 5h1v1h-1z M27 5h1v1h-1z M4 6h1v1h-1z M4 7h1v1h-1z M4 8h1v1h-1z M4 9h1v1h-1z M4 10h1v1h-1z M4 11h1v1h-1z M4 12h1v1h-1z M4 13h1v1h-1z M4 14h1v1h-1z M4 15h1v1h-1z M4 16h1v1h-1z M4 17h1v1h-1z M12 25h7v1h-7z" fill="#19a9ce" />
+  <path d="M5 5h22v1h-22z M5 6h3v1h-3z M25 6h2v1h-2z M5 7h2v1h-2z M26 7h1v1h-1z M5 8h2v1h-2z M26 8h1v1h-1z M5 9h1v1h-1z M5 10h1v1h-1z M5 11h1v1h-1z M5 12h1v1h-1z M5 13h1v1h-1z M5 14h1v1h-1z M5 15h1v1h-1z M5 16h2v1h-2z M26 16h1v1h-1z M5 17h2v1h-2z M26 17h1v1h-1z M15 21h1v1h-1z M15 22h1v1h-1z M15 23h1v1h-1z" fill="#3fbcdf" />
+  <path d="M8 6h2v1h-2z M23 6h2v1h-2z M7 7h2v1h-2z M24 7h2v1h-2z M7 8h1v1h-1z M25 8h1v1h-1z M6 9h2v1h-2z M25 9h2v1h-2z M6 10h2v1h-2z M25 10h2v1h-2z M6 11h2v1h-2z M25 11h2v1h-2z M6 12h1v1h-1z M26 12h1v1h-1z M6 13h2v1h-2z M25 13h2v1h-2z M6 14h2v1h-2z M25 14h2v1h-2z M6 15h2v1h-2z M25 15h2v1h-2z M7 16h1v1h-1z M25 16h1v1h-1z M7 17h2v1h-2z M24 17h2v1h-2z" fill="#66cdea" />
+  <path d="M10 6h3v1h-3z M20 6h3v1h-3z M9 7h2v1h-2z M22 7h2v1h-2z M8 8h3v1h-3z M22 8h3v1h-3z M8 9h2v1h-2z M23 9h2v1h-2z M8 10h2v1h-2z M23 10h2v1h-2z M8 11h1v1h-1z M24 11h1v1h-1z M7 12h2v1h-2z M24 12h2v1h-2z M8 13h1v1h-1z M24 13h1v1h-1z M8 14h2v1h-2z M23 14h2v1h-2z M8 15h2v1h-2z M23 15h2v1h-2z M8 16h3v1h-3z M22 16h3v1h-3z M9 17h2v1h-2z M22 17h2v1h-2z" fill="#8ddcf1" />
+  <path d="M13 6h7v1h-7z M11 7h11v1h-11z M11 8h11v1h-11z M10 9h13v1h-13z M10 10h13v1h-13z M9 11h15v1h-15z M9 12h15v1h-15z M9 13h15v1h-15z M10 14h13v1h-13z M10 15h13v1h-13z M11 16h11v1h-11z M11 17h11v1h-11z" fill="#b3e9f7" />
+  <g fill="#02161e" shape-rendering="crispEdges">
+    {facePathsAt({ cx: 16, cy: 12, size: 'md', smile: 'compact', gap: 2 }).map((d) => (
+      <path d={d} />
+    ))}
+  </g>
+</MarkFrame>

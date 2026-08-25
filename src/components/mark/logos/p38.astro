@@ -1,0 +1,50 @@
+---
+/**
+ * p38 · Panel, Backlit
+ *
+ * Concentric falloff again, run the other way. p35 is a recessed screen —
+ * palest at the rim, settling inward. This is a lit one: the same normalised
+ * radius drives the ramp, but the deepest tone is against the bezel and the
+ * palest is in the middle, so the glass reads as something with a lamp behind
+ * it rather than something catching a room. The face lands on that pale core
+ * and has the strongest contrast of the four, which is why this is the one that
+ * still works at 16px.
+ *
+ * The body carries the rest of the difference: the deepest chin in the set at
+ * four rows, and two feet stepping out from under the outer corners of the slab
+ * instead of a centre column. That is the modern-television reading, and it
+ * gives the mark a wide stance without a plinth. 28 x 20 of slab, 24 x 14 of
+ * glass.
+ *
+ * The face field is calmed as in the others — the ZZ sits on one flat tone,
+ * with the ramp starting at its edge rather than being cleared for it.
+ *
+ * 10 tones. The supplied face — facePathsAt, md, compact, gap 2, exactly 8 x 8
+ * — at (16, 13): 8 columns either side, 3 rows above and below. 28 x 24
+ * overall, centred on (16, 16).
+ */
+
+import MarkFrame from '../MarkFrame.astro';
+import { facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Plozz — Panel, Backlit">
+  <path d="M4 6h6v1h-6z M22 6h6v1h-6z M4 7h2v1h-2z M26 7h2v1h-2z M4 8h1v1h-1z M27 8h1v1h-1z M4 9h1v1h-1z M27 9h1v1h-1z M4 10h1v1h-1z M27 10h1v1h-1z M4 15h1v1h-1z M27 15h1v1h-1z M4 16h1v1h-1z M27 16h1v1h-1z M4 17h1v1h-1z M27 17h1v1h-1z M4 18h2v1h-2z M26 18h2v1h-2z M4 19h6v1h-6z M22 19h6v1h-6z" fill="#0c6a94" />
+  <path d="M10 6h12v1h-12z M6 7h3v1h-3z M23 7h3v1h-3z M5 8h2v1h-2z M25 8h2v1h-2z M5 9h1v1h-1z M26 9h1v1h-1z M5 10h1v1h-1z M26 10h1v1h-1z M4 11h2v1h-2z M26 11h2v1h-2z M4 12h2v1h-2z M26 12h2v1h-2z M4 13h2v1h-2z M26 13h2v1h-2z M4 14h2v1h-2z M26 14h2v1h-2z M5 15h1v1h-1z M26 15h1v1h-1z M5 16h1v1h-1z M26 16h1v1h-1z M5 17h2v1h-2z M25 17h2v1h-2z M6 18h3v1h-3z M23 18h3v1h-3z M10 19h12v1h-12z" fill="#1585b3" />
+  <path d="M9 7h1v1h-1z M22 7h1v1h-1z M7 8h1v1h-1z M24 8h1v1h-1z M6 9h2v1h-2z M24 9h2v1h-2z M6 10h1v1h-1z M25 10h1v1h-1z M6 11h1v1h-1z M25 11h1v1h-1z M6 12h1v1h-1z M25 12h1v1h-1z M6 13h1v1h-1z M25 13h1v1h-1z M6 14h1v1h-1z M25 14h1v1h-1z M6 15h1v1h-1z M25 15h1v1h-1z M6 16h2v1h-2z M24 16h2v1h-2z M7 17h1v1h-1z M24 17h1v1h-1z M9 18h1v1h-1z M22 18h1v1h-1z" fill="#2ba0cd" />
+  <path d="M10 7h12v1h-12z M8 8h2v1h-2z M22 8h2v1h-2z M8 9h1v1h-1z M23 9h1v1h-1z M7 10h2v1h-2z M23 10h2v1h-2z M7 11h2v1h-2z M23 11h2v1h-2z M7 12h1v1h-1z M24 12h1v1h-1z M7 13h1v1h-1z M24 13h1v1h-1z M7 14h2v1h-2z M23 14h2v1h-2z M7 15h2v1h-2z M23 15h2v1h-2z M8 16h1v1h-1z M23 16h1v1h-1z M8 17h2v1h-2z M22 17h2v1h-2z M10 18h12v1h-12z" fill="#5abddf" />
+  <path d="M10 8h1v1h-1z M21 8h1v1h-1z M9 9h1v1h-1z M22 9h1v1h-1z M9 10h1v1h-1z M22 10h1v1h-1z M9 11h1v1h-1z M22 11h1v1h-1z M8 12h2v1h-2z M22 12h2v1h-2z M8 13h2v1h-2z M22 13h2v1h-2z M9 14h1v1h-1z M22 14h1v1h-1z M9 15h1v1h-1z M22 15h1v1h-1z M9 16h1v1h-1z M22 16h1v1h-1z M10 17h1v1h-1z M21 17h1v1h-1z" fill="#93d9f1" />
+  <path d="M11 8h10v1h-10z M10 9h12v1h-12z M10 10h12v1h-12z M10 11h12v1h-12z M10 12h12v1h-12z M10 13h12v1h-12z M10 14h12v1h-12z M10 15h12v1h-12z M10 16h12v1h-12z M11 17h10v1h-10z" fill="#cdf1fe" />
+  <path d="M3 5h26v1h-26z M3 6h1v1h-1z M3 7h1v1h-1z M3 8h1v1h-1z M3 9h1v1h-1z M3 10h1v1h-1z M3 11h1v1h-1z M3 12h1v1h-1z M3 13h1v1h-1z M3 14h1v1h-1z M3 15h1v1h-1z M3 16h1v1h-1z M3 17h1v1h-1z M3 18h1v1h-1z M3 19h1v1h-1z M3 20h1v1h-1z M3 21h1v1h-1z M3 22h1v1h-1z M5 23h1v1h-1z M23 23h1v1h-1z M6 24h1v1h-1z M24 24h1v1h-1z M6 25h1v1h-1z M24 25h1v1h-1z M5 26h1v1h-1z M8 26h1v1h-1z M23 26h1v1h-1z M26 26h1v1h-1z" fill="#3aa6d0" />
+  <path d="M4 20h24v1h-24z M4 21h24v1h-24z M5 22h4v1h-4z M23 22h4v1h-4z M6 23h2v1h-2z M24 23h2v1h-2z" fill="#1a7aa4" />
+  <path d="M28 6h1v1h-1z M28 7h1v1h-1z M28 8h1v1h-1z M28 9h1v1h-1z M28 10h1v1h-1z M28 11h1v1h-1z M28 12h1v1h-1z M28 13h1v1h-1z M28 14h1v1h-1z M28 15h1v1h-1z M28 16h1v1h-1z M28 17h1v1h-1z M28 18h1v1h-1z M28 19h1v1h-1z M28 20h1v1h-1z M28 21h1v1h-1z M4 22h1v1h-1z M9 22h14v1h-14z M27 22h2v1h-2z M8 23h1v1h-1z M26 23h1v1h-1z M7 24h1v1h-1z M25 24h1v1h-1z M7 25h1v1h-1z M25 25h1v1h-1z M6 26h2v1h-2z M24 26h2v1h-2z" fill="#0e5677" />
+  <path d="M2 4h28v1h-28z M2 5h1v1h-1z M29 5h1v1h-1z M2 6h1v1h-1z M29 6h1v1h-1z M2 7h1v1h-1z M29 7h1v1h-1z M2 8h1v1h-1z M29 8h1v1h-1z M2 9h1v1h-1z M29 9h1v1h-1z M2 10h1v1h-1z M29 10h1v1h-1z M2 11h1v1h-1z M29 11h1v1h-1z M2 12h1v1h-1z M29 12h1v1h-1z M2 13h1v1h-1z M29 13h1v1h-1z M2 14h1v1h-1z M29 14h1v1h-1z M2 15h1v1h-1z M29 15h1v1h-1z M2 16h1v1h-1z M29 16h1v1h-1z M2 17h1v1h-1z M29 17h1v1h-1z M2 18h1v1h-1z M29 18h1v1h-1z M2 19h1v1h-1z M29 19h1v1h-1z M2 20h1v1h-1z M29 20h1v1h-1z M2 21h1v1h-1z M29 21h1v1h-1z M2 22h1v1h-1z M29 22h1v1h-1z M2 23h3v1h-3z M9 23h14v1h-14z M27 23h3v1h-3z M5 24h1v1h-1z M8 24h1v1h-1z M23 24h1v1h-1z M26 24h1v1h-1z M5 25h1v1h-1z M8 25h1v1h-1z M23 25h1v1h-1z M26 25h1v1h-1z M4 26h1v1h-1z M9 26h1v1h-1z M22 26h1v1h-1z M27 26h1v1h-1z M3 27h8v1h-8z M21 27h8v1h-8z" fill="#06283a" />
+  <g fill="#06283a" shape-rendering="crispEdges">
+    {facePathsAt({ cx: 16, cy: 13, size: 'md', smile: 'compact', gap: 2 }).map((d) => (
+      <path d={d} />
+    ))}
+  </g>
+</MarkFrame>

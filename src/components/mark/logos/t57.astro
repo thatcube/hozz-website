@@ -1,0 +1,30 @@
+---
+/**
+ * t57 · Prism, Counter
+ *
+ * One thing changed from t55: the light enters from the upper right, so the facets run the other way and the tail sits in the deep end of the run instead of the middle of it.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Twozz — Prism, Counter">
+  <path d="M23 3h2v1h-2z M24 4h3v1h-3z M25 5h3v1h-3z M25 6h4v1h-4z M26 7h3v1h-3z M27 8h2v1h-2z M27 9h2v1h-2z M28 10h1v1h-1z" fill="#aa7bee" />
+  <path d="M22 3h1v1h-1z M23 4h1v1h-1z M23 5h2v1h-2z M24 6h1v1h-1z M25 7h1v1h-1z M25 8h2v1h-2z M26 9h1v1h-1z M27 10h1v1h-1z M27 11h2v1h-2z M28 12h1v1h-1z" fill="#c9a6f9" />
+  <path d="M19 3h3v1h-3z M20 4h3v1h-3z M21 5h2v1h-2z M21 6h3v1h-3z M22 7h3v1h-3z M23 8h2v1h-2z M23 9h3v1h-3z M24 10h3v1h-3z M25 11h2v1h-2z M25 12h3v1h-3z M26 13h3v1h-3z M27 14h2v1h-2z M27 15h2v1h-2z M28 16h1v1h-1z" fill="#9a68e7" />
+  <path d="M17 3h2v1h-2z M18 4h2v1h-2z M19 5h2v1h-2z M19 6h2v1h-2z M20 7h2v1h-2z M21 8h2v1h-2z M21 9h2v1h-2z M22 10h2v1h-2z M23 11h2v1h-2z M23 12h2v1h-2z M24 13h2v1h-2z M25 14h2v1h-2z M25 15h2v1h-2z M26 16h2v1h-2z M27 17h2v1h-2z M27 18h2v1h-2z M28 19h1v1h-1z" fill="#8a56de" />
+  <path d="M7 3h10v1h-10z M5 4h13v1h-13z M5 5h14v1h-14z M6 6h13v1h-13z M7 7h13v1h-13z M7 8h14v1h-14z M8 9h13v1h-13z M9 10h13v1h-13z M9 11h14v1h-14z M10 12h13v1h-13z M11 13h13v1h-13z M11 14h14v1h-14z M12 15h13v1h-13z M13 16h13v1h-13z M13 17h14v1h-14z M14 18h13v1h-13z M15 19h13v1h-13z M15 20h13v1h-13z M16 21h11v1h-11z M17 22h8v1h-8z M17 23h1v1h-1z" fill="#7a43cf" />
+  <path d="M4 5h1v1h-1z M3 6h3v1h-3z M4 7h3v1h-3z M5 8h2v1h-2z M5 9h3v1h-3z M6 10h3v1h-3z M7 11h2v1h-2z M7 12h3v1h-3z M8 13h3v1h-3z M9 14h2v1h-2z M9 15h3v1h-3z M10 16h3v1h-3z M11 17h2v1h-2z M11 18h3v1h-3z M12 19h3v1h-3z M13 20h2v1h-2z M13 21h3v1h-3z M14 22h3v1h-3z M15 23h2v1h-2z M15 24h2v1h-2z" fill="#6b3abd" />
+  <path d="M3 7h1v1h-1z M3 8h2v1h-2z M4 9h1v1h-1z M4 10h2v1h-2z M5 11h2v1h-2z M6 12h1v1h-1z M6 13h2v1h-2z M7 14h2v1h-2z M8 15h1v1h-1z M8 16h2v1h-2z M9 17h2v1h-2z M10 18h1v1h-1z M10 19h2v1h-2z M11 20h2v1h-2z M12 21h1v1h-1z M12 22h2v1h-2z M13 23h2v1h-2z M14 24h1v1h-1z M14 25h2v1h-2z" fill="#4f2a8d" />
+  <path d="M3 9h1v1h-1z M3 10h1v1h-1z M3 11h2v1h-2z M3 12h3v1h-3z M3 13h3v1h-3z M4 14h3v1h-3z M5 15h3v1h-3z M5 16h3v1h-3z M6 17h3v1h-3z M7 18h3v1h-3z M7 19h3v1h-3z M8 20h3v1h-3z M9 21h3v1h-3z M9 22h3v1h-3z M10 23h3v1h-3z M11 24h3v1h-3z M11 25h3v1h-3z M12 26h3v1h-3z M13 27h1v1h-1z" fill="#5e33ab" />
+  <path d="M3 14h1v1h-1z M3 15h2v1h-2z M3 16h2v1h-2z M3 17h3v1h-3z M3 18h4v1h-4z M3 19h4v1h-4z M4 20h4v1h-4z M5 21h4v1h-4z M7 22h2v1h-2z M9 23h1v1h-1z M10 24h1v1h-1z M10 25h1v1h-1z M10 26h2v1h-2z M10 27h3v1h-3z M10 28h3v1h-3z" fill="#532c98" />
+  <path d="M7 2h18v1h-18z M5 3h2v1h-2z M25 3h2v1h-2z M4 4h1v1h-1z M27 4h1v1h-1z M3 5h1v1h-1z M28 5h1v1h-1z M2 6h1v1h-1z M29 6h1v1h-1z M2 7h1v1h-1z M29 7h1v1h-1z M2 8h1v1h-1z M29 8h1v1h-1z M2 9h1v1h-1z M29 9h1v1h-1z M2 10h1v1h-1z M29 10h1v1h-1z M2 11h1v1h-1z M29 11h1v1h-1z M2 12h1v1h-1z M29 12h1v1h-1z M2 13h1v1h-1z M29 13h1v1h-1z M2 14h1v1h-1z M29 14h1v1h-1z M2 15h1v1h-1z M29 15h1v1h-1z M2 16h1v1h-1z M29 16h1v1h-1z M2 17h1v1h-1z M29 17h1v1h-1z M2 18h1v1h-1z M29 18h1v1h-1z M2 19h1v1h-1z M29 19h1v1h-1z M3 20h1v1h-1z M28 20h1v1h-1z M4 21h1v1h-1z M27 21h1v1h-1z M5 22h2v1h-2z M25 22h2v1h-2z M7 23h2v1h-2z M18 23h7v1h-7z M9 24h1v1h-1z M17 24h1v1h-1z M9 25h1v1h-1z M16 25h1v1h-1z M9 26h1v1h-1z M15 26h1v1h-1z M9 27h1v1h-1z M14 27h1v1h-1z M9 28h1v1h-1z M13 28h1v1h-1z M9 29h4v1h-4z" fill="#130c28" />
+  <g fill="#ffffff" shape-rendering="crispEdges">
+    {facePathsAt({ cx: 16, cy: 13, size: 'md', smile: 'compact', gap: 2 }).map((d) => (
+      <path d={d} />
+    ))}
+  </g>
+</MarkFrame>

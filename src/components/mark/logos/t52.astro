@@ -1,0 +1,44 @@
+---
+/**
+ * t52 · Carrier Crest
+ *
+ * Same silhouette and same keyline as t51. What changes is that the light is
+ * not a monotonic fade. A wave has a crest and a trough, so the four bands
+ * nearest the tail run bright, back half a step, bright again, then fall — and
+ * only after that does the ramp behave. It reads as a front passing through
+ * the shape instead of a lamp shining into it.
+ *
+ * The face is the exact family 8×8 — `facePathsAt` at `md` with the
+ * `compact` smile and a 2-row gap — centred on the body at (16, 14), tail
+ * ignored, with 8 rows of air above it and 7 below. Nothing is cleared
+ * for it: the calm field is sized from the glyph itself, so no band edge can
+ * reach the face, and white on that one tone measures 5.94:1.
+ *
+ * 11 purple tones, one ink keyline, no gradients, nothing fetched.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Twozz — Carrier Crest">
+  <path d="M6 2h20v1h-20z M4 3h2v1h-2z M26 3h2v1h-2z M3 4h1v1h-1z M28 4h1v1h-1z M3 5h1v1h-1z M28 5h1v1h-1z M2 6h1v1h-1z M29 6h1v1h-1z M2 7h1v1h-1z M29 7h1v1h-1z M2 8h1v1h-1z M29 8h1v1h-1z M2 9h1v1h-1z M29 9h1v1h-1z M2 10h1v1h-1z M29 10h1v1h-1z M2 11h1v1h-1z M29 11h1v1h-1z M2 12h1v1h-1z M29 12h1v1h-1z M2 13h1v1h-1z M29 13h1v1h-1z M2 14h1v1h-1z M29 14h1v1h-1z M2 15h1v1h-1z M29 15h1v1h-1z M2 16h1v1h-1z M29 16h1v1h-1z M2 17h1v1h-1z M29 17h1v1h-1z M2 18h1v1h-1z M29 18h1v1h-1z M2 19h1v1h-1z M29 19h1v1h-1z M2 20h1v1h-1z M29 20h1v1h-1z M3 21h1v1h-1z M28 21h1v1h-1z M3 22h1v1h-1z M28 22h1v1h-1z M4 23h2v1h-2z M26 23h2v1h-2z M6 24h1v1h-1z M15 24h11v1h-11z M6 25h1v1h-1z M13 25h2v1h-2z M6 26h1v1h-1z M11 26h2v1h-2z M6 27h1v1h-1z M9 27h2v1h-2z M6 28h1v1h-1z M8 28h1v1h-1z M6 29h2v1h-2z" fill="#1a0e33" />
+  <path d="M24 3h2v1h-2z M25 4h3v1h-3z M26 5h2v1h-2z M27 6h2v1h-2z M28 7h1v1h-1z" fill="#491e8c" />
+  <path d="M21 3h3v1h-3z M22 4h3v1h-3z M24 5h2v1h-2z M25 6h2v1h-2z M26 7h2v1h-2z M27 8h2v1h-2z M28 9h1v1h-1z" fill="#52229b" />
+  <path d="M17 3h4v1h-4z M19 4h3v1h-3z M21 5h3v1h-3z M23 6h2v1h-2z M24 7h2v1h-2z M25 8h2v1h-2z M26 9h2v1h-2z M27 10h2v1h-2z M28 11h1v1h-1z" fill="#5e2cac" />
+  <path d="M11 3h6v1h-6z M15 4h4v1h-4z M18 5h3v1h-3z M20 6h3v1h-3z M21 7h3v1h-3z M23 8h2v1h-2z M24 9h2v1h-2z M25 10h2v1h-2z M26 11h2v1h-2z M27 12h2v1h-2z M27 13h2v1h-2z M28 14h1v1h-1z" fill="#6a35bc" />
+  <path d="M6 3h5v1h-5z M4 4h11v1h-11z M14 5h4v1h-4z M17 6h3v1h-3z M19 7h2v1h-2z M20 8h3v1h-3z M22 9h2v1h-2z M23 10h2v1h-2z M24 11h2v1h-2z M25 12h2v1h-2z M26 13h1v1h-1z M27 14h1v1h-1z M27 15h2v1h-2z M28 16h1v1h-1z M28 17h1v1h-1z" fill="#743ccb" />
+  <path d="M4 5h10v1h-10z M3 6h14v1h-14z M3 7h16v1h-16z M3 8h17v1h-17z M3 9h19v1h-19z M3 10h20v1h-20z M3 11h21v1h-21z M3 12h22v1h-22z M3 13h23v1h-23z M3 14h24v1h-24z M3 15h24v1h-24z M3 16h25v1h-25z M3 17h3v1h-3z M8 17h20v1h-20z M12 18h17v1h-17z M14 19h15v1h-15z M15 20h14v1h-14z M16 21h12v1h-12z M16 22h12v1h-12z M17 23h9v1h-9z" fill="#7a41d4" />
+  <path d="M6 17h2v1h-2z M3 18h9v1h-9z M3 19h11v1h-11z M3 20h1v1h-1z M10 20h5v1h-5z M12 21h4v1h-4z M13 22h3v1h-3z M14 23h3v1h-3z" fill="#8754d9" />
+  <path d="M4 20h6v1h-6z M4 21h8v1h-8z M4 22h1v1h-1z M8 22h5v1h-5z M11 23h3v1h-3z M12 24h3v1h-3z M12 25h1v1h-1z" fill="#9f70e3" />
+  <path d="M5 22h3v1h-3z M6 23h5v1h-5z M7 24h5v1h-5z M10 25h2v1h-2z M10 26h1v1h-1z" fill="#c39bf3" />
+  <path d="M7 25h3v1h-3z M7 26h3v1h-3z" fill="#d1b1f7" />
+  <path d="M7 27h2v1h-2z M7 28h1v1h-1z" fill="#b385ed" />
+  <g fill="#ffffff" shape-rendering="crispEdges">
+    {facePathsAt({ cx: 16, cy: 14, size: 'md', smile: 'compact', gap: 2 }).map((d) => (
+      <path d={d} />
+    ))}
+  </g>
+</MarkFrame>

@@ -12,7 +12,7 @@
  */
 import '../styles/sketch-base.css';
 import { SITE } from '../data/site';
-import { facePaths } from '../data/mark';
+import { facePathsAt } from '../data/mark';
 
 const mods = import.meta.glob('../components/mark/logos/*.astro', { eager: true }) as Record<
   string,
@@ -31,9 +31,10 @@ const all = Object.entries(mods)
   })
   .sort((a, b) => a.slug.localeCompare(b.slug));
 
-/* Hozz marks are cNN; the Twozz/Strozz refresh lives alongside as tNN. */
+/* Hozz marks are cNN; only the complete p31+/t31+ restart belongs in this review. */
 const items = all.filter((i) => i.slug.startsWith('c'));
-const twozz = all.filter((i) => i.slug.startsWith('t'));
+const plozz = all.filter((i) => /^p(?:3[1-9]|[4-9]\d)$/.test(i.slug));
+const twozz = all.filter((i) => /^t(?:3[1-9]|[4-9]\d)$/.test(i.slug));
 
 const SIZES = [96, 48, 28, 16];
 
@@ -45,15 +46,6 @@ const SIZES = [96, 48, 28, 16];
 const SELECTED = 'c45';
 const chosen = all.find((i) => i.slug === SELECTED);
 
-/**
- * The Twozz pick, on the same terms. Carrier earns it on the 28px row rather
- * than the 150px one: the arcs stay legible when everything else in the set
- * collapses to a plain bubble, and the idea behind them — a voice falling off
- * across a room, struck around the off-frame speaker the tail points at — is
- * the only one here that is about live audio rather than about chat.
- */
-const TWOZZ_SELECTED = 't19';
-const twozzChosen = all.find((i) => i.slug === TWOZZ_SELECTED);
 ---
 
 <!doctype html>
@@ -77,10 +69,14 @@ const twozzChosen = all.find((i) => i.slug === TWOZZ_SELECTED);
         silhouette, palette, depth and light.
       </p>
       <p class="lede lede--fine">
-        The face never competes. The <code>ZZ</code> eyes and the smile are
-        lifted pixel-for-pixel out of the shipped Plozz mark and imported from
-        one module, so no concept can drift from the family even by accident.
+        The face never competes. Every new carrier uses the same supplied 8×8
+        face—two 3-wide <code>ZZ</code> eyes and the compact two-row smile—without
+        redrawing or rescaling it.
       </p>
+      <nav class="jump" aria-label="Jump to the new logo explorations">
+        <a href="#plozz">Review {plozz.length} Plozz marks</a>
+        <a href="#twozz">Review {twozz.length} Twozz / Strozz marks</a>
+      </nav>
 
       <figure class="proof">
         <svg viewBox="0 0 32 32" width="120" height="120" shape-rendering="crispEdges" aria-hidden="true">
@@ -92,14 +88,13 @@ const twozzChosen = all.find((i) => i.slug === TWOZZ_SELECTED);
               </>
             ))
           }
-          <g fill="#14161a">{facePaths({ cx: 16, cy: 16 }).map((d) => <path d={d} />)}</g>
+          <g fill="#14161a">
+            {facePathsAt({ cx: 16, cy: 16, size: 'md', smile: 'compact', gap: 2 }).map((d) => <path d={d} />)}
+          </g>
         </svg>
         <figcaption>
-          The eyes are the fixed part — two 4-wide Zs, identical in all three
-          siblings. The face is ten pixels across, so its centre is x&nbsp;16,
-          and it is centred on its container's optical middle rather than on
-          the 32-box. The smile comes in three widths; Plozz already uses the
-          middle one because its mark is busy.
+          The supplied face is the fixed part: exactly 8×8 pixels, centred on
+          each carrier's body rather than on any tail or stand.
         </figcaption>
       </figure>
     </header>
@@ -175,45 +170,55 @@ const twozzChosen = all.find((i) => i.slug === TWOZZ_SELECTED);
         })
       }
       {items.length === 0 && <p class="empty">No concepts yet.</p>}
+      {
+        plozz.length > 0 && (
+          <>
+            <header class="band" id="plozz">
+              <h2>Plozz — {plozz.length} new directions</h2>
+              <p>
+                Ten distinct carrier ideas, each explored through four controlled
+                variations. Every mark uses a dimensional 8–11-tone construction
+                and the exact supplied face.
+              </p>
+            </header>
+            {plozz.map((it) => {
+              const C = it.Comp;
+              const m = it.meta;
+              return (
+                <section class="card" id={it.slug}>
+                  <div class="meta">
+                    <p class="tag"><b>{m.n ?? it.slug}</b><span>{m.name ?? 'Untitled'}</span></p>
+                    {m.idea && <p class="idea">{m.idea}</p>}
+                    {m.palette && (
+                      <ul class="pal">{m.palette.map((c) => (<li><i style={`background:${c}`} />{c}</li>))}</ul>
+                    )}
+                  </div>
+                  <div class="grounds">
+                    <div class="ground ground--light">
+                      {SIZES.map((s) => (<span class="slot"><C size={s} /><em>{s}</em></span>))}
+                    </div>
+                    <div class="ground ground--dark">
+                      {SIZES.map((s) => (<span class="slot"><C size={s} /><em>{s}</em></span>))}
+                    </div>
+                  </div>
+                </section>
+              );
+            })}
+          </>
+        )
+      }
 
       {
         twozz.length > 0 && (
           <>
-            <header class="band">
-              <h2>Twozz — a little more character</h2>
+            <header class="band" id="twozz">
+              <h2>Twozz / Strozz — {twozz.length} new directions</h2>
               <p>
-                The shipped mark is a purple speech bubble with the family face.
-                It works, but it says “chat” and nothing about live streams or
-                emotes. These keep the purple, because the audience is Twitch,
-                and try to give it something to remember.
+                Ten carrier families, each explored through four variations:
+                conventional speech silhouettes, broader streaming forms and
+                dimensional light treatments that still survive at icon size.
               </p>
             </header>
-            {twozzChosen && (
-              <section class="chosen">
-                <div class="chosen-art">
-                  <div class="chosen-ground chosen-ground--light">
-                    <twozzChosen.Comp size={128} />
-                  </div>
-                  <div class="chosen-ground chosen-ground--dark">
-                    <twozzChosen.Comp size={128} />
-                  </div>
-                </div>
-                <div class="chosen-note">
-                  <p class="eyebrow">Selected</p>
-                  <h2>
-                    {twozzChosen.meta.n} · {twozzChosen.meta.name}
-                  </h2>
-                  <p>{twozzChosen.meta.idea}</p>
-                  <p class="chosen-keep">
-                    Chosen on the 28px row, not the 150px one. Several below are
-                    better looking at full size — t13 does something with
-                    transmitted light that an opaque mark cannot — but that
-                    detail is gone by the time it is a favicon, and this one is
-                    still itself down there.
-                  </p>
-                </div>
-              </section>
-            )}
             {twozz.map((it) => {
               const C = it.Comp;
               const m = it.meta;
@@ -320,6 +325,24 @@ const twozzChosen = all.find((i) => i.slug === TWOZZ_SELECTED);
     line-height: 1.5;
     color: #5c6169;
     max-width: 34ch;
+  }
+
+  .jump {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    margin-top: 1.25rem;
+  }
+
+  .jump a {
+    padding: 0.65rem 0.85rem;
+    color: #132638;
+    background: #fff;
+    border: 1px solid #d8dbe0;
+    border-radius: 999px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-decoration: none;
   }
 
   main {

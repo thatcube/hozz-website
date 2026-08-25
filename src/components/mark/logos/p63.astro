@@ -1,0 +1,60 @@
+---
+/**
+ * p63 · Pane
+ *
+ * A single piece of blue glass, cut landscape, with nothing behind it.
+ *
+ * The four Plozz studies here share two silhouettes and vary only the light.
+ * This one and p66 are the same 28x20 pane with the same [3, 1] corner cut;
+ * p64 and p65 are the same 26x22 faceplate with the same [4, 2, 1] cut. Reuse
+ * the shape, change the physics, and the comparison is about the physics.
+ *
+ * A pane leaning back under a light that is above it, not beside it, does not
+ * shade like a button. The top three rings run near-white and step down one
+ * stop at a time until they meet the field; the left is quiet, one stop and
+ * then nothing, because a vertical edge turned toward a high light catches
+ * almost none of it; and the bottom carries the glass's own thickness as a
+ * deep rim, three rings falling from the darkest blue in the scale back up to
+ * the field. The right does the same in half the range. The mitres land on the
+ * true 45 because the facet is chosen by whichever edge is nearest, ties going
+ * to the top and then the left.
+ *
+ * That asymmetry is the whole argument against the disc. A circle shaded this
+ * way is a sphere; a rectangle shaded this way is a sheet of glass, and a
+ * sheet of glass in landscape is a screen even with no frame drawn around it.
+ *
+ * Nothing is cleared for the letterforms. The four inner rings resolve to one
+ * flat field a full pixel wider than the face on every side, so the ZZ sits on
+ * plain glass with the ramp beginning outside it: 6 rows of air above the face
+ * and 6 below, 10 columns either side, measured. Face ink is the keyline
+ * colour, as Hozz does it.
+ *
+ * 10 tones off the family blue, 12.6:1 at the face.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { faceBoxAt, facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+const face = { cx: 16, cy: 16, size: 'md', smile: 'compact', gap: 2 } as const;
+const box = faceBoxAt(face);
+if (box.x !== 12 || box.y !== 12 || box.right !== 19 || box.bottom !== 19) {
+  throw new Error(`p63 face geometry changed: ${JSON.stringify(box)}`);
+}
+---
+
+<MarkFrame size={size} title="Plozz — Pane">
+  <path d="M5 6h22v1h-22z M3 7h2v1h-2z M27 7h2v1h-2z M2 8h1v1h-1z M29 8h1v1h-1z M2 9h1v1h-1z M29 9h1v1h-1z M2 10h1v1h-1z M29 10h1v1h-1z M2 11h1v1h-1z M29 11h1v1h-1z M2 12h1v1h-1z M29 12h1v1h-1z M2 13h1v1h-1z M29 13h1v1h-1z M2 14h1v1h-1z M29 14h1v1h-1z M2 15h1v1h-1z M29 15h1v1h-1z M2 16h1v1h-1z M29 16h1v1h-1z M2 17h1v1h-1z M29 17h1v1h-1z M2 18h1v1h-1z M29 18h1v1h-1z M2 19h1v1h-1z M29 19h1v1h-1z M2 20h1v1h-1z M29 20h1v1h-1z M2 21h1v1h-1z M29 21h1v1h-1z M2 22h1v1h-1z M29 22h1v1h-1z M2 23h1v1h-1z M29 23h1v1h-1z M3 24h2v1h-2z M27 24h2v1h-2z M5 25h22v1h-22z" fill="#05202f" />
+  <path d="M5 7h22v1h-22z M3 8h2v1h-2z M27 8h2v1h-2z" fill="#f6feff" />
+  <path d="M5 8h22v1h-22z M4 9h1v1h-1z M27 9h1v1h-1z" fill="#e4f8ff" />
+  <path d="M3 9h1v1h-1z M5 9h22v1h-22z M3 10h1v1h-1z M3 11h1v1h-1z M3 12h1v1h-1z M3 13h1v1h-1z M3 14h1v1h-1z M3 15h1v1h-1z M3 16h1v1h-1z M3 17h1v1h-1z M3 18h1v1h-1z M3 19h1v1h-1z M3 20h1v1h-1z M3 21h1v1h-1z M3 22h1v1h-1z M3 23h1v1h-1z" fill="#cdf0fe" />
+  <path d="M4 10h22v1h-22z M4 11h22v1h-22z M4 12h22v1h-22z M4 13h22v1h-22z M4 14h22v1h-22z M4 15h22v1h-22z M4 16h22v1h-22z M4 17h22v1h-22z M4 18h22v1h-22z M4 19h22v1h-22z M4 20h22v1h-22z M4 21h22v1h-22z M4 22h2v1h-2z" fill="#b6e7fb" />
+  <path d="M26 10h1v1h-1z M26 11h1v1h-1z M26 12h1v1h-1z M26 13h1v1h-1z M26 14h1v1h-1z M26 15h1v1h-1z M26 16h1v1h-1z M26 17h1v1h-1z M26 18h1v1h-1z M26 19h1v1h-1z M26 20h1v1h-1z M26 21h1v1h-1z" fill="#9edcf8" />
+  <path d="M27 10h1v1h-1z M27 11h1v1h-1z M27 12h1v1h-1z M27 13h1v1h-1z M27 14h1v1h-1z M27 15h1v1h-1z M27 16h1v1h-1z M27 17h1v1h-1z M27 18h1v1h-1z M27 19h1v1h-1z M27 20h1v1h-1z M27 21h1v1h-1z M6 22h21v1h-21z" fill="#7fcdf2" />
+  <path d="M28 9h1v1h-1z M28 10h1v1h-1z M28 11h1v1h-1z M28 12h1v1h-1z M28 13h1v1h-1z M28 14h1v1h-1z M28 15h1v1h-1z M28 16h1v1h-1z M28 17h1v1h-1z M28 18h1v1h-1z M28 19h1v1h-1z M28 20h1v1h-1z M28 21h1v1h-1z M28 22h1v1h-1z" fill="#5bb8e8" />
+  <path d="M27 22h1v1h-1z M5 23h22v1h-22z" fill="#3a9fd6" />
+  <path d="M4 23h1v1h-1z M27 23h2v1h-2z M5 24h22v1h-22z" fill="#136694" />
+  <g fill="#05202f" shape-rendering="crispEdges">
+    {facePathsAt(face).map((d) => <path d={d} />)}
+  </g>
+</MarkFrame>

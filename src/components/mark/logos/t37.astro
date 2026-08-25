@@ -1,0 +1,50 @@
+---
+/**
+ * t37 · Gable
+ *
+ * The quietest of the four. Sloped shoulders on a narrower, 26-wide body
+ * with a flat base, and a tail that tapers from both sides at once instead
+ * of hanging off one of them — a spike, not a hook. It sits left of centre,
+ * which is the only thing in the mark that is not balanced about x=16. The
+ * body is symmetric about x=16 — 22 rows, 26 across at its widest — and the
+ * tail is exempt from that, as it is in every mark in the family. It is cut
+ * from the same silhouette rather than stuck on the side of one, so a single
+ * keyline runs round the two of them and there is no seam where they meet.
+ *
+ * The interior is not a flat fill. Eight surface tones are laid down as a
+ * 5-pixel contour bevel that follows every facet: each pixel takes its tone
+ * from the local surface normal against a light off (12, 3), and from how
+ * far it sits from that light, so the highlight gathers on the facets
+ * nearest it and falls away across the rest instead of ringing the whole rim
+ * evenly. Facets turned away from the light fall two tones below the body
+ * colour. Neighbouring pixels never skip a tone.
+ *
+ * The middle stays plain. The 8-wide md face with the compact smile sits on
+ * the core tone with 7 rows of body air above it and 7 below, measured on
+ * the body and ignoring the tail, and nothing is cleared behind it.
+ *
+ * 9 tones, all purple, and a white face at 5.83:1 on the core.
+ */
+import MarkFrame from '../MarkFrame.astro';
+import { facePathsAt } from '../../../data/mark';
+
+interface Props { size?: number }
+const { size = 128 } = Astro.props;
+---
+
+<MarkFrame size={size} title="Twozz — Gable">
+  <path d="M7 3h18v1h-18z M6 4h20v1h-20z M5 5h22v1h-22z M4 6h24v1h-24z M3 7h26v1h-26z M3 8h26v1h-26z M3 9h26v1h-26z M3 10h26v1h-26z M3 11h26v1h-26z M3 12h26v1h-26z M3 13h26v1h-26z M3 14h26v1h-26z M3 15h26v1h-26z M3 16h26v1h-26z M3 17h26v1h-26z M3 18h26v1h-26z M3 19h26v1h-26z M3 20h26v1h-26z M3 21h26v1h-26z M3 22h26v1h-26z M4 23h24v1h-24z M5 24h22v1h-22z M9 25h8v1h-8z M10 26h6v1h-6z M11 27h4v1h-4z M12 28h2v1h-2z" fill="#8c3cc9" />
+  <path d="M7 4h12v1h-12z" fill="#ecd7f9" />
+  <path d="M19 4h3v1h-3z M6 5h13v1h-13z M5 6h1v1h-1z M4 7h1v1h-1z" fill="#d9b8ef" />
+  <path d="M22 4h2v1h-2z M19 5h3v1h-3z M6 6h13v1h-13z M5 7h1v1h-1z M4 8h2v1h-2z M4 9h1v1h-1z" fill="#c699e6" />
+  <path d="M24 4h1v1h-1z M22 5h2v1h-2z M25 5h1v1h-1z M19 6h3v1h-3z M6 7h13v1h-13z M6 8h1v1h-1z M5 9h1v1h-1z M4 10h2v1h-2z M4 11h1v1h-1z M4 12h1v1h-1z M4 13h1v1h-1z M4 14h1v1h-1z M4 15h1v1h-1z M4 16h1v1h-1z M4 17h1v1h-1z M4 18h1v1h-1z" fill="#b27adc" />
+  <path d="M24 5h1v1h-1z M22 6h2v1h-2z M25 6h2v1h-2z M19 7h3v1h-3z M7 8h12v1h-12z M6 9h2v1h-2z M6 10h1v1h-1z M5 11h1v1h-1z M5 12h1v1h-1z M5 13h1v1h-1z M5 14h1v1h-1z M5 15h1v1h-1z M5 16h1v1h-1z M5 17h1v1h-1z M5 18h1v1h-1z M4 19h1v1h-1z M4 20h1v1h-1z" fill="#9f5bd3" />
+  <path d="M27 9h1v1h-1z M27 10h1v1h-1z M27 11h1v1h-1z M27 12h1v1h-1z M27 13h1v1h-1z M27 14h1v1h-1z M27 15h1v1h-1z M27 16h1v1h-1z M27 17h1v1h-1z M27 18h1v1h-1z M27 19h1v1h-1z M26 20h2v1h-2z M26 21h1v1h-1z M7 22h2v1h-2z M17 22h10v1h-10z M5 23h2v1h-2z M8 23h1v1h-1z M16 23h1v1h-1z M9 24h1v1h-1z M15 24h1v1h-1z M10 25h1v1h-1z M14 25h1v1h-1z M11 26h3v1h-3z" fill="#762fa9" />
+  <path d="M27 21h1v1h-1z M27 22h1v1h-1z M7 23h1v1h-1z M17 23h10v1h-10z M16 24h1v1h-1z M15 25h1v1h-1z M14 26h1v1h-1z M12 27h2v1h-2z" fill="#5f2189" />
+  <path d="M7 3h18v1h-18z M6 4h1v1h-1z M25 4h1v1h-1z M5 5h1v1h-1z M26 5h1v1h-1z M4 6h1v1h-1z M27 6h1v1h-1z M3 7h1v1h-1z M28 7h1v1h-1z M3 8h1v1h-1z M28 8h1v1h-1z M3 9h1v1h-1z M28 9h1v1h-1z M3 10h1v1h-1z M28 10h1v1h-1z M3 11h1v1h-1z M28 11h1v1h-1z M3 12h1v1h-1z M28 12h1v1h-1z M3 13h1v1h-1z M28 13h1v1h-1z M3 14h1v1h-1z M28 14h1v1h-1z M3 15h1v1h-1z M28 15h1v1h-1z M3 16h1v1h-1z M28 16h1v1h-1z M3 17h1v1h-1z M28 17h1v1h-1z M3 18h1v1h-1z M28 18h1v1h-1z M3 19h1v1h-1z M28 19h1v1h-1z M3 20h1v1h-1z M28 20h1v1h-1z M3 21h1v1h-1z M28 21h1v1h-1z M3 22h1v1h-1z M28 22h1v1h-1z M4 23h1v1h-1z M27 23h1v1h-1z M5 24h4v1h-4z M17 24h10v1h-10z M9 25h1v1h-1z M16 25h1v1h-1z M10 26h1v1h-1z M15 26h1v1h-1z M11 27h1v1h-1z M14 27h1v1h-1z M12 28h2v1h-2z" fill="#2e1046" />
+  <g fill="#ffffff" shape-rendering="crispEdges">
+    {facePathsAt({ cx: 16, cy: 14, size: 'md', smile: 'compact', gap: 2 }).map((d) => (
+      <path d={d} />
+    ))}
+  </g>
+</MarkFrame>
