@@ -11,6 +11,7 @@ export default defineConfig({
   // old documentation route keeps answering so nothing that linked to it dies.
   redirects: {
     '/docs/privacy/': '/privacy/',
+    '/docs/free-and-open/': '/docs/open-source/',
   },
   integrations: [
     sitemap({
@@ -20,7 +21,7 @@ export default defineConfig({
       // redirect, and a sitemap should list the destination, not the sign.
       filter: (page) =>
         !/\/(v2|directions|sketch|lab|lab2|logos|w|id|f)\//.test(page) &&
-        !/\/docs\/privacy\//.test(page),
+        !/\/docs\/(privacy|free-and-open)\//.test(page),
     }),
     icon(),
   ],

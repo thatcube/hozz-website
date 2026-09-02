@@ -1,7 +1,7 @@
 # hozz-website
 
-Marketing site for **[Hozz](https://github.com/thatcube/hozz)** — a free,
-open-source app that exports your Apple Health data to destinations you own.
+Marketing site for **[Hozz](https://github.com/thatcube/hozz)** — an open-source
+app that moves health data between places and platforms you use.
 
 Live at **[hozz.brando.page](https://hozz.brando.page)**.
 

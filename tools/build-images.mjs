@@ -67,8 +67,8 @@ const og = `<!doctype html><html><head><meta charset="utf-8"><style>
 </style></head><body>
   <div class="pad">
     <div class="brand">${mark}<span>Hozz</span></div>
-    <h1>Take your health data<br>somewhere <i>you own</i>.</h1>
-    <p class="sub">Free and open source. No subscription, no account, no server in the middle.</p>
+    <h1>Move your health data<br>where <i>you use it</i>.</h1>
+    <p class="sub">Open source. No account, analytics, hosted relay, or default destination.</p>
     <div class="chips">
       ${chips.map(([c, t]) => `<span class="chip"><i style="background:${c}"></i>${t}</span>`).join('')}
     </div>

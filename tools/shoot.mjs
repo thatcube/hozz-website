@@ -28,7 +28,8 @@ if (paths.length === 0) {
 
 const viewports = [
   { name: 'desktop', width: 1440, height: 1000, deviceScaleFactor: 1 },
-  { name: 'phone', width: 390, height: 844, deviceScaleFactor: 2 },
+  { name: 'tablet', width: 768, height: 1024, deviceScaleFactor: 1 },
+  { name: 'phone', width: 390, height: 844, deviceScaleFactor: 1 },
 ];
 
 await mkdir(outDir, { recursive: true });
@@ -40,6 +41,7 @@ for (const path of paths) {
   for (const viewport of viewports) {
     const page = await browser.newPage();
     await page.setViewport(viewport);
+    await page.setCacheEnabled(false);
     const response = await page.goto(base + path, { waitUntil: 'networkidle0' });
     if (!response?.ok()) {
       console.error(`  !! ${path} → HTTP ${response?.status()}`);

@@ -52,13 +52,11 @@ const jsonLd = {
       operatingSystem: 'iOS, macOS',
       url: `${SITE}/w/w05/`,
       downloadUrl: GITHUB_URL,
-      isAccessibleForFree: true,
       license: LICENSE_URL,
       softwareVersion: 'Early alpha',
       author: { '@type': 'Person', name: 'Brandon Moore' },
-      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
       description:
-        'A free, open-source iPhone app with a companion Mac app that exports Apple Health data to destinations you own: your Mac, a folder, Home Assistant, InfluxDB, any web endpoint, or MQTT.',
+        'An open-source iPhone app with a companion Mac app that exports Apple Health data to destinations you own: your Mac, a folder, Home Assistant, InfluxDB, any web endpoint, or MQTT.',
     },
     {
       '@type': 'FAQPage',
@@ -81,7 +79,7 @@ const jsonLd = {
     <meta name="color-scheme" content="light" />
     <meta
       name="description"
-      content="Hozz files your Apple Health history where you can find it again: NDJSON, SQLite, CSV and more, sent to your Mac, a folder, Home Assistant, InfluxDB, a URL or MQTT. Free, open source, no account."
+      content="Hozz files your Apple Health history where you can find it again: NDJSON, SQLite, CSV and more, sent to your Mac, a folder, Home Assistant, InfluxDB, a URL or MQTT. Open source, no account."
     />
     <link rel="canonical" href={`${SITE}/w/w05/`} />
     <title>Hozz — your health history, filed where you can find it</title>
@@ -113,7 +111,7 @@ const jsonLd = {
       <!-- ── Hero ─────────────────────────────────────────────── -->
       <section class="hero">
         <div class="hero-copy">
-          <p class="eyebrow"><span class="dot" aria-hidden="true"></span>Free · open source · early alpha</p>
+          <p class="eyebrow"><span class="dot" aria-hidden="true"></span>Open source · early alpha</p>
           <h1>Your health history, filed where <em>you</em> can find it.</h1>
           <p class="lede">
             Hozz copies Apple Health out of your iPhone and into places you already own — a
@@ -426,7 +424,7 @@ const jsonLd = {
         <Mark size={56} />
         <h2>Take the copy. Keep the copy.</h2>
         <p>
-          Free forever, GPL-3.0 with an App Store exception, built by one person. Read every
+          Open source under GPL-3.0 with an App Store exception, built by one person. Read every
           line before you trust it with a single heartbeat.
         </p>
         <p class="actions">

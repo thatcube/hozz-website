@@ -207,7 +207,7 @@ export const MCP_TOOLS = [
 
 /** Written as refusals, because each one is a thing the app will not do. */
 export const PROMISES = [
-  { category: 'heart' as CategoryKey, title: 'No subscription', body: 'Nothing held back for a Pro tier.' },
+  { category: 'heart' as CategoryKey, title: 'Open source', body: 'GPL-3.0 with an App Store distribution exception.' },
   { category: 'activity' as CategoryKey, title: 'No account', body: 'Nothing to sign up to.' },
   { category: 'mobility' as CategoryKey, title: 'No analytics', body: 'No telemetry, no ads, no crash payloads.' },
   { category: 'respiratory' as CategoryKey, title: 'No server of mine', body: 'No relay in the middle.' },
@@ -240,8 +240,8 @@ export const NOT_YET = [
 /** Question-shaped, so the answers can be marked up as an FAQPage. */
 export const FAQ = [
   {
-    q: 'Is Hozz free?',
-    a: 'Yes. Free and open source under GPL-3.0, with no subscription, no account and no paid tier planned.',
+    q: 'Is Hozz open source?',
+    a: 'Yes. Hozz is licensed under GPL-3.0 with an App Store distribution exception.',
   },
   {
     q: 'Where does my health data go?',

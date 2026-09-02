@@ -35,6 +35,7 @@ import {
   SOURCE_REF,
   SYNC,
 } from '../src/data/docs.ts';
+import { scanPublicSource } from './public-copy.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -216,6 +217,20 @@ console.log(
     if (configured && value) {
       agree(`The site's address in ${label}`, configured, value, 'astro.config.mjs');
     }
+  }
+}
+
+{
+  const copy = await scanPublicSource(root);
+  if (copy.findings.length) {
+    for (const finding of copy.findings) {
+      problems.push(
+        `Permanent-pricing language in ${finding.file}:${finding.line}\n` +
+          `    found ${JSON.stringify(finding.text)} (${finding.label})\n`,
+      );
+    }
+  } else {
+    notes.push(`Permanent-pricing language absent from ${copy.filesScanned} public source files`);
   }
 }
 

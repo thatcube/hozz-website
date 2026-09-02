@@ -101,7 +101,7 @@ export const PROMISE_ROWS = [
   { icon: 'ph:cloud-slash', tint: '#F26B78', title: 'No server of mine', body: 'No relay, no database, no cloud. Nothing in the middle to trust.' },
   { icon: 'ph:user-circle-dashed', tint: '#FF8A3D', title: 'No account', body: 'Nothing to sign up for, because there is nothing to sign up to.' },
   { icon: 'ph:chart-line-down', tint: '#5DBF48', title: 'No analytics', body: 'No tracking, no telemetry, no crash reports with your health in them.' },
-  { icon: 'ph:currency-dollar-simple', tint: '#4FB6D8', title: 'No subscription', body: 'No paywall, no Pro tier. Hozz has nothing to sell you later.' },
+  { icon: 'ph:code', tint: '#4FB6D8', title: 'Open source', body: 'GPL-3.0 with an App Store distribution exception.' },
   { icon: 'ph:cloud-x', tint: '#6E6CE4', title: 'Nothing put in iCloud', body: 'Where a copy lands is your call, never a default of mine.' },
   { icon: 'ph:lock-simple', tint: '#8A72EC', title: 'Credentials stay put', body: 'Keys for your own server live in that device’s Keychain, unsynced.' },
 ];

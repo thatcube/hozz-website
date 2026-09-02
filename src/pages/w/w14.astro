@@ -81,12 +81,10 @@ const structuredData = {
       url: `${SITE}/w/w14/`,
       codeRepository: GITHUB_URL,
       license: LICENSE_URL,
-      isAccessibleForFree: true,
       softwareVersion: 'Early alpha',
       author: { '@type': 'Person', name: 'Brandon Moore' },
-      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
       description:
-        'A free, open-source iPhone app with a companion Mac app that exports Apple Health records to destinations the user controls.',
+        'An open-source iPhone app with a companion Mac app that exports Apple Health records to destinations the user controls.',
     },
     {
       '@type': 'FAQPage',
@@ -110,7 +108,7 @@ const structuredData = {
     <meta name="theme-color" content="#f8fcff" />
     <meta
       name="description"
-      content="Hozz makes a durable copy of your Apple Health history in a place you control. Free, open source, no account, no analytics and no hosted relay."
+      content="Hozz makes a durable copy of your Apple Health history in a place you control. Open source, no account, no analytics and no hosted relay."
     />
     <link rel="canonical" href={`${SITE}/w/w14/`} />
     <link rel="icon" href="/logo.svg" type="image/svg+xml" />
@@ -148,7 +146,7 @@ const structuredData = {
     <main id="main">
       <section class="hero" id="top">
         <div class="shell hero-copy">
-          <p class="eyebrow">Apple Health export · free · open source</p>
+          <p class="eyebrow">Apple Health export · open source</p>
           <h1>Move your health history without taking a <em class="em">leap</em>.</h1>
           <p class="lede">
             Apple Health holds the original. Hozz makes the copy you control — and moves its place
@@ -161,9 +159,6 @@ const structuredData = {
           <p class="conditions">
             <span class="condition-item">No account</span>{' '}<span class="condition-separator" aria-hidden="true"
               >·</span
-            >{' '}<span class="condition-item">No subscription</span>{' '}<span
-              class="condition-separator"
-              aria-hidden="true">·</span
             >{' '}<span class="condition-item">No default destination</span>
           </p>
         </div>
@@ -520,10 +515,10 @@ const structuredData = {
         <div class="shell close-grid">
           <div class="close-mark"><Mark size={82} /></div>
           <div>
-            <p class="eyebrow">Free forever · GPL-3.0</p>
+            <p class="eyebrow">GPL-3.0</p>
             <h2 id="close-title">Make the copy you can <em class="em">keep</em>.</h2>
             <p>
-              No account, no subscription, no server of mine. Read the source before you trust it
+              No account and no server of mine. Read the source before you trust it
               with anything — that is the point of building Hozz in the open.
             </p>
           </div>

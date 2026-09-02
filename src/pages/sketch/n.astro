@@ -22,7 +22,7 @@ const DESTINATIONS = [
 ];
 
 const STEPS = [
-  'Install Hozz on your iPhone. It is free and the source is public.',
+  'Install Hozz on your iPhone. The source is public.',
   'Add a destination you own — your Mac, a folder, a URL, Home Assistant or MQTT.',
   'Tick the Health types it may read. iOS asks; you answer.',
   'Send a test batch, then pick a schedule: on arrival, hourly, daily, or only when you tap.',
@@ -92,11 +92,6 @@ const FAQ = [
       'Apple’s Health app exports once, by hand, as a zip you then have to deal with. Hozz keeps a running copy flowing to a destination you own. Install Hozz on your iPhone, add a destination — your Mac, a folder, a web address, Home Assistant or an MQTT broker — grant the Health types it may read, send a test batch, then choose a schedule: on arrival, hourly, daily or manual. New records go on their own after that.',
   },
   {
-    q: 'What does Hozz cost?',
-    a:
-      'Nothing. Hozz is free and open source under GPL-3.0 with an App Store exception. There is no subscription, no account and no paid tier.',
-  },
-  {
     q: 'Where does my health data go?',
     a:
       'Only to destinations you add and confirm. There is no default destination, no hosted relay and no server belonging to the developer. Nothing leaves the phone until you set one up.',
@@ -117,13 +112,11 @@ const jsonLd = {
       applicationCategory: 'HealthApplication',
       operatingSystem: 'iOS, macOS',
       description:
-        'Free, open-source iPhone and Mac app that exports Apple Health data to destinations you own: a Mac on your own network, a folder, a web address, Home Assistant or an MQTT broker.',
+        'Open-source iPhone and Mac app that exports Apple Health data to destinations you own: a Mac on your own network, a folder, a web address, Home Assistant or an MQTT broker.',
       url: GITHUB_URL,
       codeRepository: GITHUB_URL,
       license: LICENSE_URL,
-      isAccessibleForFree: true,
       author: { '@type': 'Person', name: 'Brandon Moore' },
-      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
       featureList: [
         'Automatic export of new Apple Health records on a schedule you set',
         'Destinations: a Mac on your network, a folder, Home Assistant, a web address, an MQTT broker',
@@ -165,14 +158,14 @@ const jsonLd = {
 
         <p class="n-lede">
           Every health app writes the confident line first. This one keeps it — struck out — beside the sentence
-          that survived. Free, open source, and nothing leaves your phone until you name a destination.
+          that survived. Open source, and nothing leaves your phone until you name a destination.
         </p>
 
         <div class="n-cta">
           <a class="n-pill n-pill--solid" href={GITHUB_URL}>Get Hozz on GitHub</a>
           <a class="n-pill" href={DONATE_URL}>Sponsor the work</a>
         </div>
-        <p class="n-fine">Free forever · GPL-3.0 · iPhone + Mac · no account</p>
+        <p class="n-fine">GPL-3.0 · iPhone + Mac · no account</p>
       </section>
 
       <section class="n-row n-stet" aria-labelledby="stet-title">
@@ -266,8 +259,8 @@ const jsonLd = {
       <section class="n-close" aria-labelledby="close-title">
         <h2 id="close-title" class="n-final n-final--close">Get your health history <em>out</em>.</h2>
         <p class="n-close-body">
-          It is yours. Put it somewhere you own — a file, your Mac, your server — and keep it there. Free forever, no
-          account, nothing in the middle.
+          It is yours. Put it somewhere you own — a file, your Mac, your server — and keep it there.
+          No account, nothing in the middle.
         </p>
         <div class="n-cta">
           <a class="n-pill n-pill--solid" href={GITHUB_URL}>Get Hozz on GitHub</a>

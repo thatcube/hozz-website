@@ -25,8 +25,7 @@ const jsonLd = {
       applicationCategory: 'HealthApplication',
       operatingSystem: 'iOS, macOS',
       description:
-        'A free, open-source iPhone app with a companion Mac app that exports Apple Health data to destinations you own.',
-      isAccessibleForFree: true,
+        'An open-source iPhone app with a companion Mac app that exports Apple Health data to destinations you own.',
       license: 'https://www.gnu.org/licenses/gpl-3.0.html',
       codeRepository: GITHUB_URL,
       softwareVersion: 'Early alpha',
@@ -98,7 +97,7 @@ const isLossy = (note: string) => note.startsWith('Lossy');
           <dl class="plain-facts" aria-label="Hozz at a glance">
             <div><dt>Account</dt><dd>None</dd></div>
             <div><dt>Relay</dt><dd>None</dd></div>
-            <div><dt>Price</dt><dd>Free forever</dd></div>
+            <div><dt>Licence</dt><dd>GPL-3.0</dd></div>
           </dl>
         </div>
 
@@ -352,7 +351,7 @@ const isLossy = (note: string) => note.startsWith('Lossy');
         <p class="overline inverse"><span>Licence</span> GPL-3.0 with an App Store exception</p>
         <h2 id="closing-title">Keep your history. <em>Keep the proof.</em></h2>
         <p>
-          Free forever. No account. No subscription. Built in the open by Brandon Moore.
+          Open source. No account. Built in the open by Brandon Moore.
         </p>
         <a class="button light" href={GITHUB_URL}>View Hozz on GitHub <span aria-hidden="true">↗</span></a>
       </section>

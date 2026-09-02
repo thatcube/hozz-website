@@ -5,7 +5,7 @@
  * recoloured, and dropped on top of a shape. The give-away is stroke contrast.
  * A text Z has one weight — its bars and its diagonal are the same mass, because
  * a type designer already balanced them for a page of running text. A *drawn* Z
- * is free to make the diagonal heavier than the bars, or lighter, to shear its
+ * can make the diagonal heavier than the bars, or lighter, shear its
  * terminals to match a container edge, to lose a bar into the object it sits in.
  *
  * So this module exposes the variables, not a glyph:

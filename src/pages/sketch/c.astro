@@ -2,10 +2,9 @@
 /**
  * Sketch C — "Quiet"
  *
- * Thesis: an app that handles your health records should look like it has
- * nothing to sell, so the page is almost entirely type. No cards, no tiles, no
- * panels — statements set large enough to be read as claims you could hold
- * someone to.
+ * Thesis: an app that handles your health records should make every claim
+ * inspectable, so the page is almost entirely type. No cards, no tiles, no
+ * panels — statements set large enough to be checked.
  *
  * The spectrum appears exactly once, as a hairline the width of the page, and it
  * is the only colour in the design. The single graphic is a dotted spine with a
@@ -44,7 +43,7 @@ const FORMATS = [
 const CLAIMS = [
   { lead: 'No server of mine.', rest: 'Nothing to breach, nothing to subpoena.', cat: 'heart' },
   { lead: 'No account.', rest: 'It never asks who you are.', cat: 'body' },
-  { lead: 'No paid tier, ever.', rest: 'Nothing held back to sell you later.', cat: 'nutrition' },
+  { lead: 'No default destination.', rest: 'Nothing leaves until you choose where it goes.', cat: 'nutrition' },
   {
     lead: 'It will not claim it got everything.',
     rest: 'Apple will not let it know that it did.',
@@ -66,12 +65,10 @@ const schema = {
       applicationCategory: 'HealthApplication',
       operatingSystem: 'iOS, macOS',
       description:
-        'A free, open-source iPhone app with a companion Mac app that exports Apple Health data to destinations you own — your Mac, a folder, Home Assistant, your own web endpoint, or an MQTT broker.',
+        'An open-source iPhone app with a companion Mac app that exports Apple Health data to destinations you own — your Mac, a folder, Home Assistant, your own web endpoint, or an MQTT broker.',
       license: 'https://www.gnu.org/licenses/gpl-3.0.html',
       codeRepository: GITHUB_URL,
-      isAccessibleForFree: true,
       author: { '@type': 'Person', name: 'Brandon Moore' },
-      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
     },
     {
       '@type': 'FAQPage',
@@ -123,7 +120,7 @@ const schema = {
         <span>You should have a copy.</span>
       </h1>
       <p class="stand">
-        Hozz exports it to somewhere you own. Free, open source, nothing in the
+        Hozz exports it to somewhere you own. Open source, nothing in the
         middle.
       </p>
       <p class="meta">iPhone + companion Mac app · GPL-3.0 · early alpha</p>
@@ -210,7 +207,7 @@ const schema = {
     <section class="close" aria-labelledby="get">
       <h2 id="get" class="r">Take your history with you.</h2>
       <p class="lede r">
-        Free now, free later. Read the code before you trust it.
+        Read the code before you trust it.
       </p>
       <p class="actions r">
         <a class="pill" href={GITHUB_URL} rel="noopener">

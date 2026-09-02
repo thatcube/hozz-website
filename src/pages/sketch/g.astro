@@ -90,10 +90,6 @@ const FAQ = [
     q: 'Where does Hozz send my Apple Health data?',
     a: 'Only where you address it. There is no default destination, no account and no hosted relay — nothing leaves the iPhone until you add a destination and confirm it. Credentials stay in the device Keychain and are never synced.',
   },
-  {
-    q: 'What does it cost?',
-    a: 'Nothing. Hozz is free and open source under GPL-3.0 with an App Store exception, written by one developer. There is no subscription, no advertising and no analytics.',
-  },
 ];
 
 const LD = {
@@ -105,12 +101,10 @@ const LD = {
       applicationCategory: 'HealthApplication',
       operatingSystem: 'iOS, macOS',
       description:
-        'Free, open-source iPhone and Mac app that exports Apple Health data to destinations you own: a Mac on your local network, a folder, Home Assistant, a web address, or an MQTT broker. No account, no relay and no default destination.',
+        'Open-source iPhone and Mac app that exports Apple Health data to destinations you own: a Mac on your local network, a folder, Home Assistant, a web address, or an MQTT broker. No account, no relay and no default destination.',
       author: { '@type': 'Person', name: 'Brandon Moore' },
       codeRepository: GITHUB_URL,
       license: LICENSE_URL,
-      isAccessibleForFree: true,
-      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
       softwareVersion: 'early alpha',
     },
     {
@@ -136,7 +130,7 @@ const LD = {
     <div class="wrap">
       <header class="mast">
         <a class="mark" href="#top">HOZZ</a>
-        <p class="flag">EARLY ALPHA — FREE &amp; OPEN SOURCE</p>
+        <p class="flag">EARLY ALPHA — OPEN SOURCE</p>
       </header>
 
       <main id="top">
@@ -326,7 +320,7 @@ const LD = {
 
         <section class="close" aria-labelledby="close-title" data-r>
           <h2 id="close-title">Your health history, in a file <em>you own</em>.</h2>
-          <p>Free, forever. GPL-3.0. One developer, no company.</p>
+          <p>Open source. GPL-3.0. One developer, no company.</p>
           <p class="cta">
             <a class="pill pill-solid" href={GITHUB_URL} rel="noopener">Read the source on GitHub</a>
             <a class="pill" href={DONATE_URL} rel="noopener">Sponsor the work</a>
