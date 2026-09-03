@@ -105,8 +105,9 @@ const haSensor = `mqtt:
 
   <Callout kind="warn" title="MQTT keeps no history">
     <p>
-      Offline brokers miss a batch despite retries. Retained metric topics keep only the latest
-      point. Subscribe to <code>&lt;root&gt;/batch</code> or send NDJSON elsewhere for history.
+      Hozz retries detected connection failures. QoS 0 still cannot confirm that an accepted
+      publish was persisted, and retained metric topics keep only the latest point. Subscribe to
+      <code>&lt;root&gt;/batch</code> or send NDJSON elsewhere for history.
     </p>
   </Callout>
 
