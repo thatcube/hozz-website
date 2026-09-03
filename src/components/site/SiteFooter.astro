@@ -1,0 +1,206 @@
+---
+/**
+ * The one footer.
+ *
+ * The homepage ended in a dark plate and the documentation ended in a pale
+ * strip with a different set of links in a different order — which is two
+ * endings for one site. This is the homepage's, because the plate is the thing
+ * that says the page is over, and a documentation page needs that said just as
+ * plainly.
+ *
+ * The homepage's own section links live here too. They are hidden from the
+ * header below 1100px for want of room, and a phone that can only scroll a very
+ * long page is worse than one that can jump down it.
+ */
+import { Icon } from 'astro-icon/components';
+import Mark from '../mark/logos/c45.astro';
+import {
+  DONATE_URL,
+  GITHUB_URL,
+  HOME_SECTIONS,
+  LICENSE_URL,
+  SIBLINGS,
+  SURFACES,
+  type SurfaceKey,
+} from '../../data/site';
+
+interface Props {
+  surface: SurfaceKey;
+  /** The path being rendered, so in-page links only appear on their own page. */
+  path?: string;
+}
+
+const { surface, path } = Astro.props;
+const atHome = surface === 'home' && path === SURFACES.home.href;
+
+/** Counted rather than written down, so a column cannot be added and missed. */
+const columns = atHome ? 3 : 2;
+---
+
+<footer class="site-footer">
+  <div class="columns" style={`--columns: ${columns}`}>
+    <div class="about">
+      <a class="brand" href={atHome ? '#top' : '/'} aria-label="Hozz — home">
+        <Mark size={26} />
+        <span class="wordmark">Hozz</span>
+      </a>
+      <p>Apple Health export without a middleman.</p>
+    </div>
+
+    {
+      atHome && (
+        <nav aria-labelledby="footer-page">
+          <h2 id="footer-page">This page</h2>
+          {HOME_SECTIONS.map((section) => (
+            <a href={section.href}>{section.label}</a>
+          ))}
+        </nav>
+      )
+    }
+
+    <nav aria-labelledby="footer-hozz">
+      <h2 id="footer-hozz">Hozz</h2>
+      <a href={SURFACES.docs.href}>Docs</a>
+      <a href="/privacy/">Privacy</a>
+      <a class="repo" href={GITHUB_URL} rel="noopener">
+        <Icon name="ph:github-logo" aria-hidden="true" />
+        GitHub
+      </a>
+      <a href={LICENSE_URL} rel="noopener">License</a>
+      <a href={DONATE_URL} rel="noopener">Sponsor</a>
+    </nav>
+
+    <nav aria-labelledby="footer-siblings">
+      <h2 id="footer-siblings">More</h2>
+      {
+        SIBLINGS.map((sibling) => (
+          <a href={sibling.href} rel="noopener">
+            {sibling.name} — {sibling.body}
+          </a>
+        ))
+      }
+    </nav>
+  </div>
+
+  <div class="base">
+    <span>No cookies, analytics, storage, or third-party requests.</span>
+    <code>early alpha</code>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    padding: 4rem 0 1.5rem;
+    background: var(--ink);
+    color: #dce8f0;
+  }
+
+  .columns,
+  .base {
+    width: min(100% - var(--gutter) * 2, var(--max));
+    margin-inline: auto;
+  }
+
+  .columns {
+    display: grid;
+    grid-template-columns: 1.2fr repeat(var(--columns), minmax(0, 1fr));
+    gap: 3rem;
+    padding-bottom: 3rem;
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 44px;
+    margin-bottom: 0.6rem;
+    color: white;
+    text-decoration: none;
+  }
+
+  .wordmark {
+    font-family: 'Young Serif', Georgia, serif;
+    font-size: 1.2rem;
+    font-weight: 400;
+    letter-spacing: -0.025em;
+  }
+
+  .about p {
+    max-width: 28rem;
+    margin: 0;
+    color: #c6d7e2;
+    font-size: 0.86rem;
+  }
+
+  h2 {
+    margin: 0 0 1rem;
+    color: #b9d7eb;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  nav {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  nav a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.42rem;
+    min-height: 44px;
+    color: #dce8f0;
+    font-size: 0.78rem;
+    text-decoration: none;
+  }
+
+  nav a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.22em;
+  }
+
+  .repo :global(svg) {
+    width: 1.15em;
+    height: 1.15em;
+  }
+
+  .base {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(220, 236, 246, 0.18);
+    color: #b9cbd7;
+    font-size: 0.72rem;
+  }
+
+  .base code {
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  @media (max-width: 900px) {
+    .columns {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 2rem 1.5rem;
+    }
+
+    .about {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .columns {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .base {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  }
+</style>

@@ -1,110 +1,104 @@
 # hozz-website
 
-Marketing site for [Hozz](https://github.com/thatcube/hozz) — a free,
-open-source iPhone and iPad app for exporting Apple Health data to destinations
-you own.
+Marketing site for **[Hozz](https://github.com/thatcube/hozz)** — an open-source
+app that moves health data between places and platforms you use.
 
 Live at **[hozz.brando.page](https://hozz.brando.page)**.
 
 ## Stack
 
-Astro, no client framework, no analytics, no third-party requests. Deployed as
-an assets-only Cloudflare Worker — there is no `main`, so nothing runs
-server-side and every request is served from the edge without starting an
-isolate. Workers Static Assets rather than Pages, which has been maintenance-only
-since early 2025. The site makes exactly zero network calls that Hozz's own
-privacy page would have to apologise for — typefaces included, which is why they
-are self-hosted rather than pulled from a font CDN.
+- **[Astro](https://astro.build)** — static output, no client framework, no
+  analytics, no third-party requests (typefaces are self-hosted in
+  `public/fonts`).
+- **Hosting:** an assets-only **Cloudflare Worker** (Workers Static Assets, not
+  Pages). There is no `main` handler — nothing runs server-side, so every
+  request is served from the edge. Config is in
+  [`wrangler.jsonc`](wrangler.jsonc); the canonical host is `hozz.brando.page`,
+  with `hozz.brandomoore.com` still attached so older links resolve.
+
+Node 22 (see [`.nvmrc`](.nvmrc)).
+
+## Develop
 
 ```bash
 npm install
-npm run dev      # http://localhost:4321
-npm run build    # → dist/
-npm run preview
+npm run dev      # astro dev — http://localhost:4321
 ```
 
-## Design system
-
-`src/styles/global.css` holds the whole system. The key idea: there is no single
-brand accent. Apple Health sorts what it knows about you into categories, and
-Hozz keeps those categories intact all the way to the file you end up owning, so
-the site borrows the same spectrum. Each section sets one `--tint` and its wash,
-eyebrow dot, italic emphasis and selection colour all follow from it.
-
-- **Sentient** — headings only. A humanist serif with softened terminals, warm
-  rather than clinical.
-- **General Sans** — body copy.
-- **IBM Plex Mono** — machine facts only: HealthKit identifiers, coverage
-  states, milestone ids. Prose never uses it.
-
-Content lives in `src/data/site.ts`. The identifiers in the hero stream are real
-HealthKit names, not invented ones — if a claim on this site cannot be checked,
-it should not be on it.
-
-## Documentation
-
-`/docs` is seventeen pages under `src/pages/docs/`. Two data files hold
-everything that would otherwise be repeated or go stale:
-
-- **`src/data/docs-nav.ts`** — every page, in reading order, with its `<title>`,
-  `<h1>`, description and lede. The sidebar, breadcrumbs, previous/next links
-  and the index all read from it. A page missing from this list has no route
-  into it.
-- **`src/data/docs.ts`** — the facts that live in the app's source: destination
-  presets, delivery and export formats, the MCP tool list, the analysis
-  thresholds, and the error strings the app actually shows.
-
-### Keeping the docs honest
-
-The site and the app are separate repositories, so the second file can drift.
-`verify:facts` reads the enums out of the app's Swift and fails if this
-repository disagrees:
+## Build
 
 ```bash
-npm run verify:facts                     # against thatcube/hozz@main
-npm run verify:facts -- --ref my-branch  # against another ref
-HOZZ_REPO=~/Development/hozz npm run verify:facts   # against a local checkout
-npm run build && npm run verify:links    # dead internal links and anchors
+npm run build    # astro build → dist/
+npm run preview  # preview the production build locally
 ```
 
-Both run in CI on every push and once a week, because the app moves without
-this repository being touched.
+## Deploy
 
-This is a verifier rather than a generator on purpose. Generating prose from
-Swift would produce something nobody can maintain, and the prose is most of the
-value; generating only the lists would leave them stranded from the sentences
-around them. Checking the lists gets the drift protection without either
-problem.
+CI (`.github/workflows/site.yml`) runs the checks on every push and deploys the
+live site from `main` once they pass. It needs one repository secret,
+`CLOUDFLARE_API_TOKEN` (the account id in `wrangler.jsonc` is not secret).
 
-## Images
-
-`public/og-image.png` and `public/apple-touch-icon.png` are generated from the
-site's own fonts and colours, and are committed. Regenerate them only when they
-change:
+To publish by hand:
 
 ```bash
-npm i -D playwright && npx playwright install chromium
-node tools/build-images.mjs
+npm run deploy   # astro build && wrangler deploy
 ```
 
-## Deploying
+## Structure
+
+```
+src/pages/           Routes: index, privacy, 404, and docs/ (plus noindex
+                     review-only pages: v2, directions, sketch, lab, logos…)
+src/pages/docs/      The documentation pages
+src/components/site/   The chrome every live page shares (SiteHeader, SiteFooter)
+src/components/       Reusable sections (HealthStream, docs/, health/…)
+src/layouts/          Page shells (Layout, DocsLayout, HealthLayout…)
+src/data/             Site copy + checkable facts (site.ts, docs-nav.ts, docs.ts)
+src/styles/           foundation.css — tokens and typefaces every surface shares
+                      docs.css — the documentation shell on top of them
+public/               Static assets, self-hosted fonts, generated OG image/icon
+tools/                Verifiers and image generators
+```
+
+## Keeping the site honest
+
+The site and the app live in separate repos, so the facts on the page can drift
+from the app's source. Three checks guard against that, and all three run in CI:
 
 ```bash
+npm run verify:facts     # reads enums out of thatcube/hozz's Swift and fails on disagreement
 npm run build
-npx wrangler deploy
+npm run verify:links     # dead internal links and anchors, against the build
+npm run preview &        # then, against a served build:
+SHOOT_BASE=http://localhost:4321 npm run verify:layout   # overflow, tap targets, nested links
 ```
 
-The Worker owns `hozz.brando.page` as a custom domain, and still answers on the
-former `hozz.brandomoore.com` so old links do not break. Only the first is
-canonical — every page declares `hozz.brando.page`, so the two hostnames are not
-competing for search results. Declaring any route disables the `workers.dev`
-hostname, which is deliberate.
+`verify:facts` can target a branch (`-- --ref my-branch`) or a local checkout
+(`HOZZ_REPO=~/Development/hozz npm run verify:facts`).
 
-Both hostnames are listed in `wrangler.jsonc`. Wrangler reconciles custom
-domains against that list rather than merging with it, so a domain attached by
-hand in the dashboard and absent from the file is removed by the next deploy.
+<!-- app-family:start -->
+<!-- Generated by https://github.com/thatcube/brando — edit apps.json there, not this block. -->
 
-## Licence
+---
 
-Site content and code © Brandon Moore. The Hozz app itself is GPL-3.0 with an
-App Store distribution exception.
+<p align="center"><b>More open source</b></p>
+
+<p align="center">
+  <a href="https://github.com/thatcube/hozz" title="Hozz — Apple Health, exported to storage you own"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/thatcube/brando/main/logos/lockups/hozz-dark.svg" /><img src="https://raw.githubusercontent.com/thatcube/brando/main/logos/lockups/hozz-light.svg" height="40" alt="Hozz" /></picture></a>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="https://github.com/thatcube/Mozz" title="Mozz — Your music, wherever it lives"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/thatcube/brando/main/logos/lockups/mozz-dark.svg" /><img src="https://raw.githubusercontent.com/thatcube/brando/main/logos/lockups/mozz-light.svg" height="40" alt="Mozz" /></picture></a>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="https://github.com/thatcube/Plozz" title="Plozz — Movies &amp; TV on Apple TV, iPhone &amp; iPad"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/thatcube/brando/main/logos/lockups/plozz-dark.svg" /><img src="https://raw.githubusercontent.com/thatcube/brando/main/logos/lockups/plozz-light.svg" height="40" alt="Plozz" /></picture></a>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="https://github.com/thatcube/Twozz" title="Twozz — Twitch on Apple TV, with real emotes"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/thatcube/brando/main/logos/lockups/twozz-dark.svg" /><img src="https://raw.githubusercontent.com/thatcube/brando/main/logos/lockups/twozz-light.svg" height="40" alt="Twozz" /></picture></a>
+</p>
+
+<p align="center">
+  <a href="https://brando.page">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/thatcube/brando/main/logos/brando-white.svg" />
+      <img src="https://raw.githubusercontent.com/thatcube/brando/main/logos/brando-black.svg" height="22" alt="Brandon Moore" />
+    </picture>
+  </a>
+</p>
+<!-- app-family:end -->

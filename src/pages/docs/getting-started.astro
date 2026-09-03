@@ -4,7 +4,6 @@ import Callout from '../../components/docs/Callout.astro';
 import Code from '../../components/docs/Code.astro';
 import { page } from '../../data/docs-nav';
 import { COUNTS, REQUIREMENTS, spell } from '../../data/docs';
-import { GITHUB_URL } from '../../data/site';
 
 const entry = page('/docs/getting-started/');
 
@@ -20,74 +19,57 @@ tools/device-build.sh`;
 
 <DocsLayout page={entry}>
   <p>
-    Hozz has two halves that can be used independently. The <strong>iPhone app</strong> reads Apple
-    Health and sends it somewhere. The <strong>Mac app</strong> is one of the places it can send it
-    to, and adds charts and assistant access. You only need the Mac app if you want it.
+    The iPhone app reads Apple Health. The optional Mac app receives, charts and serves that data to
+    assistants.
   </p>
 
   <h2>1. Install it</h2>
 
   <p>
-    Hozz is early alpha and <strong>not in the App Store yet</strong>, so today installing it means
-    building it. That needs a Mac with Xcode {REQUIREMENTS.xcode} or newer and{' '}
+    Hozz is early alpha and <strong>not in the App Store</strong>. Build it with Xcode {
+      REQUIREMENTS.xcode
+    }+ and{' '}
     <a href="https://github.com/yonaskolb/XcodeGen">XcodeGen</a> {REQUIREMENTS.xcodegen} or newer.
   </p>
 
   <Code caption="Terminal" code={build} />
 
-  <p>
-    <code>tools/mac-build.sh</code> does the same for the Mac app.
-  </p>
+  <p><code>tools/mac-build.sh</code> builds the Mac app.</p>
 
   <Callout kind="note" title="One thing that will bite you on a device build">
     <p>
-      The app and widget targets declare the App Group <code>group.com.thatcube.Hozz</code>. Your
-      Apple developer profile has to carry that group or a device build with the widget fails. This
-      does not affect Simulator builds.
+      Device builds need the App Group <code>group.com.thatcube.Hozz</code> in your developer
+      profile. Simulator builds do not.
     </p>
   </Callout>
 
   <h2>2. Give it Health access</h2>
 
   <p>
-    On first run Hozz asks Health for the types it reads. Grant what you are comfortable with — you
-    can grant a subset, and you can change it later in{' '}
+    Grant any subset. Change it later in{' '}
     <strong>Settings → Health → Data Access &amp; Devices → Hozz</strong>.
   </p>
 
-  <p>There is one consequence of Apple's design worth knowing before you see it:</p>
-
   <Callout kind="warn" title="Hozz cannot tell “denied” from “you have none”">
     <p>
-      HealthKit deliberately refuses to reveal which types you withheld, because telling an app
-      would leak the fact that you have data you chose not to share. So a type you denied and a type
-      you genuinely have no records of look identical to Hozz.
-    </p>
-    <p>
-      Rather than guess, Hozz reports the state it actually has and says so in those words. If a
-      type shows no data and you expected some, check the Health settings screen above.
+      HealthKit reports both cases identically. If expected data is missing, check Health settings.
     </p>
   </Callout>
 
   <h2>3. Pick a destination</h2>
 
   <p>
-    Nothing leaves your phone until you add a destination and confirm it. There is no default
-    destination, because a default would be a place someone else chose.
+    Nothing leaves until you add and confirm a destination.
   </p>
 
   <p>
-    On the <strong>Automatic</strong> tab, add a destination. Hozz lists any Macs it can find on
-    your network first, then {spell(COUNTS.presets)} presets: Folder, Home Assistant, InfluxDB, Web address, and MQTT.{' '}
-    <a href="/docs/destinations/">Choosing a destination</a> covers what each is for; if you have no
-    strong preference, <a href="/docs/destinations/folder/">Folder</a> is the one Hozz recommends,
-    because it needs no server, no open ports and no VPN.
+    On <strong>Automatic</strong>, choose a discovered Mac or one of {spell(COUNTS.presets)} presets.
+    Start with <a href="/docs/destinations/folder/">Folder</a> if unsure.
   </p>
 
   <p>
-    Each destination has its own settings: which Health types it receives, which format, and how
-    often. Use <strong>Send a test</strong> before you trust it. A test sends a small probe in the
-    destination's own format and reports what came back — it contains no Health data.
+    Choose its Health types, format and cadence. <strong>Send a test</strong> uses a probe with no
+    Health data.
   </p>
 
   <h2>4. Run the first export</h2>
@@ -95,59 +77,27 @@ tools/device-build.sh`;
   <h3>Automatic sync</h3>
 
   <p>
-    The first automatic sync works through your history a bounded batch at a time. It gives every
-    selected type a share of each pass rather than draining one type to exhaustion before starting
-    the next — a phone with years of stand hours would otherwise send nothing else for days, which
-    is a working sync that reads exactly like a broken one.
+    Automatic sync works through history in bounded batches, sharing each pass across selected types.
   </p>
 
   <p>
-    The phone reports how many selected types are complete; the Mac reports how many types have
-    arrived and how far back they reach. Neither shows a percentage or a time estimate, and that is
-    deliberate: Health will not say how many records a type holds without reading all of them, so
-    any fraction would be invented.
+    The phone reports completed types; the Mac reports received types and date coverage. Health does
+    not reveal totals before reading them, so Hozz cannot give a percentage or estimate.
   </p>
 
   <Callout kind="note" title="A first backfill looks slow because it is">
     <p>
-      Years of Health history is a lot of records, and iOS grants background time in short windows.
-      A first sync taking days is normal, not a fault. <a href="/docs/troubleshooting/">
-        Troubleshooting</a
-      > covers how to tell a slow backfill from a stuck one.
+      iOS grants short background windows. Large archives can take days or weeks.{' '}
+      <a href="/docs/troubleshooting/">Tell slow from stuck.</a>
     </p>
   </Callout>
 
   <h3>Manual export</h3>
 
   <p>
-    On the <strong>Export</strong> tab, Hozz builds a full historical export you can save or share
-    from the phone, in NDJSON, CSV, JSON, SQLite, Markdown or GPX. It is resumable: pausing,
-    backgrounding, an expiry, a kill or a reboot all resume from the last durable checkpoint rather
-    than starting over.
+    <strong>Export</strong> builds a historical NDJSON, CSV, JSON, SQLite, Markdown or GPX file.
+    Interrupted exports resume from their last durable checkpoint.
   </p>
 
-  <p>
-    Manual export does not depend on a destination and does not disturb one.
-  </p>
-
-  <h2>What to read next</h2>
-
-  <ul>
-    <li>
-      <a href="/docs/background-sync/">Background sync</a> — why an export scheduled for 8am does
-      not run at 8am, and what Hozz reports instead of pretending it did.
-    </li>
-    <li>
-      <a href="/docs/formats/">Export formats</a> — which of the {spell(COUNTS.exportFormats)} keeps
-      everything, and which {spell(COUNTS.lossyExportFormats)} deliberately do not.
-    </li>
-    <li>
-      <a href="/docs/data-coverage/">Data coverage</a> — what Hozz exports today and what it does
-      not.
-    </li>
-    <li>
-      <a href={GITHUB_URL}>The source</a> — every claim on these pages is meant to be checkable
-      there.
-    </li>
-  </ul>
+  <p>Manual export is independent of automatic destinations.</p>
 </DocsLayout>

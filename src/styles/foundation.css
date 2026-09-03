@@ -5,7 +5,7 @@
    hard-coding the same eleven colours is how a palette drifts. The homepage
    and the documentation import this file, so a token changes in one place.
 
-   Sentient carries headings, General Sans carries reading, and IBM Plex Mono
+   Young Serif carries headings, General Sans carries reading, and IBM Plex Mono
    is for machine facts only — identifiers, formats, states, header names.
    Mono in prose is a bug. All three are self-hosted: a site arguing that Hozz
    does not hand your data to anyone has no business handing your visit to a
@@ -13,25 +13,9 @@
    ========================================================================== */
 
 @font-face {
-  font-family: 'Sentient';
-  src: url('/fonts/sentient-400.woff2') format('woff2');
+  font-family: 'Young Serif';
+  src: url('/fonts/young-serif-400.woff2') format('woff2');
   font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Sentient';
-  src: url('/fonts/sentient-400-italic.woff2') format('woff2');
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Sentient';
-  src: url('/fonts/sentient-500.woff2') format('woff2');
-  font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
@@ -75,6 +59,11 @@
   --blue-wash: #dcecf6;
   --blue-light: #cae1f1;
   --blue: #5d8cb0;
+  /* The reading blue. --blue is a surface colour: at 3.5:1 it is fine behind a
+     hairline and wrong under a word. This is the same hue taken deep enough to
+     clear 4.5:1 on every wash here, and it is what carries emphasis and the
+     section badge in the header. */
+  --blue-deep: #355f80;
   --ink: #132638;
   --ink-soft: #3f5568;
   --ink-muted: #4e6274;

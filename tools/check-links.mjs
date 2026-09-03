@@ -12,6 +12,7 @@ import { readFile, readdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative } from 'node:path';
+import { scanFiles } from './public-copy.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = join(root, 'dist');
@@ -68,10 +69,20 @@ for (const page of pages) {
   }
 }
 
+const copy = await scanFiles(pages, root);
+for (const finding of copy.findings) {
+  problems.push(
+    `${finding.file}:${finding.line} contains ${JSON.stringify(finding.text)} (${finding.label})`,
+  );
+}
+
 if (problems.length) {
-  for (const problem of problems) console.error(`  DEAD  ${problem}`);
-  console.error(`\n${problems.length} dead link(s) of ${checked} checked.`);
+  for (const problem of problems) console.error(`  FAIL  ${problem}`);
+  console.error(`\n${problems.length} link or public-copy problem(s) found.`);
   process.exit(1);
 }
 
 console.log(`${checked} internal links and anchors checked across ${pages.length} pages. None dead.`);
+console.log(
+  `${copy.filesScanned} built HTML pages checked for prohibited public-copy claims. None found.`,
+);

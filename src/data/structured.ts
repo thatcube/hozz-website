@@ -15,7 +15,7 @@ export const structuredData = {
       url: SITE,
       name: 'Hozz',
       description:
-        'Export Apple Health data to a file or a server you own.',
+        'Move health data between the places and platforms you use.',
       publisher: { '@id': `${SITE}/#person` },
       inLanguage: 'en-US',
     },
@@ -35,15 +35,13 @@ export const structuredData = {
       operatingSystem: 'iOS, macOS',
       codeRepository: GITHUB_URL,
       license: LICENSE_URL,
-      isAccessibleForFree: true,
       author: { '@id': `${SITE}/#person` },
       sameAs: [GITHUB_URL],
       description:
-        'A free, open-source iPhone app with a companion Mac app that exports Apple Health data to destinations the user owns.',
+        'Reads Apple Health on iPhone and sends it to your Mac or destinations you choose.',
       /* Derived, never typed: if a format is added or dropped in site.ts the
          markup follows, so it cannot claim an export Hozz does not do. */
       featureList: FORMATS.map((format) => `${format.name} export`),
-      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
     },
     {
       '@type': 'FAQPage',

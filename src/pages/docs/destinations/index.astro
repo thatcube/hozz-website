@@ -3,7 +3,7 @@ import DocsLayout from '../../../layouts/DocsLayout.astro';
 import Callout from '../../../components/docs/Callout.astro';
 import Table from '../../../components/docs/Table.astro';
 import { page, DOC_PAGES } from '../../../data/docs-nav';
-import { COUNTS, DELIVERY_FORMATS, DESTINATIONS, Spell } from '../../../data/docs';
+import { DELIVERY_FORMATS, DESTINATIONS } from '../../../data/docs';
 
 const entry = page('/docs/destinations/');
 
@@ -18,38 +18,14 @@ const formatName = (id: string) => DELIVERY_FORMATS.find((f) => f.id === id)?.na
 
 <DocsLayout page={entry} section="Destinations">
   <p>
-    A destination is somewhere Hozz sends new Health records on its own. You can have several at
-    once, each with its own set of Health types, its own format, its own schedule, and its own place
-    in the queue — so a destination that is failing cannot hold up one that is working.
+    Each destination has its own Health types, format, cadence and queue position. Nothing leaves
+    until you add and confirm one.
   </p>
 
-  <p>
-    Nothing is sent anywhere until you add one and confirm it. There is no default, because a
-    default would be a place someone else chose.
-  </p>
-
-  <h2>The six</h2>
-
-  <ul class="card-grid card-grid--2">
-    {
-      cards.map((destination) => (
-        <li>
-          <a class="doc-card" href={destination.doc.href}>
-            <span class="doc-card-tag">
-              {destination.recommended ? 'Recommended' : formatName(destination.defaultFormat)}
-            </span>
-            <h3>{destination.name}</h3>
-            <p>{destination.summary}</p>
-          </a>
-        </li>
-      ))
-    }
-  </ul>
-
-  <h2>Choosing between them</h2>
+  <h2>Compare destinations</h2>
 
   <Table
-    caption="Each destination, who it suits, and the format it starts with"
+    caption="Destinations, uses and default formats"
     columns={['Destination', 'Choose it when', 'Default format']}
   >
     {
@@ -69,10 +45,8 @@ const formatName = (id: string) => DELIVERY_FORMATS.find((f) => f.id === id)?.na
 
   <Callout kind="note" title="If you have no strong preference, pick a folder">
     <p>
-      <a href="/docs/destinations/folder/">Folder</a> is the one Hozz recommends first, and it is the
-      only one with no failure mode of its own. It needs no server, no open ports and no VPN, the sync
-      client already on your computer does the networking, and it keeps working while that computer is
-      switched off — which a push to a local receiver cannot.
+      <a href="/docs/destinations/folder/">Folder</a> needs no server, open port or VPN, and can sync
+      while your computer is off.
     </p>
   </Callout>
 
@@ -80,52 +54,20 @@ const formatName = (id: string) => DELIVERY_FORMATS.find((f) => f.id === id)?.na
 
   <ul>
     <li>
-      <strong>Health types.</strong> Limit a destination to the types you want it to receive, rather
-      than everything.
+      <strong>Health types.</strong> Choose what it receives.
     </li>
     <li>
-      <strong>A format.</strong> {Spell(COUNTS.deliveryFormats)} are available; which ones make sense
-      depends on the destination. <a href="/docs/delivery-schema/">The delivery schema</a> documents all
-      of them.
+      <strong>Format.</strong> See <a href="/docs/delivery-schema/">delivery schema</a>.
     </li>
     <li>
-      <strong>A cadence.</strong> On arrival, hourly, daily, or manual only. These are requests —{' '}
-      <a href="/docs/background-sync/">iOS decides when a background app runs</a>.
+      <strong>Cadence.</strong> On arrival, hourly, daily or manual. iOS controls timing.
     </li>
     <li>
-      <strong>Send a test.</strong> A small probe in the destination's own format, reporting exactly
-      what came back. It contains no Health data.
+      <strong>Send a test.</strong> Sends a probe without Health data.
     </li>
     <li>
-      <strong>Its own cursor.</strong> A destination only advances past records it actually
-      accepted.
+      <strong>Cursor.</strong> Advances only past accepted records.
     </li>
   </ul>
 
-  <h2>Formats, briefly</h2>
-
-  <Table
-    caption="Delivery formats and what each keeps"
-    columns={['Format', 'Media type', 'Keeps everything?']}
-    mono
-  >
-    {
-      DELIVERY_FORMATS.map((format) => (
-        <tr>
-          <th scope="row">{format.name}</th>
-          <td>
-            <code>{format.contentType}</code>
-          </td>
-          <td>{format.lossless ? 'Yes' : 'No — ' + format.note.split('. ').pop()}</td>
-        </tr>
-      ))
-    }
-  </Table>
-
-  <p>
-    Neither SQLite nor Markdown is offered to a destination. A delivery is an append of new records,
-    a database file is not appendable over HTTP, and a day's note rewritten from one batch would
-    replace a whole day with a fraction of it. Both are available for{' '}
-    <a href="/docs/formats/">manual export</a>.
-  </p>
 </DocsLayout>

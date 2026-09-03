@@ -66,29 +66,16 @@ const byHand = `{
   </div>
 
   <p>
-    The Mac app embeds a read-only MCP server over the Health data your phone has delivered to it.
-    Point an MCP-capable assistant at it and you can ask questions about your own health data
-    without any of it going anywhere you did not send it.
+    The Mac app serves its local Health database to MCP clients. It is read-only.
   </p>
 
-  <h2>Why this one is different</h2>
+  <h2>Local and current</h2>
 
-  <p>
-    Most Apple Health MCP servers read the bulk XML file you get from Health's{' '}
-    <strong>Export All Health Data</strong> button. That file is a snapshot: correct on the day you
-    export it and stale from the next morning.
-  </p>
-
-  <p>
-    Hozz queries a local SQLite database that <strong>your phone keeps current in the background</strong>.
-    Asking a question costs an indexed lookup rather than a re-parse, the answer reflects the last
-    sync rather than a hand-made export, and nothing had to be exported by hand.
-  </p>
+  <p>Your phone keeps the queried SQLite database current in the background.</p>
 
   <Callout kind="note" title="Read-only by construction, not by policy">
     <p>
-      The server can select from the received database. It has no code path that writes, changes, or
-      deletes anything — not a permission that could be granted, an absence of code.
+      The server has no code path that writes, changes or deletes.
     </p>
   </Callout>
 
@@ -99,36 +86,27 @@ const byHand = `{
   <Code caption="Path" code={MCP.binary} />
 
   <p>
-    It has to be told where the received database is. The Mac app is sandboxed while your assistant
-    launches the tool <em>outside</em> that sandbox, so a guessed path opens an empty directory and
-    every tool truthfully reports no data. <strong>Open the Mac app's Assistant tab and copy the
-      configuration it generates</strong> rather than typing one.
+    <strong>Copy the configuration from the Mac app's Assistant tab.</strong> A guessed sandbox path
+    can open an empty directory.
   </p>
 
   <h3>Let your assistant do it</h3>
 
   <p>
-    Every client keeps its MCP configuration somewhere different and in a slightly different shape,
-    which is a tedious thing to document and an easy thing to get wrong. Your assistant already
-    knows where its own configuration lives, so paste this to it instead:
+    Paste this to your assistant:
   </p>
 
   <Code caption="Paste this to your assistant" code={paste} />
 
-  <p>
-    That works because the server needs so little: a path, an argument, and stdio. There is no
-    account to create, no key to paste, and nothing to reach over a network.
-  </p>
+  <p>It needs a path, one argument and stdio. No account, key or network.</p>
 
   <h3>Writing it by hand</h3>
 
   <Code caption="The shape most clients want" code={byHand} />
 
   <p>
-    Some clients want extra keys alongside those — GitHub Copilot's CLI, for instance, keeps its
-    servers in <code>~/.copilot/mcp-config.json</code> and expects <code>"type": "local"</code> and a{' '}
-    <code>"tools"</code> list on each entry. Check what the other entries in your own file look like
-    and match them; <code>command</code> and <code>args</code> are the part that is always the same.
+    Clients may require extra keys. Match existing entries; <code>command</code> and <code>args</code>
+    stay the same.
   </p>
 
   <p>
@@ -155,118 +133,70 @@ const byHand = `{
   }
 
   <p>
-    <strong>Call <code>summarise_health_data</code> first.</strong> It returns age, biological sex,
-    blood type and the rest where they have been shared, and reference ranges depend on them: a
-    resting heart rate of 48 is unremarkable at 34 and worth a question at 70. Those characteristics
-    are deliberately part of the overview rather than a tool of their own, because an assistant that
-    has to make a second optional call will sometimes not make it — and answering "is this normal for
-    me" without knowing who <em>me</em> is is the failure worth designing against.
+    <strong>Call <code>summarise_health_data</code> first.</strong> It includes shared characteristics
+    needed to interpret measurements.
   </p>
 
   <h3>A few deliberate shapes</h3>
 
   <ul>
     <li>
-      <strong><code>aggregate_health_data</code> returns both sum and average</strong>, because which
-      is correct depends entirely on the type. Summing heart rates is meaningless; averaging step
-      counts understates a day. Hiding one of them would invite a confidently wrong answer.
+      <strong><code>aggregate_health_data</code> returns sum and average.</strong> The correct measure
+      depends on the type.
     </li>
     <li>
-      <strong>ECGs and hearing tests are not ordinary samples</strong> and do not appear in{' '}
-      <code>list_health_samples</code>. An ECG has no single value, and its voltage pages are not
-      readings — storing them generically made "how many ECGs do I have" answer 2 for one reading,
-      and made the classification invisible.
+      <strong>ECGs and hearing tests use dedicated tools.</strong> They are not ordinary samples.
     </li>
     <li>
-      <strong>A workout keeps its sample row too</strong>, with its duration as the value, so "how
-      long do I work out" charts like anything else. A figure Health did not compute is omitted
-      rather than shown as zero, because a zero average heart rate reads as a measurement.
+      <strong>Workouts keep a sample row.</strong> Missing figures are omitted, never shown as zero.
     </li>
     <li>
-      <strong>Mood is an ordinary chartable type.</strong> Its valence lands in the sample table as a
-      real value, so trends and comparisons work on it. Use <code>list_mood_entries</code> when the
-      labels and associations matter.
+      <strong>Mood valence is chartable.</strong> Use <code>list_mood_entries</code> for labels and
+      associations.
     </li>
     <li>
-      <strong>Only <code>taken</code> means a medicine was taken.</strong> <code>skipped</code>,{' '}
-      <code>snoozed</code> and <code>notAnswered</code> are three different ways of not taking it and
-      are always reported separately. An unrecognised status is reported as{' '}
-      <code>unrecorded</code> rather than guessed at, because every guess there is a claim about
-      whether someone took their medicine.
+      <strong>Only <code>taken</code> means taken.</strong> <code>skipped</code>, <code>snoozed</code>,
+      <code>notAnswered</code> and <code>unrecorded</code> stay separate.
     </li>
   </ul>
 
   <h2>What the analysis tools refuse to say</h2>
 
-  <p>
-    This is the point of the analysis tools, not a caveat attached to them.
-  </p>
-
-  <p>
-    Their output goes straight into a language model, which will narrate a confident story around
-    any number handed to it. A slope with no uncertainty becomes "your heart rate is climbing". A
-    correlation over three weeks of daily data becomes "your sleep drives your step count". Neither
-    is supportable, and a health tool asserting them is not merely unhelpful — it is the kind of
-    confident wrongness someone might act on.
-  </p>
-
-  <p>So each tool reports whether a claim is supportable alongside the number, and says plainly when it is not.</p>
+  <p>Analysis includes uncertainty and refuses unsupported claims.</p>
 
   <ul>
     <li>
-      <strong>A trend needs at least {MCP.minimumTrendDays} days.</strong> Below that it returns
-      nothing but the refusal: a line fitted through nine days describes the noise.
+      <strong>Trends need {MCP.minimumTrendDays} days.</strong> Below that, the tool refuses.
     </li>
     <li>
-      <strong>A trend whose confidence interval spans zero is reported as “no detectable change”</strong>,
-      and the text says not to describe it as rising or falling. This matters more than it sounds — a
-      genuinely flat step count still fits a slope of about −26 steps per week, and handed that
-      number bare, an assistant reports a decline that is not there.
+      <strong>A confidence interval spanning zero means “no detectable change”.</strong>
     </li>
     <li>
-      <strong>A correlation needs at least {MCP.minimumCorrelationDays} shared days</strong>, and its
-      interval is computed on an <em>autocorrelation-adjusted</em> sample size. Consecutive days are
-      not independent evidence — today's step count resembles yesterday's — and treating a hundred
-      similar days as a hundred observations is exactly what turns three weeks of data into false
-      certainty.
+      <strong>Correlations need {MCP.minimumCorrelationDays} shared days</strong> and use an
+      autocorrelation-adjusted sample size.
     </li>
     <li>
-      <strong>A correlation warns when both series are trending.</strong> Two quantities that both
-      drift across a year will correlate strongly whether or not they have anything to do with each
-      other, and that is the single most common way this kind of number misleads.
+      <strong>Correlations warn when both series trend.</strong>
     </li>
     <li><strong>No correlation is ever described as cause.</strong> Every response says so.</li>
     <li>
-      <strong>Anomalies use the median and median absolute deviation</strong>, not the mean and
-      standard deviation, so a single extreme day cannot inflate the spread and hide the
-      ordinary-looking outliers beside it.
+      <strong>Anomalies use median absolute deviation</strong>, resisting extreme days.
     </li>
   </ul>
 
   <Callout kind="warn" title="A day the watch was not worn is not a low reading">
     <p>
-      A day with too few records is not judged. It is reported separately as the device most likely
-      not being worn, and explicitly as <em>missing measurements, not low readings</em>.
-    </p>
-    <p>
-      A stray reading of 31 bpm on a day the watch was off is indistinguishable from a collapsed
-      heart rate to any detector that ignores how much was recorded — and reporting it as a collapse
-      would be alarming and wrong.
+      Low-coverage days are <em>missing measurements, not low readings</em>.
     </p>
   </Callout>
 
   <p>
-    <strong>A type that has not synced yet says so.</strong> Your phone works through your types a
-    share at a time, so a type with no data is usually one the backfill has not reached rather than
-    one you have none of. The tools answer "this has not reached this Mac yet — it is not evidence
-    that you have no such data" and list what has arrived, rather than returning zero or an error.
+    <strong>Unsynced types say so.</strong> Missing local data is not evidence that none exists.
   </p>
 
   <p>
-    The analysis tools deliberately do <strong>not</strong> repeat the person's characteristics. None
-    of them uses age in its computation — a trend is a trend regardless — so surfacing age there
-    would imply an age-adjusted clinical judgement that is not being made. The context belongs in the
-    overview; the analysis stays descriptive.
+    Analysis tools do not imply age-adjusted clinical judgement. Characteristics appear only in the
+    overview.
   </p>
 
   <h2 id="if-it-reports-no-data">If it reports no data</h2>
@@ -286,29 +216,22 @@ const byHand = `{
   </ul>
 
   <p>
-    The tools distinguish these where they can: a type with no records in your window says so,
-    rather than claiming you have no such data.
+    Tools report missing records without claiming the person has none.
   </p>
 
-  <h2>One thing to understand before connecting it</h2>
+  <h2>Cloud clients may upload data</h2>
 
   <Callout kind="warn" title="A cloud assistant may upload what it reads">
     <p>
-      If you point a cloud-hosted assistant at this server, that assistant may upload whatever it
-      reads. That is the assistant's behaviour, not Hozz's, and no local server can prevent it.
-    </p>
-    <p>
-      A locally-run model has no such problem. Either way, the choice is yours to make deliberately
-      — which is the same discipline the rest of{' '}
-      <a href="/privacy/">Hozz's privacy story</a> depends on.
+      A cloud-hosted assistant may upload anything it reads. Hozz cannot prevent that. Choose the
+      client deliberately; see <a href="/privacy/">Privacy</a>.
     </p>
   </Callout>
 
   <h2>What it will not do</h2>
 
   <p>
-    The server cannot write to Apple Health, and neither can the rest of Hozz. That is a decision
-    rather than a missing feature, and the reasoning is on{' '}
+    The server cannot write to Apple Health. See{' '}
     <a href="/docs/data-coverage/#what-hozz-will-never-do">Data coverage</a>.
   </p>
 </DocsLayout>

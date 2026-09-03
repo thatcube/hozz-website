@@ -134,7 +134,7 @@ const faq = {
       name: 'Does Hozz send my health data to a server?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'No. Hozz has no account, no analytics, no hosted relay and no default destination. Data goes only to destinations you add yourself. It is free and open source under GPL-3.0 with an App Store exception.',
+        text: 'No. Hozz has no account, no analytics, no hosted relay and no default destination. Data goes only to destinations you add yourself. It is open source under GPL-3.0 with an App Store exception.',
       },
     },
   ],
@@ -147,12 +147,10 @@ const app = {
   applicationCategory: 'HealthApplication',
   operatingSystem: 'iOS, macOS',
   description:
-    'Free, open-source app that exports Apple Health data from your iPhone to destinations you own: a Mac on your local network, a folder, an HTTP endpoint, MQTT, or Home Assistant. NDJSON, JSON, CSV and Metrics JSON.',
+    'Open-source app that exports Apple Health data from your iPhone to destinations you own: a Mac on your local network, a folder, an HTTP endpoint, MQTT, or Home Assistant. NDJSON, JSON, CSV and Metrics JSON.',
   license: 'https://www.gnu.org/licenses/gpl-3.0.html',
-  isAccessibleForFree: true,
   author: { '@type': 'Person', name: 'Brandon Moore' },
   codeRepository: GITHUB_URL,
-  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
 };
 ---
 
@@ -164,7 +162,7 @@ const app = {
         <div class="p-hero-grid">
           <p class="p-eyebrow p-r">
             <span class="p-chip">Early alpha</span>
-            <span>Free &amp; open source</span>
+            <span>Open source</span>
           </p>
           <h1 class="p-h1 p-r" style="--i:1">
             Get your Apple Health data <span class="p-acc">out</span>.
@@ -191,7 +189,7 @@ const app = {
 
         <dl class="p-spec p-r" style="--i:4">
           <div><dt>Runs on</dt><dd>iPhone + Mac</dd></div>
-          <div><dt>Price</dt><dd>Free, no account</dd></div>
+          <div><dt>Account</dt><dd>None</dd></div>
           <div><dt>Licence</dt><dd>GPL-3.0</dd></div>
           <div><dt>Destinations</dt><dd>Five, all yours</dd></div>
           <div><dt>Tests</dt><dd>475 XCTest</dd></div>
@@ -458,10 +456,10 @@ const app = {
     <!-- ----------------------------------------------------------- close -->
     <section class="p-shell p-close" aria-labelledby="p-close">
       <div class="p-close-inner p-r">
-        <h2 class="p-h2" id="p-close">Free. And staying that way.</h2>
+        <h2 class="p-h2" id="p-close">Open source. Yours to inspect.</h2>
         <p class="p-body">
-          One developer, GPL-3.0 with an App Store exception. No subscription, no account, no server
-          of mine in the middle of your health record.
+          One developer, GPL-3.0 with an App Store exception. No account and no server of mine in
+          the middle of your health record.
         </p>
         <div class="p-acts">
           <a class="p-btn p-btn--solid" href={GITHUB_URL} rel="noopener">Read the source</a>

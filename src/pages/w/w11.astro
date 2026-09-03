@@ -20,7 +20,6 @@ import {
   GITHUB_URL,
   DONATE_URL,
   LICENSE_URL,
-  NAV_LINKS,
   CATEGORIES,
   STREAM_LANES,
   STEPS,
@@ -35,6 +34,7 @@ import {
   FAQ,
   SIBLINGS,
 } from '../../data/site';
+import { ARCHIVE_NAV_LINKS as NAV_LINKS } from '../../data/archive';
 
 const hue = Object.fromEntries(CATEGORIES.map((c) => [c.key, c.hue])) as Record<string, string>;
 const label = Object.fromEntries(CATEGORIES.map((c) => [c.key, c.label])) as Record<string, string>;
@@ -166,13 +166,11 @@ const jsonLd = {
       operatingSystem: 'iOS, macOS',
       url: SITE,
       downloadUrl: GITHUB_URL,
-      isAccessibleForFree: true,
       license: LICENSE_URL,
       softwareVersion: 'Early alpha',
       author: { '@type': 'Person', name: 'Brandon Moore' },
-      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
       description:
-        'A free, open-source iPhone app with a companion Mac app that exports Apple Health data to destinations you own — your Mac, a folder, Home Assistant, InfluxDB, any web endpoint or MQTT. No account, no analytics, no hosted relay and no default destination.',
+        'An open-source iPhone app with a companion Mac app that exports Apple Health data to destinations you own — your Mac, a folder, Home Assistant, InfluxDB, any web endpoint or MQTT. No account, no analytics, no hosted relay and no default destination.',
     },
     {
       '@type': 'FAQPage',
@@ -194,7 +192,7 @@ const jsonLd = {
     <meta name="robots" content="noindex, nofollow" />
     <meta
       name="description"
-      content="Hozz separates your Apple Health archive into the formats and destinations you choose — your Mac, a folder, Home Assistant, InfluxDB, a URL or MQTT. Free, open source, no account, no analytics, no server in the middle."
+      content="Hozz separates your Apple Health archive into the formats and destinations you choose — your Mac, a folder, Home Assistant, InfluxDB, a URL or MQTT. Open source, no account, no analytics, no server in the middle."
     />
     <meta name="color-scheme" content="light" />
     <meta name="theme-color" content="#f6fbfe" />
@@ -300,7 +298,7 @@ const jsonLd = {
               <h1>One archive in. Out in the shapes <em class="em">you</em> chose.</h1>
               <p class="lede">
                 Hozz copies your Apple Health history off your iPhone and separates it into the
-                formats and destinations you picked. Free, open source, one developer. No account,
+                formats and destinations you picked. Open source, one developer. No account,
                 no analytics, no server of mine.
               </p>
               <div class="actions">
@@ -320,7 +318,7 @@ const jsonLd = {
               <h1>One archive in. Out in the shapes <em class="em">you</em> chose.</h1>
               <p class="lede">
                 Hozz copies your Apple Health history off your iPhone and separates it into the
-                formats and destinations you picked. Free, open source, one developer. No account,
+                formats and destinations you picked. Open source, one developer. No account,
                 no analytics, no server of mine.
               </p>
               <div class="actions">
@@ -774,7 +772,7 @@ const jsonLd = {
           <Mark size={64} />
           <h2 id="close-h">Point it somewhere you <em class="em">own.</em></h2>
           <p>
-            Free forever, GPL-3.0 with an App Store exception, written by one person. Read every line
+            Open source under GPL-3.0 with an App Store exception, written by one person. Read every line
             before you trust it with anything.
           </p>
           <div class="actions">

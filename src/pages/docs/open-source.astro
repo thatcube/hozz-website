@@ -1,0 +1,50 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import { page } from '../../data/docs-nav';
+import { GITHUB_URL, LICENSE_URL } from '../../data/site';
+
+const entry = page('/docs/open-source/');
+---
+
+<DocsLayout page={entry}>
+  <p>
+    Hozz is <a href={LICENSE_URL}>licensed under GPL-3.0 with an App Store distribution exception</a
+    >. Its <a href={GITHUB_URL}>source</a> is public.
+  </p>
+
+  <h2>What the source lets you check</h2>
+
+  <ul>
+    <li>
+      <strong>No account.</strong> There is no sign-in service.
+    </li>
+    <li>
+      <strong>No hosted relay or default destination.</strong> You add and confirm every route.
+    </li>
+    <li>
+      <strong>No analytics, ads or remote crash reports.</strong> Logs omit values and secrets.
+    </li>
+    <li>
+      <strong>Destination credentials stay in the device Keychain.</strong> The Mac pairing token
+      may sync through iCloud Keychain; see <a href="/privacy/">Privacy</a>.
+    </li>
+  </ul>
+
+  <h2>Trust the code, not this page</h2>
+
+  <p>
+    Privacy claims describe absences. Inspecting the networking, storage and logging code—and the
+    tests that enforce them—is stronger evidence than using the app.
+  </p>
+
+  <h2>Where the guarantee ends</h2>
+
+  <p>
+    Once data reaches your destination, Hozz cannot control it. A cloud-hosted assistant may upload
+    what it reads through <a href="/docs/mcp/">MCP</a>.
+  </p>
+
+  <p>
+    <a href="/privacy/">Privacy</a> lists what leaves each device and when.
+  </p>
+</DocsLayout>

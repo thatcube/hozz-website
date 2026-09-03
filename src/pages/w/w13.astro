@@ -30,7 +30,6 @@ import {
   GITHUB_URL,
   DONATE_URL,
   LICENSE_URL,
-  NAV_LINKS,
   CATEGORIES,
   STREAM_LANES,
   STEPS,
@@ -45,6 +44,7 @@ import {
   FAQ,
   SIBLINGS,
 } from '../../data/site';
+import { ARCHIVE_NAV_LINKS as NAV_LINKS } from '../../data/archive';
 
 const hue = (key: string) => CATEGORIES.find((c) => c.key === key)?.hue ?? '#5d8cb0';
 
@@ -118,13 +118,11 @@ const jsonLd = {
       operatingSystem: 'iOS, macOS',
       url: SITE,
       downloadUrl: GITHUB_URL,
-      isAccessibleForFree: true,
       license: LICENSE_URL,
       softwareVersion: 'Early alpha',
       author: { '@type': 'Person', name: 'Brandon Moore' },
-      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
       description:
-        'A free, open-source iPhone app with a companion Mac app that exports Apple Health data to destinations you own — your Mac, a folder, Home Assistant, InfluxDB, any web endpoint or MQTT. No account, no analytics, no hosted relay and no default destination.',
+        'An open-source iPhone app with a companion Mac app that exports Apple Health data to destinations you own — your Mac, a folder, Home Assistant, InfluxDB, any web endpoint or MQTT. No account, no analytics, no hosted relay and no default destination.',
     },
     {
       '@type': 'FAQPage',
@@ -146,7 +144,7 @@ const jsonLd = {
     <meta name="robots" content="noindex, nofollow" />
     <meta
       name="description"
-      content="Hozz exports your Apple Health history to destinations you own — your Mac, a folder, Home Assistant, InfluxDB, a URL or MQTT. Free, open source, no account, no analytics, no server in the middle."
+      content="Hozz exports your Apple Health history to destinations you own — your Mac, a folder, Home Assistant, InfluxDB, a URL or MQTT. Open source, no account, no analytics, no server in the middle."
     />
     <meta name="color-scheme" content="light" />
     <meta name="theme-color" content="#f7fbfd" />
@@ -188,7 +186,7 @@ const jsonLd = {
             <h1>Drop it once. It reaches everywhere you <em class="em">own.</em></h1>
             <p class="lede">
               Your Apple Health history, copied off your iPhone into places you already run.
-              Free, open source, one developer.
+              Open source, one developer.
             </p>
             <div class="actions">
               <a class="btn" href="#export">How to export your data</a>
@@ -754,7 +752,7 @@ const jsonLd = {
           <div class="close-mark"><Mark size={72} /></div>
           <h2 id="close-h">Drop it in. <em class="em">Keep</em> the copy.</h2>
           <p>
-            Free forever, GPL-3.0 with an App Store exception, written by one person. Read every
+            Open source under GPL-3.0 with an App Store exception, written by one person. Read every
             line before you trust it with anything.
           </p>
           <div class="actions">

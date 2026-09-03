@@ -45,9 +45,7 @@ const haSensor = `mqtt:
   </div>
 
   <p>
-    Hozz publishes to an MQTT broker on your network. If a broker is already the centre of your
-    home setup, this puts Health data on it alongside everything else, and anything already
-    subscribing can pick it up without knowing Hozz exists.
+    Hozz publishes batches and latest values to your MQTT broker.
   </p>
 
   <h2>Setting it up</h2>
@@ -66,8 +64,7 @@ const haSensor = `mqtt:
     <li>
       <h3>Send a test</h3>
       <p>
-        Subscribe to <code>hozz/#</code> in any MQTT client and you will see the probe arrive. It
-        carries no Health data.
+        Subscribe to <code>hozz/#</code>. The probe contains no Health data.
       </p>
     </li>
   </ol>
@@ -75,18 +72,14 @@ const haSensor = `mqtt:
   <h2>Topics</h2>
 
   <p>
-    The whole batch goes to <code>&lt;root&gt;/batch</code>. For Metrics JSON only, the{' '}
-    <strong>latest point of each metric</strong> also goes to <code>&lt;root&gt;/&lt;metric&gt;</code>.{' '}
-    <code>&lt;root&gt;</code> defaults to <code>hozz</code>.
+    Batches go to <code>&lt;root&gt;/batch</code>. Metrics JSON also publishes each latest point to{' '}
+    <code>&lt;root&gt;/&lt;metric&gt;</code>. The default root is <code>hozz</code>.
   </p>
 
   <Code caption="Topics published for a Metrics JSON batch" code={topics} />
 
   <p>
-    The per-metric topics are the point of using MQTT here: a sensor can subscribe to{' '}
-    <code>hozz/step_count</code> and read a value, rather than subscribing to a batch and parsing it.
-    Other formats publish only <code>&lt;root&gt;/batch</code>, because there is nothing to split per
-    metric.
+    Other formats publish only <code>&lt;root&gt;/batch</code>.
   </p>
 
   <Code caption="Payload on hozz/heart_rate" code={point} />
@@ -99,9 +92,7 @@ const haSensor = `mqtt:
   <h2>Retained messages</h2>
 
   <p>
-    Per-metric topics are published <strong>retained, at QoS 0</strong>, so a subscriber that
-    connects later immediately receives the last known value rather than waiting for the next
-    delivery. That is what makes a dashboard show something the moment it starts.
+    Metric topics are <strong>retained at QoS 0</strong>, so new subscribers receive the latest value.
   </p>
 
   <h2>Using it from Home Assistant</h2>
@@ -109,30 +100,21 @@ const haSensor = `mqtt:
   <Code caption="configuration.yaml" code={haSensor} />
 
   <p>
-    If you would rather not run a broker at all, <a href="/docs/destinations/home-assistant/">the
-      Home Assistant destination</a> posts the same data straight to a webhook.
+    Without a broker, use the <a href="/docs/destinations/home-assistant/">Home Assistant destination</a>.
   </p>
 
   <Callout kind="warn" title="MQTT keeps no history">
     <p>
-      This is the honest limitation, and the app says so where you choose it. A broker that is
-      offline misses that batch. Hozz retries, but a{' '}
-      <a href="/docs/destinations/folder/">folder</a> is more forgiving — it keeps every batch as a
-      file, and a computer that was switched off simply picks them up later.
-    </p>
-    <p>
-      Retained per-metric topics also only keep the <em>latest</em> point, by design. They are a
-      current-value surface, not a record. If you want every sample, subscribe to{' '}
-      <code>&lt;root&gt;/batch</code> or send NDJSON somewhere alongside.
+      Hozz retries detected connection failures. QoS 0 still cannot confirm that an accepted
+      publish was persisted, and retained metric topics keep only the latest point. Subscribe to
+      <code>&lt;root&gt;/batch</code> or send NDJSON elsewhere for history.
     </p>
   </Callout>
 
   <h2>What Hozz implements</h2>
 
   <p>
-    Hozz speaks the part of MQTT 3.1.1 a publisher needs: CONNECT, PUBLISH at QoS 0, and DISCONNECT.
-    It is not a full client, and it does not subscribe to anything. If your broker requires
-    features beyond that, this destination will not be the right one.
+    Hozz implements CONNECT, QoS 0 PUBLISH and DISCONNECT. It does not subscribe.
   </p>
 
   <DeviceConstraints />

@@ -13,44 +13,37 @@ const probe = `curl -sv http://your-mac.local:54330/
 
 <DocsLayout page={entry}>
   <p>
-    Most of what looks like a fault here is Hozz reporting a state honestly. The states that read
-    worst — waiting, retrying, no data for a type — are usually the app declining to claim something
-    it cannot support. This page separates those from the genuine problems.
+    Find the message or symptom you see.
   </p>
 
   <h2>Every message, and what it means</h2>
 
-  <p>
-    These are the exact strings the app shows, so you can search the words on your screen.
-  </p>
+  <p>These are the app's exact strings.</p>
 
   <MessageList />
 
   <h2>The Mac does not appear on the phone</h2>
 
-  <p>Work through these in order — they are ordered by how often each is the cause.</p>
+  <p>Check these in order:</p>
 
   <ol class="steps">
     <li>
       <h3>Is Hozz open on the Mac?</h3>
       <p>
-        The receiver only runs while the app does. A Mac you have used before shows{' '}
-        <strong>Offline — open Hozz on it</strong> rather than being offered, because offering a
-        computer that cannot answer only produces a failure you could not have avoided.
+        The receiver runs only while the app is open. An unavailable saved Mac shows{' '}
+        <strong>Offline — open Hozz on it</strong>.
       </p>
     </li>
     <li>
       <h3>Are both devices on the same network?</h3>
       <p>
-        Guest networks, client isolation and separate 2.4/5GHz SSIDs that do not bridge will all
-        prevent discovery. So will the phone being on cellular.
+        Guest networks, client isolation, unbridged SSIDs and cellular prevent discovery.
       </p>
     </li>
     <li>
       <h3>Does the phone have Local Network permission?</h3>
       <p>
-        If it says <strong>Hozz needs permission to see this network</strong>, grant it in{' '}
-        <strong>Settings → Hozz → Local Network</strong>. Without it, Bonjour cannot look.
+        If asked, grant it in <strong>Settings → Hozz → Local Network</strong>.
       </p>
     </li>
     <li>
@@ -58,26 +51,23 @@ const probe = `curl -sv http://your-mac.local:54330/
       <p>A <code>GET</code> to the port answers with a small JSON identification:</p>
       <Code caption="From any machine on the same network" code={probe} />
       <p>
-        If that answers, the receiver is fine and the problem is discovery — add the Mac by web
-        address instead. If it does not, the problem is the network or the Mac.
+        If it answers, add the Mac by web address. Otherwise check the network and Mac.
       </p>
     </li>
     <li>
       <h3>Give up on the network and use a folder</h3>
       <p>
-        The Mac app also watches a folder. Point the phone at a synced folder and the Mac at the
-        same folder, and you get everything the receiver gives you without either device accepting
-        an inbound connection. See <a href="/docs/destinations/folder/">Folder</a>.
+        Use a synced <a href="/docs/destinations/folder/">folder</a> instead of an inbound connection.
       </p>
     </li>
   </ol>
 
   <Callout kind="note" title="If you are building the Mac app yourself">
     <p>
-      Two macOS behaviours look exactly like network faults and are not. A sandboxed app needs{' '}
+      A sandboxed app needs{' '}
       <code>com.apple.security.network.client</code> to <em>answer</em>, not just{' '}
       <code>...network.server</code> to listen — a reply travels to the phone's ephemeral port,
-      which the sandbox classifies as outbound. And macOS 15+ Local Network authorisation is keyed
+      which the sandbox classifies as outbound. macOS 15+ Local Network authorisation is keyed
       to the executable's UUID and cannot be reset, so a grant goes stale on every rebuild while
       System Settings still shows the app as allowed. Both are written up in the app repository's
       README.
@@ -87,37 +77,31 @@ const probe = `curl -sv http://your-mac.local:54330/
   <h2>The first sync looks stalled</h2>
 
   <p>
-    It is almost certainly working. A first backfill covers years of history, and iOS grants
-    background time in short windows, so days is normal.
+    A first backfill covers years in short iOS windows. Days or weeks is normal.
   </p>
 
   <p>
-    <strong>How to tell it apart from stuck:</strong> the count of completed types should rise over
-    a day or two, and the Mac's Data tab should show types reaching further back. If neither moves
-    at all across several days <em>and</em> you have opened the app in that time, treat it as stuck.
-    See <a href="/docs/getting-started/">Getting started</a> for what to expect during a first sync.
+    Completed types and Mac history should grow. If neither moves across several days despite
+    opening the app, treat it as stuck.
   </p>
 
   <h2>An export came out empty, or smaller than expected</h2>
 
   <ul>
     <li>
-      <strong>Check the format.</strong> A <a href="/docs/formats/">GPX</a> export contains only
-      workouts that have GPS. A treadmill run has no route and produces no file — that is not an
-      error. If you chose GPX expecting a health export, you get an archive that looks broken.
+      <strong>Check the format.</strong> <a href="/docs/formats/">GPX</a> contains only workouts with
+      GPS.
     </li>
     <li>
-      <strong>Check the Health permissions.</strong> A denied type and an empty type are
-      indistinguishable to Hozz, because Apple does not let an app tell them apart. Look at{' '}
+      <strong>Check Health permissions.</strong> Apple makes denied and empty types indistinguishable.
+      Look at{' '}
       <strong>Settings → Health → Data Access &amp; Devices → Hozz</strong>.
     </li>
     <li>
-      <strong>Check which types the destination is limited to.</strong> A destination can be scoped
-      to a subset, and a scope you set months ago is easy to forget.
+      <strong>Check the destination's type limit.</strong>
     </li>
     <li>
-      <strong>Check whether the type has synced yet.</strong> On the Mac, a type the backfill has not
-      reached is not the same as a type you have no data for, and the app distinguishes them.
+      <strong>Check whether backfill reached the type.</strong>
     </li>
   </ul>
 
@@ -143,15 +127,12 @@ const probe = `curl -sv http://your-mac.local:54330/
   <h2>A destination says it needs attention</h2>
 
   <p>
-    <code>needsAttention</code> means Hozz has stopped trying and wants you, rather than retrying on
-    a timer forever. The two states are different on purpose: <code>retrying</code> resolves itself,{' '}
-    <code>needsAttention</code> does not.
+    <code>retrying</code> continues automatically; <code>needsAttention</code> stops for you.
   </p>
 
   <p>
-    One case is worth explaining because it looks like a bug. If a destination was written by a
-    newer version of Hozz — or by one whose vocabulary later changed — this build may not recognise
-    one of its settings. When that happens Hozz <strong>keeps the record and refuses to use it</strong>:
+    If this build cannot recognize a destination setting, it <strong>keeps the record and refuses to
+      use it</strong>:
   </p>
 
   <ul>
@@ -161,32 +142,26 @@ const probe = `curl -sv http://your-mac.local:54330/
   </ul>
 
   <p>
-    Editing and saving is the escape hatch, and the editor says plainly that saving is also the
-    moment the original setting is replaced.
+    Editing and saving replaces the original setting.
   </p>
 
   <h2>An unfinished export cannot be continued</h2>
 
   <p>
-    An export written by a later version whose stored words this build does not recognise is still
-    shown, with the reason, and can be discarded. Hiding it would leave your export simply gone;
-    offering to continue it would promise something that fails on the tap.
+    An incompatible unfinished export remains visible with its reason and can be discarded.
   </p>
 
   <h2>The MCP server reports no data</h2>
 
   <p>
-    Two different problems look identical: the data directory path is wrong, or nothing has synced
-    to that Mac yet. <a href="/docs/mcp/#if-it-reports-no-data">The MCP page</a> covers telling them
-    apart — the short version is to copy the configuration from the Mac app's Assistant tab rather
-    than typing a path, because the database lives inside the sandboxed app's container.
+    The path is wrong or nothing has synced. Copy configuration from the Mac app's Assistant tab;
+    see <a href="/docs/mcp/#if-it-reports-no-data">MCP</a>.
   </p>
 
   <h2>Still stuck</h2>
 
   <p>
-    Hozz is early alpha, and some of what you hit will genuinely be a bug.{' '}
-    <a href="https://github.com/thatcube/hozz/issues">Open an issue</a> — logs never contain Health
-    values, credentials or destination secrets, so they are safe to attach.
+    <a href="https://github.com/thatcube/hozz/issues">Open an issue</a>. Logs omit Health values,
+    credentials and destination secrets.
   </p>
 </DocsLayout>

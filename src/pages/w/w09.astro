@@ -13,7 +13,6 @@ import {
   GITHUB_URL,
   DONATE_URL,
   LICENSE_URL,
-  NAV_LINKS,
   STREAM_LANES,
   STEPS,
   DESTINATIONS,
@@ -26,6 +25,7 @@ import {
   NOT_YET,
   FAQ,
 } from '../../data/site';
+import { ARCHIVE_NAV_LINKS as NAV_LINKS } from '../../data/archive';
 
 const ledger = STREAM_LANES[0].slice(0, 6);
 
@@ -45,13 +45,11 @@ const jsonLd = {
       operatingSystem: 'iOS, macOS',
       url: SITE,
       downloadUrl: GITHUB_URL,
-      isAccessibleForFree: true,
       license: LICENSE_URL,
       softwareVersion: 'Early alpha',
       author: { '@type': 'Person', name: 'Brandon Moore' },
-      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
       description:
-        'A free, open-source iPhone app with a companion Mac app that exports Apple Health data to destinations you own — your Mac, a folder, Home Assistant, InfluxDB, any web endpoint or MQTT. No account, no analytics, no hosted relay and no default destination.',
+        'An open-source iPhone app with a companion Mac app that exports Apple Health data to destinations you own — your Mac, a folder, Home Assistant, InfluxDB, any web endpoint or MQTT. No account, no analytics, no hosted relay and no default destination.',
     },
     {
       '@type': 'FAQPage',
@@ -73,7 +71,7 @@ const jsonLd = {
     <meta name="robots" content="noindex, nofollow" />
     <meta
       name="description"
-      content="Hozz exports your Apple Health history to destinations you own — your Mac, a folder, Home Assistant, InfluxDB, a URL or MQTT. Free, open source, no account, no analytics, no server in the middle."
+      content="Hozz exports your Apple Health history to destinations you own — your Mac, a folder, Home Assistant, InfluxDB, a URL or MQTT. Open source, no account, no analytics, no server in the middle."
     />
     <meta name="color-scheme" content="light" />
     <meta name="theme-color" content="#eef0e8" />
@@ -106,7 +104,7 @@ const jsonLd = {
             <h1>A phone is not an <em class="em">archive.</em></h1>
             <p class="lede">
               Hozz copies your Apple Health history off your iPhone and into places you already
-              own. Free, open source, one developer. No account, no analytics, no server of mine.
+              own. Open source, one developer. No account, no analytics, no server of mine.
             </p>
             <p class="claim">
               Data you hold no copy of is data you are slowly losing.
@@ -409,7 +407,7 @@ const jsonLd = {
           <Mark size={64} />
           <h2 id="close-h">Keep a copy while you still <em class="em">can.</em></h2>
           <p>
-            Free forever, GPL-3.0 with an App Store exception, written by one person. Read every
+            Open source under GPL-3.0 with an App Store exception, written by one person. Read every
             line before you trust it with anything.
           </p>
           <div class="actions">

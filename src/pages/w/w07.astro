@@ -80,12 +80,10 @@ const jsonLd = {
       codeRepository: GITHUB_URL,
       downloadUrl: GITHUB_URL,
       license: LICENSE_URL,
-      isAccessibleForFree: true,
       softwareVersion: 'Early alpha',
       author: { '@type': 'Person', name: 'Brandon Moore' },
-      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
       description:
-        'A free, open-source iPhone app with a companion Mac app that exports Apple Health records to destinations you own — your Mac, a folder, Home Assistant, InfluxDB, a web endpoint or MQTT — as NDJSON, SQLite, JSON, CSV, Markdown, GPX or Metrics JSON.',
+        'An open-source iPhone app with a companion Mac app that exports Apple Health records to destinations you own — your Mac, a folder, Home Assistant, InfluxDB, a web endpoint or MQTT — as NDJSON, SQLite, JSON, CSV, Markdown, GPX or Metrics JSON.',
     },
     {
       '@type': 'FAQPage',
@@ -118,7 +116,7 @@ const jsonLd = {
     <meta name="color-scheme" content="light" />
     <meta
       name="description"
-      content="Hozz copies your Apple Health history into places you own — your Mac, a folder, InfluxDB, MQTT — so it outlives the phone that recorded it. Free, open source, no account, no analytics."
+      content="Hozz copies your Apple Health history into places you own — your Mac, a folder, InfluxDB, MQTT — so it outlives the phone that recorded it. Open source, no account, no analytics."
     />
     <link rel="canonical" href={`${SITE}/w/w07/`} />
     <link rel="icon" href="/logo.svg" type="image/svg+xml" />
@@ -157,10 +155,10 @@ const jsonLd = {
       <section class="hero" id="top">
         <div class="shell hero-grid">
           <div class="hero-copy">
-            <p class="eyebrow"><span class="dot" style="--c:#8b6253"></span>Free · open source · early alpha</p>
+            <p class="eyebrow"><span class="dot" style="--c:#8b6253"></span>Open source · early alpha</p>
             <h1>Your health history should <em class="em">outlive</em> the phone that wrote it.</h1>
             <p class="lede">
-              Hozz is a free iPhone app with a Mac companion. It copies your Apple Health records into
+              Hozz is an iPhone app with a Mac companion. It copies your Apple Health records into
               somewhere you own — your Mac, a folder, your own database — and keeps copying as new ones
               arrive. Nothing leaves until you add a destination and confirm it.
             </p>
@@ -474,9 +472,8 @@ const jsonLd = {
             <Mark size={56} />
             <h2 id="close-h">Start the copy <em class="em">today</em>. Twenty years is made of days.</h2>
             <p class="wide">
-              Free, and free forever — GPL-3.0 with an App Store exception, built by one person. There is
-              nothing to sign up to, nothing held back for a Pro tier, and no default destination waiting
-              to catch your data.
+              Open source under GPL-3.0 with an App Store exception, built by one person. There is no
+              account and no default destination waiting to catch your data.
             </p>
             <p class="actions">
               <a class="btn primary" href={GITHUB_URL} rel="noopener">Get it from GitHub</a>

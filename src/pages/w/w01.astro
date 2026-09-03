@@ -30,7 +30,7 @@ import {
 
 const title = 'Hozz — your Apple Health history, in a file you own';
 const description =
-  'A free, open-source iPhone app with a companion Mac app. It exports Apple Health to destinations you own — your Mac, a folder, Home Assistant, InfluxDB, a URL or MQTT. No account, no server, no default destination.';
+  'An open-source iPhone app with a companion Mac app. It exports Apple Health to destinations you own — your Mac, a folder, Home Assistant, InfluxDB, a URL or MQTT. No account, no server, no default destination.';
 
 /** Six real HealthKit identifiers for the hero specimen, with example values. */
 const specimen = [
@@ -60,12 +60,10 @@ const ld = {
       applicationCategory: 'HealthApplication',
       operatingSystem: 'iOS, macOS',
       description:
-        'A free, open-source app that exports Apple Health data to destinations you own: a Mac running the companion app, a folder, Home Assistant, InfluxDB, any web endpoint, or MQTT. No account, no analytics, no hosted relay and no default destination.',
+        'An open-source app that exports Apple Health data to destinations you own: a Mac running the companion app, a folder, Home Assistant, InfluxDB, any web endpoint, or MQTT. No account, no analytics, no hosted relay and no default destination.',
       url: `${SITE}/`,
       license: 'https://www.gnu.org/licenses/gpl-3.0.html',
-      isAccessibleForFree: true,
       author: { '@type': 'Person', name: 'Brandon Moore' },
-      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
       softwareVersion: 'Early alpha',
       codeRepository: GITHUB_URL,
       featureList: WORKING,
@@ -1125,10 +1123,10 @@ const ld = {
       <section class="hero plain">
         <div class="wrap hero-in">
           <div>
-            <p class="eyebrow">Free · open source · early alpha</p>
+            <p class="eyebrow">Open source · early alpha</p>
             <h1>Your health history, in a file you <span class="em">own</span>.</h1>
             <p class="lede">
-              Hozz is a free iPhone app that copies your Apple Health data out to
+              Hozz is an iPhone app that copies your Apple Health data out to
               somewhere of your choosing — your Mac, a folder, your own dashboard —
               and keeps it current on its own.
             </p>
@@ -1137,7 +1135,7 @@ const ld = {
               <a class="btn btn-ghost" href="#export">How the export works</a>
             </div>
             <p class="fine">
-              No account. No subscription. No server of mine. There is no default
+              No account. No server of mine. There is no default
               destination, so nothing leaves your phone until you add one and
               confirm it.
             </p>
@@ -1438,8 +1436,8 @@ const ld = {
           <Mark size={64} />
           <h2>Your history, held where you put it.</h2>
           <p>
-            Free forever, GPL-3.0, no paid tier planned. Read the code before you
-            trust it with anything — that is rather the point.
+            Open source under GPL-3.0. Read the code before you trust it with anything — that is
+            rather the point.
           </p>
           <div class="cta" style="justify-content:center;">
             <a class="btn btn-solid" href={GITHUB_URL}>Get it on GitHub</a>

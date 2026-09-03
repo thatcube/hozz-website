@@ -69,15 +69,11 @@ const headers = [
   </div>
 
   <p>
-    Point Hozz at any endpoint that accepts a POST. This is the destination for anything not covered
-    by the named ones — your own service, a serverless function, an ingestion pipeline, or something
-    off-the-shelf that speaks HTTP.
+    Point Hozz at any endpoint that accepts a POST.
   </p>
 
   <p>
-    The <a href="/docs/destinations/mac/">Mac receiver</a>, <a href="/docs/destinations/home-assistant/">Home
-      Assistant</a> and <a href="/docs/destinations/influxdb/">InfluxDB</a> destinations are this destination
-    with the fields filled in.
+    Mac, Home Assistant and InfluxDB use the same delivery mechanism with preset fields.
   </p>
 
   <h2>Setting it up</h2>
@@ -97,13 +93,12 @@ const headers = [
     </li>
     <li>
       <h3>Choose a format</h3>
-      <p>All {spell(COUNTS.deliveryFormats)} are available here. NDJSON is the default and the only lossless streaming one.</p>
+      <p>All {spell(COUNTS.deliveryFormats)} are available. NDJSON is the default.</p>
     </li>
     <li>
       <h3>Send a test</h3>
       <p>
-        A small probe in the chosen format, reporting the status that came back. It contains no
-        Health data.
+        Sends a probe without Health data and reports the response.
       </p>
     </li>
   </ol>
@@ -126,37 +121,28 @@ const headers = [
   <h2>How to answer</h2>
 
   <p>
-    Answer <code>2xx</code> to accept. Hozz treats <code>408</code>, <code>429</code> and{' '}
-    <code>5xx</code> as "try again" and retries with backoff; anything else stops and asks the user
-    to fix it rather than retrying on a timer forever.
+    Return <code>2xx</code> to accept. Hozz retries <code>408</code>, <code>429</code> and{' '}
+    <code>5xx</code>; other responses stop for attention.
   </p>
 
   <Callout kind="note" title="Response bodies are discarded, not logged">
     <p>
-      A server rejecting a batch frequently echoes the offending record back, and a Health value
-      must not end up in a log. So Hozz records the status and a human-readable failure state, and
-      throws the body away. If you need to know why your endpoint rejected something, look at your
-      endpoint's own logs.
+      Hozz records the status but discards bodies that may echo Health data. Check server logs for
+      rejection details.
     </p>
   </Callout>
 
-  <h2>Idempotency, and why it matters</h2>
+  <h2>Idempotency</h2>
 
   <p>
-    <strong>The batch identifier is derived from the payload bytes.</strong> A retry of the same data
-    reuses it, so you can safely discard a repeat. A retry that picked up newer records gets a{' '}
-    <em>different</em> identifier and has to be stored — reusing a key for changed contents is exactly
-    how a correctly written receiver ends up discarding records it has never seen.
+    The id derives from payload bytes. Identical retries reuse it; changed payloads get a new id.
   </p>
 
   <h2>A receiver, in full</h2>
 
   <Code caption="A minimal receiver" code={minimal} />
 
-  <p>
-    A working, dependency-free Python receiver lives in <code>receiver/</code> in the Hozz
-    repository if you would rather start from something complete.
-  </p>
+  <p>A dependency-free example lives in <code>receiver/</code>.</p>
 
   <h2>Choosing a format</h2>
 
@@ -177,16 +163,9 @@ const headers = [
     }
   </Table>
 
-  <p>
-    <a href="/docs/delivery-schema/">The delivery schema</a> documents each of them field by field, with
-    a worked example payload.
-  </p>
-
   <Callout kind="warn" title="Your phone has to be able to reach the address">
     <p>
-      On a home network that means being on the same Wi-Fi, and a <code>.local</code> address will
-      not resolve over cellular. If you want deliveries while you are out, the endpoint has to be
-      reachable from outside — and if it is, it should be behind TLS, because this is Health data.
+      <code>.local</code> works only on the same network. External endpoints need TLS.
     </p>
   </Callout>
 

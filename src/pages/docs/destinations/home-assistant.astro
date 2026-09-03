@@ -58,9 +58,7 @@ const payload = `{
   </div>
 
   <p>
-    Hozz posts <a href="/docs/delivery-schema/#metrics-json">Metrics JSON</a> to Home Assistant,
-    either to a webhook trigger or to the REST API. It is an ordinary HTTPS endpoint underneath —
-    the preset exists so you do not have to work out that it was one.
+    Hozz posts <a href="/docs/delivery-schema/#metrics-json">Metrics JSON</a> to a webhook or REST API.
   </p>
 
   <h2>Setting it up</h2>
@@ -69,25 +67,21 @@ const payload = `{
     <li>
       <h3>Decide: webhook or REST API</h3>
       <p>
-        A <strong>webhook</strong> needs no token and is the simpler of the two. The{' '}
-        <strong>REST API</strong> needs a long-lived access token, and suits you if you are already
-        posting to it from other things.
+        Webhooks need no token. The REST API needs a long-lived access token.
       </p>
     </li>
     <li>
       <h3>For a webhook, add the trigger</h3>
       <p>
-        Create an automation with a webhook trigger and note its ID. The address Hozz shows as a
-        placeholder is{' '}
+        Create a webhook automation and note its ID. The placeholder is{' '}
         <code>http://homeassistant.local:8123/api/webhook/hozz</code>.
       </p>
     </li>
     <li>
       <h3>For the REST API, create a token</h3>
       <p>
-        Under your Home Assistant profile, create a long-lived access token. In the Hozz
-        destination's secret field, write <code>Bearer</code> followed by a space and the token
-        itself — the field holds the whole header value, not just the credential.
+        Create a long-lived token. Prefix it with <code>Bearer</code> and one space, then store the
+        full value in the secret field.
       </p>
     </li>
     <li>
@@ -98,9 +92,7 @@ const payload = `{
 
   <Callout kind="warn" title="Your phone has to be able to reach the address">
     <p>
-      On a home network that means being on the same Wi-Fi. A <code>.local</code> address will not
-      resolve over cellular, so if you want deliveries while you are out, use an address that is
-      reachable from outside — and put it behind TLS if it is.
+      A <code>.local</code> address works only on the same network. External addresses need TLS.
     </p>
   </Callout>
 
@@ -109,8 +101,7 @@ const payload = `{
   <Code caption="Home Assistant automation" code={webhookYaml} />
 
   <p>
-    <code>local_only: true</code> is worth keeping unless you deliberately want the webhook exposed.
-    Hozz sends the batch as a single POST with <code>Content-Type: application/json</code>.
+    Keep <code>local_only: true</code> unless you intend to expose the webhook.
   </p>
 
   <h2>What arrives</h2>
@@ -118,11 +109,7 @@ const payload = `{
   <Code caption="POST body — Metrics JSON" code={payload} />
 
   <p>
-    Points are grouped by metric name, in lowercase snake_case. Curated names are used where one
-    exists — <code>HKQuantityTypeIdentifierStepCount</code> becomes <code>step_count</code>,{' '}
-    <code>HKQuantityTypeIdentifierActiveEnergyBurned</code> becomes <code>active_energy</code> —
-    and anything uncurated has its identifier prefix removed and the rest snake cased, so a type
-    Hozz has never heard of still gets a stable, predictable name rather than being dropped.
+    Points use stable lowercase snake_case metric names.
   </p>
 
   <p>
@@ -132,19 +119,15 @@ const payload = `{
   <h2>Coming from Health Auto Export</h2>
 
   <p>
-    If your automations are already keyed to Health Auto Export's field names, Hozz has an{' '}
-    <strong>opt-in compatibility mode</strong> on this destination that emits those names instead.
-    It is offered when the format is Metrics JSON.{' '}
-    <a href="/docs/switching-from-health-auto-export/">Switching from Health Auto Export</a> covers what
-    maps to what, and the three things it deliberately does not claim.
+    Existing automations can use an opt-in compatibility mode.{' '}
+    <a href="/docs/switching-from-health-auto-export/">See its mappings and limits.</a>
   </p>
 
   <h2>Telling it is working</h2>
 
   <ul>
     <li>
-      <strong>Send a test</strong> reports the status Home Assistant returned. Anything <code>2xx</code
-      > is an acceptance.
+      <strong>Send a test</strong> reports the response. Any <code>2xx</code> accepts.
     </li>
     <li>
       In Home Assistant, a webhook automation's trace shows the payload it received.

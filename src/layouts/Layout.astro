@@ -9,9 +9,9 @@ export interface Props {
 }
 
 const {
-  title = 'Hozz — take your Apple Health data somewhere you own',
+  title = 'Hozz — move health data where you use it',
   description =
-    'A free, open-source iPhone app with a companion Mac app that exports your Apple Health data to a file or a server you control. No subscription, no account, no analytics, and no server in the middle.',
+    'Today, Hozz reads Apple Health on iPhone and works with the companion Mac app plus existing destinations. Open source, with no account, analytics, hosted relay, or default destination.',
   noindex = false,
 } = Astro.props;
 
@@ -37,7 +37,7 @@ const ogImage = new URL('/og-image.png', Astro.site ?? SITE).href;
 
     <!-- Self-hosted, so a page about not being tracked does not hand you to a
          font CDN on the way in. Only the two faces above the fold preload. -->
-    <link rel="preload" href="/fonts/sentient-500.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/young-serif-400.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/general-sans-400.woff2" as="font" type="font/woff2" crossorigin />
 
     <meta property="og:type" content="website" />
@@ -47,7 +47,7 @@ const ogImage = new URL('/og-image.png', Astro.site ?? SITE).href;
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Hozz — take your Apple Health data somewhere you own" />
+    <meta property="og:image:alt" content="Hozz — move health data where you use it" />
     <meta property="og:site_name" content="Hozz" />
     <meta property="og:locale" content="en_US" />
 

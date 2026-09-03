@@ -24,9 +24,9 @@ import { SITE } from '../data/site';
  * headline on the page itself stays poetic and is not an SEO surface.
  */
 const title = 'Export Apple Health data to CSV, JSON or SQLite — Hozz';
-const socialTitle = 'Hozz — take your Apple Health data somewhere you own';
+const socialTitle = 'Hozz — move health data where you use it';
 const description =
-  'A free, open-source iPhone and Mac app that exports your Apple Health records to CSV, JSON, SQLite or a server you own. No account, no cloud, no tracking.';
+  'Move Apple Health data from iPhone to your Mac, files, dashboards, servers or MQTT.';
 
 const canonical = new URL(Astro.url.pathname, Astro.site ?? SITE).href;
 const ogImage = new URL('/og-image.png', Astro.site ?? SITE).href;
@@ -50,7 +50,7 @@ const ogImage = new URL('/og-image.png', Astro.site ?? SITE).href;
 
     <!-- Self-hosted, so a page about not being tracked does not hand you to a
          font CDN on the way in. Only the faces above the fold preload. -->
-    <link rel="preload" href="/fonts/sentient-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/young-serif-400.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/general-sans-400.woff2" as="font" type="font/woff2" crossorigin />
 
     <meta property="og:type" content="website" />

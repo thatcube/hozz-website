@@ -48,8 +48,8 @@ export const DOC_SECTIONS: DocSection[] = [
         nav: 'Getting started',
         title: 'Getting started with Hozz — export your Apple Health data',
         description:
-          'Install Hozz, grant Health access, choose a destination, and run your first Apple Health export. Includes what iOS will and will not let a background app do.',
-        lede: 'Four steps to your first export, and an honest account of what happens after it.',
+          'Build Hozz, grant Health access, choose a destination, and run your first export.',
+        lede: 'Build it, grant access, choose a destination and export.',
       },
       {
         href: '/privacy/',
@@ -57,17 +57,17 @@ export const DOC_SECTIONS: DocSection[] = [
         nav: 'Privacy',
         title: 'Hozz privacy — what leaves your device, and when',
         description:
-          'Nothing leaves your iPhone until you add a destination and confirm it. Where credentials live, what Hozz never logs, and what it cannot promise once data reaches a destination you chose.',
-        lede: 'What leaves the device, when, and to where. This is the whole argument for the app.',
+          'What leaves your iPhone, where credentials live, what Hozz logs, and where its control ends.',
+        lede: 'What leaves your device, when, and where.',
       },
       {
-        href: '/docs/free-and-open/',
-        heading: 'Free, and open source',
-        nav: 'Free and open',
-        title: 'Why Hozz is free — no account, no subscription, no server',
+        href: '/docs/open-source/',
+        heading: 'Open source',
+        nav: 'Open source',
+        title: 'Hozz is open source — inspect the privacy claims',
         description:
-          'Hozz has no paid tier, no account, no analytics and no server run by its maintainer. What that means in practice, and why exporting your Apple Health data does not need any of them.',
-        lede: 'There is no paid tier, no sign-in, and nowhere for your data to be collected. Here is why that is possible.',
+          'Hozz is GPL-3.0 with an App Store distribution exception. Inspect its privacy claims in source.',
+        lede: 'Source, license, and what they let you verify.',
       },
     ],
   },
@@ -80,8 +80,8 @@ export const DOC_SECTIONS: DocSection[] = [
         nav: 'Choosing one',
         title: 'Apple Health export destinations — which one to choose',
         description:
-          'Hozz can send Apple Health data to a Mac, a folder, Home Assistant, a web endpoint, MQTT or InfluxDB. What each is for, and how to choose.',
-        lede: `${Spell(COUNTS.destinations)} places Hozz can send your data, and how to tell which one you want.`,
+          'Compare Hozz destinations: Mac, folder, Home Assistant, InfluxDB, web endpoint and MQTT.',
+        lede: `Choose among ${spell(COUNTS.destinations)} destinations.`,
       },
       {
         href: '/docs/destinations/mac/',
@@ -89,8 +89,8 @@ export const DOC_SECTIONS: DocSection[] = [
         nav: 'Your Mac',
         title: 'Send Apple Health data to your Mac — the Hozz receiver',
         description:
-          'Set up the Hozz Mac app to receive Apple Health data from your iPhone over the local network. Bonjour discovery, tokens, the folder watcher, and how to tell it is working.',
-        lede: 'The Mac app receives what the phone sends, stores it in SQLite, charts it, and can hand it to an assistant.',
+          'Set up the Hozz Mac receiver, local discovery, authentication and folder fallback.',
+        lede: 'Receive, store, chart and query your data on a Mac.',
       },
       {
         href: '/docs/destinations/folder/',
@@ -98,8 +98,8 @@ export const DOC_SECTIONS: DocSection[] = [
         nav: 'Folder',
         title: 'Export Apple Health data to a folder — iCloud, Dropbox, OneDrive',
         description:
-          'Write Apple Health export files to any folder the Files app can reach: iCloud Drive, Dropbox, OneDrive, Google Drive, SMB, or on-device storage. No server and no open ports.',
-        lede: 'The recommended destination, because it needs no server, no ports and no VPN.',
+          'Write Apple Health batches to any folder the iOS Files app can reach.',
+        lede: 'The simplest destination: any folder in Files.',
       },
       {
         href: '/docs/destinations/home-assistant/',
@@ -107,8 +107,8 @@ export const DOC_SECTIONS: DocSection[] = [
         nav: 'Home Assistant',
         title: 'Apple Health to Home Assistant — webhook and REST setup',
         description:
-          'Send Apple Health metrics into Home Assistant as sensors, using a webhook trigger or the REST API. Exact addresses, the token format, the payload, and how to confirm it arrived.',
-        lede: 'Metrics JSON to a webhook or the REST API, with the payload written out in full.',
+          'Send Apple Health metrics to Home Assistant by webhook or REST API.',
+        lede: 'Send Metrics JSON by webhook or REST.',
       },
       {
         href: '/docs/destinations/influxdb/',
@@ -116,8 +116,8 @@ export const DOC_SECTIONS: DocSection[] = [
         nav: 'InfluxDB',
         title: 'Apple Health to InfluxDB — line protocol, no translator needed',
         description:
-          'Write Apple Health data straight into InfluxDB 1.8, 2.x or 3.x as line protocol, ready to chart in Grafana. Measurement names, tags, fields, timestamp precision and escaping.',
-        lede: 'Line protocol written directly, so there is no translator container in the diagram.',
+          'Write Apple Health line protocol to InfluxDB 1.8, 2.x or 3.x.',
+        lede: 'Write line protocol directly to InfluxDB.',
       },
       {
         href: '/docs/destinations/web/',
@@ -125,8 +125,8 @@ export const DOC_SECTIONS: DocSection[] = [
         nav: 'Web address',
         title: 'Apple Health to your own endpoint — POST, headers and idempotency',
         description:
-          'Point Hozz at any endpoint that accepts a POST. Every header Hozz sends, which status codes it retries, and how the idempotency key is derived.',
-        lede: `Any endpoint that accepts a POST, in whichever of the ${spell(COUNTS.deliveryFormats)} formats you pick.`,
+          'POST Apple Health batches to your endpoint with retry and idempotency headers.',
+        lede: `POST any of ${spell(COUNTS.deliveryFormats)} delivery formats.`,
       },
       {
         href: '/docs/destinations/mqtt/',
@@ -134,8 +134,8 @@ export const DOC_SECTIONS: DocSection[] = [
         nav: 'MQTT',
         title: 'Apple Health to MQTT — topics, retained messages and QoS',
         description:
-          'Publish Apple Health data to an MQTT broker. Topic layout, retained per-metric topics, QoS, and the one thing MQTT cannot do that a folder can.',
-        lede: 'Retained per-metric topics for anything already listening to your broker.',
+          'Publish Apple Health data to MQTT batch and retained metric topics.',
+        lede: 'Publish batches and latest values to MQTT.',
       },
     ],
   },
@@ -148,8 +148,8 @@ export const DOC_SECTIONS: DocSection[] = [
         nav: 'Export formats',
         title: 'Apple Health export formats — NDJSON, CSV, JSON, SQLite, Markdown, GPX',
         description:
-          'Every format Hozz can export Apple Health data to, what each is good for, and exactly which ones lose detail. CSV, Markdown and GPX are lossy and say so.',
-        lede: `${Spell(COUNTS.exportFormats)} formats. ${Spell(COUNTS.lossyExportFormats)} of them lose detail on purpose, and this page says which and what.`,
+          'Compare Hozz export formats, including which formats lose detail.',
+        lede: `${Spell(COUNTS.exportFormats)} formats; ${spell(COUNTS.lossyExportFormats)} are lossy.`,
       },
       {
         href: '/docs/delivery-schema/',
@@ -157,8 +157,8 @@ export const DOC_SECTIONS: DocSection[] = [
         nav: 'Delivery schema',
         title: 'Hozz delivery schema — Apple Health export JSON reference',
         description:
-          'Field-by-field reference for every format Hozz delivers: NDJSON, JSON, CSV, Metrics JSON and InfluxDB line protocol, with a worked example payload for each.',
-        lede: 'What arrives at your endpoint, field by field, so you can build against Hozz without reading the source.',
+          'Field reference and examples for every Hozz delivery format.',
+        lede: 'Fields, record kinds and payload examples.',
       },
       {
         href: '/docs/data-coverage/',
@@ -166,8 +166,8 @@ export const DOC_SECTIONS: DocSection[] = [
         nav: 'Data coverage',
         title: 'What Apple Health data Hozz exports — and what it does not',
         description:
-          'Which Apple Health types Hozz exports today: quantity and category samples, workouts, routes, ECGs, audiograms, State of Mind, medications and characteristics — and what is not covered.',
-        lede: 'What Hozz keeps, what it cannot keep, and the one join it refuses to make up.',
+          'What Hozz exports from Apple Health today, its limits, and unsupported data.',
+        lede: 'Current coverage, limits and omissions.',
       },
     ],
   },
@@ -180,8 +180,8 @@ export const DOC_SECTIONS: DocSection[] = [
         nav: 'The MCP server',
         title: 'Apple Health MCP server — query live Health data from an AI assistant',
         description:
-          `Hozz ships a read-only MCP server over a local SQLite database your phone keeps current — not the stale bulk XML export. ${Spell(COUNTS.mcpTools)} tools, and analysis that refuses to overstate.`,
-        lede: `${Spell(COUNTS.mcpTools)} read-only tools over a database your phone keeps current, built to refuse the claims it cannot support.`,
+          `Query Hozz's local Mac database through ${spell(COUNTS.mcpTools)} read-only MCP tools.`,
+        lede: `${Spell(COUNTS.mcpTools)} read-only tools over your local database.`,
       },
       {
         href: '/docs/switching-from-health-auto-export/',
@@ -189,8 +189,8 @@ export const DOC_SECTIONS: DocSection[] = [
         nav: 'Switching from HAE',
         title: 'Switching from Health Auto Export to Hozz — field mapping',
         description:
-          'Hozz has an opt-in Health Auto Export compatibility mode so existing Home Assistant automations and scripts keep working. What maps to what, and what it does not claim.',
-        lede: 'A compatibility mode for automations already keyed to the other app’s field names.',
+          'Map Health Auto Export fields to Hozz compatibility mode.',
+        lede: 'Field mappings and compatibility limits.',
       },
     ],
   },
@@ -203,8 +203,8 @@ export const DOC_SECTIONS: DocSection[] = [
         nav: 'Background sync',
         title: 'Why didn’t my Apple Health export run? iOS background limits explained',
         description:
-          'iOS decides when a background app runs, most Health types are capped at hourly, and Health cannot be read while the phone is locked. What Hozz can promise and what it cannot.',
-        lede: 'Your 8am export did not run at 8am. That is usually iOS, and it is worth understanding why.',
+          'Why iOS delays Apple Health background export, and what Hozz guarantees.',
+        lede: 'iOS controls timing; Hozz preserves correctness.',
       },
       {
         href: '/docs/troubleshooting/',
@@ -212,8 +212,8 @@ export const DOC_SECTIONS: DocSection[] = [
         nav: 'Troubleshooting',
         title: 'Hozz troubleshooting — exports, sync and the Mac receiver',
         description:
-          'The Mac not appearing, a first backfill that looks stalled, an empty export, and background sync that is not running. Every message Hozz shows, and what it means.',
-        lede: 'Every message Hozz can show you, what it actually means, and what to do about it.',
+          'Fix Hozz sync, destination, export and Mac receiver problems.',
+        lede: 'Find the message or symptom, then fix it.',
       },
     ],
   },
