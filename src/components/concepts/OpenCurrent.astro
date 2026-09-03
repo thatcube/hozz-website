@@ -56,19 +56,17 @@ const categorySamples = CATEGORIES.map((category) => ({
         <div class="hero-glow" aria-hidden="true"></div>
         <div class="shell hero-grid">
           <div class="hero-copy">
-            <p class="eyebrow">Open-source health data movement</p>
+            <p class="eyebrow">Health data, moved</p>
             <h1 id="hero-title">Move your health data<br /><em>where you use it.</em></h1>
             <p class="hero-lede">
-              Today, Hozz reads Apple Health on iPhone and works with the companion Mac app plus
-              existing destinations.
+              Hozz reads Apple Health on iPhone and sends it to your Mac or destinations you choose.
             </p>
             <div class="hero-actions">
-              <a class="button button-primary" href="#how">See how it moves</a>
-              <a class="button button-quiet" href={GITHUB_URL}>Inspect the source</a>
+              <a class="button button-primary" href="#how">How it works</a>
+              <a class="button button-quiet" href={GITHUB_URL}>Source</a>
             </div>
             <p class="hero-note">
-              No account. No analytics. No Hozz cloud. Nothing leaves until you add a destination
-              and confirm it.
+              No account, analytics, hosted relay or default destination.
             </p>
           </div>
 
@@ -154,27 +152,11 @@ const categorySamples = CATEGORIES.map((category) => ({
               }
             </ul>
             <figcaption id="record-caption">
-              Real HealthKit identifiers with example readings. The lines trace
-              every record back to its source; the colours name its category.
+              Real HealthKit identifiers. Example readings.
             </figcaption>
           </figure>
         </div>
       </section>
-
-      <aside class="truth-band" aria-label="Hozz privacy conditions">
-        <div class="shell truth-inner">
-          <p>
-            <strong>Your data is the interface.</strong> Every label is a real
-            HealthKit identifier with an example reading, so the page needs
-            neither an invented dashboard nor abstract particles.
-          </p>
-          <ul>
-            <li>on-device source</li>
-            <li>user-chosen route</li>
-            <li>open output</li>
-          </ul>
-        </div>
-      </aside>
 
       <section class="section data-section" id="data" aria-labelledby="data-title">
         <div class="shell">
@@ -184,9 +166,7 @@ const categorySamples = CATEGORIES.map((category) => ({
               <h2 id="data-title">Not a health score.<br />The <em>records themselves.</em></h2>
             </div>
             <p class="section-lede">
-              Hozz keeps HealthKit’s real type names intact. Each example below
-              is drawn from the data the app handles; the reading beside it is
-              an example, never a claim about a person.
+              Real HealthKit types, grouped by category. Readings are examples.
             </p>
           </div>
 
@@ -215,11 +195,10 @@ const categorySamples = CATEGORIES.map((category) => ({
       <section class="section destinations-section" id="destinations" aria-labelledby="destinations-title">
         <div class="shell">
           <div class="section-heading">
-            <p class="eyebrow">Six destinations · no middleman</p>
+            <p class="eyebrow">Six destinations</p>
             <h2 id="destinations-title">Let each record<br /><em>land where you choose.</em></h2>
             <p class="section-lede">
-              Every route ends at somewhere you control. Each destination keeps
-              its own Health types, schedule, and place in the queue.
+              Each destination has its own types, schedule and queue position.
             </p>
           </div>
 
@@ -246,8 +225,7 @@ const categorySamples = CATEGORIES.map((category) => ({
               <h2 id="formats-title">Useful now.<br /><em>Readable later.</em></h2>
             </div>
             <p class="section-lede">
-              Pick the shape the next tool needs. Hozz says when a format keeps
-              every field and when it deliberately leaves detail behind.
+              Pick the shape your next tool needs. Lossy formats say what they drop.
             </p>
           </div>
 
@@ -285,8 +263,7 @@ const categorySamples = CATEGORIES.map((category) => ({
               <h2 id="how-title">One source.<br /><em>Three choices.</em></h2>
             </div>
             <p class="section-lede">
-              Nothing starts in secret. You choose a destination, choose what it
-              receives, and choose when it runs.
+              Choose where, what and when.
             </p>
           </div>
 
@@ -308,8 +285,7 @@ const categorySamples = CATEGORIES.map((category) => ({
           <div class="privacy-note">
             <Mark size={56} />
             <p>
-              <strong>Nothing leaves your phone until you add a destination and confirm it.</strong>
-              Hozz has no default destination and no hosted relay to receive a copy.
+              <strong>Nothing leaves until you add and confirm a destination.</strong>
             </p>
           </div>
         </div>
@@ -321,7 +297,6 @@ const categorySamples = CATEGORIES.map((category) => ({
             <p class="eyebrow">A current that keeps its place</p>
             <h2 id="durability-title">Interrupted,<br /><em>never quietly skipped.</em></h2>
             <p class="section-lede">
-              Each Health type advances only after its records are durably staged.
               An interruption can repeat work; it cannot skip records.
             </p>
           </div>
@@ -343,8 +318,7 @@ const categorySamples = CATEGORIES.map((category) => ({
               <p class="eyebrow">No false certainty</p>
               <h3>Hozz reports the state Apple actually gives it.</h3>
               <p>
-                There is no invented progress percentage. Health will not reveal
-                a total without reading every record first.
+                Health will not reveal a total without reading every record first.
               </p>
               <dl>
                 {
@@ -368,10 +342,6 @@ const categorySamples = CATEGORIES.map((category) => ({
               <p class="eyebrow">Private by construction</p>
               <h2 id="promises-title">The clearest promises<br />start with <em>no.</em></h2>
             </div>
-            <p class="section-lede">
-              Hozz’s privacy story is not a policy wrapped around a service. It
-              is the absence of the service that would collect your data.
-            </p>
           </div>
           <ul class="promise-grid">
             {
@@ -387,8 +357,7 @@ const categorySamples = CATEGORIES.map((category) => ({
             }
           </ul>
           <p class="never-write">
-            Hozz will never write anything back into Apple Health. Re-importing
-            would erase where a record came from and could silently create duplicates.
+            Hozz never writes to Apple Health: importing would erase provenance and can duplicate records.
           </p>
         </div>
       </section>
@@ -401,8 +370,7 @@ const categorySamples = CATEGORIES.map((category) => ({
               <h2 id="status-title">Working now.<br /><em>Coverage is partial.</em></h2>
             </div>
             <p>
-              Hozz is not in the App Store yet. One developer is building it in
-              the open, and the repository is available now.
+              Early alpha. Not in the App Store.
             </p>
           </div>
           <div class="status-columns">
@@ -421,8 +389,8 @@ const categorySamples = CATEGORIES.map((category) => ({
       <section class="section faq-section" aria-labelledby="faq-title">
         <div class="shell faq-grid">
           <div class="section-heading">
-            <p class="eyebrow">Plain answers</p>
-            <h2 id="faq-title">Before you trust<br /><em>the current.</em></h2>
+            <p class="eyebrow">Questions</p>
+            <h2 id="faq-title">Plain <em>answers.</em></h2>
           </div>
           <div class="faq-list">
             {
@@ -443,13 +411,9 @@ const categorySamples = CATEGORIES.map((category) => ({
           <Mark size={82} />
           <p class="eyebrow">Open source · GPL-3.0</p>
           <h2 id="closing-title">Your history.<br /><em>Your place to keep it.</em></h2>
-          <p>
-            Hozz is open source so you can read how it works before trusting it
-            with anything.
-          </p>
           <div class="hero-actions">
-            <a class="button button-primary" href={GITHUB_URL}>Open the repository ↗</a>
-            <a class="button button-quiet" href={DONATE_URL}>Sponsor the work</a>
+            <a class="button button-primary" href={GITHUB_URL}>Repository ↗</a>
+            <a class="button button-quiet" href={DONATE_URL}>Sponsor</a>
           </div>
         </div>
       </section>
@@ -903,51 +867,6 @@ const categorySamples = CATEGORIES.map((category) => ({
     font-size: 0.76rem;
     line-height: 1.55;
     text-align: center;
-  }
-
-  .truth-band {
-    border-block: 1px solid var(--line);
-    background: rgba(255, 255, 255, 0.74);
-  }
-
-  .truth-inner {
-    display: grid;
-    grid-template-columns: 1.35fr 1fr;
-    gap: 2rem;
-    align-items: center;
-    min-height: 6.5rem;
-  }
-
-  .truth-inner p {
-    margin: 0;
-    color: var(--ink-soft);
-    font-size: 0.96rem;
-  }
-
-  .truth-inner strong {
-    color: var(--ink);
-  }
-
-  .truth-inner ul {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1.4rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .truth-inner li {
-    color: var(--ink-muted);
-    font: 0.65rem 'IBM Plex Mono', monospace;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-
-  .truth-inner li::before {
-    content: '○';
-    margin-right: 0.4rem;
-    color: var(--blue);
   }
 
   .section {
@@ -1740,18 +1659,6 @@ const categorySamples = CATEGORIES.map((category) => ({
 
     .record-field figcaption {
       text-align: left;
-    }
-
-    .truth-inner {
-      grid-template-columns: 1fr;
-      gap: 1rem;
-      padding-block: 1.6rem;
-    }
-
-    .truth-inner ul {
-      display: grid;
-      justify-content: start;
-      gap: 0.4rem;
     }
 
     .section-heading h2,

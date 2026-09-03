@@ -4,7 +4,6 @@ import Callout from '../../../components/docs/Callout.astro';
 import Code from '../../../components/docs/Code.astro';
 import DeviceConstraints from '../../../components/docs/DeviceConstraints.astro';
 import { page } from '../../../data/docs-nav';
-import { COUNTS, spell } from '../../../data/docs';
 
 const entry = page('/docs/destinations/mac/');
 
@@ -31,84 +30,65 @@ curl http://your-mac.local:54330/
   </div>
 
   <p>
-    The Mac app is a local receiver and browser for what the phone sends. It accepts batches over
-    your network, stores them in a SQLite database on that Mac, charts them, and can expose them to
-    an AI assistant through <a href="/docs/mcp/">the MCP server</a>. It is the only destination that
-    gives you somewhere to actually <em>look</em> at the data without setting anything else up.
+    The Mac app receives batches over your network, stores them in SQLite, charts them, and serves
+    them through <a href="/docs/mcp/">MCP</a>.
   </p>
 
   <h2>Setting it up</h2>
-
-  <p>
-    The setup is built so that you never type an address or copy a token.
-  </p>
 
   <ol class="steps">
     <li>
       <h3>Open Hozz on the Mac</h3>
       <p>
-        It starts a receiver on port <strong>54330</strong> and advertises itself as{' '}
-        <code>_hozz._tcp</code> on the local network. Leave it running.
+        It listens on <strong>54330</strong> and advertises <code>_hozz._tcp</code>.
       </p>
     </li>
     <li>
       <h3>On the iPhone, add a destination</h3>
       <p>
-        The Mac appears at the top of the list under <strong>Your computers</strong>, before the
-        {' '}{spell(COUNTS.presets)} presets. Tap it.
+        Pick it under <strong>Your computers</strong>.
       </p>
     </li>
     <li>
-      <h3>That is the whole setup</h3>
+      <h3>Test it</h3>
       <p>
-        Hozz fills in the address and the token and saves a working destination. Use{' '}
-        <strong>Send a test</strong> to confirm, then watch the Mac's <strong>Activity</strong> tab
-        show it arrive.
+        Hozz fills the address and token. Use <strong>Send a test</strong>.
       </p>
     </li>
   </ol>
 
   <h2>How the phone finds the Mac</h2>
 
-  <p>There are three routes, tried in order, because each fails in a different situation:</p>
-
   <ol>
     <li>
-      <strong>Bonjour.</strong> The Mac advertises <code>_hozz._tcp</code>; the phone browses for
-      it. This is the normal path.
+      <strong>Bonjour:</strong> the normal path.
     </li>
     <li>
-      <strong>Your own iCloud Keychain.</strong> The Mac publishes a receiver record through a
-      shared Keychain access group. Two devices on the same Apple ID share the token with no pairing
-      step.
+      <strong>iCloud Keychain:</strong> when available, it can sync the pairing token between
+      devices on one Apple ID.
     </li>
     <li>
-      <strong>A local sweep.</strong> If mDNS is blocked and no shared record exists, the phone
-      sweeps a private <code>/24</code> on port 54330. The port is known, so the network can simply
-      be asked.
+      <strong>Local sweep:</strong> a private <code>/24</code> on port 54330 when mDNS fails.
     </li>
   </ol>
 
   <h2>Authentication</h2>
 
   <p>
-    The receiver requires a token on every delivery, sent in the <code>Authorization</code> header.
-    Exactly one route is reachable without it — <code>POST /pair</code> — because handing the token
-    over is that route's entire purpose. A wrong or missing token gets <code>401</code>, and the
-    attempt is recorded in the Activity tab.
+    Deliveries require an <code>Authorization</code> token. <code>GET /</code> and{' '}
+    <code>POST /pair</code> are unauthenticated. Wrong or missing delivery tokens return{' '}
+    <code>401</code>.
   </p>
 
   <p>
-    A <code>GET</code> to the port answers with a small JSON identification rather than an error, so
-    that a browser pointed at it tells you "wrong address" and "not running" apart:
+    A <code>GET</code> identifies the receiver:
   </p>
 
   <Code caption="Checking the receiver is up" code={probe} />
 
   <Callout kind="note" title="Already paired with another device">
     <p>
-      A Mac that is already paired answers a second pairing attempt with <code>403</code> and this
-      message: <em
+      A paired Mac returns <code>403</code>: <em
         >This Mac is already paired with another device. Open Hozz on the Mac and forget it first,
         or copy the token by hand.</em
       >
@@ -118,58 +98,43 @@ curl http://your-mac.local:54330/
   <h2>If the local network will not cooperate</h2>
 
   <p>
-    Some networks refuse inbound connections between devices — guest Wi-Fi, client isolation,
-    corporate networks. The Mac app also <strong>watches a folder</strong> for automatic batch
-    files, which routes around this entirely.
+    Guest, isolated and corporate networks may block device-to-device traffic. Use the folder
+    watcher instead.
   </p>
 
   <p>
-    Point the phone at a synced folder, pick the same folder on the Mac, and the Mac ingests new
-    NDJSON, JSON, CSV or Metrics JSON files as they arrive. See{' '}
-    <a href="/docs/destinations/folder/">Folder</a>. Line protocol is deliberately not offered for
-    folders, because the watcher ignores it and a folder writing line protocol would look like it
-    was working while nothing was ingested.
+    Point both apps at the same synced <a href="/docs/destinations/folder/">folder</a>. The Mac
+    ingests NDJSON, JSON, CSV and Metrics JSON.
   </p>
 
   <h2>What the Mac app does with it</h2>
 
-  <p>
-    Received batches go into <code>hozz-received.sqlite</code> with idempotent
-    batch records, deletions, characteristics, per-device "last heard from" state, and dedicated
-    tables for ECGs, audiograms, State of Mind, medication doses and workout statistics.
-  </p>
+  <p>Received batches go into <code>hozz-received.sqlite</code>.</p>
 
   <p>The app has four tabs:</p>
 
   <ul>
     <li><strong>Connect</strong> — the receiver, the folder watcher, the token, and per-device status based on when data last actually arrived.</li>
     <li>
-      <strong>Data</strong> — what has arrived and how far back it reaches, your own characteristics
-      above the measurements, charts by hour/day/week/month, CSV export of a type, and the name of
-      anything received in a form this version cannot read yet.
+      <strong>Data</strong> — coverage, characteristics, charts and CSV export.
     </li>
     <li><strong>Assistant</strong> — the MCP configuration to copy into an assistant.</li>
     <li>
-      <strong>Activity</strong> — recent accepted, duplicate, paired, test and rejected deliveries,
-      without logging sample values.
+      <strong>Activity</strong> — accepted, duplicate, paired, test and rejected deliveries.
     </li>
   </ul>
 
   <Callout kind="note" title="Quarantine, and why nothing is dropped">
     <p>
-      A record the current parser cannot read is not discarded — it goes to a quarantine table and
-      is named in the Data tab. When a newer version can read it, a promotion pass adds it properly
-      and the UI says it did. A newer phone talking to an older Mac therefore loses nothing.
+      Unknown records are quarantined and named in Data. A later version can promote them.
     </p>
   </Callout>
 
   <h2>A dependency-free alternative</h2>
 
   <p>
-    If you would rather not run the Mac app, a small standalone Python receiver lives in{' '}
-    <code>receiver/</code> in the repository. It is a plain script with no dependencies, and it is a
-    working example of the protocol if you are writing your own —{' '}
-    <a href="/docs/destinations/web/">Your own endpoint</a> documents the headers.
+    A dependency-free Python receiver lives in <code>receiver/</code>.{' '}
+    <a href="/docs/destinations/web/">Your own endpoint</a> documents the protocol.
   </p>
 
   <DeviceConstraints />

@@ -44,7 +44,7 @@ const columns = atHome ? 3 : 2;
         <Mark size={26} />
         <span class="wordmark">Hozz</span>
       </a>
-      <p>Apple Health export, without a middleman. Built by Brandon Moore.</p>
+      <p>Apple Health export without a middleman.</p>
     </div>
 
     {
@@ -60,18 +60,18 @@ const columns = atHome ? 3 : 2;
 
     <nav aria-labelledby="footer-hozz">
       <h2 id="footer-hozz">Hozz</h2>
-      <a href={SURFACES.docs.href}>Documentation</a>
+      <a href={SURFACES.docs.href}>Docs</a>
       <a href="/privacy/">Privacy</a>
       <a class="repo" href={GITHUB_URL} rel="noopener">
         <Icon name="ph:github-logo" aria-hidden="true" />
         GitHub
       </a>
-      <a href={LICENSE_URL} rel="noopener">GPL-3.0 licence</a>
-      <a href={DONATE_URL} rel="noopener">Sponsor the work</a>
+      <a href={LICENSE_URL} rel="noopener">License</a>
+      <a href={DONATE_URL} rel="noopener">Sponsor</a>
     </nav>
 
     <nav aria-labelledby="footer-siblings">
-      <h2 id="footer-siblings">Also by Brandon</h2>
+      <h2 id="footer-siblings">More</h2>
       {
         SIBLINGS.map((sibling) => (
           <a href={sibling.href} rel="noopener">

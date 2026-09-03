@@ -38,7 +38,7 @@ export const structuredData = {
       author: { '@id': `${SITE}/#person` },
       sameAs: [GITHUB_URL],
       description:
-        'Today, Hozz reads Apple Health on iPhone and works with the companion Mac app plus existing destinations.',
+        'Reads Apple Health on iPhone and sends it to your Mac or destinations you choose.',
       /* Derived, never typed: if a format is added or dropped in site.ts the
          markup follows, so it cannot claim an export Hozz does not do. */
       featureList: FORMATS.map((format) => `${format.name} export`),

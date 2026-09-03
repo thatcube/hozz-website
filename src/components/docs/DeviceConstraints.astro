@@ -11,24 +11,17 @@
 import Callout from './Callout.astro';
 ---
 
-<Callout kind="warn" title="Three things iOS decides, not Hozz">
+<Callout kind="warn" title="iOS controls background timing">
   <ul>
     <li>
-      <strong>Health cannot be read while the phone is locked.</strong> The database is encrypted
-      until first unlock. If iOS wakes Hozz on a locked phone, the pass waits rather than
-      reporting a delivery it did not make.
+      Health may be unreadable while the phone is locked.
     </li>
     <li>
-      <strong>iOS chooses when a background app runs.</strong> A cadence is a request. Most Health
-      types are capped at hourly delivery by HealthKit regardless of what is asked for.
+      A cadence is a request. Most Health types are capped near hourly.
     </li>
     <li>
-      <strong>Force-quitting Hozz stops background launches</strong> until you open the app again.
-      That is an iOS rule that applies to every app, and there is no way around it.
+      Force-quitting Hozz stops background launches until you reopen it.
     </li>
   </ul>
-  <p>
-    <a href="/docs/background-sync/">Background sync, explained honestly</a> covers what Hozz does
-    about each of these.
-  </p>
+  <p><a href="/docs/background-sync/">Background sync details.</a></p>
 </Callout>

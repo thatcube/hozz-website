@@ -29,16 +29,12 @@ hozz-20260822T221512Z-2f1a9c04-000002.ndjson`;
   </div>
 
   <p>
-    Hozz writes batch files into a folder you choose with the system file picker. Because iOS
-    presents every provider through the same interface, that folder can be in iCloud Drive, Dropbox,
-    OneDrive, Google Drive, an SMB share, or just on the device.
+    Hozz writes batches to any folder in Files: cloud storage, SMB or on-device.
   </p>
 
   <p>
-    This is the destination Hozz recommends first, and it is the one with the fewest ways to go
-    wrong. It needs no server, no open ports and no VPN; the sync client already installed on your
-    computer does the networking; and it keeps working while that computer is switched off — which a
-    push to a local receiver cannot.
+    Cloud-backed and on-device folders need no server, open port or VPN. SMB requires its host
+    to remain reachable.
   </p>
 
   <h2>Setting it up</h2>
@@ -47,13 +43,12 @@ hozz-20260822T221512Z-2f1a9c04-000002.ndjson`;
     <li>
       <h3>Choose a folder</h3>
       <p>
-        Anywhere the Files app can reach. If you want it on a computer, choose a folder your cloud
-        client already syncs there.
+        Anywhere Files can reach.
       </p>
     </li>
     <li>
-      <h3>Whatever syncs that folder does the rest</h3>
-      <p>Hozz writes files; your existing sync client moves them. Hozz has no part in that step.</p>
+      <h3>Let the folder sync</h3>
+      <p>Hozz writes files; your provider moves them.</p>
     </li>
     <li>
       <h3>Send a test</h3>
@@ -68,9 +63,7 @@ hozz-20260822T221512Z-2f1a9c04-000002.ndjson`;
   <Code caption="hozz-&lt;timestamp&gt;-&lt;destination&gt;-&lt;sequence&gt;.&lt;ext&gt;" code={names} />
 
   <p>
-    The destination identifier is part of the name because two destinations may point at the same
-    folder, and every batch in one pass shares a timestamp and starts at sequence zero — without it
-    their first files would be named identically and the second would silently replace the first.
+    The timestamp, destination id and sequence keep names ordered and unique.
   </p>
 
   <p>
@@ -83,42 +76,33 @@ hozz-20260822T221512Z-2f1a9c04-000002.ndjson`;
 
   <Callout kind="warn" title="Line protocol is not offered for folders">
     <p>
-      This is deliberate rather than an oversight. Hozz's own Mac app watches a folder for{' '}
-      <code>ndjson</code>, <code>json</code> and <code>csv</code> and ignores anything else — so a folder
-      writing InfluxDB line protocol would look like it was working while nothing was ever ingested.
+      The Mac watcher ignores line protocol, so Hozz does not offer that combination.
     </p>
   </Callout>
 
   <h2>Pairing it with the Mac app</h2>
 
   <p>
-    A folder and the <a href="/docs/destinations/mac/">Mac receiver</a> are not alternatives. Point
-    the phone at a synced folder, then point the Mac app's folder watcher at the same folder on the
-    Mac, and you get the Mac app's charts and{' '}
-    <a href="/docs/mcp/">assistant access</a> without either device needing to accept an inbound
-    connection. On a network that blocks device-to-device traffic, this is the route that works.
+    Point the phone and <a href="/docs/destinations/mac/">Mac app</a> at the same synced folder to
+    get charts and <a href="/docs/mcp/">assistant access</a> without inbound connections.
   </p>
 
   <h2>When it goes wrong</h2>
-
-  <p>Folders have exactly two failure modes, and both say so plainly:</p>
 
   <ul>
     <li>
       <strong><em>Hozz could not reach that folder. It may have been moved, renamed, or signed
           out.</em></strong>
-      The saved reference no longer resolves — usually a renamed folder, or a cloud drive that
-      signed out. Edit the destination and pick the folder again.
+      Pick the folder again.
     </li>
     <li>
       <strong><em>Hozz no longer has permission to write to that folder.</em></strong>
-      The folder resolves but iOS refused the write. Pick it again to re-grant access.
+      Pick it again to restore access.
     </li>
   </ul>
 
   <p>
-    Neither loses data. A destination only advances its cursor past records it actually wrote, so
-    once the folder is reachable again the same records are written.
+    The cursor advances only after a successful write, so neither failure loses records.
   </p>
 
   <DeviceConstraints />

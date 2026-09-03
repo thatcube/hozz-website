@@ -225,12 +225,12 @@ console.log(
   if (copy.findings.length) {
     for (const finding of copy.findings) {
       problems.push(
-        `Permanent-pricing language in ${finding.file}:${finding.line}\n` +
+        `Prohibited public-copy claim in ${finding.file}:${finding.line}\n` +
           `    found ${JSON.stringify(finding.text)} (${finding.label})\n`,
       );
     }
   } else {
-    notes.push(`Permanent-pricing language absent from ${copy.filesScanned} public source files`);
+    notes.push(`Prohibited public-copy claims absent from ${copy.filesScanned} public source files`);
   }
 }
 

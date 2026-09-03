@@ -1,22 +1,17 @@
 ---
 import HealthLayout from '../layouts/HealthLayout.astro';
 import CategoryTile from '../components/health/CategoryTile.astro';
-import DataCard from '../components/health/DataCard.astro';
 import Mark from '../components/Mark.astro';
 import { Icon } from 'astro-icon/components';
 import {
   COVERAGE_ROWS,
   DESTINATION_ROWS,
   HEALTH_CATEGORIES,
-  HEART_ROWS,
-  MILESTONE_ROWS,
   PROMISE_ROWS,
   STEP_ROWS,
-  CATEGORY_BY_KEY,
 } from '../data/health';
 import { DONATE_URL, GITHUB_URL, SIBLINGS } from '../data/site';
 
-const heart = CATEGORY_BY_KEY.heart;
 const year = new Date().getFullYear();
 ---
 
@@ -47,19 +42,18 @@ const year = new Date().getFullYear();
          the page because all of them are about to appear. -->
     <section class="hero">
       <div class="wrap">
-        <p class="eyebrow">Pre-alpha · nothing to install yet</p>
+        <p class="eyebrow">Early alpha</p>
         <h1>
           Your health data.<br />
           <span class="keep">Yours to keep.</span>
         </h1>
         <p class="lead">
-          Hozz is an open-source app for iPhone, with a Mac companion, that copies what
-          Apple Health knows about you into a file you keep, or onto a server you
-          run. No account, and nothing of yours passing through anything of mine.
+          Hozz moves Apple Health data from your iPhone to files, a companion Mac and destinations
+          you control. No account or hosted relay.
         </p>
         <div class="cta-row">
           <a class="btn btn--primary" href={GITHUB_URL} rel="noopener">Read the source</a>
-          <a class="btn btn--plain" href="#browse">See what it reads</a>
+          <a class="btn btn--plain" href="/docs/getting-started/">Get started</a>
         </div>
       </div>
     </section>
@@ -68,12 +62,9 @@ const year = new Date().getFullYear();
     <section class="section" id="browse">
       <div class="wrap">
         <div class="section-head">
-          <h2>Not a curated dozen.</h2>
+          <h2>Apple Health, broadly.</h2>
           <p class="lead">
-            This is the shape of what Apple Health holds — the same categories,
-            in the same colours you already know. The target is every one of
-            them, with the relationships between records left intact. Hozz's
-            only job is getting a copy somewhere you own.
+            Coverage is partial and explicit. See <a href="/docs/data-coverage/">Data coverage</a>.
           </p>
         </div>
 
@@ -81,39 +72,6 @@ const year = new Date().getFullYear();
           {HEALTH_CATEGORIES.map((c, i) => <CategoryTile category={c} index={i} />)}
         </ul>
 
-        <p class="footnote">
-          Categories arrive as the milestones below land. Nothing here is
-          exported yet.
-        </p>
-      </div>
-    </section>
-
-    <!-- ─────────────────── A category, up close ───────────────────
-         One detail screen rendered at full size. It is the source, not the
-         product: this is what Health hands over, and the identifiers under
-         each reading are the real HealthKit types anyone can check. -->
-    <section
-      class="section section--wash"
-      style={`--tint: ${heart.from}; --tint-2: ${heart.to}`}
-    >
-      <div class="wrap">
-        <div class="detail-head">
-          <span class="detail-glyph" style={`--from: ${heart.from}; --to: ${heart.to}`}>
-            <Icon name={heart.icon} width={22} height={22} />
-          </span>
-          <h2>Heart</h2>
-        </div>
-
-        <p class="group-title">Today</p>
-        <div class="cards">
-          {HEART_ROWS.map((row) => <DataCard row={row} icon={heart.icon} />)}
-        </div>
-
-        <p class="footnote footnote--dark">
-          Readings are illustrative. The identifiers under them are the real
-          HealthKit types, so every claim on this page can be checked against
-          Apple's documentation.
-        </p>
       </div>
     </section>
 
@@ -121,11 +79,7 @@ const year = new Date().getFullYear();
     <section class="section section--split" id="promise">
       <div class="wrap">
         <div class="section-head">
-          <h2>Six things it will never do.</h2>
-          <p class="lead">
-            Most health apps ask you to trust a company. Hozz is built so there
-            is nothing to trust in the first place.
-          </p>
+          <h2>No middleman.</h2>
         </div>
 
         <ul class="group">
@@ -148,7 +102,7 @@ const year = new Date().getFullYear();
     <section class="section" id="how">
       <div class="wrap">
         <div class="section-head">
-          <h2>It only does three things.</h2>
+          <h2>Three steps.</h2>
         </div>
 
         <ul class="grid grid--3">
@@ -169,10 +123,9 @@ const year = new Date().getFullYear();
     <section class="section">
       <div class="wrap">
         <div class="section-head">
-          <h2>Somewhere you already own.</h2>
+          <h2>Your destination.</h2>
           <p class="lead">
-            A destination is a place you set up and confirm. There is no default
-            one, because a default would be somewhere I chose.
+            Nothing leaves until you add and confirm one.
           </p>
         </div>
 
@@ -196,11 +149,9 @@ const year = new Date().getFullYear();
     <section class="section section--split honest" id="honest">
       <div class="wrap">
         <div class="section-head">
-          <h2>It will never say it got everything.</h2>
+          <h2>Coverage stays honest.</h2>
           <p class="lead">
-            Apple will not let an app tell the difference between a data type you
-            denied and one you simply have none of. From the inside, the two look
-            identical. Plenty of export tools quietly call that “complete”.
+            Apple makes denied and empty types indistinguishable. Hozz does not guess.
           </p>
         </div>
 
@@ -222,29 +173,12 @@ const year = new Date().getFullYear();
     <section class="section section--split" id="status">
       <div class="wrap">
         <div class="section-head">
-          <h2>Where it actually is.</h2>
+          <h2>Current status.</h2>
           <p class="lead">
-            Hozz is early alpha. It works, but its coverage is still partial.
-            The repository holds the reviewed architecture and the first
-            acquisition test harness. Each milestone ships only when its gate
-            passes.
+            Apple Health reading, manual export, automatic destinations and the Mac receiver work
+            today. Coverage remains partial.
           </p>
         </div>
-
-        <ol class="group miles">
-          {
-            MILESTONE_ROWS.map((m) => (
-              <li class={`row mile mile--${m.state}`}>
-                <span class="mile-badge">{m.id}</span>
-                <span class="row-title">
-                  {m.name}
-                  <em>{m.state === 'done' ? 'Done' : m.state === 'now' ? 'In progress' : 'Planned'}</em>
-                </span>
-                <span class="row-body">{m.body}</span>
-              </li>
-            ))
-          }
-        </ol>
       </div>
     </section>
 
@@ -253,8 +187,7 @@ const year = new Date().getFullYear();
       <div class="wrap">
         <h2>Built in the open.</h2>
         <p class="lead">
-          Watch the repository to follow development. Sponsorship is optional and supports this and
-          the other open-source apps.
+          Follow development or support the work.
         </p>
         <div class="cta-row">
           <a class="btn btn--primary" href={GITHUB_URL} rel="noopener">Watch the repository</a>
@@ -271,7 +204,7 @@ const year = new Date().getFullYear();
           <Mark size={26} />
           <span>Hozz</span>
         </a>
-        <p>An open-source app for taking your Apple Health data somewhere you own.</p>
+        <p>Move Apple Health data somewhere you own.</p>
       </div>
       <nav aria-label="Hozz">
         <h2>Hozz</h2>
@@ -434,52 +367,6 @@ const year = new Date().getFullYear();
     }
   }
 
-  .footnote {
-    margin-top: 1.5rem;
-    color: var(--ink-3);
-    font-size: var(--fs-sub);
-    max-width: 56ch;
-  }
-
-  .footnote--dark {
-    color: var(--ink-2);
-  }
-
-  /* ── Category detail ──────────────────────────────────────────────────── */
-  .detail-head {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    margin-bottom: clamp(1.75rem, 4vw, 2.75rem);
-  }
-
-  .detail-glyph {
-    display: grid;
-    place-items: center;
-    inline-size: 44px;
-    block-size: 44px;
-    border-radius: 13px;
-    color: #fff;
-    background: linear-gradient(142deg, var(--from), var(--to));
-  }
-
-  .detail-head h2 {
-    font-size: clamp(2.4rem, 1.6rem + 3.4vw, 4rem);
-    font-weight: 900;
-    letter-spacing: -0.04em;
-  }
-
-  .cards {
-    display: grid;
-    gap: 0.85rem;
-  }
-
-  @media (min-width: 760px) {
-    .cards {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
   /* ── Steps ────────────────────────────────────────────────────────────── */
   .step-n {
     display: grid;
@@ -535,52 +422,6 @@ const year = new Date().getFullYear();
 
   .state--flat .dot {
     background: #8a8a8e;
-  }
-
-  /* ── Milestones ───────────────────────────────────────────────────────── */
-  .mile-badge {
-    display: grid;
-    place-items: center;
-    min-inline-size: 34px;
-    block-size: 22px;
-    padding-inline: 0.4rem;
-    border-radius: 6px;
-    background: var(--sys-bg-2);
-    color: var(--ink-3);
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    grid-row: span 2;
-    align-self: start;
-    margin-top: 3px;
-  }
-
-  .mile .row-title {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    flex-wrap: wrap;
-  }
-
-  .mile .row-title em {
-    font-style: normal;
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: -0.005em;
-    padding: 0.15rem 0.5rem;
-    border-radius: var(--r-pill);
-    background: var(--sys-bg-2);
-    color: var(--ink-3);
-  }
-
-  .mile--done .row-title em {
-    background: rgba(52, 199, 89, 0.16);
-    color: #17752c;
-  }
-
-  .mile--now .row-title em {
-    background: rgba(255, 159, 10, 0.18);
-    color: #8a5200;
   }
 
   /* ── Closer ───────────────────────────────────────────────────────────── */

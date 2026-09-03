@@ -143,9 +143,8 @@ const fields = [
 
 <DocsLayout page={entry}>
   <p>
-    This is what Hozz sends to an automatic destination, field by field. It exists so you can build
-    against Hozz without reading the source. Manual exports use the same record shape packaged
-    differently — <a href="/docs/formats/">Export formats</a> covers those.
+    The receiver contract for automatic destinations. Manual exports package the same record shape
+    differently; see <a href="/docs/formats/">Export formats</a>.
   </p>
 
   <h2>Conventions</h2>
@@ -158,18 +157,15 @@ const fields = [
       which uses local time in that app's format.
     </li>
     <li>
-      <strong>Units</strong> are HealthKit's own unit strings, untranslated. A heart rate arrives as{' '}
-      <code>count/min</code>, not <code>bpm</code>. This is deliberate — a unit Hozz invented a
-      nicer name for is a unit you cannot map back.
+      <strong>Units</strong> are untranslated HealthKit strings: <code>count/min</code>, not{' '}
+      <code>bpm</code>.
     </li>
     <li>
-      <strong>Identifiers</strong> are lowercase UUID strings. A sample keeps the UUID HealthKit
-      gave it, so the same record delivered twice is recognisably the same record.
+      <strong>Identifiers</strong> are lowercase HealthKit UUID strings, stable across delivery.
     </li>
     <li>
-      <strong>Nothing is null.</strong> A field Hozz has no value for is absent rather than present
-      and empty. An absent <code>device</code> means HealthKit reported no device, not that Hozz
-      dropped it.
+      <strong>Nothing is null.</strong> Unknown fields are absent. Missing <code>device</code> means
+      HealthKit reported none.
     </li>
   </ul>
 
@@ -213,8 +209,7 @@ const fields = [
   <h3>Metadata is type-tagged</h3>
 
   <p>
-    HealthKit metadata is <code>[String: Any]</code>, and an untagged value cannot be read back
-    reliably — so each value carries its own type. <code>type</code> is one of <code>string</code>,{' '}
+    Each metadata value carries a type: <code>string</code>,{' '}
     <code>number</code>, <code>bool</code>, <code>date</code>, <code>data</code> (base64),{' '}
     <code>quantity</code> (which carries a <code>description</code> string rather than a{' '}
     <code>value</code>), <code>array</code> (whose <code>value</code> is an array of tagged values),
@@ -224,25 +219,19 @@ const fields = [
   <h3>Workout routes</h3>
 
   <p>
-    A route arrives as three record kinds, because a long ride holds hundreds of thousands of points
-    and cannot be one record.
+    Routes use three record kinds so large tracks can be paged.
   </p>
 
   <Code caption="One page of route points" code={route} />
 
   <p>
-    Pages are 500 points, split at fixed offsets so a replayed page is byte identical to the one it
-    replaces. Core Location reports "unknown" as a negative accuracy, course or speed, and those
-    keys are <strong>omitted rather than written as negative numbers that look like measurements</strong>.{' '}
-    <code>workoutRouteEnd</code> carries the final <code>locations</code> count, so a complete route
-    is distinguishable from a truncated one.
+    Pages hold 500 points at fixed offsets. Negative “unknown” values are omitted.{' '}
+    <code>workoutRouteEnd</code> carries the final count, exposing truncation.
   </p>
 
   <p>
-    <code>workout.state</code> on a <code>workoutRoute</code> is <code>resolved</code> or{' '}
-    <code>unresolved</code>. An unresolved route carries a <code>reason</code> instead of a workout,
-    because a route attached to a workout Hozz only guessed at is worse than one that says it does
-    not know.
+    <code>workout.state</code> is <code>resolved</code> or <code>unresolved</code>. Unresolved routes
+    carry a reason, not a guessed workout.
   </p>
 
   <h2 id="ndjson">NDJSON</h2>
@@ -255,15 +244,13 @@ const fields = [
   <Code caption="application/x-ndjson" code={ndjson} />
 
   <p>
-    Keys within a record are sorted, so the same records always produce the same bytes. That is what
-    lets the batch identifier be derived from the payload.
+    Sorted keys make identical records produce identical bytes.
   </p>
 
   <h2 id="json">JSON</h2>
 
   <p>
     The same records as one array, <code>application/json</code>. <strong>Lossless.</strong>
-    Convenient for tools that want a single JSON value; NDJSON is better for anything streaming.
   </p>
 
   <Code caption="application/json" code={json} />
@@ -283,16 +270,13 @@ const fields = [
   <Code caption="text/csv" code={csv} />
 
   <p>
-    Whole numbers are written without a decimal point. <code>deleted</code> is <code>true</code> only
-    for <code>kind</code> <code>deletion</code>. A batch spans several Health types, so this is one
-    table rather than a file per type — splitting it would defeat appending on the receiving end.
+    Whole numbers omit decimals. <code>deleted</code> is true only for <code>deletion</code>.
   </p>
 
   <h2 id="metrics-json">Metrics JSON</h2>
 
   <p>
-    Grouped by metric rather than by sample, <code>application/json</code>. What Home Assistant,
-    MQTT subscribers and most dashboards want.
+    Grouped by metric, <code>application/json</code>.
   </p>
 
   <Callout kind="lossy">
@@ -350,16 +334,12 @@ const fields = [
   </Table>
 
   <p>
-    <strong><code>endDate</code> is a Hozz addition.</strong> Hozz sends the individual samples
-    HealthKit returned rather than hourly or daily rollups, because that is the only shape that can
-    honestly claim no gaps and no duplicates. Sleep and exercise samples are intervals, and
-    flattening one to an instant loses the span it covered.
+    <strong><code>endDate</code> preserves intervals.</strong> Hozz sends HealthKit samples, not
+    rollups.
   </p>
 
   <p>
-    <strong><code>deletions</code> is a Hozz addition too</strong>, and a tombstone carries no date —
-    Health does not tell an app when a record was removed, only that it was. A receiver that ignores
-    the key behaves exactly as though it were not there.
+    <strong><code>deletions</code> carries tombstones.</strong> Health provides no removal time.
   </p>
 
   <h3 id="metric-names">Metric names</h3>
@@ -373,19 +353,15 @@ const fields = [
   </p>
 
   <p>
-    Anything uncurated has its <code>HKQuantityTypeIdentifier</code> or{' '}
-    <code>HKCategoryTypeIdentifier</code> prefix removed and the rest snake cased, so a type Hozz has
-    never heard of still gets a stable, predictable name instead of being dropped.
+    Uncurated types drop the HealthKit prefix and become snake_case.
   </p>
 
   <h2 id="influxdb-line-protocol">InfluxDB line protocol</h2>
 
   <p>
-    <code>text/plain; charset=utf-8</code>. One line per record, ready for InfluxDB's write endpoint
-    or for Telegraf with no translator in between. Measurements, tags, fields, timestamp precision
-    and the escaping rules are all documented on{' '}
-    <a href="/docs/destinations/influxdb/">the InfluxDB page</a>, because they only matter if you are
-    using it.
+    <code>text/plain; charset=utf-8</code>. See <a href="/docs/destinations/influxdb/"
+      >the InfluxDB page</a
+    > for measurements, tags, precision and escaping.
   </p>
 
   <h2 id="delivery-mechanics">Delivery mechanics</h2>
@@ -399,9 +375,7 @@ const fields = [
 
   <Callout kind="note" title="Connection tests carry no Health data">
     <p>
-      A test sends a small probe in the destination's own format and reports what came back. The
-      format matters: a JSON probe posted to InfluxDB is rejected as unparseable, which would report
-      a correctly configured database as broken.
+      Tests send a small format-specific probe and report the response.
     </p>
   </Callout>
 </DocsLayout>

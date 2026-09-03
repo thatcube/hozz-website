@@ -42,88 +42,34 @@ export const HEALTH_CATEGORIES: HealthCategory[] = [
   { key: 'other', label: 'Other Data', icon: 'ph:plus', from: '#4A9AF0', to: '#2F80E8', note: 'Everything Apple files nowhere else, and lab results' },
 ];
 
-export const CATEGORY_BY_KEY = Object.fromEntries(
-  HEALTH_CATEGORIES.map((c) => [c.key, c]),
-) as Record<string, HealthCategory>;
-
-/**
- * The detail panel. Real HealthKit identifiers with plausible readings — the
- * numbers are illustrative, the type names are not. Anyone who knows HealthKit
- * can check every one of them.
- */
-export interface DetailRow {
-  name: string;
-  identifier: string;
-  value: string;
-  unit: string;
-  time: string;
-  /** Relative bar heights, 0–1, newest last. */
-  spark: number[];
-}
-
-export const HEART_ROWS: DetailRow[] = [
-  {
-    name: 'Heart Rate',
-    identifier: 'heartRate',
-    value: '62',
-    unit: 'BPM',
-    time: '2:29 PM',
-    spark: [0.5, 0.72, 0.4, 0.86, 0.55, 0.34, 0.68, 0.44, 0.62],
-  },
-  {
-    name: 'Heart Rate Variability',
-    identifier: 'heartRateVariabilitySDNN',
-    value: '48',
-    unit: 'ms',
-    time: '6:02 AM',
-    spark: [0.42, 0.55, 0.68, 0.5, 0.74, 0.6, 0.38, 0.66, 0.52],
-  },
-  {
-    name: 'Resting Heart Rate',
-    identifier: 'restingHeartRate',
-    value: '54',
-    unit: 'BPM',
-    time: 'Today',
-    spark: [0.6, 0.58, 0.63, 0.55, 0.5, 0.57, 0.48, 0.52, 0.46],
-  },
-  {
-    name: 'Electrocardiogram',
-    identifier: 'electrocardiogram',
-    value: 'Sinus rhythm',
-    unit: '',
-    time: 'Jul 28',
-    spark: [],
-  },
-];
-
 /** Things Hozz refuses to do, as a grouped list. */
 export const PROMISE_ROWS = [
-  { icon: 'ph:cloud-slash', tint: '#F26B78', title: 'No server of mine', body: 'No relay, no database, no cloud. Nothing in the middle to trust.' },
-  { icon: 'ph:user-circle-dashed', tint: '#FF8A3D', title: 'No account', body: 'Nothing to sign up for, because there is nothing to sign up to.' },
-  { icon: 'ph:chart-line-down', tint: '#5DBF48', title: 'No analytics', body: 'No tracking, no telemetry, no crash reports with your health in them.' },
+  { icon: 'ph:cloud-slash', tint: '#F26B78', title: 'No hosted relay', body: 'No Hozz-hosted service routes or stores records.' },
+  { icon: 'ph:user-circle-dashed', tint: '#FF8A3D', title: 'No account', body: 'Nothing to sign up for today.' },
+  { icon: 'ph:chart-line-down', tint: '#5DBF48', title: 'No analytics', body: 'No tracking, telemetry or ads.' },
   { icon: 'ph:code', tint: '#4FB6D8', title: 'Open source', body: 'GPL-3.0 with an App Store distribution exception.' },
-  { icon: 'ph:cloud-x', tint: '#6E6CE4', title: 'Nothing put in iCloud', body: 'Where a copy lands is your call, never a default of mine.' },
-  { icon: 'ph:lock-simple', tint: '#8A72EC', title: 'Credentials stay put', body: 'Keys for your own server live in that device’s Keychain, unsynced.' },
+  { icon: 'ph:cloud-x', tint: '#6E6CE4', title: 'No default destination', body: 'You choose where every copy goes.' },
+  { icon: 'ph:lock-simple', tint: '#8A72EC', title: 'Credentials on device', body: 'Destination secrets stay in Keychain.' },
 ];
 
 export const STEP_ROWS = [
   {
     n: '1',
     tint: '#F26B78',
-    title: 'You decide what it reads',
-    body: 'iOS asks, not Hozz. Tick what you want to take with you and leave the rest closed.',
+    title: 'Choose what it reads',
+    body: 'Grant only the Health permissions you want.',
   },
   {
     n: '2',
     tint: '#C960E8',
-    title: 'It keeps up quietly',
-    body: 'Each type resumes from where it stopped, so nothing arrives twice and nothing is skipped.',
+    title: 'Resume safely',
+    body: 'Each type resumes from a durable cursor. Retries may repeat, never skip.',
   },
   {
     n: '3',
     tint: '#5DBF48',
-    title: 'It writes where you say',
-    body: 'A file you keep or a server you run. Nothing leaves until you set up a destination and confirm it.',
+    title: 'Choose where it writes',
+    body: 'Nothing leaves until you confirm a destination.',
   },
 ];
 
@@ -132,19 +78,19 @@ export const DESTINATION_ROWS = [
     icon: 'ph:file-arrow-down',
     tint: '#4A9AF0',
     title: 'A file you keep',
-    body: 'Written in parts with a manifest, so an interrupted export can never look finished.',
+    body: 'Parts and a manifest expose interrupted exports.',
   },
   {
     icon: 'ph:hard-drives',
     tint: '#4FB6D8',
     title: 'A server you run',
-    body: 'TLS first, credentials scoped to one destination and never handed to an off-host redirect.',
+    body: 'TLS first. Credentials stay scoped to one destination.',
   },
   {
     icon: 'ph:table',
     tint: '#5DBF48',
     title: 'CSV and GPX',
-    body: 'Labelled lossy projections, because that is what they are. The full record stays whole.',
+    body: 'Lossy projections, labelled before export.',
   },
 ];
 
@@ -153,17 +99,4 @@ export const COVERAGE_ROWS = [
   { state: 'Allowed', tone: 'good', body: 'You granted it, and every object HealthKit returned is accounted for.' },
   { state: 'Denied or empty', tone: 'unknown', body: 'Apple will not say which. Hozz will not guess, so it reports both.' },
   { state: 'Not supported yet', tone: 'flat', body: 'Hozz cannot read it correctly yet, so it says so instead of skipping it quietly.' },
-];
-
-export const MILESTONE_ROWS = [
-  { id: 'M0', name: 'Contract', state: 'done', body: 'Every HealthKit family classified; privacy and threat models written down.' },
-  { id: 'M1', name: 'Foundation', state: 'now', body: 'Swift 6 targets build, and fault tests prove a retry cannot skip past data.' },
-  { id: 'M2', name: 'Catalogue', state: 'next', body: 'The full type list, with the awkward authorization flows kept separate.' },
-  { id: 'M3', name: 'Canonical model', state: 'next', body: 'Byte-identical output whatever your locale or time zone.' },
-  { id: 'M4', name: 'Acquisition', state: 'next', body: 'Millions of changes survive cancellation and injected crashes.' },
-  { id: 'M5', name: 'Files', state: 'next', body: 'Manifests that verify every part and disclose every limitation.' },
-  { id: 'M6', name: 'Background', state: 'next', body: 'Tested on real devices through lock, reboot and lost network.' },
-  { id: 'M7', name: 'Delivery', state: 'next', body: 'Idempotent batches reconciled against an open-source reference receiver.' },
-  { id: 'M8', name: 'Multi-device', state: 'next', body: 'One writer at a time, with an explicit handover between your devices.' },
-  { id: 'M9', name: 'Release', state: 'next', body: 'Accessibility, localisation, and a multi-year endurance run.' },
 ];

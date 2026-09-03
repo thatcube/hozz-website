@@ -84,5 +84,5 @@ if (problems.length) {
 
 console.log(`${checked} internal links and anchors checked across ${pages.length} pages. None dead.`);
 console.log(
-  `${copy.filesScanned} built HTML pages checked for permanent-pricing language. None found.`,
+  `${copy.filesScanned} built HTML pages checked for prohibited public-copy claims. None found.`,
 );

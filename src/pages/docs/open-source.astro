@@ -9,66 +9,42 @@ const entry = page('/docs/open-source/');
 <DocsLayout page={entry}>
   <p>
     Hozz is <a href={LICENSE_URL}>licensed under GPL-3.0 with an App Store distribution exception</a
-    >{' '}and developed in public. You can inspect the code that reads Health, stores credentials,
-    writes logs and sends data.
+    >. Its <a href={GITHUB_URL}>source</a> is public.
   </p>
 
   <h2>What the source lets you check</h2>
 
   <ul>
     <li>
-      <strong>The current app has no account system.</strong> There is no service to sign in to.
+      <strong>No account.</strong> There is no sign-in service.
     </li>
     <li>
-      <strong>There is no hosted relay or default destination.</strong> Nothing leaves until you add
-      a destination and confirm it.
+      <strong>No hosted relay or default destination.</strong> You add and confirm every route.
     </li>
     <li>
-      <strong>There are no analytics, ads, or remote crash reports.</strong> Diagnostics stay on the
-      device and redact sample values, credentials and destination secrets.
+      <strong>No analytics, ads or remote crash reports.</strong> Logs omit values and secrets.
     </li>
     <li>
-      <strong>Destination credentials stay in the device Keychain.</strong> Networking and storage
-      code are visible in <a href={GITHUB_URL}>the repository</a>.
+      <strong>Destination credentials stay in the device Keychain.</strong> The Mac pairing token
+      may sync through iCloud Keychain; see <a href="/privacy/">Privacy</a>.
     </li>
   </ul>
 
-  <h2>Why that matters</h2>
+  <h2>Trust the code, not this page</h2>
 
   <p>
-    The central privacy claim is negative: Hozz does not send your data anywhere you did not choose.
-    Using the app cannot prove an absence. Reading the networking code and its tests can.
+    Privacy claims describe absences. Inspecting the networking, storage and logging code—and the
+    tests that enforce them—is stronger evidence than using the app.
   </p>
-
-  <ul>
-    <li>
-      <a href={GITHUB_URL}>Every line is readable</a>, including the networking and the parts that
-      touch the Keychain.
-    </li>
-    <li>
-      Privacy behaviours have tests, rather than being assertions on a page. Some of them exist
-      specifically to fail if a Health value ever reached a log.
-    </li>
-    <li>
-      This documentation is written against that source, and its factual lists are checked against
-      the app's own enums rather than copied by hand.
-    </li>
-  </ul>
 
   <h2>Where the guarantee ends</h2>
 
   <p>
-    Hozz does not send your data anywhere you did not configure. It cannot make any promise about
-    what happens after that.
+    Once data reaches your destination, Hozz cannot control it. A cloud-hosted assistant may upload
+    what it reads through <a href="/docs/mcp/">MCP</a>.
   </p>
 
   <p>
-    If you point Hozz at an endpoint on the public internet, the data is on that endpoint. If you
-    connect the <a href="/docs/mcp/">MCP server</a> to a cloud-hosted assistant, that assistant may
-    upload whatever it reads. Choosing destinations you control is the part Hozz cannot do for you.
-  </p>
-
-  <p>
-    <a href="/privacy/">Privacy</a> sets out exactly what leaves the device, when, and to where.
+    <a href="/privacy/">Privacy</a> lists what leaves each device and when.
   </p>
 </DocsLayout>

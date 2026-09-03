@@ -49,11 +49,11 @@ export const DESTINATIONS: Destination[] = [
     preset: null,
     name: 'Your Mac',
     summary:
-      'Sends batches to the Hozz Mac app over your local network. Hozz finds the computer and sets up the address and token for you.',
+      'Sends to the Hozz Mac app over your local network.',
     defaultFormat: 'ndjson',
     kind: 'restAPI',
     recommended: false,
-    who: 'You want the data charted, searchable, and available to an AI assistant, without running anything yourself.',
+    who: 'You want charts, search and local assistant access.',
   },
   {
     slug: 'folder',
@@ -64,7 +64,7 @@ export const DESTINATIONS: Destination[] = [
     defaultFormat: 'ndjson',
     kind: 'folder',
     recommended: true,
-    who: 'You want files you can open, back up, and keep — with nothing to run and no ports to open.',
+    who: 'You want files without a server.',
   },
   {
     slug: 'home-assistant',
@@ -74,18 +74,17 @@ export const DESTINATIONS: Destination[] = [
     defaultFormat: 'metrics',
     kind: 'restAPI',
     recommended: false,
-    who: 'You already run Home Assistant and want Health data to trigger automations.',
+    who: 'You want Health data in Home Assistant.',
   },
   {
     slug: 'influxdb',
     preset: 'influxDB',
     name: 'InfluxDB',
-    summary:
-      'Writes line protocol straight into InfluxDB, ready to chart in Grafana.',
+    summary: 'Writes line protocol to InfluxDB.',
     defaultFormat: 'influx',
     kind: 'restAPI',
     recommended: false,
-    who: 'You want Grafana dashboards, and you do not want to run a translator container to get them.',
+    who: 'You want InfluxDB or Grafana.',
   },
   {
     slug: 'web',
@@ -95,7 +94,7 @@ export const DESTINATIONS: Destination[] = [
     defaultFormat: 'ndjson',
     kind: 'restAPI',
     recommended: false,
-    who: 'You are writing the receiving end yourself, or pointing Hozz at something that already accepts a POST.',
+    who: 'You control an HTTP endpoint.',
   },
   {
     slug: 'mqtt',
@@ -105,7 +104,7 @@ export const DESTINATIONS: Destination[] = [
     defaultFormat: 'metrics',
     kind: 'mqtt',
     recommended: false,
-    who: 'You have a broker at the centre of your home setup and want Health data on it like everything else.',
+    who: 'You already use an MQTT broker.',
   },
 ];
 
@@ -131,7 +130,7 @@ export const DELIVERY_FORMATS: DeliveryFormatFact[] = [
     contentType: 'application/x-ndjson',
     fileExtension: 'ndjson',
     lossless: true,
-    note: 'One record per line. The default, and the only shape that streams at any size.',
+    note: 'One record per line. Lossless and streamable.',
   },
   {
     id: 'json',
@@ -139,7 +138,7 @@ export const DELIVERY_FORMATS: DeliveryFormatFact[] = [
     contentType: 'application/json',
     fileExtension: 'json',
     lossless: true,
-    note: 'The same records as one array, for tools that want a single JSON value.',
+    note: 'The same records as one array.',
   },
   {
     id: 'csv',
@@ -147,7 +146,7 @@ export const DELIVERY_FORMATS: DeliveryFormatFact[] = [
     contentType: 'text/csv',
     fileExtension: 'csv',
     lossless: false,
-    note: 'One flat table. Metadata, device, workout detail and route points do not fit a grid and are not included.',
+    note: 'Flat table. Drops metadata, devices, workout detail and route points.',
   },
   {
     id: 'metrics',
@@ -155,7 +154,7 @@ export const DELIVERY_FORMATS: DeliveryFormatFact[] = [
     contentType: 'application/json',
     fileExtension: 'json',
     lossless: false,
-    note: 'Grouped by metric rather than by sample. What Home Assistant, MQTT subscribers and dashboards want. Drops metadata, device and workout detail.',
+    note: 'Grouped by metric. Drops metadata, devices and workout detail.',
   },
   {
     id: 'influx',
@@ -163,7 +162,7 @@ export const DELIVERY_FORMATS: DeliveryFormatFact[] = [
     contentType: 'text/plain; charset=utf-8',
     fileExtension: 'lp',
     lossless: false,
-    note: 'Ingested directly by InfluxDB and Telegraf. Drops metadata, workout detail, and device detail beyond its name.',
+    note: 'For InfluxDB and Telegraf. Drops metadata, workout detail and most device detail.',
   },
 ];
 
@@ -195,8 +194,8 @@ export const EXPORT_FORMATS: ExportFormatFact[] = [
     lossy: false,
     routesOnly: false,
     inPicker: true,
-    good: 'Keeping everything, and feeding another tool.',
-    keeps: 'Every field Hozz encodes. The default, and the format the export is built from.',
+    good: 'Keeping everything or feeding another tool.',
+    keeps: 'Every encoded field. The default.',
   },
   {
     id: 'sqlite',
@@ -205,8 +204,8 @@ export const EXPORT_FORMATS: ExportFormatFact[] = [
     lossy: false,
     routesOnly: false,
     inPicker: true,
-    good: 'Asking questions without an import step.',
-    keeps: 'Everything. Typed columns for querying, plus the original record kept verbatim in a raw column.',
+    good: 'Querying without an import step.',
+    keeps: 'Typed columns plus every original record.',
   },
   {
     id: 'json',
@@ -215,8 +214,8 @@ export const EXPORT_FORMATS: ExportFormatFact[] = [
     lossy: false,
     routesOnly: false,
     inPicker: true,
-    good: 'Smaller exports, and tools that want one JSON value.',
-    keeps: 'Every field Hozz encodes, as a single array.',
+    good: 'Tools that want one JSON value.',
+    keeps: 'Every encoded field in one array.',
   },
   {
     id: 'csv',
@@ -225,8 +224,8 @@ export const EXPORT_FORMATS: ExportFormatFact[] = [
     lossy: true,
     routesOnly: false,
     inPicker: true,
-    good: 'Opening in Excel, Numbers or Sheets.',
-    keeps: 'Values, dates, units and source. Metadata and nested workout detail are dropped.',
+    good: 'Excel, Numbers or Sheets.',
+    keeps: 'Values, dates, units and source. Drops metadata and nested workout detail.',
   },
   {
     id: 'markdown',
@@ -235,8 +234,8 @@ export const EXPORT_FORMATS: ExportFormatFact[] = [
     lossy: true,
     routesOnly: false,
     inPicker: true,
-    good: 'Obsidian, and daily journals.',
-    keeps: "A day's totals and extremes with YAML front matter. The records behind them are dropped.",
+    good: 'Obsidian and daily journals.',
+    keeps: 'Daily totals and extremes. Drops source records.',
   },
   {
     id: 'gpx',
@@ -245,8 +244,8 @@ export const EXPORT_FORMATS: ExportFormatFact[] = [
     lossy: true,
     routesOnly: true,
     inPicker: true,
-    good: 'Maps, and self-hosted fitness tools.',
-    keeps: 'One GPX 1.1 track per workout that has GPS, and nothing else at all.',
+    good: 'Maps and fitness tools.',
+    keeps: 'Routed workouts only.',
   },
   {
     id: 'raw',
@@ -255,8 +254,8 @@ export const EXPORT_FORMATS: ExportFormatFact[] = [
     lossy: false,
     routesOnly: false,
     inPicker: false,
-    good: 'Piping straight into something else.',
-    keeps: 'The same as NDJSON, uncompressed. Supported by the export engine rather than offered in the picker.',
+    good: 'Piping into another tool.',
+    keeps: 'Uncompressed NDJSON. Engine only.',
   },
 ];
 
@@ -428,14 +427,14 @@ export const APP_MESSAGES: AppMessage[] = [
     text: 'Health data is locked. Unlock this iPhone and Hozz will continue.',
     source: 'Sources/HozzHealth/HealthKitFailure.swift',
     means:
-      'iOS woke Hozz while the phone was locked. Health is encrypted until first unlock, so there was nothing to read.',
-    fix: 'Nothing. Unlock the phone and the next pass continues from where it stopped. No records are skipped.',
+      'iOS woke Hozz while Health was encrypted.',
+    fix: 'Unlock the phone. The next pass resumes without skipping records.',
   },
   {
     text: 'Health returned no data. Apple does not let Hozz tell a denied type from an empty one.',
     source: 'Sources/HozzHealth/HealthKitFailure.swift',
     means:
-      'Either you did not grant this type, or you genuinely have none of it. HealthKit answers both cases identically and deliberately.',
+      'The type is denied or empty. HealthKit reports both identically.',
     fix: 'Check the type in Settings → Health → Data Access & Devices → Hozz. If it is on, you have no data of that type.',
   },
   {
@@ -448,7 +447,7 @@ export const APP_MESSAGES: AppMessage[] = [
     text: 'Hozz could not reach that folder. It may have been moved, renamed, or signed out.',
     source: 'Sources/HozzDeliver/Destination.swift',
     means:
-      'The security-scoped bookmark no longer resolves. Usually a renamed folder, or a cloud drive that signed out.',
+      'The folder moved, was renamed, or its cloud drive signed out.',
     fix: 'Edit the destination and pick the folder again.',
   },
   {
@@ -461,14 +460,14 @@ export const APP_MESSAGES: AppMessage[] = [
     text: 'The destination refused the data (HTTP …).',
     source: 'Sources/HozzDeliver/Destination.swift',
     means:
-      'Your endpoint answered with something other than 2xx. 408, 429 and 5xx are treated as “try again”; anything else stops and waits for you.',
-    fix: 'Check the endpoint’s own logs. Hozz deliberately does not log the response body, because a server rejecting a batch often echoes the record back.',
+      'The endpoint returned non-2xx. Hozz retries 408, 429 and 5xx; other codes stop.',
+    fix: 'Check the endpoint logs. Hozz does not log response bodies.',
   },
   {
     text: 'Hozz could not reach the destination: …',
     source: 'Sources/HozzDeliver/Destination.swift',
-    means: 'A transport failure — wrong host, no route, TLS refused, or nothing listening.',
-    fix: 'Confirm the phone can reach the address on this network. Use Send a test, which reports what came back.',
+    means: 'Wrong host, no route, TLS refusal, or nothing listening.',
+    fix: 'Confirm the phone can reach it. Use Send a test.',
   },
   {
     text: 'This destination is not finished being set up.',
@@ -480,13 +479,13 @@ export const APP_MESSAGES: AppMessage[] = [
     text: 'The delivery was stopped before it finished.',
     source: 'Sources/HozzDeliver/Destination.swift',
     means: 'iOS ended the background window, or the app was closed mid-delivery.',
-    fix: 'Nothing. The cursor did not advance, so the next pass resends the same records.',
+    fix: 'Nothing. The cursor stayed put; the next pass resends.',
   },
   {
     text: 'Offline — open Hozz on it',
     source: 'App/DestinationPickerView.swift',
     means:
-      'A Mac you have used before did not answer a probe just now. Hozz will not offer a computer that cannot accept data.',
+      'A previously used Mac did not answer.',
     fix: 'Open Hozz on that Mac and make sure both devices are on the same network.',
   },
   {
